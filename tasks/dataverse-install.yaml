@@ -1,0 +1,29 @@
+---
+
+- name: download dvinstall.zip
+  get_url: url=https://github.com/IQSS/dataverse/releases/download/v4.2.1/dvinstall-4.2.1.zip dest=/tmp mode=0644
+  tags: dataverse
+
+- name: unzip dvinstall.zip
+  shell: unzip /tmp/dvinstall-4.2.1.zip -d /tmp
+  tags: dataverse
+
+- name: copy config template
+  template: src=install.de.j2 dest=/tmp/dvinstall/install.de owner=root group=root mode=0755
+  tags: dataverse
+
+- name: run the IQSS install script
+  shell: "pushd /tmp/dvinstall && /bin/perl /tmp/dvinstall/install.de > /tmp/dvinstall/install.out 2>&1"
+  tags: dataverse
+
+- name: copy admin password hash (set group_var as SHA256)
+  template: src=adminpass.txt.j2 dest=/tmp/dvinstall/adminpass.txt owner={{ dataverse_gf_user }} group={{ dataverse_gf_group }} mode=0600
+  tags: dataverse
+
+- name: set admin password
+  shell: "/usr/local/glassfish4/glassfish/bin/asadmin --user {{ dataverse_gf_adminuser }} --passwordfile /tmp/dvinstall/adminpass.txt change-admin-password"
+  tags: dataverse
+
+- name: enable secure admin
+  shell: "/usr/local/glassfish4/glassfish/bin/asadmin --user {{ dataverse_gf_adminuser }} --passwordfile /tmp/dvinstall/adminpass.txt enable-secure-admin"
+  tags: dataverse
