@@ -1,5 +1,11 @@
 ---
 
+- name: install EPEL repository for RedHat7/CentOS7
+  yum: name=epel-release state=latest
+  when: ansible_os_family == "RedHat" and
+        and ansible_distribution_major_version == "7"
+  tags: dataverse
+
 - name: install java-1.7.0-openjdk-devel. dataverse currently requires this version.
   yum: name="{{item}}" state=latest
   with_items:
@@ -8,13 +14,13 @@
     - jq
     - mod_ssl
     - perl
-  when: ansible_distribution == "CentOS"
+  when: ansible_os_family == "RedHat" and
         and ansible_distribution_major_version == "7"
   tags: dataverse
 
 - name: install shibboleth repo
   get_url: url=http://download.opensuse.org/repositories/security:/shibboleth/CentOS_7/security:shibboleth.repo dest=/etc/yum.repos.d owner=root group=root mode=0644
-  when: ansible_distribution == "CentOS"
+  when: ansible_os_family == "RedHat" and
         and ansible_distribution_major_version == "7"
   tags: dataverse
 
@@ -23,7 +29,7 @@
   with_items:
     - shibboleth
     - shibboleth-embedded-ds
-  when: ansible_distribution == "CentOS"
+  when: ansible_os_family == "RedHat" and
         and ansible_distribution_major_version == "7"
   tags: dataverse
 
@@ -49,10 +55,14 @@
 
 - name: install glassfish systemd conf file
   copy: src=glassfish.service dest=/usr/lib/systemd/system owner=root group=root mode=0644
+  when: ansible_os_family == "RedHat" and
+        and ansible_distribution_major_version == "7"
   tags: dataverse
 
 - name: reload systemd because systemd
   shell: systemctl daemon-reload
+  when: ansible_os_family == "RedHat" and
+        and ansible_distribution_major_version == "7"
   tags: dataverse
 
 - name: start and enable glassfish
@@ -61,6 +71,8 @@
 
 - name: install postgres-9.3 repo. dataverse doesn't yet like 9.4 OotB.
   yum: name=http://yum.postgresql.org/9.3/redhat/rhel-7-x86_64/pgdg-centos93-9.3-2.noarch.rpm state=present
+  when: ansible_os_family == "RedHat" and
+        and ansible_distribution_major_version == "7"
   tags: dataverse
 
 - name: install postgres-9.3
@@ -101,10 +113,14 @@
 
 - name: install solr systemd conf file
   copy: src=solr.service dest=/usr/lib/systemd/system owner=root group=root mode=0644
+  when: ansible_os_family == "RedHat" and
+        and ansible_distribution_major_version == "7"
   tags: dataverse
 
 - name: reload systemd because systemd
   shell: systemctl daemon-reload
+  when: ansible_os_family == "RedHat" and
+        and ansible_distribution_major_version == "7"
   tags: dataverse
 
 - name: enable solr on boot, start solr
