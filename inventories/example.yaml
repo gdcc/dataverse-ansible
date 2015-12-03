@@ -1,0 +1,9 @@
+[systems]
+dataverse.yourinstitution.edu
+
+[web-nodes]
+webnode1.yourinstitution.edu
+webnode2.yourinstitution.edu
+
+[db]
+db.yourinstitution.edu
