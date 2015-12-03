@@ -3,7 +3,7 @@ Description = GlassFish Server v4.1.1
 After = syslog.target network.target
 
 [Service]
-User=root
+User={{ dataverse_gf_user }}
 ExecStart = /usr/bin/java -jar /usr/local/glassfish4/glassfish/lib/client/appserver-cli.jar start-domain
 ExecStop = /usr/bin/java -jar /usr/local/glassfish4/glassfish/lib/client/appserver-cli.jar stop-domain
 ExecReload = /usr/bin/java -jar /usr/local/glassfish4/glassfish/lib/client/appserver-cli.jar restart-domain

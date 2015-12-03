@@ -12,6 +12,14 @@
   template: src=install.de.j2 dest=/tmp/dvinstall/install.de owner=root group=root mode=0755
   tags: dataverse
 
+- name: create gfclient dir
+  file: path=/home/{{ dataverse_gf_user }}/.gfclient owner={{ dataverse_gf_user }} group={{ dataverse_gf_group }} state=directory mode=0700
+  tags: dataverse
+
+- name: copy gfclient template
+  template: src=gfclient.j2 dest=/home/{{ dataverse_gf_user }}/.gfclient/pass owner={{ dataverse_gf_user }} group={{ dataverse_gf_group }} mode=0600
+  tags: dataverse
+
 - name: run the IQSS install script
   shell: "pushd /tmp/dvinstall && /bin/perl /tmp/dvinstall/install.de > /tmp/dvinstall/install.out 2>&1"
   tags: dataverse
@@ -26,4 +34,8 @@
 
 - name: enable secure admin
   shell: "/usr/local/glassfish4/glassfish/bin/asadmin --user {{ dataverse_gf_adminuser }} --passwordfile /tmp/dvinstall/adminpass.txt enable-secure-admin"
+  tags: dataverse
+
+- name: remove admin password hash tmp file
+  file: path=/tmp/dvinstall/adminpass.txt state=absent
   tags: dataverse
