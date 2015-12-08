@@ -9,6 +9,7 @@
 - name: install java-1.7.0-openjdk-devel for RedHat/CentOS. Dataverse currently requires this version.
   yum: name="{{item}}" state=latest
   with_items:
+    - git
     - httpd
     - java-1.7.0-openjdk-devel
     - jq
@@ -22,6 +23,7 @@
   apt: name="{{item}}" state=latest update_cache=true
   with_items:
     - apache2
+    - git
     - jq
     - libapache2-mod-shib2
     - openjdk-7-jdk
@@ -53,11 +55,15 @@
   tags: dataverse
 
 - name: unzip glassfish. unarchive urls supported in ansible 2.0
-  shell: unzip /tmp/glassfish-4.1.zip
+  shell: unzip /tmp/glassfish-4.1.zip -d /tmp
   tags: dataverse
 
-- name: rsync glassfish into desired glassfish root.
-  synchronize: src=/tmp/glassfish4/ dest={{ dataverse_gf_root }}/
+- name: ensure dataverse_gf_root exists
+  file: path={{ dataverse_gf_root }} state=directory owner=root group=root mode=0755
+  tags: dataverse
+
+- name: copy glassfish into desired glassfish root. (synchronize module barfs even without pty, file wants to copy local/remote)
+  shell: "/bin/cp -r /tmp/glassfish4/* {{ dataverse_gf_root }}"
   tags: dataverse
 
 - name: create glassfish service group
@@ -69,7 +75,7 @@
   tags: dataverse
 
 - name: glassfish runs as service account
-  copy: path={{ dataverse_gf_root }}/glassfish/domains/{{ dataverse_gf_domain }} owner={{ dataverse_gf_user }}
+  file: path={{ dataverse_gf_root }}/glassfish/domains/{{ dataverse_gf_domain }} owner={{ dataverse_gf_user }}
         group={{ dataverse_gf_group }} state=directory recurse=yes
   tags: dataverse
 

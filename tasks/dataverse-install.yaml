@@ -1,7 +1,8 @@
 ---
 
 - name: clone {{ dataverse_version }} from git. optimally replace install.zip with this.
-  git: repo=git://github.com/IQSS/dataverse.git dest=/tmp/dataverse-{{ dataverse_version }} version={{ dataverse_version }} clone=yes depth=1
+  git: repo=git://github.com/IQSS/dataverse.git dest=/tmp/dataverse_{{ dataverse_version }} version={{ dataverse_version }}
+       clone=yes depth=1 accept_hostkey=true
   tags: dataverse
 
 - name: download dataverse installer. unarchive urls supported in ansible 2.0
@@ -13,7 +14,7 @@
   tags: dataverse
 
 - name: install jdbc driver
-  copy: src=/tmp/dvinstall/pgdriver/postgresql-9.1-902.jdbc4.jar dest={{ dataverse_gf_root }}/glassfish/lib/ owner=root group=root mode=0644
+  shell: "/bin/cp /tmp/dvinstall/pgdriver/postgresql-9.1-902.jdbc4.jar {{ dataverse_gf_root }}/glassfish/lib/"
   tags: dataverse
 
 - name: copy jhove config
@@ -21,33 +22,33 @@
   tags: dataverse
 
 - name: run glass-setup.sh
-  script: /tmp/dvinstall/glassfish-setup.sh
+  shell: "/bin/bash /tmp/dvinstall/glassfish-setup.sh > /tmp/dvinstall.out 2>&1"
   environment:
-    HOST_ADDRESS: {{ dataverse_host_address }}
-    GLASSFISH_ROOT: {{ dataverse_gf_root }}
-    GLASSFISH_DOMAIN: {{ dataverse_gf_domain }}
-    FILES_DIR: {{ dataverse_filesdir }}
-    DB_NAME: {{ dataverse_db }}
-    DB_PORT: {{ dataverse_dbport }}
-    DB_HOST: {{ dataverse_dbhost }}
-    DB_USER: {{ dataverse_dbuser }}
-    DB_PASS: {{ dataverse_dbpass }}
-    RSERVE_HOST: {{ rserve_host }}
-    RSERVE_PORT: {{ rserve_port }}
-    RSERVE_USER: {{ rserve_user }}
-    RSERVE_PASS: {{ rserve_pass }}
-    SMTP_SERVER: {{ dataserve_smtp }}
-    MEM_HEAP_SIZE: {{ dataverse_memheap }}
+    HOST_ADDRESS: "{{ dataverse_host_address }}"
+    GLASSFISH_ROOT: "{{ dataverse_gf_root }}"
+    GLASSFISH_DOMAIN: "{{ dataverse_gf_domain }}"
+    FILES_DIR: "{{ dataverse_filesdir }}"
+    DB_NAME: "{{ dataverse_db }}"
+    DB_PORT: "{{ dataverse_dbport }}"
+    DB_HOST: "{{ dataverse_dbhost }}"
+    DB_USER: "{{ dataverse_dbuser }}"
+    DB_PASS: "{{ dataverse_dbpass }}"
+    RSERVE_HOST: "{{ rserve_host }}"
+    RSERVE_PORT: "{{ rserve_port }}"
+    RSERVE_USER: "{{ rserve_user }}"
+    RSERVE_PASS: "{{ rserve_pass }}"
+    SMTP_SERVER: "{{ dataserve_smtp }}"
+    MEM_HEAP_SIZE: "{{ dataverse_memheap }}"
   tags: dataverse
 
-- name: setup-all.sh: kitchen sink configuration
-  script: /tmp/dataverse-{{ dataverse-version }}/scripts/api/setup-all.sh
+- name: setup-all.sh kitchen sink configuration.
+  shell: "/bin/bash /tmp/dataverse_{{ dataverse_version }}/scripts/api/setup-all.sh > /tmp/setup-all.out 2> &1"
   tags: dataverse
 
 - name: populate reference data
-  shell: "psql -U {{ dataverse_dbuser }} -h {{ dataverse_dbhost }} -d {{ dataverse_db}} -f /tmp/dataverse-{{ dataverse-version }}/scripts/database/reference_data.sql
+  shell: "psql -U {{ dataverse_dbuser }} -h {{ dataverse_dbhost }} -d {{ dataverse_db}} -f /tmp/dataverse-{{ dataverse-version }}/scripts/database/reference_data.sql"
   environment:
-    PGPASSWORD: {{ dataverse_dbpass }}
+    PGPASSWORD: "{{ dataverse_dbpass }}"
   tags: dataverse
 
 - name: publish root dataverse
