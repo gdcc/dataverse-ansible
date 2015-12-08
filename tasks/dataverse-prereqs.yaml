@@ -6,7 +6,7 @@
         ansible_distribution_major_version == "7"
   tags: dataverse
 
-- name: install java-1.7.0-openjdk-devel. dataverse currently requires this version.
+- name: install java-1.7.0-openjdk-devel for RedHat/CentOS. Dataverse currently requires this version.
   yum: name="{{item}}" state=latest
   with_items:
     - httpd
@@ -18,13 +18,18 @@
         ansible_distribution_major_version == "7"
   tags: dataverse
 
-- name: install shibboleth repo
-  get_url: url=http://download.opensuse.org/repositories/security:/shibboleth/CentOS_7/security:shibboleth.repo dest=/etc/yum.repos.d owner=root group=root mode=0644
-  when: ansible_os_family == "RedHat" and
-        ansible_distribution_major_version == "7"
+- name: install openjdk-7-jdk, apache, etc. for Ubuntu/Debian.
+  apt: name="{{item}}" state=latest update_cache=true
+  with_items:
+    - apache2
+    - jq
+    - libapache2-mod-shib2
+    - openjdk-7-jdk
+    - perl5
+  when: ansible_os_family == "Debian"
   tags: dataverse
 
-- name: install shibboleth rpms
+- name: install Shibboleth RPMs for RedHat/CentOS7
   yum: name="{{item}}" state=latest
   with_items:
     - shibboleth
@@ -124,13 +129,17 @@
   get_url: url=https://github.com/IQSS/dataverse/releases/download/v4.2.1/schema.xml dest=/usr/local/solr/example/solr/collection1/conf/ owner={{ dataverse_gf_user }} group={{ dataverse_gf_group }} mode=0644
   tags: dataverse
 
-- name: install solr systemd conf file
+- name: install solr upstart script for Debian/Ubuntu
+  file: src=solr.conf dest=/etc/init owner=root group=root mode=0644
+  tags: dataverse
+
+- name: install solr systemd conf file for RedHat/CentOS
   copy: src=solr.service dest=/usr/lib/systemd/system owner=root group=root mode=0644
   when: ansible_os_family == "RedHat" and
         ansible_distribution_major_version == "7"
   tags: dataverse
 
-- name: reload systemd because systemd
+- name: reload systemd
   shell: systemctl daemon-reload
   when: ansible_os_family == "RedHat" and
         ansible_distribution_major_version == "7"
@@ -138,4 +147,6 @@
 
 - name: enable solr on boot, start solr
   service: name=solr enabled=yes state=started
+  when: ansible_os_family == "RedHat" and
+        ansible_distribution_major_version == "7"
   tags: dataverse
