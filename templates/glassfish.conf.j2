@@ -2,7 +2,7 @@
 description "GlassFish4"
 
 # Instance per domain
-instance {{ dataverse_domain }}
+instance {{ dataverse_gf_domain }}
 
 console none
 
@@ -13,7 +13,7 @@ umask 0022
 chdir {{ dataverse_gf_root }}
 
 # start
-exec {{ dataverse_gf_root }}/bin/asadmin start-domain {{ dataverse_domain }}
+exec {{ dataverse_gf_root }}/bin/asadmin start-domain {{ dataverse_gf_domain }}
 
 # stop
-pre-stop exec {{ dataverse_gf_root }}/bin/asadmin stop-domain {{ dataverse_domain }}
+pre-stop exec {{ dataverse_gf_root }}/bin/asadmin stop-domain {{ dataverse_gf_domain }}

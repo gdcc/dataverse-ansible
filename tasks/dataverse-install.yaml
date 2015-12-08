@@ -1,39 +1,89 @@
 ---
 
-- name: download dvinstall.zip
+- name: clone {{ dataverse_version }} from git. optimally replace install.zip with this.
+  git: repo=git://github.com/IQSS/dataverse.git dest=/tmp/dataverse-{{ dataverse_version }} version={{ dataverse_version }}
+  tags: dataverse
+
+- name: download dataverse installer. unarchive urls supported in ansible 2.0
   get_url: url=https://github.com/IQSS/dataverse/releases/download/v4.2.1/dvinstall-4.2.1.zip dest=/tmp mode=0644
   tags: dataverse
 
-- name: unzip dvinstall.zip
-  shell: unzip /tmp/dvinstall-4.2.1.zip -d /tmp
+- name: unzip dataverse installer
+  shell: unzip /tmp/dvinstall-{{ dataverse_version }}.zip -d /tmp
   tags: dataverse
 
-- name: copy config template
-  template: src=install.de.j2 dest=/tmp/dvinstall/install.de owner=root group=root mode=0755
+- name: install jdbc driver
+  copy: src=/tmp/dvinstall/pgdriver/postgresql-9.1-902.jdbc4.jar dest={{ dataverse_gf_root }}/glassfish/lib/ owner=root group=root mode=0644
   tags: dataverse
 
-- name: create gfclient dir
-  file: path=/home/{{ dataverse_gf_user }}/.gfclient owner={{ dataverse_gf_user }} group={{ dataverse_gf_group }} state=directory mode=0700
+- name: copy jhove config
+  copy: src=jhove.conf dest={{ dataverse_gf_root }}/domains/glassfish/{{ dataverse_gf_domain }}/config/ owner=root group=root mode=0644
   tags: dataverse
 
-- name: copy gfclient template
-  template: src=gfclient.j2 dest=/home/{{ dataverse_gf_user }}/.gfclient/pass owner={{ dataverse_gf_user }} group={{ dataverse_gf_group }} mode=0600
+- name: run glass-setup.sh
+  script: /tmp/dvinstall/glassfish-setup.sh
+  environment:
+    HOST_ADDRESS: {{ dataverse_host_address }}
+    GLASSFISH_ROOT: {{ dataverse_gf_root }}
+    GLASSFISH_DOMAIN: {{ dataverse_gf_domain }}
+    FILES_DIR: {{ dataverse_filesdir }}
+    DB_NAME: {{ dataverse_db }}
+    DB_PORT: {{ dataverse_dbport }}
+    DB_HOST: {{ dataverse_dbhost }}
+    DB_USER: {{ dataverse_dbuser }}
+    DB_PASS: {{ dataverse_dbpass }}
+    RSERVE_HOST: {{ rserve_host }}
+    RSERVE_PORT: {{ rserve_port }}
+    RSERVE_USER: {{ rserve_user }}
+    RSERVE_PASS: {{ rserve_pass }}
+    SMTP_SERVER: {{ dataserve_smtp }}
+    MEM_HEAP_SIZE: {{ dataverse_memheap }}
   tags: dataverse
 
-- name: run the IQSS install script
-  shell: "pushd /tmp/dvinstall && /bin/perl /tmp/dvinstall/install.de > /tmp/dvinstall/install.out 2>&1"
+- name: setup-all.sh: kitchen sink configuration
+  script: /tmp/dataverse-{{ dataverse-version }}/scripts/api/setup-all.sh
   tags: dataverse
 
-- name: copy admin password hash (set group_var as SHA256)
+- name: populate reference data
+  shell: "psql -U {{ dataverse_dbuser }} -h {{ dataverse_dbhost }} -d {{ dataverse_db}} -f /tmp/dataverse-{{ dataverse-version }}/scripts/database/reference_data.sql
+  environment:
+    PGPASSWORD: {{ dataverse_dbpass }}
+  tags: dataverse
+
+- name: publish root dataverse
+  shell: "cd /tmp/dataverse-{{ dataverse-version }} && ./scripts/search/tests/publish-dataverse-root"
+  tags: dataverse
+
+- name: grant authusers add on root
+  shell: "cd /tmp/dataverse-{{ dataverse-version }} && ./scripts/search/tests/grant-authusers-add-on-root"
+  tags: dataverse
+
+- name: populate users
+  shell: "cd /tmp/dataverse-{{ dataverse-version }} && ./scripts/search/populate-users"
+  tags: dataverse
+
+- name: create-users
+  shell: "cd /tmp/dataverse-{{ dataverse-version }} && ./scripts/search/create-users"
+  tags: dataverse
+
+- name: create all and test
+  shell: "cd /tmp/dataverse-{{ dataverse-version }} && ./scripts/search/tests/create-all-and-test"
+  tags: dataverse
+
+- name: public spruce1 and test (do we want this?)
+  shell: "cd /tmp/dataverse-{{ dataverse-version }} && ./scripts/search/tests/public-spruce1-and-test"
+  tags: dataverse
+
+- name: copy admin password file
   template: src=adminpass.txt.j2 dest=/tmp/dvinstall/adminpass.txt owner={{ dataverse_gf_user }} group={{ dataverse_gf_group }} mode=0600
   tags: dataverse
 
 - name: set admin password
-  shell: "/usr/local/glassfish4/glassfish/bin/asadmin --user {{ dataverse_gf_adminuser }} --passwordfile /tmp/dvinstall/adminpass.txt change-admin-password"
+  shell: "{{ dataverse_gf_root }}/bin/asadmin --user {{ dataverse_gf_adminuser }} --passwordfile /tmp/dvinstall/adminpass.txt change-admin-password"
   tags: dataverse
 
 - name: enable secure admin
-  shell: "/usr/local/glassfish4/glassfish/bin/asadmin --user {{ dataverse_gf_adminuser }} --passwordfile /tmp/dvinstall/adminpass.txt enable-secure-admin"
+  shell: "{{ dataverse_gf_root }}/bin/asadmin --user {{ dataverse_gf_adminuser }} --passwordfile /tmp/dvinstall/adminpass.txt enable-secure-admin"
   tags: dataverse
 
 - name: remove admin password hash tmp file

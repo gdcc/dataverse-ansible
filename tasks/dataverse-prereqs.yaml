@@ -69,7 +69,7 @@
   tags: dataverse
 
 - name: glassfish runs as service account
-  copy: path={{ dataverse_gf_root }}/glassfish/domains/{{ dataverse_domain }} owner={{ dataverse_gf_user }}
+  copy: path={{ dataverse_gf_root }}/glassfish/domains/{{ dataverse_gf_domain }} owner={{ dataverse_gf_user }}
         group={{ dataverse_gf_group }} state=directory recurse=yes
   tags: dataverse
 
