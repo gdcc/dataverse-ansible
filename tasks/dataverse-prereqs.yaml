@@ -131,6 +131,7 @@
 
 - name: install solr upstart script for Debian/Ubuntu
   file: src=solr.conf dest=/etc/init owner=root group=root mode=0644
+  when: ansible_os_family == "Debian"
   tags: dataverse
 
 - name: install solr systemd conf file for RedHat/CentOS
