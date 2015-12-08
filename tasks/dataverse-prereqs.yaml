@@ -56,7 +56,7 @@
   shell: unzip /tmp/glassfish-4.1.zip
   tags: dataverse
 
-- name: copy glassfish into desired glassfish root.
+- name: rsync glassfish into desired glassfish root.
   synchronize: src=/tmp/glassfish4/ dest={{ dataverse_gf_root }}/
   tags: dataverse
 
@@ -79,7 +79,7 @@
 
 - name: get patched weld jar
   get_url: url=http://central.maven.org/maven2/org/jboss/weld/weld-osgi-bundle/2.2.10.SP1/weld-osgi-bundle-2.2.10.SP1-glassfish4.jar 
-        dest={{ dataverse_gf_root }}/glassfish/modules owner={{ dataverse_gf_user }} group={{ dataverse_gf_group }} mode=0644
+        dest={{ dataverse_gf_root }}/glassfish/modules owner=root group=root mode=0644
   tags: dataverse
 
 - name: install glassfish systemd conf file for RedHat / CentOS7
@@ -152,7 +152,7 @@
   tags: dataverse
 
 - name: install pg_hba.conf on Debian/Ubuntu
-  copy: src=pg_hba.conf dest=/var/lib/postgresql/9.3/data owner=postgres group=postgres mode=0644
+  copy: src=pg_hba.conf dest=/etc/postgresql/9.3/main owner=postgres group=postgres mode=0644
   when: ansible_os_family == "Debian"
   tags: dataverse
 

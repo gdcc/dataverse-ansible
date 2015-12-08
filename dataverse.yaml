@@ -3,5 +3,3 @@
   sudo_user: root
   roles:
     - role: dataverse
-  environment:
-    AS_ADMIN_USER: "{{ dataverse_gf_adminuser }}"

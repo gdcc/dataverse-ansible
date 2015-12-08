@@ -1,7 +1,7 @@
 ---
 
 - name: clone {{ dataverse_version }} from git. optimally replace install.zip with this.
-  git: repo=git://github.com/IQSS/dataverse.git dest=/tmp/dataverse-{{ dataverse_version }} version={{ dataverse_version }}
+  git: repo=git://github.com/IQSS/dataverse.git dest=/tmp/dataverse-{{ dataverse_version }} version={{ dataverse_version }} clone=yes depth=1
   tags: dataverse
 
 - name: download dataverse installer. unarchive urls supported in ansible 2.0
