@@ -29,6 +29,12 @@
   when: ansible_os_family == "Debian"
   tags: dataverse
 
+- name: install shibboleth repo for RedHat/CentOS7
+  get_url: url=http://download.opensuse.org/repositories/security:/shibboleth/CentOS_7/security:shibboleth.repo dest=/etc/yum.repos.d owner=root group=root mode=0644
+  when: ansible_os_family == "RedHat" and
+        ansible_distribution_major_version == "7"
+  tags: dataverse
+
 - name: install Shibboleth RPMs for RedHat/CentOS7
   yum: name="{{item}}" state=latest
   with_items:
@@ -59,7 +65,8 @@
   tags: dataverse
 
 - name: glassfish runs as service account
-  file: path=/usr/local/glassfish4 owner={{ dataverse_gf_user }} group={{ dataverse_gf_group }} state=directory recurse=yes
+  copy: path=/usr/local/glassfish4/glassfish/domains/{{ dataverse_domain }} owner={{ dataverse_gf_user }}
+        group={{ dataverse_gf_group }} state=directory recurse=yes
   tags: dataverse
 
 - name: remove old weld jar
@@ -71,46 +78,83 @@
         dest=/usr/local/glassfish4/glassfish/modules owner={{ dataverse_gf_user }} group={{ dataverse_gf_group }} mode=0644
   tags: dataverse
 
-- name: install glassfish systemd conf file
+- name: install glassfish systemd conf file for RedHat / CentOS7
   template: src=glassfish.service.j2 dest=/usr/lib/systemd/system/glassfish.service owner=root group=root mode=0644
   when: ansible_os_family == "RedHat" and
         ansible_distribution_major_version == "7"
   tags: dataverse
 
-- name: reload systemd because systemd
+- name: reload systemd on RedHat/CentOS7
   shell: systemctl daemon-reload
   when: ansible_os_family == "RedHat" and
         ansible_distribution_major_version == "7"
   tags: dataverse
 
-- name: start and enable glassfish
+- name: start and enable glassfish on RedHat/CentOS7
   service: name=glassfish enabled=yes state=started
+  when: ansible_os_family == "RedHat" and
+        ansible_distribution_major_version == "7"
   tags: dataverse
 
-- name: install postgres-9.3 repo. dataverse doesn't yet like 9.4 OotB.
+- name: install glassfish upstart script for Debian/Ubuntu
+  template: src=glassfish.conf.j2 dest=/etc/init owner=root group=root mode=0644
+  when: ansible_os_family == "Debian"
+  tags: dataverse
+
+- name: start glassfish on Debian/Ubuntu
+  service: glassfish state=started
+  when: ansible_os_family == "Debian"
+  tags: dataverse
+
+- name: install postgres-9.3 repo on Redhat / CentOS 7.
   yum: name=http://yum.postgresql.org/9.3/redhat/rhel-7-x86_64/pgdg-centos93-9.3-2.noarch.rpm state=present
   when: ansible_os_family == "RedHat" and
         ansible_distribution_major_version == "7"
   tags: dataverse
 
-- name: install postgres-9.3
+- name: install postgres-9.3 on RedHat / CentOS 7.
   yum: name=postgresql93-server state=latest
+  when: ansible_os_family == "RedHat" and
+        ansible_distribution_major_version == "7"
   tags: dataverse
 
-- name: init postgres-9.3
+- name: init postgres-9.3 on RedHat / CentOS 7.
   shell: /usr/pgsql-9.3/bin/postgresql93-setup initdb
+  when: ansible_os_family == "RedHat" and
+        ansible_distribution_major_version == "7"
   tags: dataverse
 
-- name: install pg_hba.conf
+- name: install and init postgres-9.3 for Debian/Ubuntu
+  apt: pkg=postgresql-9.3 state=latest update_cache=true
+  when: ansible_os_family == "Debian"
+  tags: dataverse
+
+- name: install pg_hba.conf on RedHat / CentOS 7.
   copy: src=pg_hba.conf dest=/var/lib/pgsql/9.3/data owner=postgres group=postgres mode=0644
+  when: ansible_os_family == "RedHat" and
+        ansible_distribution_major_version == "7"
   tags: dataverse
 
-- name: enable postgres-9.3 on boot
+- name: enable postgres-9.3 on RedHat / CentOS 7.
   service: name=postgresql-9.3 enabled=yes
+  when: ansible_os_family == "RedHat" and
+        ansible_distribution_major_version == "7"
   tags: dataverse
 
-- name: start postgres-9.3
+- name: start postgres-9.3 on RedHat / CentOS 7.
   service: name=postgresql-9.3 state=started
+  when: ansible_os_family == "RedHat" and
+        ansible_distribution_major_version == "7"
+  tags: dataverse
+
+- name: install pg_hba.conf on Debian/Ubuntu
+  copy: src=pg_hba.conf dest=/var/lib/postgresql/9.3/data owner=postgres group=postgres mode=0644
+  when: ansible_os_family == "Debian"
+  tags: dataverse
+
+- name: restart postgres on Debian/Ubuntu
+  service: postgresql state=restarted
+  when: ansible_os_family == "Debian"
   tags: dataverse
 
 - name: download solr. unarchive urls supported in 2.0.
@@ -130,7 +174,7 @@
   tags: dataverse
 
 - name: install solr upstart script for Debian/Ubuntu
-  file: src=solr.conf dest=/etc/init owner=root group=root mode=0644
+  copy: src=solr.conf dest=/etc/init owner=root group=root mode=0644
   when: ansible_os_family == "Debian"
   tags: dataverse
 
