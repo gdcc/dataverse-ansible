@@ -52,8 +52,12 @@
   get_url: url=http://dlc-cdn.sun.com/glassfish/4.1/release/glassfish-4.1.zip dest=/tmp mode=0644
   tags: dataverse
 
-- name: unzip glassfish.
-  shell: unzip /tmp/glassfish-4.1.zip -d /usr/local
+- name: unzip glassfish. unarchive urls supported in ansible 2.0
+  shell: unzip /tmp/glassfish-4.1.zip
+  tags: dataverse
+
+- name: copy glassfish into desired glassfish root.
+  synchronize: src=/tmp/glassfish4/ dest={{ dataverse_gf_root }}/
   tags: dataverse
 
 - name: create glassfish service group
@@ -65,17 +69,17 @@
   tags: dataverse
 
 - name: glassfish runs as service account
-  copy: path=/usr/local/glassfish4/glassfish/domains/{{ dataverse_domain }} owner={{ dataverse_gf_user }}
+  copy: path={{ dataverse_gf_root }}/glassfish/domains/{{ dataverse_domain }} owner={{ dataverse_gf_user }}
         group={{ dataverse_gf_group }} state=directory recurse=yes
   tags: dataverse
 
 - name: remove old weld jar
-  shell: /bin/rm /usr/local/glassfish4/glassfish/modules/weld-osgi-bundle.jar
+  shell: /bin/rm {{ dataverse_gf_root }}/glassfish/modules/weld-osgi-bundle.jar
   tags: dataverse
 
 - name: get patched weld jar
   get_url: url=http://central.maven.org/maven2/org/jboss/weld/weld-osgi-bundle/2.2.10.SP1/weld-osgi-bundle-2.2.10.SP1-glassfish4.jar 
-        dest=/usr/local/glassfish4/glassfish/modules owner={{ dataverse_gf_user }} group={{ dataverse_gf_group }} mode=0644
+        dest={{ dataverse_gf_root }}/glassfish/modules owner={{ dataverse_gf_user }} group={{ dataverse_gf_group }} mode=0644
   tags: dataverse
 
 - name: install glassfish systemd conf file for RedHat / CentOS7

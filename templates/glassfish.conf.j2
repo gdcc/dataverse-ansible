@@ -10,10 +10,10 @@ console none
 setuid {{ dataverse_gf_user }}
 setgid {{ dataverse_gf_group }}
 umask 0022
-chdir /usr/local/glassfish4
+chdir {{ dataverse_gf_root }}
 
 # start
-exec /usr/local/glassfish4/bin/asadmin start-domain {{ dataverse_domain }}
+exec {{ dataverse_gf_root }}/bin/asadmin start-domain {{ dataverse_domain }}
 
 # stop
-pre-stop exec /usr/local/glassfish4/bin/asadmin stop-domain {{ dataverse_domain }}
+pre-stop exec {{ dataverse_gf_root }}/bin/asadmin stop-domain {{ dataverse_domain }}
