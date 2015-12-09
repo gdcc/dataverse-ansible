@@ -6,7 +6,7 @@
   tags: dataverse
 
 - name: download dataverse installer. unarchive urls supported in ansible 2.0
-  get_url: url=https://github.com/IQSS/dataverse/releases/download/v4.2.1/dvinstall-4.2.1.zip dest=/tmp mode=0644
+  get_url: url=https://github.com/IQSS/dataverse/releases/download/v{{ dataverse_version }}/dvinstall-{{ dataverse_version }}.zip dest=/tmp mode=0644
   tags: dataverse
 
 - name: unzip dataverse installer
@@ -21,8 +21,10 @@
   copy: src=jhove.conf dest={{ dataverse_gf_root }}/domains/glassfish/{{ dataverse_gf_domain }}/config/ owner=root group=root mode=0644
   tags: dataverse
 
-- name: run glass-setup.sh
-  shell: "/bin/bash /tmp/dvinstall/glassfish-setup.sh > /tmp/dvinstall.out 2>&1"
+- name: run glassfish-setup.sh
+  shell: "cd /tmp/dvinstall && nohup ./glassfish-setup.sh > /tmp/glassfish-setup.out 2>&1"
+  become: yes
+  become_user: "{{ dataverse_gf_user }}"
   environment:
     HOST_ADDRESS: "{{ dataverse_host_address }}"
     GLASSFISH_ROOT: "{{ dataverse_gf_root }}"
@@ -41,52 +43,71 @@
     MEM_HEAP_SIZE: "{{ dataverse_memheap }}"
   tags: dataverse
 
+- name: deploy dataverse.war
+  become: yes
+  become_user: "{{ dataverse_gf_user }}"
+  shell: "nohup {{ dataverse_gf_root }}/bin/asadmin deploy /tmp/dvinstall/dataverse.war"
+  tags: dataverse
+
+- name: restart glassfish post-deployment
+  shell: "nohup {{ dataverse_gf_root }}/bin/asadmin restart-domain {{ dataverse_gf_domain }}"
+  tags: dataverse
+
+- name: give glassfish 60 seconds to wake up
+  pause: seconds=60
+  tags: dataverse
+
 - name: setup-all.sh kitchen sink configuration.
-  shell: "/bin/bash /tmp/dataverse_{{ dataverse_version }}/scripts/api/setup-all.sh > /tmp/setup-all.out 2> &1"
+  shell: "cd /tmp/dataverse_{{ dataverse_version }}/scripts/api && ./setup-all.sh > /tmp/setup-all.out 2>&1"
   tags: dataverse
 
 - name: populate reference data
-  shell: "psql -U {{ dataverse_dbuser }} -h {{ dataverse_dbhost }} -d {{ dataverse_db}} -f /tmp/dataverse-{{ dataverse-version }}/scripts/database/reference_data.sql"
+  shell: "psql -U {{ dataverse_dbuser }} -h {{ dataverse_dbhost }} -d {{ dataverse_db }} -f /tmp/dataverse_{{ dataverse_version }}/scripts/database/reference_data.sql"
   environment:
     PGPASSWORD: "{{ dataverse_dbpass }}"
   tags: dataverse
 
-- name: publish root dataverse
-  shell: "cd /tmp/dataverse-{{ dataverse-version }} && ./scripts/search/tests/publish-dataverse-root"
+- name: Fin
+  debug: msg="Dataverse installation complete! Please check output logs in /tmp for further review."
   tags: dataverse
 
-- name: grant authusers add on root
-  shell: "cd /tmp/dataverse-{{ dataverse-version }} && ./scripts/search/tests/grant-authusers-add-on-root"
-  tags: dataverse
-
-- name: populate users
-  shell: "cd /tmp/dataverse-{{ dataverse-version }} && ./scripts/search/populate-users"
-  tags: dataverse
-
-- name: create-users
-  shell: "cd /tmp/dataverse-{{ dataverse-version }} && ./scripts/search/create-users"
-  tags: dataverse
-
-- name: create all and test
-  shell: "cd /tmp/dataverse-{{ dataverse-version }} && ./scripts/search/tests/create-all-and-test"
-  tags: dataverse
-
-- name: public spruce1 and test (do we want this?)
-  shell: "cd /tmp/dataverse-{{ dataverse-version }} && ./scripts/search/tests/public-spruce1-and-test"
-  tags: dataverse
-
-- name: copy admin password file
-  template: src=adminpass.txt.j2 dest=/tmp/dvinstall/adminpass.txt owner={{ dataverse_gf_user }} group={{ dataverse_gf_group }} mode=0600
-  tags: dataverse
-
-- name: set admin password
-  shell: "{{ dataverse_gf_root }}/bin/asadmin --user {{ dataverse_gf_adminuser }} --passwordfile /tmp/dvinstall/adminpass.txt change-admin-password"
-  tags: dataverse
-
-- name: enable secure admin
-  shell: "{{ dataverse_gf_root }}/bin/asadmin --user {{ dataverse_gf_adminuser }} --passwordfile /tmp/dvinstall/adminpass.txt enable-secure-admin"
-  tags: dataverse
-
-- name: remove admin password hash tmp file
-  file: path=/tmp/dvinstall/adminpass.txt state=absent
-  tags: dataverse
+########### don't think we want the below for a production installation ###########
+#- name: publish root dataverse
+#  shell: "cd /tmp/dataverse_{{ dataverse_version }} && ./scripts/search/tests/publish-dataverse-root"
+#  tags: dataverse
+#
+#- name: grant authusers add on root
+#  shell: "cd /tmp/dataverse_{{ dataverse_version }} && ./scripts/search/tests/grant-authusers-add-on-root"
+#  tags: dataverse
+#
+#- name: populate users
+#  shell: "cd /tmp/dataverse_{{ dataverse_version }} && ./scripts/search/populate-users"
+#  tags: dataverse
+#
+#- name: create-users
+#  shell: "cd /tmp/dataverse_{{ dataverse_version }} && ./scripts/search/create-users"
+#  tags: dataverse
+#
+#- name: create all and test
+#  shell: "cd /tmp/dataverse_{{ dataverse_version }} && ./scripts/search/tests/create-all-and-test"
+#  tags: dataverse
+#
+#- name: public spruce1 and test (do we want this?)
+#  shell: "cd /tmp/dataverse_{{ dataverse_version }} && ./scripts/search/tests/public-spruce1-and-test"
+#  tags: dataverse
+#
+#- name: copy admin password file
+#  template: src=adminpass.txt.j2 dest=/tmp/dvinstall/adminpass.txt owner={{ dataverse_gf_user }} group={{ dataverse_gf_group }} mode=0600
+#  tags: dataverse
+#
+#- name: set admin password
+#  shell: "{{ dataverse_gf_root }}/bin/asadmin --user {{ dataverse_gf_adminuser }} --passwordfile /tmp/dvinstall/adminpass.txt change-admin-password"
+#  tags: dataverse
+#
+#- name: enable secure admin
+#  shell: "{{ dataverse_gf_root }}/bin/asadmin --user {{ dataverse_gf_adminuser }} --passwordfile /tmp/dvinstall/adminpass.txt enable-secure-admin"
+#  tags: dataverse
+#
+#- name: remove admin password hash tmp file
+#  file: path=/tmp/dvinstall/adminpass.txt state=absent
+#  tags: dataverse
