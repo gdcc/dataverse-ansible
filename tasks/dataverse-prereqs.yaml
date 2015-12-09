@@ -63,15 +63,15 @@
   tags: dataverse
 
 - name: install shibboleth2.xml template
-  template: src=shibboleth2.xml.j2 dest=/etc/shibboleth/ owner=root group=root mode=0644
+  template: src=shibboleth2.xml.j2 dest=/etc/shibboleth/shibboleth2.xml owner=root group=root mode=0644
   tags: dataverse
 
 - name: copy attribute-map.xml file
-  copy: src=attribute-map.xml dest=/etc/shibboleth/ owner=root group=root mode=0644
+  copy: src=attribute-map.xml dest=/etc/shibboleth/attribute-map.xml owner=root group=root mode=0644
   tags: dataverse
 
 - name: copy TestShib IdP metadata XML file
-  copy: src=dataverse-idp-metadata.xml dest=/etc/shibboleth/ owner=root group=root mode=0644
+  copy: src=dataverse-idp-metadata.xml dest=/etc/shibboleth/dataverse-idp-metadata.xml owner=root group=root mode=0644
   tags: dataverse
 
 - name: enable and start shibd on RedHat / CentOS 7.
