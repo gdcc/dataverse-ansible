@@ -48,9 +48,50 @@
         ansible_distribution_major_version == "7"
   tags: dataverse
 
-# TODO: fix this.
-- name: configure apache/shib to front glassfish
-  debug: msg="Apache and Shibboleth packages installed. Please see http://guides.dataverse.org/en/latest/installation/shibboleth.html for detailed configuration instructions."
+# TODO: install shib on Debian/Ubuntu
+
+- name: install http redirect template
+  template: src=http.redirect.conf.j2 dest=/etc/httpd/conf.d/http.redirect.conf owner=root group=root mode=0644
+  when: ansible_os_family == "RedHat" and
+        ansible_distribution_major_version == "7"
+  tags: dataverse
+
+- name: install mod_ssl template
+  template: src=ssl.conf.j2 dest=/etc/httpd/conf.d/ssl.conf owner=root group=root mode=0644
+  when: ansible_os_family == "RedHat" and
+        ansible_distribution_major_version == "7"
+  tags: dataverse
+
+- name: install shibboleth2.xml template
+  template: src=shibboleth2.xml.j2 dest=/etc/shibboleth/ owner=root group=root mode=0644
+  tags: dataverse
+
+- name: copy attribute-map.xml file
+  copy: src=attribute-map.xml dest=/etc/shibboleth/ owner=root group=root mode=0644
+  tags: dataverse
+
+- name: copy TestShib IdP metadata XML file
+  copy: src=dataverse-idp-metadata.xml dest=/etc/shibboleth/ owner=root group=root mode=0644
+  tags: dataverse
+
+- name: enable and start shibd on RedHat / CentOS 7.
+  service: name=shibd enabled=yes state=started
+  when: ansible_os_family == "RedHat" and
+        ansible_distribution_major_version == "7"
+  tags: dataverse
+
+- name: enable and start httpd on RedHat / CentOS 7.
+  service: name=httpd enabled=yes state=started
+  when: ansible_os_family == "RedHat" and
+        ansible_distribution_major_version == "7"
+  tags: dataverse
+
+# TODO: restart shib on Debian/Ubuntu
+
+- name: restart apache2 on Debian/Ubuntu
+  service: name=apache2 state=restarted
+  when: ansible_os_family == "Debian"
+  tags: dataverse
 
 - name: install postgres-9.3 repo on Redhat / CentOS 7.
   yum: name=http://yum.postgresql.org/9.3/redhat/rhel-7-x86_64/pgdg-centos93-9.3-2.noarch.rpm state=present
@@ -146,6 +187,15 @@
 
 - name: get patched weld jar
   get_url: url=http://central.maven.org/maven2/org/jboss/weld/weld-osgi-bundle/2.2.10.SP1/weld-osgi-bundle-2.2.10.SP1-glassfish4.jar 
+        dest={{ dataverse_gf_root }}/glassfish/modules owner=root group=root mode=0644
+  tags: dataverse
+
+- name: remove old grizzly jar
+  file: name={{ dataverse_gf_root }}/glassfish/modules/glassfish-grizzly-extra-all.jar state=absent
+  tags: dataverse
+
+- name: get patched grizzly jar
+  get_url: url=http://guides.dataverse.org/en/latest/_static/installation/files/issues/2180/grizzly-patch/glassfish-grizzly-extra-all.jar
         dest={{ dataverse_gf_root }}/glassfish/modules owner=root group=root mode=0644
   tags: dataverse
 

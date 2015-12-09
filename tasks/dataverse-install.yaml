@@ -53,6 +53,7 @@
   shell: "nohup {{ dataverse_gf_root }}/bin/asadmin restart-domain {{ dataverse_gf_domain }}"
   tags: dataverse
 
+# my 2-core VM completes in ~30 seconds, allowing 60
 - name: give glassfish 60 seconds to wake up
   pause: seconds=60
   tags: dataverse
@@ -65,6 +66,18 @@
   shell: "psql -U {{ dataverse_dbuser }} -h {{ dataverse_dbhost }} -d {{ dataverse_db }} -f /tmp/dataverse_{{ dataverse_version }}/scripts/database/reference_data.sql"
   environment:
     PGPASSWORD: "{{ dataverse_dbpass }}"
+  tags: dataverse
+
+- name: suppress grizzly ajp warnings
+  become: yes
+  become_user: "{{ dataverse_gf_user }}"
+  shell: "{{ dataverse_gf_root }}/bin/asadmin set-log-levels org.glassfish.grizzly.http.server.util.RequestUtils=SEVERE"
+  tags: dataverse
+
+- name: enable Shibboleth in Glassfish
+  become: yes
+  become_user: "{{ dataverse_gf_user }}"
+  shell: "curl -X PUT -d true http://localhost:8080/api/admin/settings/:ShibEnabled"
   tags: dataverse
 
 - name: Fin
