@@ -1,11 +1,11 @@
 [systems]
-dataverse ansible_ssh_host=127.0.0.1
+dataverse ansible_ssh_host=127.0.0.1 ansible_ssh_user=vagrant
 
 [web-nodes]
-dataverse ansible_ssh_host=127.0.0.1
+dataverse ansible_ssh_host=127.0.0.1 ansible_ssh_user=vagrant
 
 [db]
-dataverse ansible_ssh_host=127.0.0.1
+dataverse ansible_ssh_host=127.0.0.1 ansible_ssh_user=vagrant
 
 [rserve]
-dataverse ansible_ssh_host=127.0.0.1
+dataverse ansible_ssh_host=127.0.0.1 ansible_ssh_user=vagrant
