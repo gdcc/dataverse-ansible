@@ -16,6 +16,7 @@
     - mod_ssl
     - perl
     - python-psycopg2
+    - unzip
   when: ansible_os_family == "RedHat" and
         ansible_distribution_major_version == "7"
   tags: dataverse
@@ -30,6 +31,7 @@
     - openjdk-7-jdk
     - perl5
     - python-psycopg2
+    - unzip
   when: ansible_os_family == "Debian"
   tags: dataverse
 
