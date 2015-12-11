@@ -1,11 +1,11 @@
 [systems]
-localhost
+dataverse ansible_ssh_host=localhost
 
 [web-nodes]
-localhost
+dataverse ansible_ssh_host=localhost
 
 [db]
-localhost
+dataverse ansible_ssh_host=localhost
 
 [rserve]
-localhost
+dataverse ansible_ssh_host=localhost
