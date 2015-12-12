@@ -13,12 +13,13 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     v.cpus = 2
   end
   config.vm.network "private_network", type: "dhcp"
-  config.vm.network "forwarded_port", guest: 80, host: 7780
-  config.vm.network "forwarded_port", guest: 443, host: 7443
+  config.vm.network "forwarded_port", guest: 80, host: 80
+  config.vm.network "forwarded_port", guest: 443, host: 443
   #config.vm.network "forwarded_port", guest: 8983, host: 8993
   #config.vm.network "forwarded_port", guest: 8080, host: 8088
   #config.vm.network "forwarded_port", guest: 8181, host: 8188
 
-  config.vm.provision "shell", path: "http://tactus.irss.unc.edu/dataverse/git-dataverse.sh"
+  #config.vm.provision "shell", path: "http://tactus.irss.unc.edu/dataverse/git-dataverse.sh"
+  config.vm.provision "shell", path: "scripts/vagrant/git-dataverse.sh"
 
 end
