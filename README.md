@@ -4,12 +4,12 @@ This [Ansible][ansible] role aims to install [Dataverse][dataverse] and its prer
 The role installs PostgreSQL 9.3, GlassFish 4.1 and other prerequisites, then deploys Dataverse 4.2.1
 into GlassFish.
 
-## Usage:
+### Usage:
 	$ ansible-playbook -i <inventory file> [-u <user>] [-s] [-K] -e @<group_vars_file> [-v] dataverse.yaml
 
 The role currently supports CentOS 7 with all services running on the same machine, but hopes to become OS-agnostic and support multiple nodes for scalability.
 
-If you're interested in testing Dataverse locally using [Vagrant][vagrant], you'll want to clone this repository and edit the local port redirects if the http/https ports on your local machine are already in use. Note that the current Vagrant VM template requires [VirtualBox][virtualbox] 5.0.
+If you're interested in testing Dataverse locally using [Vagrant][vagrant], you'll want to clone this repository and edit the local port redirects if the http/https ports on your local machine are already in use. Note that the current Vagrant VM template requires [VirtualBox][virtualbox] 5.0 and will automatically launch the above command within your Vagrant VM.
 
 ### To test using Vagrant:
 	$ git clone https://github.com/IQSS/dataverse-ansible
