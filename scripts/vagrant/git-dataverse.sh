@@ -18,6 +18,12 @@ echo "copying public key to authorized_keys file"
 echo "installing git"
 /usr/bin/yum -y install git
 
+echo "punching firewall holes for common dataverse ports"
+/usr/bin/firewall-cmd --permanent --add-port=80/tcp --zone=public
+/usr/bin/firewall-cmd --permanent --add-port=443/tcp --zone=public
+/usr/bin/firewall-cmd --permanent --add-port=8080/tcp --zone=public
+/usr/bin/firewall-cmd --reload
+
 echo "cloning dataverse-ansible repository"
 /usr/bin/git clone https://github.com/IQSS/dataverse-ansible.git /home/vagrant/dataverse-ansible
 

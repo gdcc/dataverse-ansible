@@ -7,7 +7,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 
   config.vm.box = "sjoeboo/centos-7-1-x86-ansible"
   config.vm.box_url = "https://atlas.hashicorp.com/sjoeboo/boxes/centos-7-1-x86-ansible"
-  config.vm.hostname = "dataverse"
+  config.vm.hostname = "localhost"
   config.vm.provider "virtualbox" do |v|
     v.memory = 2048
     v.cpus = 2
