@@ -17,6 +17,7 @@ If you're interested in testing Dataverse locally using [Vagrant][vagrant], you'
 	$ vagrant up
 
 On successful completion of the Vagrant run, you should be able to log in to your test Dataverse as dataverseAdmin using the dataverse_adminpass from group_vars/vagrant.vars using the address:
+
 	http://localhost
 
 If you needed to update the host port in the Vagrantfile due to collision, you'd append it to the URL, for example ":8080"
