@@ -250,7 +250,7 @@
   tags: dataverse
 
 - name: get updated solr schema
-  get_url: url=https://github.com/IQSS/dataverse/releases/download/v4.2.1/schema.xml dest=/usr/local/solr/example/solr/collection1/conf/ owner={{ dataverse_gf_user }} group={{ dataverse_gf_group }} mode=0644
+  get_url: url="https://github.com/IQSS/dataverse/releases/download/v{{ dataverse_version }}/schema.xml" dest=/usr/local/solr/example/solr/collection1/conf/ owner={{ dataverse_gf_user }} group={{ dataverse_gf_group }} mode=0644
   tags: dataverse
 
 - name: install solr upstart script for Debian/Ubuntu
