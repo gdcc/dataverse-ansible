@@ -205,6 +205,11 @@
         group={{ dataverse_gf_group }} state=directory recurse=yes
   tags: dataverse
 
+- name: glassfish should own dataverse_filesdir
+  file: path={{ dataverse_filesdir }} state=directory
+        owner={{ dataverse_gf_user }} group={{ dataverse_gf_group }}
+  tags: dataverse
+
 - name: remove old weld jar
   shell: /bin/rm {{ dataverse_gf_root }}/glassfish/modules/weld-osgi-bundle.jar
   tags: dataverse
