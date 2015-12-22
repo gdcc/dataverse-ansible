@@ -1,8 +1,7 @@
 # Dataverse Ansible role
 
 This [Ansible][ansible] role aims to install [Dataverse][dataverse] and its prerequisites.
-The role installs PostgreSQL 9.3, GlassFish 4.1 and other prerequisites, then deploys Dataverse 4.2.1
-into GlassFish.
+The role installs PostgreSQL, GlassFish and other prerequisites, then deploys Dataverse.
 
 ### Usage:
 	$ ansible-playbook -i <inventory file> [-u <user>] [-s] [-K] -e @<group_vars_file> [-v] dataverse.yaml
