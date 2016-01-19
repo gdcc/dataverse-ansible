@@ -3,10 +3,12 @@
 This [Ansible][ansible] role aims to install [Dataverse][dataverse] and its prerequisites.
 The role installs PostgreSQL, GlassFish and other prerequisites, then deploys Dataverse.
 
+The preparation lies in the group_var options (usernames/passwords, whether to install Shibboleth, etc.). Then, fire away:
+
 ### Usage:
 	$ ansible-playbook -i <inventory file> [-u <user>] [-s] [-K] -e @<group_vars_file> [-v] dataverse.yaml
 
-The role currently supports CentOS 7 with all services running on the same machine, but hopes to become OS-agnostic and support multiple nodes for scalability.
+The role currently supports CentOS 7 with all services running on the same machine, but intends to become OS-agnostic and support multiple nodes for scalability.
 
 If you're interested in testing Dataverse locally using [Vagrant][vagrant], you'll want to clone this repository and edit the local port redirects if the http/https ports on your local machine are already in use. Note that the current Vagrant VM template requires [VirtualBox][virtualbox] 5.0 and will automatically launch the above command within your Vagrant VM.
 
