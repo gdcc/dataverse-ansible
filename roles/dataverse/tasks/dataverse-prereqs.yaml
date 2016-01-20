@@ -6,12 +6,12 @@
         ansible_distribution_major_version == "7"
   tags: dataverse
 
-- name: install java-1.7.0-openjdk-devel for RedHat/CentOS. Dataverse currently requires this version.
+- name: install java-1.8.0-openjdk-devel for RedHat/CentOS. Dataverse currently requires this version.
   yum: name="{{item}}" state=latest
   with_items:
     - git
     - httpd
-    - java-1.7.0-openjdk-devel
+    - java-1.8.0-openjdk-devel
     - jq
     - mod_ssl
     - perl
@@ -21,14 +21,14 @@
         ansible_distribution_major_version == "7"
   tags: dataverse
 
-- name: install openjdk-7-jdk, apache, etc. for Ubuntu/Debian.
+- name: install openjdk-8-jdk, apache, etc. for Ubuntu/Debian.
   apt: name="{{item}}" state=latest update_cache=true
   with_items:
     - apache2
     - git
     - jq
     - libapache2-mod-shib2
-    - openjdk-7-jdk
+    - openjdk-8-jdk
     - perl5
     - python-psycopg2
     - unzip
