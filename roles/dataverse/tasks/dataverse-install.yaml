@@ -64,7 +64,7 @@
   tags: dataverse
 
 - name: populate reference data
-  shell: "psql -U {{ dataverse_dbuser }} -h {{ dataverse_dbhost }} -d {{ dataverse_db }} -f /tmp/dvinstall/scripts/database/reference_data.sql"
+  shell: "psql -U {{ dataverse_dbuser }} -h {{ dataverse_dbhost }} -d {{ dataverse_db }} -f /tmp/dvinstall/reference_data.sql"
   environment:
     PGPASSWORD: "{{ dataverse_dbpass }}"
   tags: dataverse
