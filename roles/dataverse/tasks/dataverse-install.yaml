@@ -7,11 +7,11 @@
 #  tags: dataverse
 
 - name: download dataverse installer. unarchive urls supported in ansible 2.0
-  get_url: url=https://github.com/IQSS/dataverse/releases/download/v{{ dataverse_version }}/dvinstall-{{ dataverse_version }}.zip dest=/tmp mode=0644
+  get_url: url=https://github.com/IQSS/dataverse/releases/download/v{{ dataverse_version }}/dvinstall.zip dest=/tmp mode=0644
   tags: dataverse
 
 - name: unzip dataverse installer
-  shell: unzip /tmp/dvinstall-{{ dataverse_version }}.zip -d /tmp
+  shell: unzip /tmp/dvinstall.zip -d /tmp
   tags: dataverse
 
 - name: install jdbc driver
