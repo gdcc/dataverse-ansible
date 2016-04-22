@@ -2,7 +2,7 @@
 
 # version numbers changed on github. only used this because files were missing from install.zip
 #- name: clone {{ dataverse.version }} from git. optimally replace install.zip with this.
-#  git: repo=git://github.com/IQSS/dataverse.git dest=/tmp/dataverse.{{ dataverse.version }} version={{ dataverse.version }}
+#  git: repo=git://github.com/IQSS/dataverse.git dest=/tmp/dataverse_{{ dataverse.version }} version={{ dataverse.version }}
 #       clone=yes depth=1 accept_hostkey=true
 #  tags: dataverse
 
@@ -87,27 +87,27 @@
 
 ########### don't think we want the below for a production installation ###########
 #- name: publish root dataverse
-#  shell: "cd /tmp/dataverse.{{ dataverse.version }} && ./scripts/search/tests/publish-dataverse-root"
+#  shell: "cd /tmp/dataverse_{{ dataverse.version }} && ./scripts/search/tests/publish-dataverse-root"
 #  tags: dataverse
 #
 #- name: grant authusers add on root
-#  shell: "cd /tmp/dataverse.{{ dataverse.version }} && ./scripts/search/tests/grant-authusers-add-on-root"
+#  shell: "cd /tmp/dataverse_{{ dataverse.version }} && ./scripts/search/tests/grant-authusers-add-on-root"
 #  tags: dataverse
 #
 #- name: populate users
-#  shell: "cd /tmp/dataverse.{{ dataverse.version }} && ./scripts/search/populate-users"
+#  shell: "cd /tmp/dataverse_{{ dataverse.version }} && ./scripts/search/populate-users"
 #  tags: dataverse
 #
 #- name: create-users
-#  shell: "cd /tmp/dataverse.{{ dataverse.version }} && ./scripts/search/create-users"
+#  shell: "cd /tmp/dataverse_{{ dataverse.version }} && ./scripts/search/create-users"
 #  tags: dataverse
 #
 #- name: create all and test
-#  shell: "cd /tmp/dataverse.{{ dataverse.version }} && ./scripts/search/tests/create-all-and-test"
+#  shell: "cd /tmp/dataverse_{{ dataverse.version }} && ./scripts/search/tests/create-all-and-test"
 #  tags: dataverse
 #
 #- name: public spruce1 and test (do we want this?)
-#  shell: "cd /tmp/dataverse.{{ dataverse.version }} && ./scripts/search/tests/public-spruce1-and-test"
+#  shell: "cd /tmp/dataverse_{{ dataverse.version }} && ./scripts/search/tests/public-spruce1-and-test"
 #  tags: dataverse
 #
 #- name: copy admin password file
