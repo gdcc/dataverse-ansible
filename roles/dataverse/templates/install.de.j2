@@ -65,18 +65,18 @@ if ($pg_only) {
 my %CONFIG_DEFAULTS = (
     'HOST_DNS_ADDRESS',    '{{ inventory_hostname }}',
     'GLASSFISH_DIRECTORY', '/usr/local/glassfish4',
-    'MAIL_SERVER',         '{{ dataverse_relay }}',
+    'MAIL_SERVER',         '{{ dataverse.smtp }}',
 
     'POSTGRES_SERVER',   'localhost',
     'POSTGRES_PORT',     5432,
-    'POSTGRES_DATABASE', '{{ dataverse_db }}',
-    'POSTGRES_USER',     '{{ dataverse_dbuser }}',
-    'POSTGRES_PASSWORD', '{{ dataverse_dbpass }}',
+    'POSTGRES_DATABASE', '{{ dataverse.db }}',
+    'POSTGRES_USER',     '{{ dataverse.dbuser }}',
+    'POSTGRES_PASSWORD', '{{ dataverse.dbpass }}',
 
-    'RSERVE_HOST',     '{{ rserve_host }}',
-    'RSERVE_PORT',     {{ rserve_port }},
-    'RSERVE_USER',     '{{ rserve_user }}',
-    'RSERVE_PASSWORD', '{{ rserve_pass }}'
+    'RSERVE_HOST',     '{{ rserve.host }}',
+    'RSERVE_PORT',     {{ rserve.port }},
+    'RSERVE_USER',     '{{ rserve.user }}',
+    'RSERVE_PASSWORD', '{{ rserve.pass }}'
 
 );
 
@@ -919,7 +919,7 @@ else {
 # the username and password for every asadmin command, if
 # access to :4848 is password-protected:
 
-system( $glassfish_dir. "/bin/asadmin login -u {{ dataverse_gf_adminuser }}" );
+system( $glassfish_dir. "/bin/asadmin login -u {{ dataverse.glassfish.adminuser }}" );
 
 # NEW: configure glassfish using ASADMIN commands:
 

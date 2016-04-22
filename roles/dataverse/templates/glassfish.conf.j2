@@ -2,19 +2,19 @@
 description "GlassFish4"
 
 # Instance per domain
-instance {{ dataverse_gf_domain }}
+instance {{ dataverse.glassfish.domain }}
 
 # log to server.log
 console none
 
 # Run as glassfish service account
-setuid {{ dataverse_gf_user }}
-setgid {{ dataverse_gf_group }}
+setuid {{ dataverse.glassfish.user }}
+setgid {{ dataverse.glassfish.group }}
 umask 0022
-chdir {{ dataverse_gf_root }}
+chdir {{ dataverse.glassfish.root }}
 
 # start
-exec {{ dataverse_gf_root }}/bin/asadmin start-domain {{ dataverse_gf_domain }}
+exec {{ dataverse.glassfish.root }}/bin/asadmin start-domain {{ dataverse.glassfish.domain }}
 
 # stop
-pre-stop exec {{ dataverse_gf_root }}/bin/asadmin stop-domain {{ dataverse_gf_domain }}
+pre-stop exec {{ dataverse.glassfish.root }}/bin/asadmin stop-domain {{ dataverse.glassfish.domain }}

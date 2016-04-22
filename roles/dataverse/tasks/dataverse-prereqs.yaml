@@ -40,7 +40,7 @@
         dest=/etc/yum.repos.d owner=root group=root mode=0644
   when: ansible_os_family == "RedHat" and
         ansible_distribution_major_version == "7" and
-        dataverse_shib == "true"
+        dataverse.shib == "true"
   tags: dataverse
 
 - name: install Shibboleth RPMs for RedHat/CentOS7
@@ -50,7 +50,7 @@
     - shibboleth-embedded-ds
   when: ansible_os_family == "RedHat" and
         ansible_distribution_major_version == "7" and
-        dataverse_shib == "true"
+        dataverse.shib == "true"
   tags: dataverse
 
 # TODO: install shib on Debian/Ubuntu
@@ -60,7 +60,7 @@
         owner=root group=root mode=0644
   when: ansible_os_family == "RedHat" and
         ansible_distribution_major_version == "7" and
-        dataverse_shib == "true"
+        dataverse.shib == "true"
   tags: dataverse
 
 - name: install mod_ssl template
@@ -68,39 +68,39 @@
         owner=root group=root mode=0644
   when: ansible_os_family == "RedHat" and
         ansible_distribution_major_version == "7" and
-        dataverse_shib == "true"
+        dataverse.shib == "true"
   tags: dataverse
 
 - name: install shibboleth2.xml template
   template: src=shibboleth2.xml.j2 dest=/etc/shibboleth/shibboleth2.xml
         owner=root group=root mode=0644
-  when: dataverse_shib == "true"
+  when: dataverse.shib == "true"
   tags: dataverse
 
 - name: copy attribute-map.xml file
   copy: src=attribute-map.xml dest=/etc/shibboleth/attribute-map.xml
         owner=root group=root mode=0644
-  when: dataverse_shib == "true"
+  when: dataverse.shib == "true"
   tags: dataverse
 
 - name: copy TestShib IdP metadata XML file
   copy: src=dataverse-idp-metadata.xml dest=/etc/shibboleth/dataverse-idp-metadata.xml
         owner=root group=root mode=0644
-  when: dataverse_shib == "true"
+  when: dataverse.shib == "true"
   tags: dataverse
 
 - name: enable and start shibd on RedHat / CentOS 7.
   service: name=shibd enabled=yes state=started
   when: ansible_os_family == "RedHat" and
         ansible_distribution_major_version == "7" and
-        dataverse_shib == "true"
+        dataverse.shib == "true"
   tags: dataverse
 
 - name: enable and start httpd on RedHat / CentOS 7.
   service: name=httpd enabled=yes state=started
   when: ansible_os_family == "RedHat" and
         ansible_distribution_major_version == "7" and
-        dataverse_shib == "true"
+        dataverse.shib == "true"
   tags: dataverse
 
 # TODO: restart shib on Debian/Ubuntu
@@ -108,7 +108,7 @@
 - name: restart apache2 on Debian/Ubuntu
   service: name=apache2 state=restarted
   when: ansible_os_family == "Debian" and
-        dataverse_shib == "true"
+        dataverse.shib == "true"
   tags: dataverse
 
 - name: install postgres-9.3 repo on Redhat / CentOS 7.
@@ -165,12 +165,12 @@
   tags: dataverse
 
 - name: create glassfish postgres database
-  postgresql_db: name={{ dataverse_db }}
+  postgresql_db: name={{ dataverse.db }}
   tags: dataverse
 
 - name: create glassfish postgres user, set permissions
-  postgresql_user: db={{ dataverse_db }} name={{ dataverse_dbuser }}
-        password={{ dataverse_dbpass }}
+  postgresql_user: db={{ dataverse.db }} name={{ dataverse.dbuser }}
+        password={{ dataverse.dbpass }}
         role_attr_flags=NOSUPERUSER,CREATEDB,CREATEROLE,INHERIT,LOGIN
   tags: dataverse
 
@@ -183,49 +183,49 @@
   shell: unzip /tmp/glassfish-4.1.zip -d /tmp
   tags: dataverse
 
-- name: ensure dataverse_gf_root exists
-  file: path={{ dataverse_gf_root }} state=directory
+- name: ensure dataverse.glassfish.root exists
+  file: path={{ dataverse.glassfish.root }} state=directory
         owner=root group=root mode=0755
   tags: dataverse
 
 - name: copy glassfish into desired glassfish root. (synchronize module barfs even with pty, file wants to copy local/remote. shell it is.)
-  shell: "/bin/cp -r /tmp/glassfish4/* {{ dataverse_gf_root }}"
+  shell: "/bin/cp -r /tmp/glassfish4/* {{ dataverse.glassfish.root }}"
   tags: dataverse
 
 - name: create glassfish service group
-  group: name={{ dataverse_gf_group }} state=present
+  group: name={{ dataverse.glassfish.group }} state=present
   tags: dataverse
 
 - name: create glassfish service account
-  user: name={{ dataverse_gf_user }} group={{ dataverse_gf_group }}
+  user: name={{ dataverse.glassfish.user }} group={{ dataverse.glassfish.group }}
   tags: dataverse
 
-- name: glassfish service account should own {{ dataverse_gf_domain }}
-  file: path={{ dataverse_gf_root }}/glassfish/domains/{{ dataverse_gf_domain }} owner={{ dataverse_gf_user }}
-        group={{ dataverse_gf_group }} state=directory recurse=yes
+- name: glassfish service account should own {{ dataverse.glassfish.domain }}
+  file: path={{ dataverse.glassfish.root }}/glassfish/domains/{{ dataverse.glassfish.domain }} owner={{ dataverse.glassfish.user }}
+        group={{ dataverse.glassfish.group }} state=directory recurse=yes
   tags: dataverse
 
-- name: glassfish should own dataverse_filesdir
-  file: path={{ dataverse_filesdir }} state=directory
-        owner={{ dataverse_gf_user }} group={{ dataverse_gf_group }}
+- name: glassfish should own dataverse.filesdir
+  file: path={{ dataverse.filesdir }} state=directory
+        owner={{ dataverse.glassfish.user }} group={{ dataverse.glassfish.group }}
   tags: dataverse
 
 - name: remove old weld jar
-  shell: /bin/rm {{ dataverse_gf_root }}/glassfish/modules/weld-osgi-bundle.jar
+  shell: /bin/rm {{ dataverse.glassfish.root }}/glassfish/modules/weld-osgi-bundle.jar
   tags: dataverse
 
 - name: get patched weld jar
   get_url: url=http://central.maven.org/maven2/org/jboss/weld/weld-osgi-bundle/2.2.10.SP1/weld-osgi-bundle-2.2.10.SP1-glassfish4.jar 
-        dest={{ dataverse_gf_root }}/glassfish/modules owner=root group=root mode=0644
+        dest={{ dataverse.glassfish.root }}/glassfish/modules owner=root group=root mode=0644
   tags: dataverse
 
 - name: remove old grizzly jar
-  file: name={{ dataverse_gf_root }}/glassfish/modules/glassfish-grizzly-extra-all.jar state=absent
+  file: name={{ dataverse.glassfish.root }}/glassfish/modules/glassfish-grizzly-extra-all.jar state=absent
   tags: dataverse
 
 - name: get patched grizzly jar
   get_url: url=http://guides.dataverse.org/en/latest/_static/installation/files/issues/2180/grizzly-patch/glassfish-grizzly-extra-all.jar
-        dest={{ dataverse_gf_root }}/glassfish/modules owner=root group=root mode=0644
+        dest={{ dataverse.glassfish.root }}/glassfish/modules owner=root group=root mode=0644
   tags: dataverse
 
 - name: install glassfish systemd conf file for RedHat / CentOS7
@@ -255,8 +255,8 @@
 
 - name: start glassfish with asadmin so subsequent Ansible-initiated restarts succeed on RedHat/CentOS
   become: yes
-  become_user: "{{ dataverse_gf_user }}"
-  shell: "nohup {{ dataverse_gf_root }}/bin/asadmin start-domain"
+  become_user: "{{ dataverse.glassfish.user }}"
+  shell: "nohup {{ dataverse.glassfish.root }}/bin/asadmin start-domain"
   when: ansible_os_family == "RedHat" and
         ansible_distribution_major_version == "7"
   tags: dataverse
@@ -280,15 +280,15 @@
   tags: dataverse
 
 #- name: get updated solr schema
-#  get_url: url="https://github.com/IQSS/dataverse/releases/download/v{{ dataverse_version }}/schema.xml"
+#  get_url: url="https://github.com/IQSS/dataverse/releases/download/v{{ dataverse.version }}/schema.xml"
 #        dest=/usr/local/solr/example/solr/collection1/conf/
-#        owner={{ dataverse_gf_user }} group={{ dataverse_gf_group }} mode=0644
+#        owner={{ dataverse.glassfish.user }} group={{ dataverse.glassfish.group }} mode=0644
 #  tags: dataverse
 
 - name: get most recent solr schema
   get_url: url="https://github.com/IQSS/dataverse/releases/download/v4.2.2/schema.xml"
         dest=/usr/local/solr/example/solr/collection1/conf/
-        owner={{ dataverse_gf_user }} group={{ dataverse_gf_group }} mode=0644
+        owner={{ dataverse.glassfish.user }} group={{ dataverse.glassfish.group }} mode=0644
   tags: dataverse
 
 - name: install solr upstart script for Debian/Ubuntu

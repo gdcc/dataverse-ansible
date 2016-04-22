@@ -1,13 +1,13 @@
 ---
 
-# version numbers changed on github. trying again with dvinstall.zip below
-#- name: clone {{ dataverse_version }} from git. optimally replace install.zip with this.
-#  git: repo=git://github.com/IQSS/dataverse.git dest=/tmp/dataverse_{{ dataverse_version }} version={{ dataverse_version }}
+# version numbers changed on github. only used this because files were missing from install.zip
+#- name: clone {{ dataverse.version }} from git. optimally replace install.zip with this.
+#  git: repo=git://github.com/IQSS/dataverse.git dest=/tmp/dataverse.{{ dataverse.version }} version={{ dataverse.version }}
 #       clone=yes depth=1 accept_hostkey=true
 #  tags: dataverse
 
 - name: download dataverse installer. unarchive urls supported in ansible 2.0
-  get_url: url=https://github.com/IQSS/dataverse/releases/download/v{{ dataverse_version }}/dvinstall.zip dest=/tmp mode=0644
+  get_url: url=https://github.com/IQSS/dataverse/releases/download/v{{ dataverse.version }}/dvinstall.zip dest=/tmp mode=0644
   tags: dataverse
 
 - name: unzip dataverse installer
@@ -15,43 +15,43 @@
   tags: dataverse
 
 - name: install jdbc driver
-  shell: "/bin/cp /tmp/dvinstall/pgdriver/postgresql-9.1-902.jdbc4.jar {{ dataverse_gf_root }}/glassfish/lib/"
+  shell: "/bin/cp /tmp/dvinstall/pgdriver/postgresql-9.1-902.jdbc4.jar {{ dataverse.glassfish.root }}/glassfish/lib/"
   tags: dataverse
 
 - name: copy jhove config
-  copy: src=jhove.conf dest={{ dataverse_gf_root }}/domains/glassfish/{{ dataverse_gf_domain }}/config/ owner=root group=root mode=0644
+  copy: src=jhove.conf dest={{ dataverse.glassfish.root }}/domains/glassfish/{{ dataverse.glassfish.domain }}/config/ owner=root group=root mode=0644
   tags: dataverse
 
 - name: run glassfish-setup.sh
   shell: "cd /tmp/dvinstall && nohup ./glassfish-setup.sh > /tmp/glassfish-setup.out 2>&1"
   become: yes
-  become_user: "{{ dataverse_gf_user }}"
+  become_user: "{{ dataverse.glassfish.user }}"
   environment:
-    HOST_ADDRESS: "{{ dataverse_host_address }}"
-    GLASSFISH_ROOT: "{{ dataverse_gf_root }}"
-    GLASSFISH_DOMAIN: "{{ dataverse_gf_domain }}"
-    FILES_DIR: "{{ dataverse_filesdir }}"
-    DB_NAME: "{{ dataverse_db }}"
-    DB_PORT: "{{ dataverse_dbport }}"
-    DB_HOST: "{{ dataverse_dbhost }}"
-    DB_USER: "{{ dataverse_dbuser }}"
-    DB_PASS: "{{ dataverse_dbpass }}"
-    RSERVE_HOST: "{{ rserve_host }}"
-    RSERVE_PORT: "{{ rserve_port }}"
-    RSERVE_USER: "{{ rserve_user }}"
-    RSERVE_PASS: "{{ rserve_pass }}"
-    SMTP_SERVER: "{{ dataserve_smtp }}"
-    MEM_HEAP_SIZE: "{{ dataverse_memheap }}"
+    HOST_ADDRESS: "{{ dataverse.host_address }}"
+    GLASSFISH_ROOT: "{{ dataverse.glassfish.root }}"
+    GLASSFISH_DOMAIN: "{{ dataverse.glassfish.domain }}"
+    FILES_DIR: "{{ dataverse.filesdir }}"
+    DB_NAME: "{{ dataverse.db }}"
+    DB_PORT: "{{ dataverse.dbport }}"
+    DB_HOST: "{{ dataverse.dbhost }}"
+    DB_USER: "{{ dataverse.dbuser }}"
+    DB_PASS: "{{ dataverse.dbpass }}"
+    RSERVE_HOST: "{{ rserve.host }}"
+    RSERVE_PORT: "{{ rserve.port }}"
+    RSERVE_USER: "{{ rserve.user }}"
+    RSERVE_PASS: "{{ rserve.pass }}"
+    SMTP_SERVER: "{{ dataserve.smtp }}"
+    MEM_HEAP_SIZE: "{{ dataverse.memheap }}"
   tags: dataverse
 
 - name: deploy dataverse.war
   become: yes
-  become_user: "{{ dataverse_gf_user }}"
-  shell: "nohup {{ dataverse_gf_root }}/bin/asadmin deploy /tmp/dvinstall/dataverse.war"
+  become_user: "{{ dataverse.glassfish.user }}"
+  shell: "nohup {{ dataverse.glassfish.root }}/bin/asadmin deploy /tmp/dvinstall/dataverse.war"
   tags: dataverse
 
 - name: restart glassfish post-deployment
-  shell: "nohup {{ dataverse_gf_root }}/bin/asadmin restart-domain {{ dataverse_gf_domain }}"
+  shell: "nohup {{ dataverse.glassfish.root }}/bin/asadmin restart-domain {{ dataverse.glassfish.domain }}"
   tags: dataverse
 
 # my 2-core VM completes in ~30 seconds, allowing 60
@@ -64,20 +64,20 @@
   tags: dataverse
 
 - name: populate reference data
-  shell: "psql -U {{ dataverse_dbuser }} -h {{ dataverse_dbhost }} -d {{ dataverse_db }} -f /tmp/dvinstall/reference_data.sql"
+  shell: "psql -U {{ dataverse.dbuser }} -h {{ dataverse.dbhost }} -d {{ dataverse.db }} -f /tmp/dvinstall/reference_data.sql"
   environment:
-    PGPASSWORD: "{{ dataverse_dbpass }}"
+    PGPASSWORD: "{{ dataverse.dbpass }}"
   tags: dataverse
 
 - name: suppress grizzly ajp warnings
   become: yes
-  become_user: "{{ dataverse_gf_user }}"
-  shell: "{{ dataverse_gf_root }}/bin/asadmin set-log-levels org.glassfish.grizzly.http.server.util.RequestUtils=SEVERE"
+  become_user: "{{ dataverse.glassfish.user }}"
+  shell: "{{ dataverse.glassfish.root }}/bin/asadmin set-log-levels org.glassfish.grizzly.http.server.util.RequestUtils=SEVERE"
   tags: dataverse
 
 - name: enable Shibboleth in Glassfish
   become: yes
-  become_user: "{{ dataverse_gf_user }}"
+  become_user: "{{ dataverse.glassfish.user }}"
   shell: "curl -X PUT -d true http://localhost:8080/api/admin/settings/:ShibEnabled"
   tags: dataverse
 
@@ -87,39 +87,39 @@
 
 ########### don't think we want the below for a production installation ###########
 #- name: publish root dataverse
-#  shell: "cd /tmp/dataverse_{{ dataverse_version }} && ./scripts/search/tests/publish-dataverse-root"
+#  shell: "cd /tmp/dataverse.{{ dataverse.version }} && ./scripts/search/tests/publish-dataverse-root"
 #  tags: dataverse
 #
 #- name: grant authusers add on root
-#  shell: "cd /tmp/dataverse_{{ dataverse_version }} && ./scripts/search/tests/grant-authusers-add-on-root"
+#  shell: "cd /tmp/dataverse.{{ dataverse.version }} && ./scripts/search/tests/grant-authusers-add-on-root"
 #  tags: dataverse
 #
 #- name: populate users
-#  shell: "cd /tmp/dataverse_{{ dataverse_version }} && ./scripts/search/populate-users"
+#  shell: "cd /tmp/dataverse.{{ dataverse.version }} && ./scripts/search/populate-users"
 #  tags: dataverse
 #
 #- name: create-users
-#  shell: "cd /tmp/dataverse_{{ dataverse_version }} && ./scripts/search/create-users"
+#  shell: "cd /tmp/dataverse.{{ dataverse.version }} && ./scripts/search/create-users"
 #  tags: dataverse
 #
 #- name: create all and test
-#  shell: "cd /tmp/dataverse_{{ dataverse_version }} && ./scripts/search/tests/create-all-and-test"
+#  shell: "cd /tmp/dataverse.{{ dataverse.version }} && ./scripts/search/tests/create-all-and-test"
 #  tags: dataverse
 #
 #- name: public spruce1 and test (do we want this?)
-#  shell: "cd /tmp/dataverse_{{ dataverse_version }} && ./scripts/search/tests/public-spruce1-and-test"
+#  shell: "cd /tmp/dataverse.{{ dataverse.version }} && ./scripts/search/tests/public-spruce1-and-test"
 #  tags: dataverse
 #
 #- name: copy admin password file
-#  template: src=adminpass.txt.j2 dest=/tmp/dvinstall/adminpass.txt owner={{ dataverse_gf_user }} group={{ dataverse_gf_group }} mode=0600
+#  template: src=adminpass.txt.j2 dest=/tmp/dvinstall/adminpass.txt owner={{ dataverse.glassfish.user }} group={{ dataverse.glassfish.group }} mode=0600
 #  tags: dataverse
 #
 #- name: set admin password
-#  shell: "{{ dataverse_gf_root }}/bin/asadmin --user {{ dataverse_gf_adminuser }} --passwordfile /tmp/dvinstall/adminpass.txt change-admin-password"
+#  shell: "{{ dataverse.glassfish.root }}/bin/asadmin --user {{ dataverse.glassfish.adminuser }} --passwordfile /tmp/dvinstall/adminpass.txt change-admin-password"
 #  tags: dataverse
 #
 #- name: enable secure admin
-#  shell: "{{ dataverse_gf_root }}/bin/asadmin --user {{ dataverse_gf_adminuser }} --passwordfile /tmp/dvinstall/adminpass.txt enable-secure-admin"
+#  shell: "{{ dataverse.glassfish.root }}/bin/asadmin --user {{ dataverse.glassfish.adminuser }} --passwordfile /tmp/dvinstall/adminpass.txt enable-secure-admin"
 #  tags: dataverse
 #
 #- name: remove admin password hash tmp file
