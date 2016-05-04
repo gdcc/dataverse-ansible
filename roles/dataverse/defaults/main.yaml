@@ -1,0 +1,25 @@
+dataverse:
+  adminpass: notPr0d
+  db: dvndb
+  dbhost: localhost
+  dbuser: dvnuser
+  dbpass: dvnsecret
+  dbport: 5432
+  demo: false
+  filesdir: /usr/local/dvn/data
+  gf_user: glassfish
+  gf_group: glassfish
+  gf_root: /usr/local/glassfish4
+  gf_domain: domain1
+  gf_adminuser: admin
+  gf_adminpass: notPr0d
+  host_address: dataverse.yourinstitution.edu
+  memheap: 2048
+  shib: true
+  smtp: smtp.yourinstitution.edu
+  version: 4.3
+rserve:
+  host: rserve.yourinstitution.edu
+  user: rserve
+  pass: rserve
+  port: 6311
