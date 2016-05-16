@@ -7,12 +7,13 @@ dataverse:
   dbport: 5432
   demo: false
   filesdir: /usr/local/dvn/data
-  gf_user: glassfish
-  gf_group: glassfish
-  gf_root: /usr/local/glassfish4
-  gf_domain: domain1
-  gf_adminuser: admin
-  gf_adminpass: notPr0d
+  glassfish:
+    user: glassfish
+    group: glassfish
+    root: /usr/local/glassfish4
+    domain: domain1
+    adminuser: admin
+    adminpass: notPr0d
   host_address: dataverse.yourinstitution.edu
   memheap: 2048
   shib: true
