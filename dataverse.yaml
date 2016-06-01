@@ -1,5 +1,6 @@
 - hosts: dataverse
-  sudo: yes
-  sudo_user: root
+  become: true
+  become_user: root
+  become_method: sudo
   roles:
     - role: dataverse

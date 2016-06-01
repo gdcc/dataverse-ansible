@@ -6,7 +6,7 @@ The role installs PostgreSQL, GlassFish and other prerequisites, then deploys Da
 The preparation lies in the group_var options (usernames/passwords, whether to install Shibboleth, etc.). Then, fire away:
 
 ### Usage:
-	$ ansible-playbook -i <inventory file> [-u <user>] [-s] [-K] -e @<group_vars_file> [-v] dataverse.yaml
+	$ ansible-playbook -i <inventory file> [-u <user>] [-b] [-K] -e @<group_vars_file> [-v] dataverse.yaml
 
 The role currently supports CentOS 7 with all services running on the same machine, but intends to become OS-agnostic and support multiple nodes for scalability.
 
