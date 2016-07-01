@@ -162,7 +162,7 @@
   tags: dataverse
 
 - name: restart postgres on Debian/Ubuntu
-  service: postgresql state=restarted
+  service: name=postgresql state=restarted
   when: ansible_os_family == "Debian"
   tags: dataverse
 
@@ -264,7 +264,7 @@
   tags: dataverse
 
 - name: start glassfish on Debian/Ubuntu
-  service: glassfish state=started
+  service: name=glassfish state=started
   when: ansible_os_family == "Debian"
   tags: dataverse
 
