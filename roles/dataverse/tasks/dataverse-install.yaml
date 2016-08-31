@@ -40,7 +40,7 @@
     RSERVE_PORT: "{{ rserve.port }}"
     RSERVE_USER: "{{ rserve.user }}"
     RSERVE_PASS: "{{ rserve.pass }}"
-    SMTP_SERVER: "{{ dataserve.smtp }}"
+    SMTP_SERVER: "{{ dataverse.smtp }}"
     MEM_HEAP_SIZE: "{{ dataverse.memheap }}"
   tags: dataverse
 
