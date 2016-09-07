@@ -44,6 +44,12 @@
     MEM_HEAP_SIZE: "{{ dataverse.memheap }}"
   tags: dataverse
 
+- name: set logging format
+  become: yes
+  become_user: "{{ dataverse.glassfish.user }}"
+  shell: "{{ dataverse.glassfish.root }}/bin/asadmin set-log-file-format {{ dataverse.glassfish.logformat }}"
+  tags: dataverse
+
 - name: deploy dataverse.war
   become: yes
   become_user: "{{ dataverse.glassfish.user }}"

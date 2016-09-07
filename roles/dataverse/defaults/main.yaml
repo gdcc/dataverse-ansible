@@ -12,6 +12,7 @@ dataverse:
     group: glassfish
     root: /usr/local/glassfish4
     domain: domain1
+    logformat: ulf
     adminuser: admin
     adminpass: notPr0d
   host_address: dataverse.yourinstitution.edu
