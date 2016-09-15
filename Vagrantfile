@@ -13,7 +13,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     v.cpus = 2
   end
   config.vm.network "private_network", type: "dhcp"
-  config.vm.network "forwarded_port", guest: 8080, host: 80
+  config.vm.network "forwarded_port", guest: 8080, host: 8080
 
   # uncomment this line to expose the glassfish console 
   #config.vm.network "forwarded_port", guest: 443, host: 443
