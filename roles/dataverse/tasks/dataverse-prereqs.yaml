@@ -114,7 +114,7 @@
   tags: dataverse
 
 - name: install postgres-9.3 repo on Redhat / CentOS 7.
-  yum: name=http://yum.postgresql.org/9.3/redhat/rhel-7-x86_64/pgdg-centos93-9.3-2.noarch.rpm state=present
+  yum: name=http://yum.postgresql.org/9.3/redhat/rhel-7-x86_64/pgdg-centos93-9.3-3.noarch.rpm state=present
   when: ansible_os_family == "RedHat" and
         ansible_distribution_major_version == "7"
   tags: dataverse

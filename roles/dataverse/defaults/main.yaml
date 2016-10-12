@@ -19,7 +19,7 @@ dataverse:
   memheap: 2048
   shib: true
   smtp: smtp.yourinstitution.edu
-  version: 4.5
+  version: 4.5.1
 rserve:
   host: rserve.yourinstitution.edu
   user: rserve
