@@ -282,7 +282,7 @@
   tags: dataverse
 
 - name: get last major solr schema
-  get_url: url="https://github.com/IQSS/dataverse/releases/download/v4.5/schema.xml"
+  get_url: url="https://github.com/IQSS/dataverse/releases/download/v{{dataverse.version}}/schema.xml"
         dest=/usr/local/solr/example/solr/collection1/conf/
         owner={{ dataverse.glassfish.user }} group={{ dataverse.glassfish.group }} mode=0644
   tags: dataverse
