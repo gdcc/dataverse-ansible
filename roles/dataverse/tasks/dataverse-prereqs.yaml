@@ -12,6 +12,7 @@
     - elinks
     - git
     - httpd
+    - ImageMagick
     - java-1.8.0-openjdk-devel
     - jq
     - mod_ssl
