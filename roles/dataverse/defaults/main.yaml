@@ -15,10 +15,11 @@ dataverse:
     logformat: ulf
     adminuser: admin
     adminpass: notPr0d
-  service_name: dataverse.yourinstitution.edu
   memheap: 2048
+  service_name: dataverse.yourinstitution.edu
   shib: true
   smtp: smtp.yourinstitution.edu
+  thumbnails: true
   version: 4.6
 rserve:
   host: rserve.yourinstitution.edu

@@ -12,7 +12,6 @@
     - elinks
     - git
     - httpd
-    - ImageMagick
     - java-1.8.0-openjdk-devel
     - jq
     - mod_ssl
@@ -22,6 +21,13 @@
     - unzip
   when: ansible_os_family == "RedHat" and
         ansible_distribution_major_version == "7"
+  tags: dataverse
+
+- name: install ImageMagick for RedHat/CentOS to allow thumbnail generation
+  yum: name=ImageMagick state=latest
+  when: ansible_os_family == "RedHat" and
+	ansible_distribution_major_version == "7" and
+	"{{ dataverse.thumbnails }}" == true
   tags: dataverse
 
 - name: install openjdk-8-jdk, apache, etc. for Ubuntu/Debian.
@@ -36,6 +42,12 @@
     - python-psycopg2
     - unzip
   when: ansible_os_family == "Debian"
+  tags: dataverse
+
+- name: install ImageMagick for Debian/Ubuntu to allow thumbnail generation
+  apt: name=ImageMagick state=latest
+  when: ansible_os_family == "Debian"
+        "{{ dataverse.thumbnails }}" == true
   tags: dataverse
 
 - name: install shibboleth repo for RedHat/CentOS7
