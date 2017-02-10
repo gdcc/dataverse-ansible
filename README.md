@@ -5,12 +5,10 @@ The role installs PostgreSQL, GlassFish and other prerequisites, then deploys Da
 
 Installation, customization, administration, and API documentation can be found in the [Dataverse 4 Guides](http://guides.dataverse.org/en/latest/).
 
-The preparation lies in the group_var options (usernames/passwords, whether to install Shibboleth, etc.). Then, fire away:
+The preparation lies in the group_var options (usernames/passwords, whether to install Shibboleth, etc.).  Your \<group_vars_file> may be a set of generic defaults stored in [roles/dataverse/defaults/main.yaml](roles/dataverse/defaults/main.yaml), but you'll likely want to modify this file or copy it and edit to suit your needs.  Then, fire away:
 
 ### Usage:
 	$ ansible-playbook -i <inventory file> [-u <user>] [-b] [-K] -e @<group_vars_file> [-v] dataverse.pb
-
-Your <group_vars_file> may be a set of generic defaults stored in [roles/dataverse/defaults/main.yaml](roles/dataverse/defaults/main.yaml), but you'll likely want to modify this file or copy it and edit to suit your needs.
 
 The role currently supports CentOS 7 with all services running on the same machine, but intends to become OS-agnostic and support multiple nodes for scalability.
 
@@ -44,6 +42,7 @@ If you needed to update the host port in the Vagrantfile due to collision, you'd
   * # systemctl {start|stop|restart|status} postgresql-9.3
 * Shibboleth
   * Provides capability for an alternative authentication provider.
+  * Default config location: */etc/shibboleth/shibboleth2.xml*
   * Site-specific and therefore not activated in the default configuration
   * # systemctl {start|stop|restart|status} shibd
 
