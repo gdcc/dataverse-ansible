@@ -28,7 +28,7 @@
   when: 
     - ansible_os_family == "RedHat"
     - ansible_distribution_major_version == "7"
-    - "{{ dataverse.thumbnails }}" == true
+    - "{{ dataverse.thumbnails }}"
   tags: dataverse
 
 - name: install openjdk-8-jdk, apache, etc. for Ubuntu/Debian.
