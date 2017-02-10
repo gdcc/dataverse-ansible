@@ -27,7 +27,7 @@
   become: yes
   become_user: "{{ dataverse.glassfish.user }}"
   environment:
-    HOST_ADDRESS: "{{ dataverse.host_address }}"
+    HOST_ADDRESS: "{{ dataverse.service_name }}"
     GLASSFISH_ROOT: "{{ dataverse.glassfish.root }}"
     GLASSFISH_DOMAIN: "{{ dataverse.glassfish.domain }}"
     FILES_DIR: "{{ dataverse.filesdir }}"

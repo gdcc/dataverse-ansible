@@ -15,7 +15,7 @@ dataverse:
     logformat: ulf
     adminuser: admin
     adminpass: notPr0d
-  host_address: dataverse.yourinstitution.edu
+  service_name: dataverse.yourinstitution.edu
   memheap: 2048
   shib: true
   smtp: smtp.yourinstitution.edu

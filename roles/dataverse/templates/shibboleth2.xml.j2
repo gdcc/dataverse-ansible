@@ -12,7 +12,7 @@ https://wiki.shibboleth.net/confluence/display/SHIB2/NativeSPConfiguration
     clockSkew="1800">
 
     <!-- FIXME: change the entityID to your hostname. -->
-    <ApplicationDefaults entityID="https://{{ dataverse.host_address }}/sp"
+    <ApplicationDefaults entityID="https://{{ dataverse.service_name }}/sp"
         REMOTE_USER="eppn" attributePrefix="AJP_">
 
         <!-- You should use secure cookies if at all possible.  See cookieProps in this Wiki article. -->
