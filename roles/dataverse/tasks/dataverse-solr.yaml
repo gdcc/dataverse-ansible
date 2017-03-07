@@ -71,7 +71,7 @@
 
 - name: bump requestHeaderSize in jetty.xml
   lineinfile: dest={{ dataverse.solr.root }}/example/etc/jetty.xml insertafter="org.eclipse.jetty.server.bio.SocketConnector"
-        line="'            <Set name="requestHeaderSize">102400</Set>'"
+        line="            <Set name=\"requestHeaderSize\">102400</Set>"
   tags: solr
 
 - name: install solr upstart script for Debian/Ubuntu
