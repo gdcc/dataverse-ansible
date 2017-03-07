@@ -80,7 +80,7 @@
   tags: solr
 
 - name: install solr systemd conf file for RedHat/CentOS
-  template: src=solr.service dest=/usr/lib/systemd/system
+  template: src=solr.service.j2 dest=/usr/lib/systemd/system
         owner=root group=root mode=0644
   when: ansible_os_family == "RedHat" and
         ansible_distribution_major_version == "7"

@@ -6,8 +6,8 @@ After = syslog.target network.target remote-fs.target nss-lookup.target
 Type = simple
 User={{ dataverse.solr.user }}
 Group={{ dataverse.solr.group }}
-WorkingDirectory = "{{ dataverse.solr.root }}/example"
-ExecStart = /usr/bin/java -jar -server "{{ dataverse.solr.user }}/example/start.jar"
+WorkingDirectory = {{ dataverse.solr.root }}/example
+ExecStart = /usr/bin/java -jar -server {{ dataverse.solr.user }}/example/start.jar
 Restart=on-failure
 
 [Install]
