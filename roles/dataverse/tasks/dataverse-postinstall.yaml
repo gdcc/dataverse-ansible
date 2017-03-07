@@ -7,6 +7,9 @@
   shell: "nohup {{ dataverse.glassfish.root }}/bin/asadmin stop-domain {{ dataverse.glassfish.domain }}" 
 
 - name: start glassfish with systemd
+  service: name=glassfish state=restarted
+
+- name: wait for glassfish to become ready
   wait_for:
     port: 8009
     state: present
