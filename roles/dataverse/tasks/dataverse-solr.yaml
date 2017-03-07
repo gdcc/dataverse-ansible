@@ -29,7 +29,7 @@
   tags: solr
 
 - name: unpack solr
-  shell: "tar xvfz /tmp/solr-{{ dataverse.solr.version }}.tgz -C /usr/local"
+  shell: "tar xvfz /tmp/solr-{{ dataverse.solr.version }}.tgz"
   tags: solr
 
 - name: remove solr root directory
