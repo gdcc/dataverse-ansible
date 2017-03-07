@@ -2,3 +2,4 @@
 
 - include: dataverse-prereqs.yaml
 - include: dataverse-install.yaml
+- include: dataverse-postinstall.yaml

@@ -1,0 +1,35 @@
+#- name: restart solr
+#  service: name=solr state=restarted
+
+- name: stop glassfish manually (systemd gums up the works)
+  become: yes 
+  become_user: "{{ dataverse.glassfish.user }}" 
+  shell: "nohup {{ dataverse.glassfish.root }}/bin/asadmin stop-domain {{ dataverse.glassfish.domain }}" 
+
+- name: start glassfish with systemd
+  wait_for:
+    port: 8009
+    state: present
+    timeout: "{{ dataverse.glassfish.timeout }}" 
+
+- name: setup-all.sh kitchen sink configuration.
+  shell: "cd /tmp/dvinstall && ./setup-all.sh > /tmp/setup-all.out 2>&1"
+
+- name: populate reference data
+  shell: "psql -U {{ dataverse.dbuser }} -h {{ dataverse.dbhost }} -d {{ dataverse.db }} -f /tmp/dvinstall/reference_data.sql"
+  environment:
+    PGPASSWORD: "{{ dataverse.dbpass }}" 
+
+- name: suppress grizzly ajp warnings
+  become: yes 
+  become_user: "{{ dataverse.glassfish.user }}" 
+  shell: "{{ dataverse.glassfish.root }}/bin/asadmin set-log-levels org.glassfish.grizzly.http.server.util.RequestUtils=SEVERE"
+
+- name: enable Shibboleth in Glassfish
+  become: yes 
+  become_user: "{{ dataverse.glassfish.user }}" 
+  shell: "curl -X PUT -d true http://localhost:8080/api/admin/settings/:ShibEnabled"
+
+- name: Fin 
+  debug: msg="Dataverse installation complete! Please check output logs in /tmp for further review."
+
