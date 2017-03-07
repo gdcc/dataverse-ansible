@@ -59,18 +59,18 @@
 
 - name: get last major solr schema
   get_url: url="https://github.com/IQSS/dataverse/releases/download/v{{dataverse.version}}/schema.xml"
-        dest="{{ dataverse.solr.root }}"/example/solr/collection1/conf/
+        dest={{ dataverse.solr.root }}/example/solr/collection1/conf/
         owner={{ dataverse.glassfish.user }} group={{ dataverse.glassfish.group }} mode=0644
   tags: solr
 
 #- name: get most recent solr schema
 #  get_url: url="https://github.com/IQSS/dataverse/releases/download/v{{ dataverse.version }}/schema.xml"
-#        dest="{{ dataverse.solr.root }}"/example/solr/collection1/conf/
+#        dest={{ dataverse.solr.root }}/example/solr/collection1/conf/
 #        owner={{ dataverse.glassfish.user }} group={{ dataverse.glassfish.group }} mode=0644
 #  tags: solr
 
 - name: bump requestHeaderSize in jetty.xml
-  lineinfile: dest="{{ dataverse.solr.root }}"/example/etc/jetty.xml insertafter="org.eclipse.jetty.server.bio.SocketConnector"
+  lineinfile: dest={{ dataverse.solr.root }}/example/etc/jetty.xml insertafter="org.eclipse.jetty.server.bio.SocketConnector"
         line="            <Set name="requestHeaderSize">102400</Set>"
   tags: solr
 
