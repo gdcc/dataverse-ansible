@@ -21,6 +21,11 @@ dataverse:
   service_name: dataverse.yourinstitution.edu
   shib: true
   smtp: smtp.yourinstitution.edu
+  solr:
+    group: solr
+    root: /usr/local/solr
+    user: solr
+    version: 4.6.0
   thumbnails: true
   version: 4.6
 rserve:

@@ -1,30 +1,72 @@
-- name: download solr. unarchive urls supported in 2.0.
-  get_url: url=https://archive.apache.org/dist/lucene/solr/4.6.0/solr-4.6.0.tgz
-        dest=/tmp mode=0644
+- name: ensure EPEL repository for RedHat/CentOS 7
+  yum: name=epel-release state=latest
+  when: ansible_os_family == "RedHat" and
+        ansible_distribution_major_version == "7"
   tags: solr
 
-- name: unpack solr
-  shell: tar xvfz /tmp/solr-4.6.0.tgz -C /usr/local
+- name: install Solr pre-reqs for RedHat/CentOS 7
+  yum: name="{{item}}" state=latest
+  with_items:
+    - java-1.8.0-openjdk-devel
+  when: ansible_os_family == "RedHat" and
+        ansible_distribution_major_version == "7"
   tags: solr
 
-- name: move solr
-  command: mv /usr/local/solr-4.6.0 /usr/local/solr
+- name: create solr service group
+  group: name="{{ dataverse.solr.group }}" state=present
+  when: dataverse.solr.group != "root"
+  tags: solr
+
+- name: create solr service account
+  user: name="{{ dataverse.solr.user }}" group="{{ dataverse.solr.group }}"
+        createhome=no comment="Dataverse Solr user"
+  when: dv_solr_user != "root"
+  tags: solr
+
+- name: download and gunzip solr
+  unarchive: src="https://archive.apache.org/dist/lucene/solr/{{ dataverse.solr.version }}/solr-{{ dataverse.solr.version }}.tgz"
+        dest=/tmp copy=no
+  tags: solr
+
+- name: remove solr root directory
+  file: path="{{ dataverse.solr.root }}" state=absent
+  tags: solr
+
+- name: create solr root directory exists
+  file: path="{{ dataverse.solr.root }}" state=directory
+        owner=root group=root mode=0755
+  tags: solr
+
+- name: copy solr distro files into solr root
+  shell: "/bin/cp -r /tmp/solr-{{ dataverse.solr.version }}/* {{ dataverse.solr.root }}"
+  tags: solr
+
+- name: solr user needs to own some of the subdirectories to run non-root
+  file: path="{{ item }}" state=directory recurse=yes
+        owner="{{ dataverse.solr.user }}" group="{{ dataverse.solr.group }}"
+  with_items:
+    - "{{ dataverse.solr.root }}/example/logs/"
+    - "{{ dataverse.solr.root }}/example/solr-webapp/"
+    - "{{ dataverse.solr.root }}/example/solr/collection1/data/"
+
+- name: clean up solr distro files
+  file: path="/tmp/solr-{{ dataverse.solr.version }}" state=absent
   tags: solr
 
 - name: get last major solr schema
   get_url: url="https://github.com/IQSS/dataverse/releases/download/v{{dataverse.version}}/schema.xml"
-        dest=/usr/local/solr/example/solr/collection1/conf/
+        dest="{{ dataverse.solr.root }}"/example/solr/collection1/conf/
         owner={{ dataverse.glassfish.user }} group={{ dataverse.glassfish.group }} mode=0644
   tags: solr
 
 #- name: get most recent solr schema
 #  get_url: url="https://github.com/IQSS/dataverse/releases/download/v{{ dataverse.version }}/schema.xml"
-#        dest=/usr/local/solr/example/solr/collection1/conf/
+#        dest="{{ dataverse.solr.root }}"/example/solr/collection1/conf/
 #        owner={{ dataverse.glassfish.user }} group={{ dataverse.glassfish.group }} mode=0644
 #  tags: solr
 
 - name: bump requestHeaderSize in jetty.xml
-  lineinfile: dest=/usr/local/solr/example/etc/jetty.xml insertafter="org.eclipse.jetty.server.bio.SocketConnector"
+  lineinfile: dest="{{ dataverse.solr.root }}"/example/etc/jetty.xml insertafter="org.eclipse.jetty.server.bio.SocketConnector"
         line="            <Set name="requestHeaderSize">102400</Set>"
   tags: solr
 
@@ -34,7 +76,7 @@
   tags: solr
 
 - name: install solr systemd conf file for RedHat/CentOS
-  copy: src=solr.service dest=/usr/lib/systemd/system
+  template: src=solr.service dest=/usr/lib/systemd/system
         owner=root group=root mode=0644
   when: ansible_os_family == "RedHat" and
         ansible_distribution_major_version == "7"
