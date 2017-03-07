@@ -13,14 +13,14 @@
   tags: solr
 
 - name: create solr service group
-  group: name="{{ dataverse.solr.group }}" state=present
-  when: "{{ dataverse.solr.group }}" != "root"
+  group: name={{ dataverse.solr.group }} state=present
+  when: {{ dataverse.solr.group }} != "root"
   tags: solr
 
 - name: create solr service account
-  user: name="{{ dataverse.solr.user }}" group="{{ dataverse.solr.group }}"
+  user: name={{ dataverse.solr.user }} group={{ dataverse.solr.group }}
         createhome=no comment="Dataverse Solr user"
-  when: "{{ dataverse.solr.user }}" != "root"
+  when: {{ dataverse.solr.user }} != "root"
   tags: solr
 
 - name: download and gunzip solr
