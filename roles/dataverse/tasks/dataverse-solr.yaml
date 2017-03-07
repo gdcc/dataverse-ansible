@@ -1,0 +1,53 @@
+- name: download solr. unarchive urls supported in 2.0.
+  get_url: url=https://archive.apache.org/dist/lucene/solr/4.6.0/solr-4.6.0.tgz
+        dest=/tmp mode=0644
+  tags: solr
+
+- name: unpack solr
+  shell: tar xvfz /tmp/solr-4.6.0.tgz -C /usr/local
+  tags: solr
+
+- name: move solr
+  command: mv /usr/local/solr-4.6.0 /usr/local/solr
+  tags: solr
+
+- name: get last major solr schema
+  get_url: url="https://github.com/IQSS/dataverse/releases/download/v{{dataverse.version}}/schema.xml"
+        dest=/usr/local/solr/example/solr/collection1/conf/
+        owner={{ dataverse.glassfish.user }} group={{ dataverse.glassfish.group }} mode=0644
+  tags: solr
+
+#- name: get most recent solr schema
+#  get_url: url="https://github.com/IQSS/dataverse/releases/download/v{{ dataverse.version }}/schema.xml"
+#        dest=/usr/local/solr/example/solr/collection1/conf/
+#        owner={{ dataverse.glassfish.user }} group={{ dataverse.glassfish.group }} mode=0644
+#  tags: solr
+
+- name: bump requestHeaderSize in jetty.xml
+  lineinfile: dest=/usr/local/solr/example/etc/jetty.xml insertafter="org.eclipse.jetty.server.bio.SocketConnector"
+        line="            <Set name="requestHeaderSize">102400</Set>"
+  tags: solr
+
+- name: install solr upstart script for Debian/Ubuntu
+  copy: src=solr.conf dest=/etc/init owner=root group=root mode=0644
+  when: ansible_os_family == "Debian"
+  tags: solr
+
+- name: install solr systemd conf file for RedHat/CentOS
+  copy: src=solr.service dest=/usr/lib/systemd/system
+        owner=root group=root mode=0644
+  when: ansible_os_family == "RedHat" and
+        ansible_distribution_major_version == "7"
+  tags: solr
+
+- name: reload systemd
+  shell: systemctl daemon-reload
+  when: ansible_os_family == "RedHat" and
+        ansible_distribution_major_version == "7"
+  tags: solr
+
+- name: enable solr on boot, start solr
+  service: name=solr enabled=yes state=started
+  when: ansible_os_family == "RedHat" and
+        ansible_distribution_major_version == "7"
+  tags: solr
