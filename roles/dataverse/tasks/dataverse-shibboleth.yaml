@@ -1,5 +1,5 @@
 - name: install shibboleth repo for RedHat/CentOS7
-  get_url: url={{ dataverse.shibboleth_repo }} dest=/etc/yum.repos.d
+  get_url: url={{ dataverse.shibboleth.repo }} dest=/etc/yum.repos.d
         owner=root group=root mode=0644
   when: ansible_os_family == "RedHat" and
         ansible_distribution_major_version == "7"
