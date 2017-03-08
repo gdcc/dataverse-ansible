@@ -2,7 +2,7 @@
 
 - include: dataverse-prereqs.yaml
 - include: dataverse-shibboleth.yaml
-  when: dataverse.shibboleth.enabled == "true"
+  when: dataverse.shibboleth.enabled == true
 - include: dataverse-postgres.yaml
 - include: dataverse-glassfish.yaml
 - include: dataverse-solr.yaml
