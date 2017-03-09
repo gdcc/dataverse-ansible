@@ -24,8 +24,7 @@
   tags: solr
 
 - name: download and unzip solr
-  unarchive: src="https://archive.apache.org/dist/lucene/solr/{{ dataverse.solr.version }}/solr-{{ dataverse.solr.version }}.tgz"
-        dest=/tmp copy=no
+  unarchive: src="https://archive.apache.org/dist/lucene/solr/{{ dataverse.solr.version }}/solr-{{ dataverse.solr.version }}.tgz" dest=/tmp copy=no
   tags: solr
 
 - name: remove solr root directory
