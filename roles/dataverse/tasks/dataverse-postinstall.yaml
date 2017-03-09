@@ -31,7 +31,7 @@
 - name: override some default settings
   become: yes
   become_user: "{{ dataverse.glassfish.user }}"
-  shell: "curl -X PUT -d {{item.val}} {{ dataverse.api.location }}/admin/settings/{{item.prop}}"
+  shell: 'curl -X PUT -d "{{item.val}}" "{{ dataverse.api.location }}/admin/settings/{{item.prop}}"'
   with_items:
     - { prop: ":GoogleAnalyticsCode", val: "{{ dataverse.google_analytics_key }}", desc: "key for Google Analytics"}
     - { prop: ":FooterCopyright" , val: "{{ dataverse.copyright }}", desc: "addition to the default copyright statement"}
