@@ -23,13 +23,9 @@
   when: dataverse.solr.user != "root"
   tags: solr
 
-- name: download solr. unarchive urls supported in 2.0.
-  get_url: url="https://archive.apache.org/dist/lucene/solr/{{ dataverse.solr.version }}/solr-{{ dataverse.solr.version }}.tgz"
-        dest=/tmp mode=0644
-  tags: solr
-
-- name: unpack solr
-  shell: "tar xvfz /tmp/solr-{{ dataverse.solr.version }}.tgz -C /tmp"
+- name: download and unzip solr
+  unarchive: url="https://archive.apache.org/dist/lucene/solr/{{ dataverse.solr.version }}/solr-{{ dataverse.solr.version }}.tgz"
+        dest=/tmp copy=no
   tags: solr
 
 - name: remove solr root directory
