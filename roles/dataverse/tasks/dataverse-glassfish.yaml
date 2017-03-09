@@ -1,5 +1,5 @@
 - name: download glassfish4. unarchive urls supported in ansible 2.0
-  get_url: url=http://dlc-cdn.sun.com/glassfish/4.1/release/glassfish-4.1.zip
+  unarchive: src=http://dlc-cdn.sun.com/glassfish/4.1/release/glassfish-4.1.zip
         dest=/tmp mode=0644
   tags: glassfish
 
