@@ -35,7 +35,7 @@
   tags: glassfish
 
 - name: remove old weld jar
-  shell: /bin/rm {{ dataverse.glassfish.root }}/glassfish/modules/weld-osgi-bundle.jar
+  file: name={{ dataverse.glassfish.root }}/glassfish/modules/weld-osgi-bundle.jar state=absent
   tags: glassfish
 
 - name: get patched weld jar
