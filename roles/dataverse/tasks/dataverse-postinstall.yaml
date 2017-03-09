@@ -28,23 +28,22 @@
   become_user: "{{ dataverse.glassfish.user }}" 
   shell: "{{ dataverse.glassfish.root }}/bin/asadmin set-log-levels org.glassfish.grizzly.http.server.util.RequestUtils=SEVERE"
 
-# commenting these out pending new vagrant box / ansible
-#- name: override some default settings
-#  become: yes
-#  become_user: "{{ dataverse.glassfish.user }}"
-#  shell: 'curl -X PUT -d "{{item.val}}" "{{ dataverse.glassfish.api }}/admin/settings/{{item.prop}}"'
-#  with_items:
-#    - { prop: ":GoogleAnalyticsCode", val: "{{ dataverse.google_analytics_key }}", desc: "key for Google Analytics"}
-#    - { prop: ":FooterCopyright" , val: "{{ dataverse.copyright }}", desc: "addition to the default copyright statement"}
-#    - { prop: ":SystemEmail", val: "{{ dataverse_service_email }}", desc: "instance email address"}
-#    - { prop: ":Protocol", val: "{{ dataverse.doi.protocol }}", desc: "global identifier protocol"}
-#    - { prop: ":DoiProvider", val: "{{ dataverse.doi.service }}", desc: "DOI service provider (EZID or DataCite)"}
-#    - { prop: ":Authority", val: "{{ dataverse.doi.prefix }}", desc: "DOI prefix"}
-#    - { prop: ":DoiSeparator,", val: "/", desc: "DOI separator. leave as slash (/)"}
-#    - { prop: ":ShibEnabled", val: "{{ dataverse.shib }}", desc: "enable/disable shibboleth" }
-#    - { prop: ":AllowSignUp", val: "{{ dataverse.allow_signups }}", desc: "don't allow self-signup"}
-#    - { prop: ":BlockedApiEndpoints", val: "admin,test", desc: "APIs that are controlled"}
-#    - { prop: ":BlockedApiPolicy", val: "localhost-only", desc: "control API access"}
+- name: override some default settings
+  become: yes
+  become_user: "{{ dataverse.glassfish.user }}"
+  shell: "curl -X PUT -d {{item.val}} {{ dataverse.glassfish.api }}/admin/settings/{{item.prop}}"
+  with_items:
+    - { prop: ":GoogleAnalyticsCode", val: "{{ dataverse.google_analytics_key }}", desc: "key for Google Analytics"}
+    - { prop: ":FooterCopyright" , val: "{{ dataverse.copyright }}", desc: "addition to the default copyright statement"}
+    - { prop: ":SystemEmail", val: "{{ dataverse.service_email }}", desc: "instance email address"}
+    - { prop: ":Protocol", val: "{{ dataverse.doi.protocol }}", desc: "global identifier protocol"}
+    - { prop: ":DoiProvider", val: "{{ dataverse.doi.service }}", desc: "DOI service provider (EZID or DataCite)"}
+    - { prop: ":Authority", val: "{{ dataverse.doi.prefix }}", desc: "DOI prefix"}
+    - { prop: ":DoiSeparator,", val: "/", desc: "DOI separator. leave as slash (/)"}
+    - { prop: ":ShibEnabled", val: "{{ dataverse.shib }}", desc: "enable/disable shibboleth" }
+    - { prop: ":AllowSignUp", val: "{{ dataverse.allow_signups }}", desc: "don't allow self-signup"}
+    - { prop: ":BlockedApiEndpoints", val: "admin,test", desc: "APIs that are controlled"}
+    - { prop: ":BlockedApiPolicy", val: "localhost-only", desc: "control API access"}
 
 - name: Fin 
   debug: msg="Dataverse installation complete! Please check output logs in /tmp for further review."
