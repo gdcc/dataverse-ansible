@@ -6,8 +6,8 @@
 #       clone=yes depth=1 accept_hostkey=true
 #  tags: dataverse
 
-- name: download dataverse installer. unarchive urls supported in ansible 2.0
-  get_url: url=https://github.com/IQSS/dataverse/releases/download/v{{ dataverse.version }}/dvinstall.zip dest=/tmp mode=0644
+- name: download dataverse installer
+  unarchive: src="https://github.com/IQSS/dataverse/releases/download/v{{ dataverse.version }}/dvinstall.zip" dest=/tmp copy=no
   tags: dataverse
 
 - name: unzip dataverse installer
