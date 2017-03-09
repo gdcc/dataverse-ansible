@@ -1,10 +1,6 @@
-- name: download glassfish4. unarchive urls supported in ansible 2.0
-  unarchive: src=http://dlc-cdn.sun.com/glassfish/4.1/release/glassfish-4.1.zip
+- name: download and unzip glassfish4
+  unarchive: src="http://dlc-cdn.sun.com/glassfish/4.1/release/glassfish-4.1.zip"
         dest=/tmp mode=0644
-  tags: glassfish
-
-- name: unzip glassfish. unarchive urls supported in ansible 2.0
-  shell: unzip /tmp/glassfish-4.1.zip -d /tmp
   tags: glassfish
 
 - name: ensure dataverse.glassfish.root exists
