@@ -10,10 +10,6 @@
   unarchive: src="https://github.com/IQSS/dataverse/releases/download/v{{ dataverse.version }}/dvinstall.zip" dest=/tmp copy=no
   tags: dataverse
 
-- name: unzip dataverse installer
-  shell: unzip /tmp/dvinstall.zip -d /tmp
-  tags: dataverse
-
 - name: install jdbc driver
   shell: "/bin/cp /tmp/dvinstall/pgdriver/postgresql-9.1-902.jdbc4.jar {{ dataverse.glassfish.root }}/glassfish/lib/"
   tags: dataverse
