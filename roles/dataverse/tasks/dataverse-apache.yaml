@@ -1,9 +1,21 @@
-- name: install httpd for RedHat/CentOS
+- name: install Apache for RedHat/CentOS
   yum: name="{{item}}" state=latest
   with_items:
     - httpd
     - mod_ssl
   when: ansible_os_family == "RedHat" and
         ansible_distribution_major_version == "7"
-  tags: prereqs
+  tags: apache
 
+- name: install http redirect template
+  template: src=http.redirect.conf.j2 dest=/etc/httpd/conf.d/http.redirect.conf
+        owner=root group=root mode=0644
+  when: ansible_os_family == "RedHat" and
+        ansible_distribution_major_version == "7"
+  tags: apache
+
+- name: enable and start httpd on RedHat/CentOS 7
+  service: name=httpd enabled=yes state=started
+  when: ansible_os_family == "RedHat" and
+        ansible_distribution_major_version == "7"
+  tags: apache

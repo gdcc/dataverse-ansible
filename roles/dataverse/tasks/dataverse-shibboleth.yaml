@@ -14,15 +14,6 @@
         ansible_distribution_major_version == "7"
   tags: shibboleth
 
-# TODO: install shib on Debian/Ubuntu
-
-- name: install http redirect template
-  template: src=http.redirect.conf.j2 dest=/etc/httpd/conf.d/http.redirect.conf
-        owner=root group=root mode=0644
-  when: ansible_os_family == "RedHat" and
-        ansible_distribution_major_version == "7"
-  tags: shibboleth
-
 - name: install mod_ssl template
   template: src=ssl.conf.j2 dest=/etc/httpd/conf.d/ssl.conf
         owner=root group=root mode=0644
@@ -51,16 +42,8 @@
         ansible_distribution_major_version == "7"
   tags: shibboleth
 
-- name: enable and start httpd on RedHat / CentOS 7.
-  service: name=httpd enabled=yes state=started
+- name: restart httpd on RedHat / CentOS 7.
+  service: name=httpd state=restarted
   when: ansible_os_family == "RedHat" and
         ansible_distribution_major_version == "7"
   tags: shibboleth
-
-# TODO: restart shib on Debian/Ubuntu
-
-- name: restart apache2 on Debian/Ubuntu
-  service: name=apache2 state=restarted
-  when: ansible_os_family == "Debian"
-  tags: shibboleth
-
