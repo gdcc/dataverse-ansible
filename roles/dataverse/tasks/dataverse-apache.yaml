@@ -1,0 +1,9 @@
+- name: install httpd for RedHat/CentOS
+  yum: name="{{item}}" state=latest
+  with_items:
+    - httpd
+    - mod_ssl
+  when: ansible_os_family == "RedHat" and
+        ansible_distribution_major_version == "7"
+  tags: prereqs
+

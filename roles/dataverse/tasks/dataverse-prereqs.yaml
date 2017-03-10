@@ -11,10 +11,8 @@
   with_items:
     - elinks
     - git
-    - httpd
     - java-1.8.0-openjdk-devel
     - jq
-    - mod_ssl
     - net-tools
     - perl
     - python-psycopg2

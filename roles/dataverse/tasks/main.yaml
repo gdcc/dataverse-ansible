@@ -1,6 +1,7 @@
 ---
 
 - include: dataverse-prereqs.yaml
+- include: dataverse-apache.yaml
 - include: dataverse-shibboleth.yaml
 - include: dataverse-postgres.yaml
 - include: dataverse-glassfish.yaml
