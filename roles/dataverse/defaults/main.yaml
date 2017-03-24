@@ -29,7 +29,6 @@ dataverse:
     timeout: 180
   google_analytics_key: 
   memheap: 2048
-  postgres_repo: "http://yum.postgresql.org/9.3/redhat/rhel-7-x86_64/pgdg-centos93-9.3-3.noarch.rpm"
   service_email: noreply@dataverse.yourinstitution.edu
   service_name: dataverse.yourinstitution.edu
   shibboleth:
