@@ -7,7 +7,11 @@
 #  tags: dataverse
 
 - name: download dataverse installer
-  unarchive: src="https://github.com/IQSS/dataverse/releases/download/v{{ dataverse.version }}/dvinstall.zip" dest=/tmp copy=no
+  get_url: url="https://github.com/IQSS/dataverse/releases/download/v{{ dataverse.version }}/dvinstall.zip" dest=/tmp
+  tags: dataverse
+
+- name: unzip dataverse installer
+  shell: "unzip -d /tmp /tmp/dvinstall.zip"
   tags: dataverse
 
 - name: install jdbc driver
