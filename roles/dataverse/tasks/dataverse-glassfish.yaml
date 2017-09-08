@@ -2,7 +2,7 @@
   unarchive:
     src: http://dlc-cdn.sun.com/glassfish/4.1/release/glassfish-4.1.zip
     dest: /tmp
-    copy: no
+    remote_src: yes
   tags: glassfish
 
 - name: ensure dataverse.glassfish.root exists
