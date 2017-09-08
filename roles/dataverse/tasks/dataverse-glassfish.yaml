@@ -1,8 +1,7 @@
 - name: download and unzip glassfish4
   get_url:
-    url: "http://dlc-cdn.sun.com/glassfish/4.1/release/glassfish-4.1.zip"
+    url: http://dlc-cdn.sun.com/glassfish/4.1/release/glassfish-4.1.zip
     dest: /tmp
-    owner={{ dataverse.glassfish.user }} group={{ dataverse.glassfish.group }} mode=0644
   tags: glassfish
 
 - name: unzip glassfish zip
