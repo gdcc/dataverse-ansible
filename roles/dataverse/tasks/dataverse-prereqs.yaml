@@ -13,7 +13,7 @@
   tags: prereqs
 
 - name: install java-1.8.0-openjdk-devel for RedHat/CentOS. Dataverse currently requires this version.
-  yum: name="{{item}}" state=latest
+  yum: name={{ item }} state=latest
   with_items:
     - elinks
     - git
