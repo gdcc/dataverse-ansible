@@ -24,7 +24,7 @@
   tags: solr
 
 - name: download and unzip solr
-  get_url: src="https://archive.apache.org/dist/lucene/solr/{{ dataverse.solr.version }}/solr-{{ dataverse.solr.version }}.tgz" dest=/tmp
+  get_url: url="https://archive.apache.org/dist/lucene/solr/{{ dataverse.solr.version }}/solr-{{ dataverse.solr.version }}.tgz" dest=/tmp
   tags: solr
 
 - name: untar solr
