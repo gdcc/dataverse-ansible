@@ -41,7 +41,7 @@ dataverse:
     user: solr
     version: 4.6.0
   thumbnails: true
-  version: 4.7
+  version: 4.7.1
 rserve:
   host: rserve.yourinstitution.edu
   user: rserve
