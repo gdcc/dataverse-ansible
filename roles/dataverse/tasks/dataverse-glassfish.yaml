@@ -4,9 +4,8 @@
     dest: /tmp
   tags: glassfish
 
-- name: unzip glassfish zip
-  unarchive: src=/tmp/glassfish-4.1.zip dest=/tmp
-  copy: no
+- name: unzip glassfish
+  shell: "unzip -d /tmp/glassfish4 /tmp/glassfish-4.1.zip"
   tags: glassfish
 
 - name: ensure dataverse.glassfish.root exists
