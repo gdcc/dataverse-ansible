@@ -1,8 +1,13 @@
 - name: download and unzip glassfish4
-  unarchive:
+  get_url:
     url: "http://dlc-cdn.sun.com/glassfish/4.1/release/glassfish-4.1.zip"
     dest: /tmp
-    remote_src: yes
+    owner={{ dataverse.glassfish.user }} group={{ dataverse.glassfish.group }} mode=0644
+  tags: glassfish
+
+- name: unzip glassfish zip
+  unarchive: src=/tmp/glassfish-4.1.zip dest=/tmp
+  copy: no
   tags: glassfish
 
 - name: ensure dataverse.glassfish.root exists
