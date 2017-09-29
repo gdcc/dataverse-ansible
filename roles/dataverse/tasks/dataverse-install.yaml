@@ -14,6 +14,10 @@
   shell: "unzip -d /tmp /tmp/dvinstall.zip"
   tags: dataverse
 
+- name: fix perms on dataverse-war
+  file: path=/tmp/dvinstall/dataverse.war mode=0644
+  tags: dataverse
+
 - name: install jdbc driver
   shell: "/bin/cp /tmp/dvinstall/pgdriver/postgresql-9.1-902.jdbc4.jar {{ dataverse.glassfish.root }}/glassfish/lib/"
   tags: dataverse
