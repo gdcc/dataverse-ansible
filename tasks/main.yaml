@@ -1,10 +1,26 @@
 ---
+# dataverse/tasks/main.yaml
 
 - include: dataverse-prereqs.yaml
+  tags: prereqs
+
 - include: dataverse-apache.yaml
+  tags: apache
+
 - include: dataverse-shibboleth.yaml
+  tags: shibboleth
+
 - include: dataverse-postgres.yaml
+  tags: postgres
+
 - include: dataverse-glassfish.yaml
+  tags: glassfish
+
 - include: dataverse-solr.yaml
+  tags: solr
+
 - include: dataverse-install.yaml
+  tags: dataverse
+
 - include: dataverse-postinstall.yaml
+  tags: postinstall

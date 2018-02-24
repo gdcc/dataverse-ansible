@@ -1,30 +1,31 @@
 ---
+# dataverse/tasks/dataverse-install.yaml
 
 # version numbers changed on github. only used this because files were missing from install.zip
 #- name: clone {{ dataverse.version }} from git. optimally replace install.zip with this.
 #  git: repo=git://github.com/IQSS/dataverse.git dest=/tmp/dataverse_{{ dataverse.version }} version={{ dataverse.version }}
 #       clone=yes depth=1 accept_hostkey=true
-#  tags: dataverse
 
 - name: download dataverse installer
-  get_url: url="https://github.com/IQSS/dataverse/releases/download/v{{ dataverse.version }}/dvinstall.zip" dest=/tmp
-  tags: dataverse
+  get_url:
+    url: https://github.com/IQSS/dataverse/releases/download/v{{ dataverse.version }}/dvinstall.zip
+    dest: /tmp
+    # checksum: sha1:7ef1fb48956cfd509e55488f2908e9a4ae923a45 # requires ansible ≥2.0
 
 - name: unzip dataverse installer
-  shell: "unzip -d /tmp /tmp/dvinstall.zip"
-  tags: dataverse
+  unarchive:
+    src: /tmp/dvinstall.zip
+    remote_src: true
+    dest: /tmp
 
 - name: fix perms on dataverse-war
   file: path=/tmp/dvinstall/dataverse.war mode=0644
-  tags: dataverse
 
 - name: install jdbc driver
   shell: "/bin/cp /tmp/dvinstall/pgdriver/postgresql-9.1-902.jdbc4.jar {{ dataverse.glassfish.root }}/glassfish/lib/"
-  tags: dataverse
 
 - name: copy jhove config
   copy: src=jhove.conf dest={{ dataverse.glassfish.root }}/domains/glassfish/{{ dataverse.glassfish.domain }}/config/ owner=root group=root mode=0644
-  tags: dataverse
 
 - name: run glassfish-setup.sh
   shell: "cd /tmp/dvinstall && nohup ./glassfish-setup.sh > /tmp/glassfish-setup.out 2>&1"

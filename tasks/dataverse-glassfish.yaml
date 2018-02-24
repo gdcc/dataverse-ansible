@@ -1,82 +1,73 @@
+---
+# dataverse/tasks/dataverse-glassfish.yaml
+
 - name: download and unzip glassfish4
   get_url:
     url: http://dlc-cdn.sun.com/glassfish/4.1/release/glassfish-4.1.zip
     dest: /tmp
-  tags: glassfish
+    # checksum: sha1:704a90899ec5e3b5007d310b13a6001575827293 # requires ansible ≥2.0
 
 - name: unzip glassfish
-  shell: "unzip -d /tmp /tmp/glassfish-4.1.zip"
-  tags: glassfish
+  unarchive:
+    src: /tmp/glassfish-4.1.zip
+    dest: /tmp
+    remote_src: true
 
 - name: ensure dataverse.glassfish.root exists
   file: path={{ dataverse.glassfish.root }} state=directory
         owner=root group=root mode=0755
-  tags: glassfish
 
 - name: copy glassfish into desired glassfish root. (synchronize module barfs even with pty, file wants to copy local/remote. shell it is.)
   shell: "/bin/cp -r /tmp/glassfish4/* {{ dataverse.glassfish.root }}"
-  tags: glassfish
 
 - name: create glassfish service group
   group: name={{ dataverse.glassfish.group }} state=present
-  tags: glassfish
 
 - name: create glassfish service account
   user: name={{ dataverse.glassfish.user }} group={{ dataverse.glassfish.group }}
-  tags: glassfish
 
 - name: glassfish service account should own {{ dataverse.glassfish.domain }}
   file: path={{ dataverse.glassfish.root }}/glassfish/domains/{{ dataverse.glassfish.domain }} owner={{ dataverse.glassfish.user }}
         group={{ dataverse.glassfish.group }} state=directory recurse=yes
-  tags: glassfish
 
 - name: glassfish should own dataverse.filesdir
   file: path={{ dataverse.filesdir }} state=directory
         owner={{ dataverse.glassfish.user }} group={{ dataverse.glassfish.group }}
-  tags: glassfish
 
 - name: remove old weld jar
   file: name={{ dataverse.glassfish.root }}/glassfish/modules/weld-osgi-bundle.jar state=absent
-  tags: glassfish
 
 - name: get patched weld jar
   get_url: url=http://central.maven.org/maven2/org/jboss/weld/weld-osgi-bundle/2.2.10.SP1/weld-osgi-bundle-2.2.10.SP1-glassfish4.jar
         dest={{ dataverse.glassfish.root }}/glassfish/modules owner=root group=root mode=0644
-  tags: glassfish
 
 - name: remove old grizzly jar
   file: name={{ dataverse.glassfish.root }}/glassfish/modules/glassfish-grizzly-extra-all.jar state=absent
-  tags: glassfish
 
 - name: get patched grizzly jar
   get_url: url=http://guides.dataverse.org/en/latest/_static/installation/files/issues/2180/grizzly-patch/glassfish-grizzly-extra-all.jar
         dest={{ dataverse.glassfish.root }}/glassfish/modules owner=root group=root mode=0644
-  tags: glassfish
 
 - name: install glassfish systemd conf file for RedHat / CentOS7
   template: src=glassfish.service.j2 dest=/usr/lib/systemd/system/glassfish.service
         owner=root group=root mode=0644
   when: ansible_os_family == "RedHat" and
         ansible_distribution_major_version == "7"
-  tags: glassfish
 
 - name: reload systemd on RedHat/CentOS7
   shell: systemctl daemon-reload
   when: ansible_os_family == "RedHat" and
         ansible_distribution_major_version == "7"
-  tags: glassfish
 
 - name: enable glassfish on RedHat/CentOS7 - but don't start it with systemd during Ansible installation
   service: name=glassfish enabled=yes
   when: ansible_os_family == "RedHat" and
         ansible_distribution_major_version == "7"
-  tags: glassfish
 
 - name: install glassfish upstart script for Debian/Ubuntu
   template: src=glassfish.conf.j2 dest=/etc/init
         owner=root group=root mode=0644
   when: ansible_os_family == "Debian"
-  tags: glassfish
 
 - name: start glassfish with asadmin so subsequent Ansible-initiated restarts succeed on RedHat/CentOS
   become: yes
@@ -84,10 +75,7 @@
   shell: "nohup {{ dataverse.glassfish.root }}/bin/asadmin start-domain"
   when: ansible_os_family == "RedHat" and
         ansible_distribution_major_version == "7"
-  tags: glassfish
 
 - name: start glassfish on Debian/Ubuntu
   service: name=glassfish state=started
   when: ansible_os_family == "Debian"
-  tags: glassfish
-

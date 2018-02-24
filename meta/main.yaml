@@ -1,0 +1,13 @@
+---
+# dataverse/meta/main.yaml
+
+dependencies: []
+
+galaxy_info:
+  min_ansible_version: 1.9.4
+  platforms:
+    - name: EL
+      versions:
+        - 7
+  galaxy_tags:
+    - dataverse

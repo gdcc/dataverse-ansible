@@ -1,40 +1,36 @@
+---
+# dataverse/tasks/dataverse-postgres.yaml
+
 - name: install postgres on RedHat / CentOS 7.
   yum: name=postgresql-server state=latest
   when: ansible_os_family == "RedHat" and
         ansible_distribution_major_version == "7"
-  tags: postgres
 
 - name: init postgres on RedHat / CentOS 7.
-  shell: /usr/bin/postgresql-setup initdb
+  shell: creates=/var/lib/pgsql/data/postgresql.conf /usr/bin/postgresql-setup initdb
   when: ansible_os_family == "RedHat" and
         ansible_distribution_major_version == "7"
-  tags: postgres
 
 - name: install pg_hba.conf on RedHat / CentOS 7.
   copy: src=pg_hba.conf dest=/var/lib/pgsql/data
         owner=postgres group=postgres mode=0644
   when: ansible_os_family == "RedHat" and
         ansible_distribution_major_version == "7"
-  tags: postgres
 
 - name: enable postgres on RedHat / CentOS 7.
   service: name=postgresql enabled=yes
   when: ansible_os_family == "RedHat" and
         ansible_distribution_major_version == "7"
-  tags: postgres
 
 - name: start postgres on RedHat / CentOS 7.
   service: name=postgresql state=started
   when: ansible_os_family == "RedHat" and
         ansible_distribution_major_version == "7"
-  tags: postgres
 
 - name: create glassfish postgres database
   postgresql_db: name={{ dataverse.db }}
-  tags: postgres
 
 - name: create glassfish postgres user, set permissions
   postgresql_user: db={{ dataverse.db }} name={{ dataverse.dbuser }}
         password={{ dataverse.dbpass }}
         role_attr_flags=NOSUPERUSER,CREATEDB,CREATEROLE,INHERIT,LOGIN
-  tags: postgres

@@ -1,9 +1,11 @@
+---
+# dataverse/tasks/dataverse-shibboleth.yaml
+
 - name: install shibboleth repo for RedHat/CentOS7
   get_url: url={{ dataverse.shibboleth.repo }} dest=/etc/yum.repos.d
         owner=root group=root mode=0644
   when: ansible_os_family == "RedHat" and
         ansible_distribution_major_version == "7"
-  tags: shibboleth
 
 - name: install Shibboleth RPMs for RedHat/CentOS7
   yum: name="{{item}}" state=latest
@@ -12,38 +14,31 @@
     - shibboleth-embedded-ds
   when: ansible_os_family == "RedHat" and
         ansible_distribution_major_version == "7"
-  tags: shibboleth
 
 - name: install mod_ssl template
   template: src=ssl.conf.j2 dest=/etc/httpd/conf.d/ssl.conf
         owner=root group=root mode=0644
   when: ansible_os_family == "RedHat" and
         ansible_distribution_major_version == "7"
-  tags: shibboleth
 
 - name: install shibboleth2.xml template
   template: src=shibboleth2.xml.j2 dest=/etc/shibboleth/shibboleth2.xml
         owner=root group=root mode=0644
-  tags: shibboleth
 
 - name: copy attribute-map.xml file
   copy: src=attribute-map.xml dest=/etc/shibboleth/attribute-map.xml
         owner=root group=root mode=0644
-  tags: shibboleth
 
 - name: copy TestShib IdP metadata XML file
   copy: src=dataverse-idp-metadata.xml dest=/etc/shibboleth/dataverse-idp-metadata.xml
         owner=root group=root mode=0644
-  tags: shibboleth
 
 - name: enable and start shibd on RedHat / CentOS 7.
   service: name=shibd enabled=yes state=started
   when: ansible_os_family == "RedHat" and
         ansible_distribution_major_version == "7"
-  tags: shibboleth
 
 - name: restart httpd on RedHat / CentOS 7.
   service: name=httpd state=restarted
   when: ansible_os_family == "RedHat" and
         ansible_distribution_major_version == "7"
-  tags: shibboleth

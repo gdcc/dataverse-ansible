@@ -4,25 +4,35 @@
 VAGRANTFILE_API_VERSION = "2"
 
 Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
-
   config.vm.box = "sjoeboo/centos-7-1-x86-ansible"
-  config.vm.box_url = "https://atlas.hashicorp.com/sjoeboo/boxes/centos-7-1-x86-ansible"
-  config.vm.hostname = "localhost"
-  config.vm.provider "virtualbox" do |v|
-    v.memory = 2048
-    v.cpus = 2
+
+  config.vm.synced_folder ".", "/vagrant"
+  config.vm.synced_folder ".", "/etc/ansible/roles/dataverse"
+
+  config.vm.network :forwarded_port, guest: 443, host: 8443, auto_correct: true # Apache Reverse Proxy to Glassfish
+  config.vm.network :forwarded_port, guest: 5432, host: 5432, auto_correct: true # Postgres
+  config.vm.network :forwarded_port, guest: 6311, host: 6311, auto_correct: true # rserve
+  config.vm.network :forwarded_port, guest: 8009, host: 8009, auto_correct: true # Glassfish HTTP Listener
+  config.vm.network :forwarded_port, guest: 8080, host: 8080, auto_correct: true # Glassfish API Endpoint
+  config.vm.network :forwarded_port, guest: 8181, host: 8181, auto_correct: true # ???
+  config.vm.network :forwarded_port, guest: 8983, host: 8983, auto_correct: true # Solr
+
+  config.vm.provision :ansible_local do |ansible|
+    ansible.playbook = "tests/site.yaml"
+    ansible.groups = {
+      "dataverse" => %(default),
+      "db"        => %(default),
+      "rserve"    => %(default),
+      "systems"   => %(default),
+      "vagrant"   => %(default),
+      "web-nodes" => %(default),
+    }
+    ansible.tags = ENV["ANSIBLE_TAGS"]
+    ansible.skip_tags = ENV["ANSIBLE_SKIP_TAGS"]
   end
-  config.vm.network "private_network", type: "dhcp"
-  config.vm.network "forwarded_port", guest: 8080, host: 8080
 
-  # uncomment this line to expose the glassfish console 
-  #config.vm.network "forwarded_port", guest: 443, host: 443
-
-  # other ports that might be useful, depending on your needs
-  #config.vm.network "forwarded_port", guest: 443, host: 443
-  #config.vm.network "forwarded_port", guest: 8181, host: 8181
-  #config.vm.network "forwarded_port", guest: 8983, host: 8983
-
-  config.vm.provision "shell", path: "scripts/vagrant/git-dataverse.sh"
-
+  config.vm.provider :virtualbox do |vbox|
+    vbox.cpus = 2
+    vbox.memory = 2048
+  end
 end
