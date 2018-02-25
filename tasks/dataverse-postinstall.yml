@@ -1,5 +1,5 @@
 ---
-# dataverse/tasks/dataverse-postinstall.yaml
+# dataverse/tasks/dataverse-postinstall.yml
 
 #- name: restart solr
 #  service: name=solr state=restarted

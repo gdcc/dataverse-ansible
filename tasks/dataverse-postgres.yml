@@ -1,5 +1,5 @@
 ---
-# dataverse/tasks/dataverse-postgres.yaml
+# dataverse/tasks/dataverse-postgres.yml
 
 - name: install postgres on RedHat / CentOS 7.
   yum: name=postgresql-server state=latest

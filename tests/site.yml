@@ -1,5 +1,5 @@
 ---
-# dataverse/tests/site.yaml
+# dataverse/tests/site.yml
 
 - name: Test out the dataverse role
 

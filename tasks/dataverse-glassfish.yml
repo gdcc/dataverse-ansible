@@ -1,5 +1,5 @@
 ---
-# dataverse/tasks/dataverse-glassfish.yaml
+# dataverse/tasks/dataverse-glassfish.yml
 
 - name: download and unzip glassfish4
   get_url:

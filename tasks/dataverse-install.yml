@@ -1,5 +1,5 @@
 ---
-# dataverse/tasks/dataverse-install.yaml
+# dataverse/tasks/dataverse-install.yml
 
 # version numbers changed on github. only used this because files were missing from install.zip
 #- name: clone {{ dataverse.version }} from git. optimally replace install.zip with this.

@@ -1,5 +1,5 @@
 ---
-# dataverse/tasks/dataverse-solr.yaml
+# dataverse/tasks/dataverse-solr.yml
 
 - name: ensure EPEL repository for RedHat/CentOS 7
   yum: name=epel-release state=latest
