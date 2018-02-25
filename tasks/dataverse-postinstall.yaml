@@ -1,10 +1,13 @@
+---
+# dataverse/tasks/dataverse-postinstall.yaml
+
 #- name: restart solr
 #  service: name=solr state=restarted
 
 - name: stop glassfish manually (systemd gums up the works)
-  become: yes 
-  become_user: "{{ dataverse.glassfish.user }}" 
-  shell: "nohup {{ dataverse.glassfish.root }}/bin/asadmin stop-domain {{ dataverse.glassfish.domain }}" 
+  become: yes
+  become_user: "{{ dataverse.glassfish.user }}"
+  shell: nohup {{ dataverse.glassfish.root }}/bin/asadmin stop-domain {{ dataverse.glassfish.domain }} || true
 
 - name: start glassfish with systemd
   service: name=glassfish state=restarted
@@ -13,7 +16,7 @@
   wait_for:
     port: 8009
     state: present
-    timeout: "{{ dataverse.glassfish.timeout }}" 
+    timeout: "{{ dataverse.glassfish.timeout }}"
 
 - name: setup-all.sh kitchen sink configuration.
   shell: "cd /tmp/dvinstall && ./setup-all.sh > /tmp/setup-all.out 2>&1"
@@ -21,11 +24,11 @@
 - name: populate reference data
   shell: "psql -U {{ dataverse.dbuser }} -h {{ dataverse.dbhost }} -d {{ dataverse.db }} -f /tmp/dvinstall/reference_data.sql"
   environment:
-    PGPASSWORD: "{{ dataverse.dbpass }}" 
+    PGPASSWORD: "{{ dataverse.dbpass }}"
 
 - name: suppress grizzly ajp warnings
-  become: yes 
-  become_user: "{{ dataverse.glassfish.user }}" 
+  become: yes
+  become_user: "{{ dataverse.glassfish.user }}"
   shell: "{{ dataverse.glassfish.root }}/bin/asadmin set-log-levels org.glassfish.grizzly.http.server.util.RequestUtils=SEVERE"
 
 - name: override some default settings
@@ -45,6 +48,6 @@
     - { prop: ":BlockedApiEndpoints", val: "admin,test", desc: "APIs that are controlled"}
     - { prop: ":BlockedApiPolicy", val: "localhost-only", desc: "control API access"}
 
-- name: Fin 
+- name: Fin
   debug: msg="Dataverse installation complete! Please check output logs in /tmp for further review."
 
