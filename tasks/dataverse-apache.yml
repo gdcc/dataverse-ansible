@@ -1,5 +1,5 @@
 ---
-# dataverse/tasks/dataverse-apache.yaml
+# dataverse/tasks/dataverse-apache.yml
 
 - name: install Apache for RedHat/CentOS
   yum: name="{{item}}" state=latest

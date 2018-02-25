@@ -1,5 +1,5 @@
 ---
-# dataverse/tasks/dataverse-prereqs.yaml
+# dataverse/tasks/dataverse-prereqs.yml
 
 - name: ensure EPEL repository for RedHat7/CentOS7
   yum: name=epel-release state=latest

@@ -1,5 +1,5 @@
 ---
-# dataverse/tasks/dataverse-shibboleth.yaml
+# dataverse/tasks/dataverse-shibboleth.yml
 
 - name: install shibboleth repo for RedHat/CentOS7
   get_url: url={{ dataverse.shibboleth.repo }} dest=/etc/yum.repos.d

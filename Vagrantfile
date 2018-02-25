@@ -18,7 +18,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   config.vm.network :forwarded_port, guest: 8983, host: 8983, auto_correct: true # Solr
 
   config.vm.provision :ansible_local do |ansible|
-    ansible.playbook = "tests/site.yaml"
+    ansible.playbook = "tests/site.yml"
     ansible.groups = {
       "dataverse" => %(default),
       "db"        => %(default),

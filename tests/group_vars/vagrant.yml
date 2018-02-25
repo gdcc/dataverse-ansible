@@ -1,8 +1,8 @@
 ---
-# dataverse/defaults/main.yaml
+# dataverse/tests/group_vars/vagrant.yml
 
 dataverse:
-  adminpass: notPr0d
+  adminpass: admin
   allow_signups: true
   api:
     blocked_endpoints: "admin,test"
@@ -31,13 +31,13 @@ dataverse:
     adminpass: notPr0d
     timeout: 180
   google_analytics_key:
-  memheap: 2048
+  memheap: 1024
   service_email: noreply@dataverse.yourinstitution.edu
-  service_name: dataverse.yourinstitution.edu
+  service_name: localhost
   shibboleth:
     enabled: true
     repo: "http://download.opensuse.org/repositories/security:/shibboleth/CentOS_7/security:shibboleth.repo"
-  smtp: smtp.yourinstitution.edu
+  smtp: localhost
   solr:
     group: solr
     root: /usr/local/solr
@@ -46,7 +46,7 @@ dataverse:
   thumbnails: true
   version: 4.8.4
 rserve:
-  host: rserve.yourinstitution.edu
+  host: localhost
   user: rserve
   pass: rserve
   port: 6311
