@@ -1,0 +1,4 @@
+# vi syntax=dosini
+
+[dataverse]
+localhost ansible_connection=local
