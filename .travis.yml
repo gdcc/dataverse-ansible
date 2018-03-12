@@ -1,0 +1,17 @@
+---
+
+sudo: required
+
+services:
+  - docker
+
+script:
+  # Build the testing container.
+  - sudo docker build --rm=true --tag=dataverse-ansible tests/
+  # Run the container in the background. We can't just fire Ansible directly
+  # b/c the role manipulates services which must be running in the container.
+  - sudo docker run --detach --privileged --volume="${PWD}/tests:/etc/ansible" --volume="${PWD}:/etc/ansible/roles/dataverse" --volume=/sys/fs/cgroup:/sys/fs/cgroup:ro dataverse-ansible > /tmp/cid
+  # Check playbook syntax
+  - sudo docker exec $(cat /tmp/cid) ansible-playbook site.yml --syntax-check
+  # Run the playbook
+  - sudo docker exec $(cat /tmp/cid) ansible-playbook site.yml
