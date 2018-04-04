@@ -35,7 +35,7 @@ dataverse:
   service_email: noreply@dataverse.yourinstitution.edu
   service_name: localhost
   shibboleth:
-    enabled: true
+    enabled: false
     repo: "http://download.opensuse.org/repositories/security:/shibboleth/CentOS_7/security:shibboleth.repo"
   smtp: localhost
   solr:
