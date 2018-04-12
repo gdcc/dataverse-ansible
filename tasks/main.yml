@@ -8,6 +8,7 @@
   tags: apache
 
 - include: dataverse-shibboleth.yml
+  when: dataverse.shibboleth.enabled == True
   tags: shibboleth
 
 - include: dataverse-postgres.yml
