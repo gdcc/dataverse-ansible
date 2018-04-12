@@ -16,7 +16,7 @@
         ansible_distribution_major_version == "7"
 
 - name: install proxy error boilerplate
-  copy: src=503.conf dest=/etc/httpd/conf.d owner=root group=root mode=0644
+  copy: src=503.html dest=/etc/httpd/conf.d owner=root group=root mode=0644
   when: ansible_os_family == "RedHat" and
         ansible_distribution_major_version == "7"
 
