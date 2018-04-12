@@ -30,6 +30,10 @@ SSLCryptoDevice builtin
   CustomLog logs/ssl_request_log \
           "%t %h %{SSL_PROTOCOL}x %{SSL_CIPHER}x \"%r\" %b"
 
+  # custom error document when Glassfish isn't responding
+  ErrorDocument 503 /503.html
+  ProxyPassMatch ^/503.html$ !
+
   # don't pass paths used by rApache and TwoRavens to Glassfish
   ProxyPassMatch ^/RApacheInfo$ !
   ProxyPassMatch ^/custom !
