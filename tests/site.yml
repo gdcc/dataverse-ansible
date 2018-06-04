@@ -9,12 +9,6 @@
 
   pre_tasks:
 
-    - name: Install development packages
-      yum:
-        pkg: "{{ item }}"
-        state: latest
-      with_items: [git, bash-completion]
-
     - name: Punch firewall holes for common dataverse ports
       firewalld:
         state: enabled

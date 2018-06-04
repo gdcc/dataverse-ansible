@@ -13,9 +13,16 @@
 #        ansible_distribution_major_version == "7"
 #  tags: prereqs
 
+- name: let's use the closest centos mirror
+  file: path=/var/cache/yum/x86_64/7/timedhosts.txt state=absent
+
+- name: makecache
+  command: /usr/bin/yum makecache fast
+
 - name: install java-1.8.0-openjdk-devel for RedHat/CentOS. Dataverse currently requires this version.
   yum: name="{{ item }}" state=latest
   with_items:
+    - bash-completion
     - elinks
     - git
     - java-1.8.0-openjdk-devel
