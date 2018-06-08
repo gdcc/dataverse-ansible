@@ -3,11 +3,12 @@ Description = GlassFish Server v4.1
 After = syslog.target network.target
 
 [Service]
+Type = forking
 User={{ dataverse.glassfish.user }}
 ExecStart = /usr/bin/java -jar {{ dataverse.glassfish.root }}/glassfish/lib/client/appserver-cli.jar start-domain
 ExecStop = /usr/bin/java -jar {{ dataverse.glassfish.root }}/glassfish/lib/client/appserver-cli.jar stop-domain
 ExecReload = /usr/bin/java -jar {{ dataverse.glassfish.root }}/glassfish/lib/client/appserver-cli.jar restart-domain
-Type = forking
+LimitNOFILE=65000
 
 [Install]
 WantedBy = multi-user.target

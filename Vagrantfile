@@ -29,6 +29,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     }
     ansible.tags = ENV["ANSIBLE_TAGS"]
     ansible.skip_tags = ENV["ANSIBLE_SKIP_TAGS"]
+    ansible.verbose = true
   end
 
   config.vm.provider :virtualbox do |vbox|

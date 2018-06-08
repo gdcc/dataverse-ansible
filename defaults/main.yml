@@ -42,9 +42,9 @@ dataverse:
     group: solr
     root: /usr/local/solr
     user: solr
-    version: 4.6.0
+    version: 7.3.0
   thumbnails: true
-  version: 4.8.6
+  version: 4.9
 rserve:
   host: rserve.yourinstitution.edu
   user: rserve

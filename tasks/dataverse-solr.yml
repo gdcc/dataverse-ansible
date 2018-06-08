@@ -7,18 +7,19 @@
         ansible_distribution_major_version == "7"
 
 - name: install Solr pre-reqs for RedHat/CentOS 7
-  yum: name="{{item}}" state=latest
+  yum: name="{{ item }}" state=latest
   with_items:
     - java-1.8.0-openjdk-devel
+    - lsof
   when: ansible_os_family == "RedHat" and
         ansible_distribution_major_version == "7"
 
 - name: create solr service group
-  group: name={{ dataverse.solr.group }} state=present
+  group: name="{{ dataverse.solr.group }}" state=present
   when: dataverse.solr.group != "root"
 
 - name: create solr service account
-  user: name={{ dataverse.solr.user }} group={{ dataverse.solr.group }}
+  user: name="{{ dataverse.solr.user }}" group="{{ dataverse.solr.group }}"
         createhome=no comment="Dataverse Solr user"
   when: dataverse.solr.user != "root"
 
@@ -26,42 +27,58 @@
   get_url: url="https://archive.apache.org/dist/lucene/solr/{{ dataverse.solr.version }}/solr-{{ dataverse.solr.version }}.tgz" dest=/tmp
 
 - name: untar solr
-  shell: "tar xvzC /tmp -f /tmp/solr-4.6.0.tgz"
+  shell: "tar xvzC /tmp -f /tmp/solr-7.3.0.tgz"
 
 - name: remove solr root directory
   file: path="{{ dataverse.solr.root }}" state=absent
 
-- name: create solr root directory exists
+- name: ensure solr directory exists
   file: path="{{ dataverse.solr.root }}" state=directory
         owner=root group=root mode=0755
 
 - name: copy solr distro files into solr root
   shell: "/bin/cp -r /tmp/solr-{{ dataverse.solr.version }}/* {{ dataverse.solr.root }}"
 
+- name: solr doesn't create its log directory until runtime
+  file: path="{{ dataverse.solr.root }}/server/logs" state=directory
+        owner="{{ dataverse.solr.user }}" group="{{ dataverse.solr.group }}" mode=0755
+
+- name: populate collection1
+  shell: "/bin/cp -r {{ dataverse.solr.root }}/server/solr/configsets/_default {{ dataverse.solr.root }}/server/solr/collection1"
+
 - name: solr user needs to own some of the subdirectories to run non-root
   file: path="{{ item }}" state=directory recurse=yes
         owner="{{ dataverse.solr.user }}" group="{{ dataverse.solr.group }}"
   with_items:
-    - "{{ dataverse.solr.root }}/example/logs/"
-    - "{{ dataverse.solr.root }}/example/solr-webapp/"
-    - "{{ dataverse.solr.root }}/example/solr/collection1/data/"
+    - "{{ dataverse.solr.root }}/server/solr/collection1"
 
 - name: clean up solr distro files
   file: path="/tmp/solr-{{ dataverse.solr.version }}" state=absent
 
 - name: get last major solr schema
-  get_url: url="https://github.com/IQSS/dataverse/releases/download/v4.6/schema.xml"
-        dest={{ dataverse.solr.root }}/example/solr/collection1/conf/
-        owner={{ dataverse.glassfish.user }} group={{ dataverse.glassfish.group }} mode=0644
+  get_url:
+        url: "https://github.com/IQSS/dataverse/releases/download/v4.9/schema.xml"
+        dest: "{{ dataverse.solr.root }}/server/solr/collection1/conf/"
+        owner: "{{ dataverse.solr.user }}"
+        group: "{{ dataverse.solr.group }}"
+        mode: 0644
 
-#- name: get most recent solr schema
-#  get_url: url="https://github.com/IQSS/dataverse/releases/download/v{{ dataverse.version }}/schema.xml"
-#        dest={{ dataverse.solr.root }}/example/solr/collection1/conf/
-#        owner={{ dataverse.glassfish.user }} group={{ dataverse.glassfish.group }} mode=0644
+- name: get solrconfig
+  get_url:
+        url: "https://github.com/IQSS/dataverse/releases/download/v4.9/solrconfig.xml"
+        dest: "{{ dataverse.solr.root }}/server/solr/collection1/conf/"
+        owner: "{{ dataverse.solr.user }}"
+        group: "{{ dataverse.solr.group }}"
+        mode: 0644
 
-- name: bump requestHeaderSize in jetty.xml
-  lineinfile: dest={{ dataverse.solr.root }}/example/etc/jetty.xml insertafter="org.eclipse.jetty.server.bio.SocketConnector"
-        line="            <Set name=\"requestHeaderSize\">102400</Set>"
+- name: adjust jetty.xml requestHeaderSize
+  replace:
+        dest: "{{ dataverse.solr.root }}/server/etc/jetty.xml"
+        regexp: >-
+           '(\s+.*)\"solr\.jetty\.request\.header\.size\" default=\"8192\"(\s+.*)'
+        replace: >-
+           \1'\"solr\.jetty\.request\.header\.size\" default=\"102400\"'\2
+        backup: yes
 
 - name: install solr upstart script for Debian/Ubuntu
   copy: src=solr.conf dest=/etc/init owner=root group=root mode=0644
@@ -82,3 +99,6 @@
   service: name=solr enabled=yes state=started
   when: ansible_os_family == "RedHat" and
         ansible_distribution_major_version == "7"
+
+- name: create collection1 core
+  shell: "/usr/bin/sudo -u {{ dataverse.solr.user }} {{ dataverse.solr.root }}/bin/solr create_core -c collection1 -d {{ dataverse.solr.root }}/server/solr/collection1/conf/"
