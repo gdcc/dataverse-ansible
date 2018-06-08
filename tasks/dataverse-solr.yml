@@ -71,14 +71,28 @@
         group: "{{ dataverse.solr.group }}"
         mode: 0644
 
-- name: adjust jetty.xml requestHeaderSize
-  replace:
+#- name: adjust jetty.xml requestHeaderSize
+#  replace:
+#        dest: "{{ dataverse.solr.root }}/server/etc/jetty.xml"
+#        regexp: >-
+#           '(\s+.*)\"solr\.jetty\.request\.header\.size\" default=\"8192\"(\s+.*)'
+#        replace: >-
+#           \1'\"solr\.jetty\.request\.header\.size\" default=\"102400\"'\2
+#        backup: yes
+
+# because vagrant VM still has ansible-1.9
+- name: remove requestHeaderSize
+  lineinfile:
         dest: "{{ dataverse.solr.root }}/server/etc/jetty.xml"
-        regexp: >-
-           '(\s+.*)\"solr\.jetty\.request\.header\.size\" default=\"8192\"(\s+.*)'
-        replace: >-
-           \1'\"solr\.jetty\.request\.header\.size\" default=\"102400\"'\2
-        backup: yes
+        regexp: "requestHeaderSize"
+        state: absent        
+
+- name: insert requestHeaderSize
+  lineinfile:
+        dest: "{{ dataverse.solr.root }}/server/etc/jetty.xml"
+        line: '    <Set name="requestHeaderSize"><Property name="solr.jetty.request.header.size" default="102400" /></Set>'
+        insertafter: "outputAggregationSize"
+        state: present
 
 - name: install solr upstart script for Debian/Ubuntu
   copy: src=solr.conf dest=/etc/init owner=root group=root mode=0644
