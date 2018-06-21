@@ -27,7 +27,7 @@
   get_url: url="https://archive.apache.org/dist/lucene/solr/{{ dataverse.solr.version }}/solr-{{ dataverse.solr.version }}.tgz" dest=/tmp
 
 - name: untar solr
-  shell: "tar xvzC /tmp -f /tmp/solr-7.3.0.tgz"
+  shell: "tar xvzC /tmp -f /tmp/solr-{{ dataverse.solr.version }}.tgz"
 
 - name: remove solr root directory
   file: path="{{ dataverse.solr.root }}" state=absent
