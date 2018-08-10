@@ -24,8 +24,8 @@
 - name: install jdbc driver
   shell: "/bin/cp /tmp/dvinstall/pgdriver/postgresql-*.jar {{ dataverse.glassfish.root }}/glassfish/lib/"
 
-- name: copy jhove config
-  copy: src=jhove.conf dest={{ dataverse.glassfish.root }}/domains/glassfish/{{ dataverse.glassfish.domain }}/config/ owner=root group=root mode=0644
+- name: copy jhove configs
+  shell: "cp /tmp/dvinstall/jhove* {{ dataverse.glassfish.root }}/glassfish/domains/{{ dataverse.glassfish.domain }}/config"
 
 - name: run glassfish-setup.sh
   shell: "cd /tmp/dvinstall && nohup ./glassfish-setup.sh > /tmp/glassfish-setup.out 2>&1"

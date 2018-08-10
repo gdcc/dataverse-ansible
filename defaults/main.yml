@@ -16,10 +16,10 @@ dataverse:
   dbport: 5432
   demo: false
   doi:
-    prefix: "10.5072/FK2"
-    protocol:
-    separator: "/"
-    service: EZID
+    authority: "10.5072"
+    protocol: doi
+    shoulder: "FK2/"
+    provider: EZID
   filesdir: /usr/local/dvn/data
   glassfish:
     user: glassfish

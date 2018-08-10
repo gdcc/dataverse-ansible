@@ -40,9 +40,9 @@
     - { prop: ":FooterCopyright" , val: "{{ dataverse.copyright }}", desc: "addition to the default copyright statement"}
     - { prop: ":SystemEmail", val: "{{ dataverse.service_email }}", desc: "instance email address"}
     - { prop: ":Protocol", val: "{{ dataverse.doi.protocol }}", desc: "global identifier protocol"}
-    - { prop: ":DoiProvider", val: "{{ dataverse.doi.service }}", desc: "DOI service provider (EZID or DataCite)"}
-    - { prop: ":Authority", val: "{{ dataverse.doi.prefix }}", desc: "DOI prefix"}
-    - { prop: ":DoiSeparator,", val: "/", desc: "DOI separator. leave as slash (/)"}
+    - { prop: ":DoiProvider", val: "{{ dataverse.doi.provider }}", desc: "DOI service provider (EZID or DataCite)"}
+    - { prop: ":Authority", val: "{{ dataverse.doi.authority }}", desc: "DOI prefix"}
+    - { prop: ":Shoulder,", val: "/", desc: "DOI shoulder. leave as slash (/)"}
     - { prop: ":ShibEnabled", val: "{{ dataverse.shibboleth.enabled }}", desc: "enable/disable shibboleth" }
     - { prop: ":AllowSignUp", val: "{{ dataverse.allow_signups }}", desc: "don't allow self-signup"}
     - { prop: ":BlockedApiEndpoints", val: "admin,test", desc: "APIs that are controlled"}
