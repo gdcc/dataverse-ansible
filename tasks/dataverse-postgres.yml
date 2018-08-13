@@ -28,9 +28,9 @@
         ansible_distribution_major_version == "7"
 
 - name: create glassfish postgres database
-  postgresql_db: name={{ dataverse.db }}
+  postgresql_db: name={{ dataverse.db.name }}
 
 - name: create glassfish postgres user, set permissions
-  postgresql_user: db={{ dataverse.db }} name={{ dataverse.dbuser }}
-        password={{ dataverse.dbpass }}
+  postgresql_user: db={{ dataverse.db.name }} name={{ dataverse.db.user }}
+        password={{ dataverse.db.pass }}
         role_attr_flags=NOSUPERUSER,CREATEDB,CREATEROLE,INHERIT,LOGIN

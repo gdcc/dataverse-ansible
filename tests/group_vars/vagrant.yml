@@ -9,11 +9,12 @@ dataverse:
     blocked_policy: "localhost-only"
     location: "http://localhost:8080/api"
   copyright: "&copy; Your Institution"
-  db: dvndb
-  dbhost: localhost
-  dbuser: dvnuser
-  dbpass: dvnsecret
-  dbport: 5432
+  db:
+    name: dvndb
+    host: localhost
+    user: dvnuser
+    pass: dvnsecret
+    port: 5432
   demo: false
   doi:
     authority: "10.5072"

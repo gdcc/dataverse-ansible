@@ -22,9 +22,9 @@
   shell: "cd /tmp/dvinstall && ./setup-all.sh > /tmp/setup-all.out 2>&1"
 
 - name: populate reference data
-  shell: "psql -U {{ dataverse.dbuser }} -h {{ dataverse.dbhost }} -d {{ dataverse.db }} -f /tmp/dvinstall/reference_data.sql"
+  shell: "psql -U {{ dataverse.db.user }} -h {{ dataverse.db.host }} -d {{ dataverse.db }} -f /tmp/dvinstall/reference_data.sql"
   environment:
-    PGPASSWORD: "{{ dataverse.dbpass }}"
+    PGPASSWORD: "{{ dataverse.db.pass }}"
 
 - name: suppress grizzly ajp warnings
   become: yes
