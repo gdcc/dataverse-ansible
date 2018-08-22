@@ -1,0 +1,23 @@
+# dataverse/tasks/dataverse-build.yml
+
+- name: install maven
+  yum:
+    name: maven
+    state: latest
+
+- name: clone specified branch
+  git:
+    repo: https://github.com/IQSS/dataverse.git
+    dest: /tmp/dataverse
+    version: "{{ dataverse.branch }}"
+
+- name: build warfile
+  shell: mvn package > mvn.out
+  args:
+    chdir: /tmp/dataverse
+
+- name: copy warfile over release
+  copy:
+    remote_src: "/tmp/dataverse/target/dataverse-{{ dataverse.version }}.war"
+    dest: /tmp/dvinstall/dataverse-{{ dataverse.version }}.war"
+    backup: yes

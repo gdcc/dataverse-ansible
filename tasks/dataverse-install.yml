@@ -18,6 +18,9 @@
     remote_src: true
     dest: /tmp
 
+- include: dataverse-build.yml
+  when: "{{ dataverse.branch }}" is defined
+  
 - name: fix perms on dataverse-war
   file: path=/tmp/dvinstall/dataverse.war mode=0644
 
