@@ -8,6 +8,7 @@ dataverse:
     blocked_endpoints: "admin,test"
     blocked_policy: "localhost-only"
     location: "http://localhost:8080/api"
+  branch:
   copyright: "&copy; Your Institution"
   db:
     name: dvndb
