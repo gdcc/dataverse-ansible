@@ -5,19 +5,36 @@
     name: maven
     state: latest
 
+- name: update system libraries on this ancient centos-7.1 image
+  yum:
+    name: "{{ item }}"
+    state: latest
+  with_items:
+  - curl
+  - libcurl
+  - nss
+
 - name: clone specified branch
   git:
     repo: https://github.com/IQSS/dataverse.git
     dest: /tmp/dataverse
     version: "{{ dataverse.branch }}"
 
-- name: build warfile
-  shell: mvn package > mvn.out
+# use shell until we upgrade ansible. sigh.
+#- name: clone specified branch
+#  shell: "cd /tmp && git clone -b {{ dataverse.branch }} https://github.com/IQSS/dataverse.git"
+
+- name: build warfile. tail /tmp/dataverse/mvn.out for gory details.
+  shell: "mvn -Dmaven.test.skip=true package > mvn.out"
   args:
     chdir: /tmp/dataverse
 
+#- name: copy warfile over release
+#  copy:
+#    remote_src: "/tmp/dataverse/target/dataverse-{{ dataverse.version }}.war"
+#    dest: "/tmp/dvinstall/dataverse-{{ dataverse.version }}.war"
+#    backup: yes
+
+# use shell until we upgrade ansible.
 - name: copy warfile over release
-  copy:
-    remote_src: "/tmp/dataverse/target/dataverse-{{ dataverse.version }}.war"
-    dest: /tmp/dvinstall/dataverse-{{ dataverse.version }}.war"
-    backup: yes
+  shell: "cp /tmp/dataverse/target/dataverse-{{ dataverse.version }}.war /tmp/dvinstall/dataverse.war"
