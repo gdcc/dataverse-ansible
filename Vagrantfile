@@ -4,7 +4,7 @@
 VAGRANTFILE_API_VERSION = "2"
 
 Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
-  config.vm.box = "sjoeboo/centos-7-1-x86-ansible"
+  config.vm.box = "fbarriere/ansible-centos7"
 
   config.vm.synced_folder ".", "/vagrant"
   config.vm.synced_folder ".", "/etc/ansible/roles/dataverse"

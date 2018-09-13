@@ -6,12 +6,11 @@
   when: ansible_os_family == "RedHat" and
         ansible_distribution_major_version == "7"
 
-# the 2.3 yum module is throwing tracebacks, lovely.
-#- name: update ansible
-#  yum: name=ansible state=latest
-#  when: ansible_os_family == "RedHat" and
-#        ansible_distribution_major_version == "7"
-#  tags: prereqs
+- name: update ansible
+  yum: name=ansible state=latest
+  when: ansible_os_family == "RedHat" and
+        ansible_distribution_major_version == "7"
+  tags: prereqs
 
 - name: let's use the closest centos mirror
   file: path=/var/cache/yum/x86_64/7/timedhosts.txt state=absent
