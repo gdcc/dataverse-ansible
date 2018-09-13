@@ -7,16 +7,17 @@
 
   become: true
 
-  pre_tasks:
-
-    - name: Punch firewall holes for common dataverse ports
-      firewalld:
-        state: enabled
-        port: "{{ item }}"
-        permanent: true
-        zone: public
-        immediate: true
-      with_items: [80/tcp, 443/tcp, 8080/tcp, 8181/tcp, 8983/tcp]
+# i consider this outside the scope of this role. dls 20180913
+#  pre_tasks:
+#
+#    - name: Punch firewall holes for common dataverse ports
+#      firewalld:
+#        state: enabled
+#        port: "{{ item }}"
+#        permanent: true
+#        zone: public
+#        immediate: true
+#      with_items: [80/tcp, 443/tcp, 8080/tcp, 8181/tcp, 8983/tcp]
 
   roles:
 
