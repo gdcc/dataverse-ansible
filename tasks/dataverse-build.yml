@@ -16,13 +16,13 @@
 
 - name: clone specified branch
   git:
-    repo: https://github.com/IQSS/dataverse.git
+    repo: "{{ dataverse.git.repo }}"
     dest: /tmp/dataverse
-    version: "{{ dataverse.branch }}"
+    version: "{{ dataverse.git.branch }}"
 
 # use shell until we upgrade ansible. sigh.
 #- name: clone specified branch
-#  shell: "cd /tmp && git clone -b {{ dataverse.branch }} https://github.com/IQSS/dataverse.git"
+#  shell: "cd /tmp && git clone -b {{ dataverse.git.branch }} {{ dataverse.git.repo }}"
 
 - name: build warfile. tail /tmp/dataverse/mvn.out for gory details.
   shell: "mvn -Dmaven.test.skip=true package > mvn.out"

@@ -8,7 +8,6 @@ dataverse:
     blocked_endpoints: "admin,test"
     blocked_policy: "localhost-only"
     location: "http://localhost:8080/api"
-  branch:
   copyright: "Your Institution"
   db:
     name: dvndb
@@ -23,6 +22,9 @@ dataverse:
     shoulder: "FK2/"
     provider: EZID
   filesdir: /usr/local/dvn/data
+  git:
+    branch:
+    repo: https://github.com/IQSS/dataverse-ansible.git
   glassfish:
     user: glassfish
     group: glassfish
