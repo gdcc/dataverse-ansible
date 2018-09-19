@@ -24,7 +24,7 @@ dataverse:
   filesdir: /usr/local/dvn/data
   git:
     branch:
-    repo: https://github.com/IQSS/dataverse-ansible.git
+    repo: https://github.com/IQSS/dataverse.git
   glassfish:
     user: glassfish
     group: glassfish
@@ -47,6 +47,7 @@ dataverse:
     root: /usr/local/solr
     user: solr
     version: 7.3.0
+  srcdir: /tmp/dataverse
   thumbnails: true
   version: 4.9.2
 rserve:

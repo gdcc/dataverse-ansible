@@ -1,40 +1,53 @@
-# dataverse/tasks/dataverse-build.yml
+# datavarse/tasks/dataverse-build.yml
 
 - name: install maven
   yum:
     name: maven
     state: latest
 
-- name: update system libraries on this ancient centos-7.1 image
-  yum:
-    name: "{{ item }}"
-    state: latest
+# ----- wedge in dataverse-bundled files before building from branch ---------
+- name: copy api scripts from branch into /tmp/dvinstall
+  copy:
+    src: "{{ item }}"
+    dest: "/tmp/dvinstall/"
+    remote_src: yes
   with_items:
-  - curl
-  - libcurl
-  - nss
+    - "{{ dataverse.srcdir }}/scripts/api/setup-datasetfields.sh"
+    - "{{ dataverse.srcdir }}/scripts/api/setup-users.sh"
+    - "{{ dataverse.srcdir }}/scripts/api/setup-builtin-roles.sh"
+    - "{{ dataverse.srcdir }}/scripts/api/setup-dvs.sh"
+    - "{{ dataverse.srcdir }}/scripts/api/setup-identity-providers.sh"
+    - "{{ dataverse.srcdir }}/scripts/api/setup-all.sh"
+    - "{{ dataverse.srcdir }}/scripts/api/post-install-api-block.sh"
 
-- name: clone specified branch
-  git:
-    repo: "{{ dataverse.git.repo }}"
-    dest: /tmp/dataverse
-    version: "{{ dataverse.git.branch }}"
+# remote copy doesn't currently support recursive copy of directory
+#- name: copy api script data directory
+#  copy:
+#    src: "{{ dataverse.srcdir }}/scripts/api/data"
+#    dest: "/tmp/dvinstall/"
+#    remote_src: yes
 
-# use shell until we upgrade ansible. sigh.
-#- name: clone specified branch
-#  shell: "cd /tmp && git clone -b {{ dataverse.git.branch }} {{ dataverse.git.repo }}"
+- name: copy api script data directory
+  shell: "/bin/cp -r {{ dataverse.srcdir }}/scripts/api/data /tmp/dvinstall/"
+
+- name: copy remaining files from branch
+  copy:
+    src: "{{ item }}"
+    dest: "/tmp/dvinstall/"
+    remote_src: yes
+  with_items:
+    - "{{ dataverse.srcdir }}/scripts/database/reference_data.sql"
+    - "{{ dataverse.srcdir }}/conf/jhove/jhove.conf"
+    - "{{ dataverse.srcdir }}/conf/jhove/jhoveConfig.xsd"
 
 - name: build warfile. tail /tmp/dataverse/mvn.out for gory details.
   shell: "mvn -Dmaven.test.skip=true package > mvn.out"
   args:
-    chdir: /tmp/dataverse
+    chdir: "{{ dataverse.srcdir }}"
 
-#- name: copy warfile over release
-#  copy:
-#    remote_src: "/tmp/dataverse/target/dataverse-{{ dataverse.version }}.war"
-#    dest: "/tmp/dvinstall/dataverse-{{ dataverse.version }}.war"
-#    backup: yes
-
-# use shell until we upgrade ansible.
 - name: copy warfile over release
-  shell: "cp /tmp/dataverse/target/dataverse-{{ dataverse.version }}.war /tmp/dvinstall/dataverse.war"
+  copy:
+    src: "{{ dataverse.srcdir }}/target/dataverse-{{ dataverse.version }}.war"
+    dest: "/tmp/dvinstall/dataverse-{{ dataverse.version }}.war"
+    backup: yes
+    remote_src: yes

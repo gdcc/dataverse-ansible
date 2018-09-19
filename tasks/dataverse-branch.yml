@@ -1,0 +1,8 @@
+# dataverse/tasks/dataverse-branch.yml
+
+- name: clone specified branch
+  git:
+    repo: "{{ dataverse.git.repo }}"
+    dest: "{{ dataverse.srcdir }}"
+    version: "{{ dataverse.git.branch }}"
+
