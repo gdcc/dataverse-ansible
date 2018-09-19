@@ -40,6 +40,12 @@
     - "{{ dataverse.srcdir }}/conf/jhove/jhove.conf"
     - "{{ dataverse.srcdir }}/conf/jhove/jhoveConfig.xsd"
 
+- name: add branch name to Build.number
+  lineinfile:
+    path: "{{ dataverse.srcdir }}/src/main/java/BuildNumber.properties"
+    line: "build.number={{ dataverse.git.branch }}"
+    create: yes
+
 - name: build warfile. tail /tmp/dataverse/mvn.out for gory details.
   shell: "mvn -Dmaven.test.skip=true package > mvn.out"
   args:
@@ -48,6 +54,6 @@
 - name: copy warfile over release
   copy:
     src: "{{ dataverse.srcdir }}/target/dataverse-{{ dataverse.version }}.war"
-    dest: "/tmp/dvinstall/dataverse-{{ dataverse.version }}.war"
+    dest: "/tmp/dvinstall/dataverse.war"
     backup: yes
     remote_src: yes
