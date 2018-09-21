@@ -19,7 +19,7 @@
     dest: /tmp
 
 - include: dataverse-build.yml
-  when: dataverse.git.branch
+  when: dataverse_branch
   
 - name: fix perms on dataverse-war
   file: path=/tmp/dvinstall/dataverse.war mode=0644

@@ -43,7 +43,7 @@
 - name: add branch name to Build.number
   lineinfile:
     path: "{{ dataverse.srcdir }}/src/main/java/BuildNumber.properties"
-    line: "build.number={{ dataverse.git.branch }}"
+    line: "build.number={{ dataverse_branch }}"
     create: yes
 
 - name: build warfile. tail /tmp/dataverse/mvn.out for gory details.

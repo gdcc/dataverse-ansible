@@ -15,7 +15,7 @@
   tags: postgres
 
 - include: dataverse-branch.yml
-  when: dataverse.git.branch
+  when: dataverse_branch
 
 - include: dataverse-glassfish.yml
   tags: glassfish

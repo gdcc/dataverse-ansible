@@ -2,7 +2,7 @@
 
 - name: clone specified branch
   git:
-    repo: "{{ dataverse.git.repo }}"
+    repo: "{{ dataverse_repo }}"
     dest: "{{ dataverse.srcdir }}"
-    version: "{{ dataverse.git.branch }}"
+    version: "{{ dataverse_branch }}"
 

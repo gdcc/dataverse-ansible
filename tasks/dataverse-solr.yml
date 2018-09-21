@@ -64,7 +64,7 @@
         owner: "{{ dataverse.solr.user }}"
         group: "{{ dataverse.solr.group }}"
         mode: 0644
-  when: dataverse.git.branch is not defined
+  when: dataverse_branch is not defined
 
 - name: place branch solr schema
   copy: 
@@ -74,7 +74,7 @@
         group: "{{ dataverse.solr.group }}"
         mode: 0644
         remote_src: yes
-  when: dataverse.git.branch
+  when: dataverse_branch
 
 # ----- solrconfig.xml -------------------------------------------
 - name: get solrconfig
@@ -84,7 +84,7 @@
         owner: "{{ dataverse.solr.user }}"
         group: "{{ dataverse.solr.group }}"
         mode: 0644
-  when: dataverse.git.branch is not defined
+  when: dataverse_branch is not defined
 
 - name: copy branch solrconfig.xml
   copy:
@@ -94,7 +94,7 @@
         group: "{{ dataverse.solr.group }}"
         mode: 0644
         remote_src: yes
-  when: dataverse.git.branch
+  when: dataverse_branch
 
 #- name: adjust jetty.xml requestHeaderSize
 #  replace:

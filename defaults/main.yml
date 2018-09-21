@@ -22,9 +22,6 @@ dataverse:
     shoulder: "FK2/"
     provider: EZID
   filesdir: /usr/local/dvn/data
-  git:
-    branch:
-    repo: https://github.com/IQSS/dataverse.git
   glassfish:
     user: glassfish
     group: glassfish
@@ -55,3 +52,6 @@ rserve:
   user: rserve
   pass: rserve
   port: 6311
+
+dataverse_branch: 
+dataverse_repo: https://github.com/IQSS/dataverse.git
