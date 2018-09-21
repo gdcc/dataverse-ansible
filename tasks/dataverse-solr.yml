@@ -74,7 +74,7 @@
         group: "{{ dataverse.solr.group }}"
         mode: 0644
         remote_src: yes
-  when: dataverse_branch
+  when: dataverse_branch is defined
 
 # ----- solrconfig.xml -------------------------------------------
 - name: get solrconfig
@@ -94,7 +94,7 @@
         group: "{{ dataverse.solr.group }}"
         mode: 0644
         remote_src: yes
-  when: dataverse_branch
+  when: dataverse_branch is defined
 
 #- name: adjust jetty.xml requestHeaderSize
 #  replace:
