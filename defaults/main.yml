@@ -38,7 +38,7 @@ dataverse:
   shibboleth:
     enabled: false
     repo: "http://download.opensuse.org/repositories/security:/shibboleth/CentOS_7/security:shibboleth.repo"
-  smtp: smtp.yourinstitution.edu
+  smtp: localhost # or the FQDN of your organization's SMTP relay
   solr:
     group: solr
     root: /usr/local/solr
@@ -46,12 +46,12 @@ dataverse:
     version: 7.3.0
   srcdir: /tmp/dataverse
   thumbnails: true
-  version: 4.9.2
+  version: 4.9.3
 rserve:
   host: rserve.yourinstitution.edu
   user: rserve
   pass: rserve
   port: 6311
 
-dataverse_branch: 
+dataverse_branch: release
 dataverse_repo: https://github.com/IQSS/dataverse.git

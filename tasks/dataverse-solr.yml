@@ -59,12 +59,12 @@
 
 - name: place release solr schema
   get_url:
-        url: "https://github.com/IQSS/dataverse/releases/download/v4.9/schema.xml"
+        url: "https://github.com/IQSS/dataverse/releases/download/v4.9.3/schema.xml"
         dest: "{{ dataverse.solr.root }}/server/solr/collection1/conf/"
         owner: "{{ dataverse.solr.user }}"
         group: "{{ dataverse.solr.group }}"
         mode: 0644
-  when: dataverse_branch is not defined
+  when: dataverse_branch != "release"
 
 - name: place branch solr schema
   copy: 
@@ -74,7 +74,7 @@
         group: "{{ dataverse.solr.group }}"
         mode: 0644
         remote_src: yes
-  when: dataverse_branch is defined
+  when: dataverse_branch != "release"
 
 # ----- solrconfig.xml -------------------------------------------
 - name: get solrconfig
@@ -84,7 +84,7 @@
         owner: "{{ dataverse.solr.user }}"
         group: "{{ dataverse.solr.group }}"
         mode: 0644
-  when: dataverse_branch is not defined
+  when: dataverse_branch != "release"
 
 - name: copy branch solrconfig.xml
   copy:
@@ -94,7 +94,7 @@
         group: "{{ dataverse.solr.group }}"
         mode: 0644
         remote_src: yes
-  when: dataverse_branch is defined
+  when: dataverse_branch != "release"
 
 #- name: adjust jetty.xml requestHeaderSize
 #  replace:

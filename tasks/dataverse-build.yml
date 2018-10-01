@@ -40,7 +40,21 @@
     - "{{ dataverse.srcdir }}/conf/jhove/jhove.conf"
     - "{{ dataverse.srcdir }}/conf/jhove/jhoveConfig.xsd"
 
-- name: add branch name to Build.number
+# TODO: fix commit variable registration
+#- name: get branch_commit
+#  command: 'cd "{{ dataverse.srcdir }}" && git log --oneline | head -1 | awk "{print $1}")'
+#  register: bcout
+#
+#- debug:
+#    msg: "bcout is {{ bcout }}"
+#
+#- set_fact:
+#    commit='{{ bcout.stdout.split(" ")[0] }}'
+#
+#- debug:
+#    msg: "commit is {{ commit }}"
+
+- name: add branch name, branch_commit to BuildNumber.properties
   lineinfile:
     path: "{{ dataverse.srcdir }}/src/main/java/BuildNumber.properties"
     line: "build.number={{ dataverse_branch }}"

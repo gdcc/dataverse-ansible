@@ -5,4 +5,4 @@
     repo: "{{ dataverse_repo }}"
     dest: "{{ dataverse.srcdir }}"
     version: "{{ dataverse_branch }}"
-
+  when: dataverse_branch != "release"
