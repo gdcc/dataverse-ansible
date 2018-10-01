@@ -27,6 +27,21 @@
 #    dest: "/tmp/dvinstall/"
 #    remote_src: yes
 
+# surgical method of editing version in pom.xml just pisses off xpath
+#- name: depending on branch, the project version in pom.xml doesn't always match.
+#  xml:
+#    path: "{{ dataverse.srcdir }}/pom.xml"
+#    namespaces:
+#      ns: http://maven.apache.org/POM/4.0.0
+#    xpath: ns:project:version
+#    value: "{{ dataverse.version }}"
+#    pretty_print: yes
+
+- name: older branches specify an older version in pom.xml. use current.
+  get_url:
+    url: https://raw.githubusercontent.com/IQSS/dataverse/develop/pom.xml
+    dest: "{{ dataverse.srcdir }}/pom.xml"
+
 - name: copy api script data directory
   shell: "/bin/cp -r {{ dataverse.srcdir }}/scripts/api/data /tmp/dvinstall/"
 
@@ -40,28 +55,27 @@
     - "{{ dataverse.srcdir }}/conf/jhove/jhove.conf"
     - "{{ dataverse.srcdir }}/conf/jhove/jhoveConfig.xsd"
 
-# TODO: fix commit variable registration
-#- name: get branch_commit
-#  command: 'cd "{{ dataverse.srcdir }}" && git log --oneline | head -1 | awk "{print $1}")'
-#  register: bcout
-#
-#- debug:
-#    msg: "bcout is {{ bcout }}"
-#
-#- set_fact:
-#    commit='{{ bcout.stdout.split(" ")[0] }}'
-#
-#- debug:
-#    msg: "commit is {{ commit }}"
+- name: get branch_commit
+  shell: 'cd "{{ dataverse.srcdir }}" && git log --oneline | head -1 | awk "{print $1}"'
+  register: bcout
+
+- debug:
+    msg: "bcout is {{ bcout }}"
+
+- set_fact:
+    commit='{{ bcout.stdout.split(" ")[0] }}'
+
+- debug:
+    msg: "commit is {{ commit }}"
 
 - name: add branch name, branch_commit to BuildNumber.properties
   lineinfile:
     path: "{{ dataverse.srcdir }}/src/main/java/BuildNumber.properties"
-    line: "build.number={{ dataverse_branch }}"
+    line: "build.number={{ dataverse_branch }}-{{ commit }}"
     create: yes
 
 - name: build warfile. tail /tmp/dataverse/mvn.out for gory details.
-  shell: "mvn -Dmaven.test.skip=true package > mvn.out"
+  shell: "mvn -Dmaven.test.skip=true -T 2C package > mvn.out"
   args:
     chdir: "{{ dataverse.srcdir }}"
 
