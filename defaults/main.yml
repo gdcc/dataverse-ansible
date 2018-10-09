@@ -16,11 +16,6 @@ dataverse:
     pass: dvnsecret
     port: 5432
   demo: false
-  doi:
-    authority: "10.5072"
-    protocol: doi
-    shoulder: "FK2/"
-    provider: EZID
   filesdir: /usr/local/dvn/data
   glassfish:
     user: glassfish
@@ -46,12 +41,22 @@ dataverse:
     version: 7.3.0
   srcdir: /tmp/dataverse
   thumbnails: true
-  version: 4.9.3
+  version: 4.9.4
 rserve:
   host: rserve.yourinstitution.edu
   user: rserve
   pass: rserve
   port: 6311
 
+# un-nesting the below so's we can pass them at the CLI
+
 dataverse_branch: release
 dataverse_repo: https://github.com/IQSS/dataverse.git
+
+dataverse_doi_authority: "10.5072"
+dataverse_doi_baseurl: https://mds.datacite.org/
+dataverse_doi_password: ""
+dataverse_doi_protocol: doi
+dataverse_doi_provider: DataCite
+dataverse_doi_shoulder: "FK2/"
+dataverse_doi_username: ""
