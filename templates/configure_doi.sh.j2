@@ -1,0 +1,19 @@
+#!/usr/bin/env bash
+
+DOI_BASEURL={{ dataverse_doi_baseurl }}
+DOI_USERNAME={{ dataverse_doi_username }}
+DOI_PASSWORD={{ dataverse_doi_password }}
+
+ASADMIN={{ dataverse.glassfish.root }}/bin/asadmin
+
+if [ ! -z "$DOI_BASEURL" ]; then
+        $ASADMIN delete-jvm-options "-Ddoi.baseurlstring=$DOI_BASEURL"
+        DOI_BASEURL_ESC=`echo $DOI_BASEURL | sed -e 's/:/\\:/'`
+        $ASADMIN create-jvm-options "\"-Ddoi.baseurlstring=$DOI_BASEURL_ESC\""
+fi
+if [ ! -z "$DOI_USERNAME" ]; then
+        $ASADMIN create-jvm-options "-Ddoi.username=$DOI_USERNAME"
+fi
+if [ ! -z "$DOI_PASSWORD" ]; then
+        $ASADMIN create-jvm-options "-Ddoi.password=$DOI_PASSWORD"
+fi
