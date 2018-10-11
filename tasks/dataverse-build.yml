@@ -81,7 +81,7 @@
 
 - name: copy warfile over release
   copy:
-    src: "{{ dataverse.srcdir }}/target/dataverse-{{ dataverse.version }}.war"
+    src: "{{ dataverse.srcdir }}/target/dataverse-*.war"
     dest: "/tmp/dvinstall/dataverse.war"
     backup: yes
     remote_src: yes
