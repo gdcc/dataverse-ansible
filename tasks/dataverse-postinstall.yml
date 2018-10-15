@@ -39,9 +39,9 @@
     - { prop: ":GoogleAnalyticsCode", val: "{{ dataverse.google_analytics_key }}", desc: "key for Google Analytics"}
     - { prop: ":FooterCopyright" , val: "{{ dataverse.copyright }}", desc: "addition to the default copyright statement"}
     - { prop: ":SystemEmail", val: "{{ dataverse.service_email }}", desc: "instance email address"}
-    - { prop: ":Protocol", val: "{{ dataverse_doi_protocol }}", desc: "global identifier protocol"}
-    - { prop: ":DoiProvider", val: "{{ dataverse_doi_provider }}", desc: "DOI service provider (EZID or DataCite)"}
-    - { prop: ":Authority", val: "{{ dataverse_doi_authority }}", desc: "DOI prefix"}
+    - { prop: ":Protocol", val: "{{ doi_protocol }}", desc: "global identifier protocol"}
+    - { prop: ":DoiProvider", val: "{{ doi_provider }}", desc: "DOI service provider (EZID or DataCite)"}
+    - { prop: ":Authority", val: "{{ doi_authority }}", desc: "DOI prefix"}
     - { prop: ":Shoulder,", val: "/", desc: "DOI shoulder. leave as slash (/)"}
     - { prop: ":ShibEnabled", val: "{{ dataverse.shibboleth.enabled }}", desc: "enable/disable shibboleth" }
     - { prop: ":AllowSignUp", val: "{{ dataverse.allow_signups }}", desc: "don't allow self-signup"}

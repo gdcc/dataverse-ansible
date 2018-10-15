@@ -30,15 +30,16 @@
 - name: copy jhove configs
   shell: "cp /tmp/dvinstall/jhove* {{ dataverse.glassfish.root }}/glassfish/domains/{{ dataverse.glassfish.domain }}/config"
 
-- name: place script to set doi provider
-  template:
-    src: configure_doi.sh.j2
-    dest: /tmp/dvinstall/configure_doi.sh
-    mode: 0755
-
-# at present pete's script is much less brittle than the xml, lineinfile or shell modules
-- name: set doi provider info
-  script: /tmp/dvinstall/configure_doi.sh
+# moving this to glassfish-setup in 5173
+#- name: place script to set doi provider
+#  template:
+#    src: configure_doi.sh.j2
+#    dest: /tmp/dvinstall/configure_doi.sh
+#    mode: 0755
+#
+## at present pete's script is much less brittle than the xml, lineinfile or shell modules
+#- name: set doi provider info
+#  script: /tmp/dvinstall/configure_doi.sh
 
 - name: run glassfish-setup.sh
   shell: "cd /tmp/dvinstall && nohup ./glassfish-setup.sh > /tmp/glassfish-setup.out 2>&1"

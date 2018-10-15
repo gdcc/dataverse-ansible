@@ -8,7 +8,7 @@ DEF_BASEURL="https\://mds.test.datacite.org"
 ASADMIN={{ dataverse.glassfish.root }}/bin/asadmin
 
 if [ ! -z "$DOI_BASEURL" ] && [[ ! $DOI_BASEURL == *mds.test.datacite.org* ]]; then
-        $ASADMIN delete-jvm-options "-Ddoi.baseurlstring=$DEF_BASEURL"
+        $ASADMIN delete-jvm-options "\"-Ddoi.baseurlstring=$DEF_BASEURL""
         DOI_BASEURL_ESC=`echo $DOI_BASEURL | sed -e 's/:/\\:/'`
         $ASADMIN create-jvm-options "\"-Ddoi.baseurlstring=$DOI_BASEURL_ESC\""
 fi
