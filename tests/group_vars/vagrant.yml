@@ -50,13 +50,13 @@ rserve:
 
 # un-nesting the below so's we can pass them at the CLI
 
-dataverse_branch: 5173_installer_datacite_variables
-dataverse_repo: https://github.com/OdumInstitute/dataverse.git
+dataverse_branch: release
+dataverse_repo: https://github.com/IQSS/dataverse.git
 
 doi_authority: "10.5072"
-doi_baseurl: https://mds.test.datacite.org/
-doi_username: "testaccount"
-doi_password: "notmypassword"
+doi_baseurl: "https://mds.test.datacite.org/"
+doi_username: "test.account"
+doi_password: "not.my.password"
 doi_protocol: doi
 doi_provider: DataCite
 doi_shoulder: "FK2/"
