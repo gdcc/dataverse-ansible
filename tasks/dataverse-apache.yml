@@ -2,10 +2,9 @@
 # dataverse/tasks/dataverse-apache.yml
 
 - name: install Apache for RedHat/CentOS
-  yum: name="{{item}}" state=latest
-  with_items:
-    - httpd
-    - mod_ssl
+  yum: 
+    name: ['httpd', 'mod_ssl']
+    state: latest
   when: ansible_os_family == "RedHat" and
         ansible_distribution_major_version == "7"
 

@@ -53,13 +53,13 @@
     - "{{ dataverse.solr.root }}/server/solr/collection1"
     - "{{ dataverse.solr.root }}/bin"
 
-# ----- solr schema.xml ------------------------------------------
 - name: clean up solr distro files
   file: path="/tmp/solr-{{ dataverse.solr.version }}" state=absent
 
+# ----- solr schema.xml ------------------------------------------
 - name: place release solr schema
   get_url:
-        url: "https://github.com/IQSS/dataverse/releases/download/v4.9.3/schema.xml"
+        url: "https://github.com/IQSS/dataverse/releases/download/v4.10/schema.xml"
         dest: "{{ dataverse.solr.root }}/server/solr/collection1/conf/"
         owner: "{{ dataverse.solr.user }}"
         group: "{{ dataverse.solr.group }}"
@@ -79,7 +79,7 @@
 # ----- solrconfig.xml -------------------------------------------
 - name: get solrconfig
   get_url:
-        url: "https://github.com/IQSS/dataverse/releases/download/v4.9/solrconfig.xml"
+        url: "https://github.com/IQSS/dataverse/releases/download/v4.10/solrconfig.xml"
         dest: "{{ dataverse.solr.root }}/server/solr/collection1/conf/"
         owner: "{{ dataverse.solr.user }}"
         group: "{{ dataverse.solr.group }}"

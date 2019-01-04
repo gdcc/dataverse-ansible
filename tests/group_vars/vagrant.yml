@@ -2,7 +2,7 @@
 # dataverse/tests/group_vars/vagrant.yml
 
 dataverse:
-  adminpass: admin
+  adminpass: notPr0d
   allow_signups: true
   api:
     blocked_endpoints: "admin,test"
@@ -41,7 +41,7 @@ dataverse:
     version: 7.3.0
   srcdir: /tmp/dataverse
   thumbnails: true
-  version: 4.9.4
+  version: "4.10"
 rserve:
   host: localhost
   user: rserve
