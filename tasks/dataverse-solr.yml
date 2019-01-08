@@ -7,10 +7,9 @@
         ansible_distribution_major_version == "7"
 
 - name: install Solr pre-reqs for RedHat/CentOS 7
-  yum: name="{{ item }}" state=latest
-  with_items:
-    - java-1.8.0-openjdk-devel
-    - lsof
+  yum:
+    name: ['java-1.8.0-openjdk-devel', 'lsof']
+    state: latest
   when: ansible_os_family == "RedHat" and
         ansible_distribution_major_version == "7"
 
