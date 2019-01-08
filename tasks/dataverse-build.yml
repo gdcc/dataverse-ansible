@@ -5,8 +5,7 @@
     name: maven
     state: latest
 
-# ----- wedge in dataverse-bundled files before building from branch ---------
-- name: copy api scripts from branch into /tmp/dvinstall
+- name: wedge in dataverse-bundled files before building from branch
   copy:
     src: "{{ item }}"
     dest: "/tmp/dvinstall/"
@@ -19,7 +18,10 @@
     - "{{ dataverse.srcdir }}/scripts/api/setup-identity-providers.sh"
     - "{{ dataverse.srcdir }}/scripts/api/setup-all.sh"
     - "{{ dataverse.srcdir }}/scripts/api/post-install-api-block.sh"
+    - "{{ dataverse.srcdir }}/scripts/installer/install"
+    - "{{ dataverse.srcdir }}/scripts/installer/glassfish-setup.sh"
 
+# grab installers 
 # remote copy doesn't currently support recursive copy of directory
 #- name: copy api script data directory
 #  copy:
