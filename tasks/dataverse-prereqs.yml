@@ -17,7 +17,8 @@
   file: path=/var/cache/yum/x86_64/7/timedhosts.txt state=absent
 
 - name: makecache
-  command: /usr/bin/yum makecache fast
+  yum:
+    update_cache: yes
 
 - name: install java-1.8.0-openjdk and other packages for RedHat/CentOS.
   yum:
