@@ -28,3 +28,7 @@
 
 - include: dataverse-postinstall.yml
   tags: postinstall
+
+- include: dataverse-counter.yml
+  when: dataverse.counter.enabled == True
+  tags: counter

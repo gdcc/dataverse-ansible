@@ -1,0 +1,62 @@
+---
+
+- name: install python36
+  yum:
+    name: python36
+    state: latest
+
+- name: install pip
+  shell: python3.6 -m ensurepip
+
+- name: ensure counter user exists
+  user:
+    name: "{{ dataverse.counter.user }}"
+
+- name: download zip file
+  unarchive:
+    src: "https://github.com/CDLUC3/counter-processor/archive/v{{ dataverse.counter.version }}.zip"
+    dest: /tmp
+    remote_src: yes
+    owner: "{{ dataverse.counter.user }}"
+
+- name: geo IP target dir must exist
+  file:
+    path: "/tmp/counter-processor-{{ dataverse.counter.version }}/maxmind_geoip"
+    owner: "{{ dataverse.counter.user }}"
+    state:  directory
+    mode: 0755
+
+- name: download geo IP database
+  unarchive:
+    src: https://geolite.maxmind.com/download/geoip/database/GeoLite2-Country.tar.gz
+    dest: "/tmp/counter-processor-{{ dataverse.counter.version }}/maxmind_geoip"
+    remote_src: yes
+
+- name: pip install requirements
+  shell: "/usr/bin/python3.6 -m pip install -r /tmp/counter-processor-{{ dataverse.counter.version }}/requirements.txt"
+  become: yes
+
+- name: create sample log dir
+  file:
+    path: "/tmp/counter-processor-{{ dataverse.counter.version }}/sample_logs"
+    owner: "{{ dataverse.counter.user }}"
+    state: directory
+    mode: 0755
+
+- name: touch sample logs
+  shell: 'for i in `echo {00..31}`; do touch /tmp/counter-processor-{{ dataverse.counter.version }}/sample_logs/counter_2018-05-$i.log; done'
+  become: yes
+  become_user: "{{ dataverse.counter.user }}"
+
+- name: place config template
+  template:
+    src: counter-processor-config.yml.j2
+    dest: "/tmp/counter-processor-{{ dataverse.counter.version }}/counter-processor-config.yml"
+
+- name: launch counter
+  shell:
+    cmd: 'cd /tmp/counter-processor-{{ dataverse.counter.version }} || python36 main.py'
+  vars:
+    CONFIG_FILE: "/tmp/counter-processor-{{ dataverse.counter.version }}/counter-processor-config.yml"
+  become: yes
+  become_user: "{{ dataverse.counter.user }}"

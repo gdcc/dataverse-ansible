@@ -9,6 +9,22 @@ dataverse:
     blocked_policy: "localhost-only"
     location: "http://localhost:8080/api"
   copyright: "Your Institution"
+  counter:
+    enabled: False
+    geoipdir: maxmind_geoip
+    geoipfile: GeoLite2-Country.mmdb
+    hub_api_token: set_me_in_secrets
+    hub_base_url: "https://api.datacite.org"
+    machines_url: "https://raw.githubusercontent.com/CDLUC3/Make-Data-Count/master/user-agents/lists/machine.txt"
+    maxmind_geoip_country_path: "maxmind_geoip/GeoLite2-Country.mmdb"
+    output_file: "/dataverse/sushi_sample_logs"
+    output_format: json
+    platform: dash
+    robots_url: "https://raw.githubusercontent.com/CDLUC3/Make-Data-Count/master/user-agents/lists/robot.txt"
+    version: "0.0.1"
+    upload_to_hub: False
+    user: counter
+    year_month: "2018-05"
   db:
     name: dvndb
     host: localhost
