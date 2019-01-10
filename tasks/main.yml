@@ -30,5 +30,5 @@
   tags: postinstall
 
 - include: dataverse-counter.yml
-  when: dataverse.counter.enabled == True
+  when: dataverse_counter_enabled == True
   tags: counter

@@ -10,7 +10,6 @@ dataverse:
     location: "http://localhost:8080/api"
   copyright: "Your Institution"
   counter:
-    enabled: False
     geoipdir: maxmind_geoip
     geoipfile: GeoLite2-Country.mmdb
     hub_api_token: set_me_in_secrets
@@ -67,6 +66,7 @@ rserve:
 # un-nesting the below so's we can pass them at the CLI
 
 dataverse_branch: release
+dataverse_counter_enabled: false
 dataverse_repo: https://github.com/IQSS/dataverse.git
 
 doi_authority: "10.5072"
