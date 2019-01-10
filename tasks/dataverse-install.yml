@@ -50,9 +50,9 @@
     RSERVE_PASS: "{{ rserve.pass }}"
     SMTP_SERVER: "{{ dataverse.smtp }}"
     MEM_HEAP_SIZE: "{{ dataverse.memheap }}"
-    DOI_BASEURL: "{{ doi_baseurl }}"
-    DOI_USERNAME: "{{ doi_username }}"
-    DOI_PASSWORD: "{{ doi_password }}"
+    DOI_BASEURL: "{{ dataverse_doi_baseurl }}"
+    DOI_USERNAME: "{{ dataverse_doi_username }}"
+    DOI_PASSWORD: "{{ dataverse_doi_password }}"
 
 - name: set logging format
   become: yes

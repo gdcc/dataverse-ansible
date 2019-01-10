@@ -67,12 +67,11 @@ rserve:
 
 dataverse_branch: release
 dataverse_counter_enabled: false
+dataverse_doi_authority: "10.5072"
+dataverse_doi_baseurl: "https://mds.test.datacite.org/"
+dataverse_doi_username: "test.account"
+dataverse_doi_password: "not.my.password"
+dataverse_doi_protocol: doi
+dataverse_doi_provider: DataCite
+dataverse_doi_shoulder: "FK2/"
 dataverse_repo: https://github.com/IQSS/dataverse.git
-
-doi_authority: "10.5072"
-doi_baseurl: "https://mds.test.datacite.org/"
-doi_username: "test.account"
-doi_password: "not.my.password"
-doi_protocol: doi
-doi_provider: DataCite
-doi_shoulder: "FK2/"
