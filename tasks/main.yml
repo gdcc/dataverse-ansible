@@ -1,6 +1,10 @@
 ---
 # dataverse/tasks/main.yml
 
+- name: set facts
+  set_fact:
+    dataverse_counter_enabled: "{{ dataverse_counter_enabled }}"
+
 - include: dataverse-prereqs.yml
   tags: prereqs
 

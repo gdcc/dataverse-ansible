@@ -66,7 +66,7 @@ rserve:
 # un-nesting the below so's we can pass them at the CLI
 
 dataverse_branch: release
-dataverse_counter_enabled: false
+dataverse_counter_enabled: true
 dataverse_doi_authority: "10.5072"
 dataverse_doi_baseurl: "https://mds.test.datacite.org/"
 dataverse_doi_username: "test.account"
