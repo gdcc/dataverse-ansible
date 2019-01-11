@@ -63,7 +63,7 @@
         owner: "{{ dataverse.solr.user }}"
         group: "{{ dataverse.solr.group }}"
         mode: 0644
-  when: dataverse_branch != "release"
+  when: dataverse_branch == "release"
 
 - name: place branch solr schema
   copy: 
@@ -83,7 +83,7 @@
         owner: "{{ dataverse.solr.user }}"
         group: "{{ dataverse.solr.group }}"
         mode: 0644
-  when: dataverse_branch != "release"
+  when: dataverse_branch == "release"
 
 - name: copy branch solrconfig.xml
   copy:
