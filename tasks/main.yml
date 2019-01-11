@@ -3,7 +3,7 @@
 
 - name: set facts
   set_fact:
-    dataverse_counter_enabled: "{{ dataverse_counter_enabled }}"
+    dataverse_counter_enabled: "{{ dataverse_counter_enabled | bool }}"
 
 - include: dataverse-prereqs.yml
   tags: prereqs
