@@ -128,6 +128,17 @@
   when: ansible_os_family == "RedHat" and
         ansible_distribution_major_version == "7"
 
+- name: increase resource limits for solr
+  blockinfile:
+    path: /etc/security/limits.conf
+    block: |
+      {{ item.user }} {{ item.type }} {{ item.descriptor }} {{ item.value }}
+  with_items:
+    - { user: "{{ dataverse.solr.user }}", type: soft, descriptor: nproc, value: 65000 }
+    - { user: "{{ dataverse.solr.user }}", type: hard, descriptor: nproc, value: 65000 }
+    - { user: "{{ dataverse.solr.user }}", type: soft, descriptor: nofile, value: 65000 }
+    - { user: "{{ dataverse.solr.user }}", type: hard, descriptor: nofile, value: 65000 }
+
 - name: reload systemd
   shell: systemctl daemon-reload
   when: ansible_os_family == "RedHat" and

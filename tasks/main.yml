@@ -1,10 +1,6 @@
 ---
 # dataverse/tasks/main.yml
 
-- name: set facts
-  set_fact:
-    dataverse_counter_enabled: "{{ dataverse_counter_enabled | bool }}"
-
 - include: dataverse-prereqs.yml
   tags: prereqs
 
@@ -34,6 +30,5 @@
   tags: postinstall
 
 - include: dataverse-counter.yml
-  when: (dataverse_counter_enabled == true) or
-        (dataverse_counter_enabled == "true"|lower)
+  when: dataverse.counter.enabled == true
   tags: counter

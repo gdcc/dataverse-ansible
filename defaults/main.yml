@@ -10,6 +10,7 @@ dataverse:
     location: "http://localhost:8080/api"
   copyright: "Your Institution"
   counter:
+    enabled: false
     geoipdir: maxmind_geoip
     geoipfile: GeoLite2-Country.mmdb
     hub_api_token: set_me_in_secrets
@@ -31,6 +32,14 @@ dataverse:
     pass: dvnsecret
     port: 5432
   demo: false
+  doi:
+    authority: "10.5072"
+    baseurl: https://mds.test.datacite.org/
+    username: "testaccount"
+    password: "notmypassword"
+    protocol: doi
+    provider: DataCite
+    shoulder: "FK2/"
   filesdir: /usr/local/dvn/data
   glassfish:
     user: glassfish
@@ -66,12 +75,4 @@ rserve:
 # un-nesting the below so's we can pass them at the CLI
 
 dataverse_branch: release
-dataverse_counter_enabled: false
-dataverse_doi_authority: "10.5072"
-dataverse_doi_baseurl: https://mds.datacite.org/
-dataverse_doi_username: "testaccount"
-dataverse_doi_password: "notmypassword"
-dataverse_doi_protocol: doi
-dataverse_doi_provider: DataCite
-dataverse_doi_shoulder: "FK2/"
 dataverse_repo: https://github.com/IQSS/dataverse.git
