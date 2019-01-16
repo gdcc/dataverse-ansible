@@ -19,7 +19,7 @@
     timeout: "{{ dataverse.glassfish.timeout }}"
 
 - name: setup-all.sh kitchen sink configuration.
-  shell: "cd /tmp/dvinstall && ./setup-all.sh -p={{ dataverse.adminpass }} > /tmp/setup-all.out 2>&1"
+  shell: "cd /tmp/dvinstall && ./setup-all.sh -p={{ dataverse.adminpass }} > /tmp/setup-all.sh.out 2>&1"
 
 - name: populate reference data
   shell: "psql -U {{ dataverse.db.user }} -h {{ dataverse.db.host }} -d {{ dataverse.db.name }} -f /tmp/dvinstall/reference_data.sql"
