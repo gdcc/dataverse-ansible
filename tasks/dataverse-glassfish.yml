@@ -48,6 +48,17 @@
   get_url: url=http://guides.dataverse.org/en/latest/_static/installation/files/issues/2180/grizzly-patch/glassfish-grizzly-extra-all.jar
         dest={{ dataverse.glassfish.root }}/glassfish/modules owner=root group=root mode=0644
 
+- name: increase resource limits for glassfish
+  blockinfile:
+    path: /etc/security/limits.conf
+    block: |
+      {{ item.user }} {{ item.type }} {{ item.descriptor }} {{ item.value }}
+  with_items:
+    - { user: "{{ dataverse.glassfish.user }}", type: soft, descriptor: nproc, value: 65000 }
+    - { user: "{{ dataverse.glassfish.user }}", type: hard, descriptor: nproc, value: 65000 }
+    - { user: "{{ dataverse.glassfish.user }}", type: soft, descriptor: nofile, value: 65000 }
+    - { user: "{{ dataverse.glassfish.user }}", type: hard, descriptor: nofile, value: 65000 }
+
 - name: install glassfish systemd conf file for RedHat / CentOS7
   template: src=glassfish.service.j2 dest=/usr/lib/systemd/system/glassfish.service
         owner=root group=root mode=0644
@@ -72,7 +83,8 @@
 - name: start glassfish with asadmin so subsequent Ansible-initiated restarts succeed on RedHat/CentOS
   become: yes
   become_user: "{{ dataverse.glassfish.user }}"
-  shell: "nohup {{ dataverse.glassfish.root }}/bin/asadmin start-domain"
+  #shell: "nohup {{ dataverse.glassfish.root }}/bin/asadmin start-domain"
+  shell: "{{ dataverse.glassfish.root }}/bin/asadmin start-domain {{ dataverse.glassfish.domain }}"
   when: ansible_os_family == "RedHat" and
         ansible_distribution_major_version == "7"
 
