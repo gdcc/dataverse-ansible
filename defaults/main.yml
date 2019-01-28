@@ -52,6 +52,9 @@ dataverse:
     timeout: 180
   google_analytics_key:
   memheap: 2048
+  sampledata:
+    enabled: false
+    sampledir: "{{ playbook_dir }}/sampledata"
   service_email: noreply@dataverse.yourinstitution.edu
   service_name: dataverse.yourinstitution.edu
   shibboleth:
