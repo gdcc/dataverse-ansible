@@ -21,7 +21,7 @@ dataverse:
     output_format: json
     platform: dash
     robots_url: "https://raw.githubusercontent.com/CDLUC3/Make-Data-Count/master/user-agents/lists/robot.txt"
-    version: "0.0.1"
+    version: "0.1"
     upload_to_hub: False
     user: counter
     year_month: "2018-05"
