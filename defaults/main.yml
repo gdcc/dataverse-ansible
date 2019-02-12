@@ -52,6 +52,9 @@ dataverse:
     timeout: 180
   google_analytics_key:
   memheap: 2048
+  postgres:
+    reporpm: https://download.postgresql.org/pub/repos/yum/9.6/redhat/rhel-7-x86_64/pgdg-centos96-9.6-3.noarch.rpm
+    version: 9.6
   service_email: noreply@dataverse.yourinstitution.edu
   service_name: dataverse.yourinstitution.edu
   shibboleth:
