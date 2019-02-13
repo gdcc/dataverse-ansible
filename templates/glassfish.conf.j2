@@ -11,10 +11,10 @@ console none
 setuid {{ dataverse.glassfish.user }}
 setgid {{ dataverse.glassfish.group }}
 umask 0022
-chdir {{ dataverse.glassfish.root }}
+chdir {{ glassfish_dir }}
 
 # start
-exec {{ dataverse.glassfish.root }}/bin/asadmin start-domain {{ dataverse.glassfish.domain }}
+exec {{ glassfish_dir }}/bin/asadmin start-domain {{ dataverse.glassfish.domain }}
 
 # stop
-pre-stop exec {{ dataverse.glassfish.root }}/bin/asadmin stop-domain {{ dataverse.glassfish.domain }}
+pre-stop exec {{ glassfish_dir }}/bin/asadmin stop-domain {{ dataverse.glassfish.domain }}

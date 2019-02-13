@@ -25,10 +25,10 @@
   file: path=/tmp/dvinstall/dataverse.war mode=0644
 
 - name: install jdbc driver
-  shell: "/bin/cp /tmp/dvinstall/pgdriver/postgresql-*.jar {{ dataverse.glassfish.root }}/glassfish/lib/"
+  shell: "/bin/cp /tmp/dvinstall/pgdriver/postgresql-*.jar {{ glassfish_dir }}/glassfish/lib/"
 
 - name: copy jhove configs
-  shell: "cp /tmp/dvinstall/jhove* {{ dataverse.glassfish.root }}/glassfish/domains/{{ dataverse.glassfish.domain }}/config"
+  shell: "cp /tmp/dvinstall/jhove* {{ glassfish_dir }}/glassfish/domains/{{ dataverse.glassfish.domain }}/config"
 
 - name: run glassfish-setup.sh
   shell: "cd /tmp/dvinstall && nohup ./glassfish-setup.sh > /tmp/glassfish-setup.out 2>&1"
@@ -36,7 +36,7 @@
   become_user: "{{ dataverse.glassfish.user }}"
   environment:
     HOST_ADDRESS: "{{ dataverse.service_name }}"
-    GLASSFISH_ROOT: "{{ dataverse.glassfish.root }}"
+    GLASSFISH_ROOT: "{{ glassfish_dir }}"
     GLASSFISH_DOMAIN: "{{ dataverse.glassfish.domain }}"
     FILES_DIR: "{{ dataverse.filesdir }}"
     DB_NAME: "{{ dataverse.db.name }}"
@@ -57,9 +57,9 @@
 - name: set logging format
   become: yes
   become_user: "{{ dataverse.glassfish.user }}"
-  shell: "{{ dataverse.glassfish.root }}/bin/asadmin set-log-file-format {{ dataverse.glassfish.logformat }}"
+  shell: "{{ glassfish_dir }}/bin/asadmin set-log-file-format {{ dataverse.glassfish.logformat }}"
 
 - name: deploy dataverse.war
   become: yes
   become_user: "{{ dataverse.glassfish.user }}"
-  shell: "nohup {{ dataverse.glassfish.root }}/bin/asadmin deploy /tmp/dvinstall/dataverse.war"
+  shell: "nohup {{ glassfish_dir }}/bin/asadmin deploy /tmp/dvinstall/dataverse.war"
