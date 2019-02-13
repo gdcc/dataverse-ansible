@@ -3,7 +3,7 @@
 
 - name: install postgres repo RPM.
   yum:
-    name: https://download.postgresql.org/pub/repos/yum/9.6/redhat/rhel-7-x86_64/pgdg-centos96-9.6-3.noarch.rpm
+    name: '{{ dataverse.postgres.reporpm }}'
     state: present
   when: ansible_os_family == "RedHat" and
         ansible_distribution_major_version == "7"
