@@ -51,6 +51,8 @@ dataverse:
     adminpass: notPr0d
     timeout: 180
   google_analytics_key:
+  java:
+    version: 1.8.0
   memheap: 2048
   service_email: noreply@dataverse.yourinstitution.edu
   service_name: dataverse.yourinstitution.edu
