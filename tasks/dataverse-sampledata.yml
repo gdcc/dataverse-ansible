@@ -65,3 +65,26 @@
     body_format: json
     status_code: 201
   with_items: "{{ sampledataverses_list.files }}"
+
+# users next because in phil's scripts the users create datasets
+- name: set user management quesadilla
+  uri:
+    url: 'http://localhost:8080/api/admin/settings/BuiltinUsers.KEY'
+    method: PUT
+    body: '{{ dataverse.usermgmtkey }}'
+
+- name: read sampleuser file list
+  find:
+    path: "{{ dataverse.sampledata.sampleusers }}"
+    file_type: "file"
+  register: sampleusers_list
+
+- name: create sample users 
+  uri:
+    url: 'http://localhost:8080/api/builtin-users?password=$pass&key={{ dataverse.usermgmtkey }}'
+    method: POST
+    headers:
+      Content-Type: "application/json"
+    src: '{{ item.path }}'
+    body_format: json
+  with_items: "{{ sampleusers_list.files }}"

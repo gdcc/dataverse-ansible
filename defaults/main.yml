@@ -78,6 +78,7 @@ dataverse:
     version: 7.3.1
   srcdir: /tmp/dataverse
   thumbnails: true
+  usermgmtkey: burrito
   version: "4.10.1"
 rserve:
   host: rserve.yourinstitution.edu
