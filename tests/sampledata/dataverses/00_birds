@@ -1,8 +1,12 @@
 {
-    "affiliation": "Birds Inc.", 
-    "alias": "birds", 
-    "contactEmail": "birds@birds.com", 
-    "description": "A bird dataverse with some trees", 
-    "name": "Birds", 
-    "permissionRoot": "false"
+  "affiliation": "Birds Inc.", 
+  "alias": "birds", 
+  "dataverseContacts": [
+    {
+      "contactEmail": "birds@birds.com"
+    }
+  ],
+  "description": "A bird dataverse with some trees", 
+  "name": "Birds", 
+  "permissionRoot": "false"
 }

@@ -57,10 +57,11 @@
 
 - name: import sample dataverses
   uri:
-    url: 'http://localhost:8080/api/dataverses/?key={{ api_token }}'
+    url: 'http://localhost:8080/api/dataverses/1?key={{ api_token }}'
     method: POST
     headers:
       Content-Type: "application/json"
-    body: '@{{ item.path }}'
+    src: '{{ item.path }}'
     body_format: json
+    status_code: 201
   with_items: "{{ sampledataverses_list.files }}"
