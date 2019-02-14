@@ -1,24 +1,26 @@
 ---
 # dataverse/tasks/dataverse-glassfish.yml
 
-- name: download and unzip glassfish4
-  get_url:
-    url: http://dlc-cdn.sun.com/glassfish/4.1/release/glassfish-4.1.zip
-    dest: /tmp
-    # checksum: sha1:704a90899ec5e3b5007d310b13a6001575827293 # requires ansible ≥2.0
+- name: construct glassfish_dir
+  set_fact:
+    glassfish_dir: '{{ dataverse.glassfish.root }}/{{ dataverse.glassfish.dir }}'
 
-- name: unzip glassfish
-  unarchive:
-    src: /tmp/glassfish-4.1.zip
-    dest: /tmp
-    remote_src: true
-
-- name: ensure dataverse.glassfish.root exists
-  file: path={{ dataverse.glassfish.root }} state=directory
+- name: glassfish_dir must exist
+  file: path={{ glassfish_dir }} state=directory
         owner=root group=root mode=0755
 
-- name: copy glassfish into desired glassfish root. (synchronize module barfs even with pty, file wants to copy local/remote. shell it is.)
-  shell: "/bin/cp -r /tmp/glassfish4/* {{ dataverse.glassfish.root }}"
+- name: download and unzip glassfish4
+  get_url:
+    url: '{{ dataverse.glassfish.zipurl }}'
+    dest: /tmp/glassfish.zip
+
+- name: bsdtar can unzip in smarter ways
+  yum:
+    name: bsdtar
+    state: latest
+
+- name: unzip to glassfish root without name/version tld
+  shell: 'bsdtar --strip-components=1 -C {{ glassfish_dir }} -xvf /tmp/glassfish.zip'
 
 - name: create glassfish service group
   group: name={{ dataverse.glassfish.group }} state=present
@@ -27,7 +29,7 @@
   user: name={{ dataverse.glassfish.user }} group={{ dataverse.glassfish.group }}
 
 - name: glassfish service account should own {{ dataverse.glassfish.domain }}
-  file: path={{ dataverse.glassfish.root }}/glassfish/domains/{{ dataverse.glassfish.domain }} owner={{ dataverse.glassfish.user }}
+  file: path={{ glassfish_dir }}/glassfish/domains/{{ dataverse.glassfish.domain }} owner={{ dataverse.glassfish.user }}
         group={{ dataverse.glassfish.group }} state=directory recurse=yes
 
 - name: glassfish should own dataverse.filesdir
@@ -35,18 +37,18 @@
         owner={{ dataverse.glassfish.user }} group={{ dataverse.glassfish.group }}
 
 - name: remove old weld jar
-  file: name={{ dataverse.glassfish.root }}/glassfish/modules/weld-osgi-bundle.jar state=absent
+  file: name={{ glassfish_dir }}/glassfish/modules/weld-osgi-bundle.jar state=absent
 
 - name: get patched weld jar
   get_url: url=http://central.maven.org/maven2/org/jboss/weld/weld-osgi-bundle/2.2.10.SP1/weld-osgi-bundle-2.2.10.SP1-glassfish4.jar
-        dest={{ dataverse.glassfish.root }}/glassfish/modules owner=root group=root mode=0644
+        dest={{ glassfish_dir }}/glassfish/modules owner=root group=root mode=0644
 
 - name: remove old grizzly jar
-  file: name={{ dataverse.glassfish.root }}/glassfish/modules/glassfish-grizzly-extra-all.jar state=absent
+  file: name={{ glassfish_dir }}/glassfish/modules/glassfish-grizzly-extra-all.jar state=absent
 
 - name: get patched grizzly jar
   get_url: url=http://guides.dataverse.org/en/latest/_static/installation/files/issues/2180/grizzly-patch/glassfish-grizzly-extra-all.jar
-        dest={{ dataverse.glassfish.root }}/glassfish/modules owner=root group=root mode=0644
+        dest={{ glassfish_dir }}/glassfish/modules owner=root group=root mode=0644
 
 - name: increase resource limits for glassfish
   blockinfile:
@@ -83,8 +85,7 @@
 - name: start glassfish with asadmin so subsequent Ansible-initiated restarts succeed on RedHat/CentOS
   become: yes
   become_user: "{{ dataverse.glassfish.user }}"
-  #shell: "nohup {{ dataverse.glassfish.root }}/bin/asadmin start-domain"
-  shell: "{{ dataverse.glassfish.root }}/bin/asadmin start-domain {{ dataverse.glassfish.domain }}"
+  shell: "{{ glassfish_dir }}/bin/asadmin start-domain {{ dataverse.glassfish.domain }}"
   when: ansible_os_family == "RedHat" and
         ansible_distribution_major_version == "7"
 

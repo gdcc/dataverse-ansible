@@ -1,29 +1,53 @@
 ---
 # dataverse/tasks/dataverse-postgres.yml
 
+- name: install postgres repo RPM.
+  yum:
+    name: '{{ dataverse.postgres.reporpm }}'
+    state: present
+  when: ansible_os_family == "RedHat" and
+        ansible_distribution_major_version == "7"
+
+- name: tell systemd postgresql is on board
+  shell: systemctl daemon-reload
+
+- name: postgres uses differing version syntax in a few commands/packages
+  set_fact:
+    dataverse_pg_version_short: "{{ dataverse.postgres.version | regex_replace('\\.','') }}"
+
 - name: install postgres on RedHat / CentOS 7.
-  yum: name=postgresql-server state=latest
+  yum:
+   name: 'postgresql{{ dataverse_pg_version_short }}-server'
+   state: latest
   when: ansible_os_family == "RedHat" and
         ansible_distribution_major_version == "7"
 
 - name: init postgres on RedHat / CentOS 7.
-  shell: creates=/var/lib/pgsql/data/postgresql.conf /usr/bin/postgresql-setup initdb
+  shell: 'creates=/var/lib/pgsql/{{ dataverse.postgres.version }}/data/postgresql.conf /usr/pgsql-{{ dataverse.postgres.version }}/bin/postgresql{{ dataverse_pg_version_short }}-setup initdb'
   when: ansible_os_family == "RedHat" and
         ansible_distribution_major_version == "7"
 
 - name: install pg_hba.conf on RedHat / CentOS 7.
-  copy: src=pg_hba.conf dest=/var/lib/pgsql/data
-        owner=postgres group=postgres mode=0644
+  copy:
+    src: pg_hba.conf
+    dest: '/var/lib/pgsql/{{ dataverse.postgres.version }}/data'
+    owner: postgres
+    group: postgres
+    mode: 0644
   when: ansible_os_family == "RedHat" and
         ansible_distribution_major_version == "7"
 
 - name: enable postgres on RedHat / CentOS 7.
-  service: name=postgresql enabled=yes
+  service:
+    name: 'postgresql-{{ dataverse.postgres.version }}'
+    enabled: yes
   when: ansible_os_family == "RedHat" and
         ansible_distribution_major_version == "7"
 
 - name: start postgres on RedHat / CentOS 7.
-  service: name=postgresql state=started
+  service:
+    name: 'postgresql-{{ dataverse.postgres.version }}'
+    state: started
   when: ansible_os_family == "RedHat" and
         ansible_distribution_major_version == "7"
 

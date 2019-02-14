@@ -20,9 +20,9 @@
   yum:
     update_cache: yes
 
-- name: install java-1.8.0-openjdk and other packages for RedHat/CentOS.
+- name: install java-nnn-openjdk and other packages for RedHat/CentOS.
   yum:
-   name: ['bash-completion', 'elinks', 'git', 'java-1.8.0-openjdk-devel', 'jq', 'net-tools', 'perl', 'python-psycopg2', 'unzip']
+   name: ['bash-completion', 'elinks', 'git', 'java-{{ dataverse.java.version }}-openjdk-devel', 'jq', 'net-tools', 'perl', 'python-psycopg2', 'unzip']
    state: latest
   when: ansible_os_family == "RedHat" and
         ansible_distribution_major_version == "7"

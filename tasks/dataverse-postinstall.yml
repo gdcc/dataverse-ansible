@@ -7,8 +7,7 @@
 - name: stop glassfish manually (systemd gums up the works)
   become: yes
   become_user: "{{ dataverse.glassfish.user }}"
-  #shell: nohup {{ dataverse.glassfish.root }}/bin/asadmin stop-domain {{ dataverse.glassfish.domain }} || true
-  shell: '{{ dataverse.glassfish.root }}/bin/asadmin stop-domain {{ dataverse.glassfish.domain }}'
+  shell: '{{ glassfish_dir }}/bin/asadmin stop-domain {{ dataverse.glassfish.domain }}'
 
 - name: start glassfish with systemd
   service: name=glassfish state=started
@@ -30,7 +29,7 @@
 - name: suppress grizzly ajp warnings
   become: yes
   become_user: "{{ dataverse.glassfish.user }}"
-  shell: "{{ dataverse.glassfish.root }}/bin/asadmin set-log-levels org.glassfish.grizzly.http.server.util.RequestUtils=SEVERE"
+  shell: "{{ glassfish_dir }}/bin/asadmin set-log-levels org.glassfish.grizzly.http.server.util.RequestUtils=SEVERE"
 
 - name: override some default settings
   become: yes
