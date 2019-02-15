@@ -73,18 +73,25 @@
     method: PUT
     body: '{{ dataverse.usermgmtkey }}'
 
-- name: read sampleuser file list
+# let's do this in a create-user script to more easily capture API tokens
+- name: find scripts in user sampledata dir
   find:
-    path: "{{ dataverse.sampledata.sampleusers }}"
-    file_type: "file"
-  register: sampleusers_list
+    path: '{{ dataverse.sampledata.sampleusers }}'
+    file_type: 'file'
+    pattern: '*.sh'
+  register: sampleuserscript_list
 
-- name: create sample users 
-  uri:
-    url: 'http://localhost:8080/api/builtin-users?password=$pass&key={{ dataverse.usermgmtkey }}'
-    method: POST
-    headers:
-      Content-Type: "application/json"
-    src: '{{ item.path }}'
-    body_format: json
-  with_items: "{{ sampleusers_list.files }}"
+- name: run scripts in sampleuser dir
+  script: '{{ item.path }}'
+  with_items: '{{ sampleuserscript_list.files }}'
+  
+- name: read sampledatasets script list
+  find:
+    path: "{{ dataverse.sampledata.sampledatasets }}"
+    file_type: "file"
+    pattern: '*.sh'
+  register: sampledatasetscripts_list
+
+- name: run sampledatasets scripts
+  script: '{{ item.path }} {{ api_token }}'
+  with_items: '{{ sampledatasetscripts_list.files }}'
