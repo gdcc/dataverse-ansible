@@ -82,7 +82,9 @@
   register: sampleuserscript_list
 
 - name: run scripts in sampleuser dir
-  script: '{{ item.path }}'
+  script: '{{ item.path }} {{ dataverse.sampledata.sampleusers }}'
+  args:
+    chdir: '{{ dataverse.sampledata.sampleusers }}'
   with_items: '{{ sampleuserscript_list.files }}'
   
 - name: read sampledatasets script list
@@ -93,5 +95,7 @@
   register: sampledatasetscripts_list
 
 - name: run sampledatasets scripts
-  script: '{{ item.path }} {{ api_token }}'
+  script: '{{ item.path }} {{ api_token }} {{ dataverse.sampledata.sampledatasets }}'
+  args:
+    chdir: '{{ dataverse.sampledata.sampledatasets }}'
   with_items: '{{ sampledatasetscripts_list.files }}'
