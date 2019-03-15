@@ -2,7 +2,7 @@
 # dataverse/defaults/main.yml
 
 dataverse:
-  adminpass: notPr0d
+  adminpass: admin1
   allow_signups: true
   api:
     blocked_endpoints: "admin,test"
