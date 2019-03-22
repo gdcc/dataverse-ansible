@@ -72,7 +72,7 @@ dataverse:
     version: 7.3.1
   srcdir: /tmp/dataverse
   thumbnails: true
-  version: "4.10.1"
+  version: "4.11"
 rserve:
   host: rserve.yourinstitution.edu
   user: rserve
