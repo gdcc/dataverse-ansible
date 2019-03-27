@@ -2,6 +2,8 @@
 SERVER='http://localhost:8080/api'
 USERDIR='{{ dataverse.sampledata.sampleusers }}'
 
+echo "API token is $api_token"
+
 create () {
   pass=`cat $1 | jq .userName | tr -d \"`
   resp=$(curl -s -H "Content-type:application/json" -X POST -d @$1 "$SERVER/builtin-users?password=$pass&key=$api_token")
