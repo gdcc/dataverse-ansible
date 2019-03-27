@@ -38,7 +38,7 @@ dataverse:
     username: "testaccount"
     password: "notmypassword"
     protocol: doi
-    provider: DataCite
+    provider: FAKE
     shoulder: "FK2/"
   filesdir: /usr/local/dvn/data
   glassfish:
