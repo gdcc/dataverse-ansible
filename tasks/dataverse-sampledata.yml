@@ -39,16 +39,14 @@
     body: '{"assignee": ":authenticated-users","role": "fullContributor"}'
     body_format: json
 
-- name: place create-users script
-  template:
-    src: create-users.sh.j2
-    dest: /tmp/create-users.sh
-    mode: 0755
-
-- name: create users
-  script: /tmp/create-users.sh
-  #vars:
-  #  api_token: '{{ api_token }}'
+#- name: place create-users script
+#  template:
+#    src: create-users.sh.j2
+#    dest: /tmp/create-users.sh
+#    mode: 0755
+#
+#- name: create users
+#  script: '/tmp/create-users.sh {{ api_token }}'
 
 - name: read sampledataverse file list
   find:
