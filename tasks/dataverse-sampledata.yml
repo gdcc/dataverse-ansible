@@ -48,23 +48,6 @@
 #- name: create users
 #  script: '/tmp/create-users.sh {{ api_token }}'
 
-- name: read sampledataverse file list
-  find:
-    path: "{{ dataverse.sampledata.sampledataverses }}"
-    file_type: "file"
-  register: sampledataverses_list
-
-- name: import sample dataverses
-  uri:
-    url: 'http://localhost:8080/api/dataverses/1?key={{ api_token }}'
-    method: POST
-    headers:
-      Content-Type: "application/json"
-    src: '{{ item.path }}'
-    body_format: json
-    status_code: 201
-  with_items: "{{ sampledataverses_list.files }}"
-
 # users next because in phil's scripts the users create datasets
 - name: set user management quesadilla
   uri:
@@ -86,6 +69,23 @@
     chdir: '{{ dataverse.sampledata.sampleusers }}'
   with_items: '{{ sampleuserscript_list.files }}'
   
+- name: read sampledataverse file list
+  find:
+    path: "{{ dataverse.sampledata.sampledataverses }}"
+    file_type: "file"
+  register: sampledataverses_list
+
+- name: import sample dataverses
+  uri:
+    url: 'http://localhost:8080/api/dataverses/1?key={{ api_token }}'
+    method: POST
+    headers:
+      Content-Type: "application/json"
+    src: '{{ item.path }}'
+    body_format: json
+    status_code: 201
+  with_items: "{{ sampledataverses_list.files }}"
+
 - name: read sampledatasets script list
   find:
     path: "{{ dataverse.sampledata.sampledatasets }}"
