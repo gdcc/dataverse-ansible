@@ -60,7 +60,7 @@
   find:
     path: '{{ dataverse.sampledata.sampleusers }}'
     file_type: 'file'
-    pattern: '*.sh'
+    pattern: '*sh'
   register: sampleuserscript_list
 
 - name: run scripts in sampleuser dir
