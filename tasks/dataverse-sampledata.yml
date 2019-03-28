@@ -58,9 +58,9 @@
 # let's do this in a create-user script to more easily capture API tokens
 - name: find scripts in user sampledata dir
   find:
-    path: '{{ dataverse.sampledata.sampleusers }}'
-    file_type: 'file'
-    pattern: '*sh'
+    path: "{{ dataverse.sampledata.sampleusers }}"
+    file_type: "file"
+    pattern: '*.sh'
   register: sampleuserscript_list
 
 - name: run scripts in sampleuser dir
