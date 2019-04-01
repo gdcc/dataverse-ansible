@@ -55,7 +55,7 @@
     method: PUT
     body: '{{ dataverse.usermgmtkey }}'
 
-# let's do this in a create-user script to more easily capture API tokens
+# in theory this should find create-users.sh and any other script
 - name: find scripts in user sampledata dir
   find:
     path: "{{ dataverse.sampledata.sampleusers }}"
@@ -63,11 +63,14 @@
     pattern: '*.sh'
   register: sampleuserscript_list
 
+# but the above find command fails outside of vagrant(?!?)
+# so let's hard-code create-users.sh for now
 - name: run scripts in sampleuser dir
-  script: '{{ item.path }} {{ dataverse.sampledata.sampleusers }}'
+  #script: '{{ item.path }} {{ dataverse.sampledata.sampleusers }}'
+  script: '{{ dataverse.sampledata.sampleusers }}/create-users.sh {{ dataverse.sampledata.sampleusers }}'
   args:
     chdir: '{{ dataverse.sampledata.sampleusers }}'
-  with_items: '{{ sampleuserscript_list.files }}'
+  #with_items: '{{ sampleuserscript_list.files }}'
   
 - name: read sampledataverse file list
   find:
