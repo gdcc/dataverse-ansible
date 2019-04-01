@@ -6,30 +6,27 @@
     state: directory
     mode: 0755
 
-- name: create sample dataverse dir
+- name: create sampledataverse dir
   file:
     path: "{{ dataverse.sampledata.sampledataverses }}"
     state: directory
     mode: 0755
 
-- name: download default sampledataverses
-  get_url:
-    url: "{{ item.url }}"
-    dest: "{{ dataverse.sampledata.sampledataverses }}/{{ item.dest }}"
-  with_items:
-    - { url: 'https://raw.githubusercontent.com/IQSS/dataverse/develop/scripts/search/data/in/dataverses.root/2', dest: '00_birds' }
-    - { url: 'https://raw.githubusercontent.com/IQSS/dataverse/develop/scripts/search/data/in/dataverses.root/3', dest: '00_trees' }
-    - { url: 'https://raw.githubusercontent.com/IQSS/dataverse/develop/scripts/search/data/in/dataverses.birds/4', dest: '01_finches' }
-    - { url: 'https://raw.githubusercontent.com/IQSS/dataverse/develop/scripts/search/data/in/dataverses.birds/5', dest: '01_sparrows' }
-    - { url: 'https://raw.githubusercontent.com/IQSS/dataverse/develop/scripts/search/data/in/dataverses.birds/6', dest: '01_wrens' }
-    - { url: 'https://raw.githubusercontent.com/IQSS/dataverse/develop/scripts/search/data/in/dataverses.trees/7', dest: '01_spruce' }
-    - { url: 'https://raw.githubusercontent.com/IQSS/dataverse/develop/scripts/search/data/in/dataverses.trees/9', dest: '01_chestnut' }
+- name: copy default sampledataverses in place
+  synchronize:
+    src: tests/sampledata/dataverses/
+    dest: "{{ dataverse.sampledata.sampledataverses }}/"
 
-- name: create sampledataverse dir
+- name: create sampledatasets dir
   file:
     path: "{{ dataverse.sampledata.sampledatasets }}"
     state: directory
     mode: 0755
+
+- name: copy sampledatasets into place
+  synchronize:
+    src: tests/sampledata/datasets/
+    dest: "{{ dataverse.sampledata.sampledatasets }}/"
 
 - name: create sampleusers dir
   file:
