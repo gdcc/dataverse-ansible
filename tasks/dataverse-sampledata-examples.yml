@@ -39,5 +39,5 @@
 
 - name: copy phil's sample users into place
   synchronize:
-    src: files/sampleusers/
+    src: tests/sampledata/users/
     dest: "{{ dataverse.sampledata.sampleusers }}/"
