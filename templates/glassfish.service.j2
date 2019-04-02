@@ -9,7 +9,7 @@ ExecStart = /usr/bin/java -jar {{ glassfish_dir }}/glassfish/lib/client/appserve
 ExecStop = /usr/bin/java -jar {{ glassfish_dir }}/glassfish/lib/client/appserver-cli.jar stop-domain
 ExecReload = /usr/bin/java -jar {{ glassfish_dir }}/glassfish/lib/client/appserver-cli.jar restart-domain
 LimitNOFILE=65000
-DefaultTimeoutStartSec=180s
+TimeoutStartSec=180s
 
 [Install]
 WantedBy = multi-user.target
