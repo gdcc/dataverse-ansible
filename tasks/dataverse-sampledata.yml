@@ -1,0 +1,105 @@
+---
+
+- name: does the sampledata directory exist?
+  stat:
+    path: "{{ dataverse.sampledata.sampledir }}"
+  register: sampledir_exists
+
+- include: dataverse-sampledata-examples.yml
+  when: sampledir_exists.stat.exists == false
+
+- name: get initial admin API token
+  script: read_API_token.sh
+  register: api_token_output
+
+- name: set api_token fact
+  set_fact:
+    api_token: "{{ api_token_output.stdout | replace('\n', '') }}"
+    cacheable: true
+
+- name: print API token
+  debug:
+    msg: "initial API token is {{ api_token }}"
+    
+- name: publish root dataverse
+  shell: 'curl -s --insecure -u {{ api_token }}: -X POST -H "In-Progress: false" --data-binary @- http://localhost:8080/dvn/api/data-deposit/v1.1/swordv2/edit/dataverse/root'
+  ignore_errors: yes
+
+- name: get dv-root.json
+  get_url:
+    url: 'https://raw.githubusercontent.com/IQSS/dataverse/develop/scripts/api/data/dv-root.json'
+    dest: "{{ playbook_dir }}/"
+
+- name: grant authusers add-on-root
+  uri:
+    url: 'http://localhost:8080/api/dataverses/root/assignments?key={{ api_token }}'
+    method: POST
+    headers:
+      Content-Type: "application/json"
+    body: '{"assignee": ":authenticated-users","role": "fullContributor"}'
+    body_format: json
+
+# users next because in phil's scripts the users create datasets
+- name: set user management quesadilla
+  uri:
+    url: 'http://localhost:8080/api/admin/settings/BuiltinUsers.KEY'
+    method: PUT
+    body: '{{ dataverse.usermgmtkey }}'
+
+# in theory this should find create-users.sh and any other script
+- name: find scripts in user sampledata dir
+  find:
+    path: "{{ dataverse.sampledata.sampleusers }}"
+    file_type: "file"
+    pattern: '*.sh'
+  register: sampleuserscript_list
+
+# but the above find command fails outside of vagrant(?!?)
+# so let's hard-code create-users.sh for now
+- name: run scripts in sampleuser dir
+  script: '{{ dataverse.sampledata.sampleusers }}/create-users.sh {{ dataverse.sampledata.sampleusers }}'
+  args:
+    chdir: '{{ dataverse.sampledata.sampleusers }}'
+  
+- name: read sampledataverse file list
+  find:
+    path: "{{ dataverse.sampledata.sampledataverses }}"
+    file_type: "file"
+  register: sampledataverses_list
+
+- name: import sample dataverses
+  uri:
+    url: 'http://localhost:8080/api/dataverses/1?key={{ api_token }}'
+    method: POST
+    headers:
+      Content-Type: "application/json"
+    src: '{{ item.path }}'
+    body_format: json
+    status_code: 201
+  with_items: "{{ sampledataverses_list.files }}"
+
+- name: read sampledatasets script list
+  find:
+    path: "{{ dataverse.sampledata.sampledatasets }}"
+    file_type: "file"
+    pattern: '*.sh'
+  register: sampledatasetscripts_list
+
+- name: run sampledatasets scripts
+  script: '{{ item.path }} {{ api_token }} {{ dataverse.sampledata.sampledatasets }}'
+  args:
+    chdir: '{{ dataverse.sampledata.sampledatasets }}'
+  with_items: '{{ sampledatasetscripts_list.files }}'
+
+- name: read sampledatafile script list
+  find:
+    path: "{{ dataverse.sampledata.samplefiles }}"
+    file_type: "file"
+    pattern: '*.sh'
+  register: sampledatafilescripts_list
+
+- name: run sampledatafile scripts
+  script: '{{ item.path }} {{ api_token }} {{ dataverse.sampledata.samplefiles }}'
+  args:
+    chdir: '{{ dataverse.sampledata.samplefiles }}'
+  with_items: '{{ sampledatafilescripts_list.files }}'

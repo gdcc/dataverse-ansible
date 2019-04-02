@@ -1,0 +1,51 @@
+---
+
+- name: create sampledata dir
+  file:
+    path: "{{ dataverse.sampledata.sampledir }}"
+    state: directory
+    mode: 0755
+
+- name: create sampledataverse dir
+  file:
+    path: "{{ dataverse.sampledata.sampledataverses }}"
+    state: directory
+    mode: 0755
+
+- name: copy default sampledataverses in place
+  synchronize:
+    src: tests/sampledata/dataverses/
+    dest: "{{ dataverse.sampledata.sampledataverses }}/"
+
+- name: create sampledatasets dir
+  file:
+    path: "{{ dataverse.sampledata.sampledatasets }}"
+    state: directory
+    mode: 0755
+
+- name: copy sampledatasets into place
+  synchronize:
+    src: tests/sampledata/datasets/
+    dest: "{{ dataverse.sampledata.sampledatasets }}/"
+
+- name: create sampleusers dir
+  file:
+    path: "{{ dataverse.sampledata.sampleusers }}"
+    state: directory
+    mode: 0755
+
+- name: copy phil's sample users into place
+  synchronize:
+    src: tests/sampledata/users/
+    dest: "{{ dataverse.sampledata.sampleusers }}/"
+
+- name: create samplefiles dir
+  file:
+    path: "{{ dataverse.sampledata.samplefiles }}"
+    state: directory
+    mode: 0755
+
+- name: copy sample files into place
+  synchronize:
+    src: tests/sampledata/files/
+    dest: "{{ dataverse.sampledata.samplefiles }}/"

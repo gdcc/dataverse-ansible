@@ -38,7 +38,7 @@ dataverse:
     username: "testaccount"
     password: "notmypassword"
     protocol: doi
-    provider: DataCite
+    provider: FAKE
     shoulder: "FK2/"
   filesdir: /usr/local/dvn/data
   glassfish:
@@ -59,6 +59,13 @@ dataverse:
   postgres:
     reporpm: https://download.postgresql.org/pub/repos/yum/9.6/redhat/rhel-7-x86_64/pgdg-centos96-9.6-3.noarch.rpm
     version: 9.6
+  sampledata:
+    enabled: false
+    sampledir: "{{ playbook_dir }}/sampledata"
+    sampledatasets: "{{ playbook_dir }}/sampledata/datasets"
+    sampledataverses: "{{ playbook_dir }}/sampledata/dataverses"
+    sampleusers: "{{ playbook_dir }}/sampledata/users"
+    samplefiles: "{{ playbook_dir }}/sampledata/files"
   service_email: noreply@dataverse.yourinstitution.edu
   service_name: dataverse.yourinstitution.edu
   shibboleth:
@@ -72,6 +79,7 @@ dataverse:
     version: 7.3.1
   srcdir: /tmp/dataverse
   thumbnails: true
+  usermgmtkey: burrito
   version: "4.12"
 rserve:
   host: rserve.yourinstitution.edu
