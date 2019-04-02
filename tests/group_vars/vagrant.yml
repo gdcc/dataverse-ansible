@@ -60,7 +60,7 @@ dataverse:
     reporpm: https://download.postgresql.org/pub/repos/yum/9.6/redhat/rhel-7-x86_64/pgdg-centos96-9.6-3.noarch.rpm
     version: 9.6
   sampledata: 
-    enabled: true
+    enabled: false
     sampledir: "{{ playbook_dir }}/sampledata"
     sampledatasets: "{{ playbook_dir }}/sampledata/datasets"
     sampledataverses: "{{ playbook_dir }}/sampledata/dataverses"
