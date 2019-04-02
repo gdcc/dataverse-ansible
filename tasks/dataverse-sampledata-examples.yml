@@ -38,3 +38,14 @@
   synchronize:
     src: tests/sampledata/users/
     dest: "{{ dataverse.sampledata.sampleusers }}/"
+
+- name: create samplefiles dir
+  file:
+    path: "{{ dataverse.sampledata.samplefiles }}"
+    state: directory
+    mode: 0755
+
+- name: copy sample files into place
+  synchronize:
+    src: tests/sampledata/files/
+    dest: "{{ dataverse.sampledata.samplefiles }}/"
