@@ -2,7 +2,7 @@
 # dataverse/defaults/main.yml
 
 dataverse:
-  adminpass: notPr0d
+  adminpass: admin1
   allow_signups: true
   api:
     blocked_endpoints: "admin,test"
@@ -65,6 +65,7 @@ dataverse:
     sampledatasets: "{{ playbook_dir }}/sampledata/datasets"
     sampledataverses: "{{ playbook_dir }}/sampledata/dataverses"
     sampleusers: "{{ playbook_dir }}/sampledata/users"
+    samplefiles: "{{ playbook_dir }}/sampledata/files"
   service_email: noreply@dataverse.yourinstitution.edu
   service_name: dataverse.yourinstitution.edu
   shibboleth:

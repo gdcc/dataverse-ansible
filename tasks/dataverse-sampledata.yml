@@ -39,15 +39,6 @@
     body: '{"assignee": ":authenticated-users","role": "fullContributor"}'
     body_format: json
 
-#- name: place create-users script
-#  template:
-#    src: create-users.sh.j2
-#    dest: /tmp/create-users.sh
-#    mode: 0755
-#
-#- name: create users
-#  script: '/tmp/create-users.sh {{ api_token }}'
-
 # users next because in phil's scripts the users create datasets
 - name: set user management quesadilla
   uri:
@@ -66,11 +57,9 @@
 # but the above find command fails outside of vagrant(?!?)
 # so let's hard-code create-users.sh for now
 - name: run scripts in sampleuser dir
-  #script: '{{ item.path }} {{ dataverse.sampledata.sampleusers }}'
   script: '{{ dataverse.sampledata.sampleusers }}/create-users.sh {{ dataverse.sampledata.sampleusers }}'
   args:
     chdir: '{{ dataverse.sampledata.sampleusers }}'
-  #with_items: '{{ sampleuserscript_list.files }}'
   
 - name: read sampledataverse file list
   find:
@@ -101,3 +90,16 @@
   args:
     chdir: '{{ dataverse.sampledata.sampledatasets }}'
   with_items: '{{ sampledatasetscripts_list.files }}'
+
+- name: read sampledatafile script list
+  find:
+    path: "{{ dataverse.sampledata.samplefiles }}"
+    file_type: "file"
+    pattern: '*.sh'
+  register: sampledatafilescripts_list
+
+- name: run sampledatafile scripts
+  script: '{{ item.path }} {{ api_token }} {{ dataverse.sampledata.samplefiles }}'
+  args:
+    chdir: '{{ dataverse.sampledata.samplefiles }}'
+  with_items: '{{ sampledatafilescripts_list.files }}'
