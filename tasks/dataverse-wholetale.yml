@@ -1,0 +1,10 @@
+---
+
+- name: enable wholetale externaltool
+  uri:
+    url: http://localhost:8080/api/admin/externalTools
+    method: POST
+    headers: 
+      Content-type: "application/json"
+    body_format: json
+    body: "{{ lookup('file', 'wholetale.json') }}"

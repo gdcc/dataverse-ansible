@@ -1,0 +1,19 @@
+{
+  "displayName": "Whole Tale",
+  "description": "Analyze in Whole Tale",
+  "type": "explore",
+  "toolUrl": "https://data.wholetale.org/api/v1/integration/dataverse",
+  "toolParameters": {
+    "queryParameters": [
+      {
+        "fileId": "{fileId}"
+      },
+      {
+        "siteUrl": "{siteUrl}"
+      },
+      {
+        "key": "{apiToken}"
+      }
+    ]
+  }
+}

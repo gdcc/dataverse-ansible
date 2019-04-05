@@ -40,3 +40,7 @@
 - include: dataverse-previewers.yml
   when: dataverse.previewers.enabled == true
   tags: previewers
+
+- include: dataverse-wholetale.yml
+  when: dataverse.wholetale.enabled == true
+  tags: wholetale

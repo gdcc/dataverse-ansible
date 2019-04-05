@@ -80,6 +80,8 @@ dataverse:
   thumbnails: true
   usermgmtkey: burrito
   version: "4.12"
+  wholetale:
+    enabled: true
 
 rserve:
   host: rserve.yourinstitution.edu
