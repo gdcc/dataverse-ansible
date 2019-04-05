@@ -1,0 +1,5 @@
+---
+
+- name: enable dataverse-previewers
+  script: dataverse-previewers.sh
+  tags: previewers

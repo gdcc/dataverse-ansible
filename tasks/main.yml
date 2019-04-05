@@ -8,7 +8,7 @@
   tags: apache
 
 - include: dataverse-shibboleth.yml
-  when: dataverse.shibboleth.enabled == True
+  when: shibboleth.enabled == True
   tags: shibboleth
 
 - include: dataverse-postgres.yml
@@ -36,3 +36,7 @@
 - include: dataverse-counter.yml
   when: dataverse.counter.enabled == true
   tags: counter
+
+- include: dataverse-previewers.yml
+  when: dataverse.previewers.enabled == true
+  tags: previewers

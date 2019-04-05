@@ -1,4 +1,5 @@
 ---
+
 # dataverse/tasks/dataverse-postinstall.yml
 
 #- name: restart solr
@@ -43,7 +44,7 @@
     - { prop: ":DoiProvider", val: "{{ dataverse.doi.provider }}", desc: "DOI service provider (EZID or DataCite)"}
     - { prop: ":Authority", val: "{{ dataverse.doi.authority }}", desc: "DOI prefix"}
     - { prop: ":Shoulder,", val: "/", desc: "DOI shoulder. leave as slash (/)"}
-    - { prop: ":ShibEnabled", val: "{{ dataverse.shibboleth.enabled }}", desc: "enable/disable shibboleth" }
+    - { prop: ":ShibEnabled", val: "{{ shibboleth.enabled }}", desc: "enable/disable shibboleth" }
     - { prop: ":AllowSignUp", val: "{{ dataverse.allow_signups }}", desc: "don't allow self-signup"}
     - { prop: ":BlockedApiEndpoints", val: "admin,test", desc: "APIs that are controlled"}
     - { prop: ":BlockedApiPolicy", val: "localhost-only", desc: "control API access"}

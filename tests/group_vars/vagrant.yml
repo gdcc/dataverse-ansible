@@ -59,6 +59,8 @@ dataverse:
   postgres:
     reporpm: https://download.postgresql.org/pub/repos/yum/9.6/redhat/rhel-7-x86_64/pgdg-centos96-9.6-3.noarch.rpm
     version: 9.6
+  previewers:
+    enabled: true
   sampledata: 
     enabled: false
     sampledir: "{{ playbook_dir }}/sampledata"
@@ -68,9 +70,6 @@ dataverse:
     samplefiles: "{{ playbook_dir }}/sampledata/files"
   service_email: noreply@dataverse.yourinstitution.edu
   service_name: localhost
-  shibboleth:
-    enabled: false
-    repo: "http://download.opensuse.org/repositories/security:/shibboleth/CentOS_7/security:shibboleth.repo"
   smtp: localhost
   solr:
     group: solr
@@ -81,11 +80,19 @@ dataverse:
   thumbnails: true
   usermgmtkey: burrito
   version: "4.12"
+
+letsencrypt:
+  enabled: true
+
 rserve:
   host: localhost
   user: rserve
   pass: rserve
   port: 6311
+
+shibboleth:
+  enabled: false
+  repo: "http://download.opensuse.org/repositories/security:/shibboleth/CentOS_7/security:shibboleth.repo"
 
 # un-nesting the below so's we can pass them at the CLI
 
