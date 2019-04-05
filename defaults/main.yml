@@ -70,9 +70,6 @@ dataverse:
     samplefiles: "{{ playbook_dir }}/sampledata/files"
   service_email: noreply@dataverse.yourinstitution.edu
   service_name: dataverse.yourinstitution.edu
-  shibboleth:
-    enabled: false
-    repo: "http://download.opensuse.org/repositories/security:/shibboleth/CentOS_7/security:shibboleth.repo"
   smtp: localhost # or the FQDN of your organization's SMTP relay
   solr:
     group: solr
@@ -83,11 +80,16 @@ dataverse:
   thumbnails: true
   usermgmtkey: burrito
   version: "4.12"
+
 rserve:
   host: rserve.yourinstitution.edu
   user: rserve
   pass: rserve
   port: 6311
+
+shibboleth:
+  enabled: false
+  repo: "http://download.opensuse.org/repositories/security:/shibboleth/CentOS_7/security:shibboleth.repo"
 
 # un-nesting the below so's we can pass them at the CLI
 
