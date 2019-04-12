@@ -1,0 +1,22 @@
+- name: ansible tasks like variables, not group_vars
+  set_fact:
+    siteUrl: '{{ dataverse.glassfish.siteurl }}'
+
+- name: if siteUrl not passed, use fqdn. fix port in proxy branch.
+  set_fact:
+    siteUrl: '{{ ansible_fqdn }}\:8080'
+  when: siteUrl |length < 1
+
+- name: EC2 must use public_hostname
+  set_fact:
+    siteUrl: '{{ ansible_ec2_public_hostname }}:8080'
+  when: ansible_ec2_public_hostname is defined
+
+- name: debug siteurl
+  debug:
+    msg: "siteurl is {{ siteUrl }}"
+
+- name: set siteurl
+  become: yes
+  become_user: "{{ dataverse.glassfish.user }}"
+  shell: '{{ glassfish_dir}}/bin/asadmin create-jvm-options "-Ddataverse.siteUrl={{ siteUrl }}"'
