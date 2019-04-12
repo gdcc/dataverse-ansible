@@ -2,9 +2,9 @@
   set_fact:
     siteUrl: '{{ dataverse.glassfish.siteurl }}'
 
-- name: if siteUrl not passed, use fqdn. fix port in proxy branch.
+- name: if siteUrl not passed, use fqdn. fix protocol and port in proxy branch.
   set_fact:
-    siteUrl: '{{ ansible_fqdn }}\:8080'
+    siteUrl: 'http://{{ ansible_fqdn }}\:8080'
   when: siteUrl |length < 1
 
 - name: are we in EC2?
@@ -24,7 +24,13 @@
 
 - name: if we're in EC2, set public hostname
   set_fact:
-    siteUrl: "{{ ec2_output.stdout }}"
+    public_hostname: "{{ ec2_output.stdout }}"
+  when: is_aws_environment
+
+- name: now correct siteUrl
+  set_fact:
+    siteUrl: 'http://{{ public_hostname}}:8080'
+  when: is_aws_environment
 
 - name: debug siteurl
   debug:
