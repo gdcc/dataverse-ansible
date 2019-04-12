@@ -19,8 +19,12 @@
 
 - name: if we're in EC2, get public hostname
   shell: 'curl http://169.254.169.254/latest/meta-data/public-hostname'
-  register: siteUrl
+  register: ec2_output
   when: is_aws_environment
+
+- name: if we're in EC2, set public hostname
+  set_fact:
+    siteUrl: "{{ ec2_output.stdout }}"
 
 - name: debug siteurl
   debug:
