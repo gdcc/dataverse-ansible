@@ -4,7 +4,7 @@
 
 - name: if siteUrl not passed, use fqdn. fix protocol and port in proxy branch.
   set_fact:
-    siteUrl: 'http://{{ ansible_fqdn }}\:8080'
+    siteUrl: 'http\://{{ ansible_fqdn }}\:8080'
   when: siteUrl |length < 1
 
 - name: are we in EC2?
@@ -29,7 +29,7 @@
 
 - name: now correct siteUrl
   set_fact:
-    siteUrl: 'http://{{ public_hostname}}:8080'
+    siteUrl: 'http\://{{ public_hostname}}\:8080'
   when: is_aws_environment
 
 - name: debug siteurl
