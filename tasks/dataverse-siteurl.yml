@@ -17,7 +17,7 @@
 - set_fact:
   is_aws_environment: "{{ aws_uri_check.status == 200 }}"
 
-- if we're in EC2, get public hostname
+- name: if we're in EC2, get public hostname
   uri:
     url: http://169.254.169.254/latest/meta-data/public-hostname
   register: siteUrl
