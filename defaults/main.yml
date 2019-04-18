@@ -1,6 +1,14 @@
 ---
 # dataverse/defaults/main.yml
 
+apache:
+  ssl:
+    enabled: false
+    cert: 
+    interm: 
+    key: 
+    use_letsencrypt: false
+
 dataverse:
   adminpass: admin1
   allow_signups: true
@@ -70,7 +78,6 @@ dataverse:
     sampleusers: "{{ playbook_dir }}/sampledata/users"
     samplefiles: "{{ playbook_dir }}/sampledata/files"
   service_email: noreply@dataverse.yourinstitution.edu
-  service_name: dataverse.yourinstitution.edu
   smtp: localhost # or the FQDN of your organization's SMTP relay
   solr:
     group: solr

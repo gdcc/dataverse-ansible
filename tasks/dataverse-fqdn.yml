@@ -5,7 +5,7 @@
 - name: unless ssl is enabled
   set_fact:
     protocol: https
-  when: apache.ssl.enabled == true
+  when: apache.ssl.enabled == True
 
 - name: ansible tasks like variables, not group_vars
   set_fact:

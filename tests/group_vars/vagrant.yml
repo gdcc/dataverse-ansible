@@ -4,9 +4,9 @@
 apache:
   ssl:
     enabled: false
-    cert:
-    intermediate:
-    key:
+    cert: 
+    interm: 
+    key: 
     use_letsencrypt: false
 
 dataverse:
@@ -78,8 +78,6 @@ dataverse:
     sampleusers: "{{ playbook_dir }}/sampledata/users"
     samplefiles: "{{ playbook_dir }}/sampledata/files"
   service_email: noreply@dataverse.yourinstitution.edu
-  # set this in siteurl task now
-  #service_name: localhost
   smtp: localhost
   solr:
     group: solr

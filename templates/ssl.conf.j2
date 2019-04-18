@@ -9,16 +9,17 @@ SSLCryptoDevice builtin
 
 <VirtualHost _default_:443>
 
-  ServerName {{ dataverse.service_name }}:443
+  ServerName {{ servername }}:443
   ErrorLog logs/ssl_error_log
   TransferLog logs/ssl_access_log
   LogLevel warn
 
   SSLEngine on
   SSLProtocol all -SSLv2
-  SSLCipherSuite HIGH:MEDIUM:!aNULL:!MD5
-  SSLCertificateFile /etc/pki/tls/certs/localhost.crt
-  SSLCertificateKeyFile /etc/pki/tls/private/localhost.key
+  SSLCipherSuite HIGH:MEDIUM:!aNULL:!MD5:!RC4:!DES:!3DES:!DSS
+  SSLCertificateFile /etc/pki/tls/certs/{{ apache.ssl.cert }}
+  SSLCertificateKeyFile /etc/pki/tls/private/{{ apache.ssl.key }}
+  SSLCertificateChainFile /etc/pki/tls/certs/{{ apache.ssl.interm }}
 
   <Files ~ "\.(cgi|shtml|phtml|php3?)$">
     SSLOptions +StdEnvVars
@@ -51,4 +52,3 @@ SSLCryptoDevice builtin
   </Location>
 
 </VirtualHost>                                  
-
