@@ -4,6 +4,9 @@
 - include: dataverse-prereqs.yml
   tags: prereqs
 
+- include: dataverse-fqdn.yml
+  tags: prereqs
+
 - include: dataverse-apache.yml
   tags: apache
 

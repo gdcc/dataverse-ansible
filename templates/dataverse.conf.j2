@@ -1,0 +1,9 @@
+<VirtualHost *:80>
+
+  ServerName '{{ servername }}'
+
+  # for DDI Explorer
+  Header set Access-Control-Allow-Origin "*"
+
+  ProxyPass / ajp://localhost:8009/
+</VirtualHost>

@@ -35,7 +35,7 @@
   become: yes
   become_user: "{{ dataverse.glassfish.user }}"
   environment:
-    HOST_ADDRESS: "{{ dataverse.service_name }}"
+    HOST_ADDRESS: "{{ servername }}"
     GLASSFISH_ROOT: "{{ glassfish_dir }}"
     GLASSFISH_DOMAIN: "{{ dataverse.glassfish.domain }}"
     FILES_DIR: "{{ dataverse.filesdir }}"
@@ -59,9 +59,6 @@
   become_user: "{{ dataverse.glassfish.user }}"
   shell: "{{ glassfish_dir }}/bin/asadmin set-log-file-format {{ dataverse.glassfish.logformat }}"
 
-- name: determine and set siteUrl
-  include: dataverse-siteurl.yml
-  
 - name: deploy dataverse.war
   become: yes
   become_user: "{{ dataverse.glassfish.user }}"

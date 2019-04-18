@@ -1,6 +1,14 @@
 ---
 # dataverse/tests/group_vars/vagrant.yml
 
+apache:
+  ssl:
+    enabled: false
+    cert:
+    intermediate:
+    key:
+    use_letsencrypt: false
+
 dataverse:
   adminpass: admin1
   allow_signups: true
@@ -70,7 +78,8 @@ dataverse:
     sampleusers: "{{ playbook_dir }}/sampledata/users"
     samplefiles: "{{ playbook_dir }}/sampledata/files"
   service_email: noreply@dataverse.yourinstitution.edu
-  service_name: localhost
+  # set this in siteurl task now
+  #service_name: localhost
   smtp: localhost
   solr:
     group: solr
@@ -80,12 +89,9 @@ dataverse:
   srcdir: /tmp/dataverse
   thumbnails: true
   usermgmtkey: burrito
-  version: "4.12"
+  version: 4.12
   wholetale:
     enabled: true
-
-letsencrypt:
-  enabled: true
 
 rserve:
   host: localhost

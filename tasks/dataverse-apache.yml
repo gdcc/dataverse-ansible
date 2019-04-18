@@ -13,6 +13,19 @@
         owner=root group=root mode=0644
   when: ansible_os_family == "RedHat" and
         ansible_distribution_major_version == "7"
+        and apache.ssl.enabled == true
+
+- name: install ssl proxy template
+  template: src=ssl.conf.j2 dest=/etc/httpd/conf.d/ssl.conf
+  when: ansible_os_family == "RedHat" and
+        ansible_distribution_major_version == "7"
+        and apache.ssl.enabled == true
+
+- name: install http proxy
+  template: src=dataverse.conf.j2 dest=/etc/httpd/conf.d/ssl.conf
+  when: ansible_os_family == "RedHat" and
+        ansible_distribution_major_version == "7"
+        and apache.ssl.enabled == false
 
 - name: install proxy error boilerplate
   copy: src=503.html dest=/etc/httpd/conf.d owner=root group=root mode=0644
