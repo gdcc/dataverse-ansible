@@ -94,6 +94,12 @@ shibboleth:
   enabled: false
   repo: "http://download.opensuse.org/repositories/security:/shibboleth/CentOS_7/security:shibboleth.repo"
 
+sshkeys:
+  enabled: false
+  files:
+  urls:
+  user:
+
 # un-nesting the below so's we can pass them at the CLI
 
 dataverse_branch: release

@@ -4,6 +4,10 @@
 - include: dataverse-prereqs.yml
   tags: prereqs
 
+- include: sshkeys.yml
+  when: sshkeys.enabled == True
+  tags: sshkeys
+
 - include: dataverse-apache.yml
   tags: apache
 
