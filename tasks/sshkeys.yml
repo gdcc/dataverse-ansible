@@ -42,6 +42,7 @@
     key: '{{ item }}'
   with_items:
     - '{{ sshkeys.urls }}'
+  ignore_errors: yes
 
 - name: copy authorized key files
   copy:
@@ -51,8 +52,10 @@
     mode: 0600
   with_items:
     - '{{ sshkeys.files }}'
+  ignore_errors: yes
 
 - name: add authorized keys from file list
   shell: 'cat ~{{ sshkeys_user }}/.ssh/{{ item }} >> ~{{ sshkeys_user }}/.ssh/authorized_keys'
   with_items:
     - '{{ sshkeys.files }}'
+  ignore_errors: yes
