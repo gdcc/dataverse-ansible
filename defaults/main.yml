@@ -7,7 +7,17 @@ apache:
     cert: 
     interm: 
     key: 
-    use_letsencrypt: false
+    pem:
+      cert: 
+      key: 
+      interm: 
+
+letsencrypt:
+  enabled: false
+  certbot:
+    autorenew: true
+    email:
+    user: certbot
 
 dataverse:
   adminpass: admin1

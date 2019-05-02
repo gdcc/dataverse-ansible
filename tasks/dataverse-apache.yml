@@ -12,6 +12,13 @@
   when: ansible_os_family == "RedHat" and
         ansible_distribution_major_version == "7"
         and apache.ssl.enabled == true
+        and letsencrypt.enabled == false
+
+- include: certbot.yml
+  when: ansible_os_family == "RedHat" and
+        ansible_distribution_major_version == "7"
+        and apache.ssl.enabled == true
+        and letsencrypt.enabled == true
 
 - name: install http proxy
   template: src=dataverse.conf.j2 dest=/etc/httpd/conf.d/ssl.conf

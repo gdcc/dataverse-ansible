@@ -1,0 +1,40 @@
+---
+
+- name: set cert filenames
+  set_fact:
+    apache_ssl_cert: '{{ servername }}.crt'
+    apache_ssl_key: '{{ servername }}.key'
+    apache_ssl_interm: '{{ servername }}_interm.crt'
+
+- name: touch cert
+  file:
+    path: '/etc/pki/tls/certs/{{ apache_ssl_cert }}'
+    state: touch
+    owner: root
+    group: root
+    mode: 0644
+
+- name: write cert
+  local_action: copy content={{ apache.ssl.pem.cert }} dest=/etc/pki/tls/certs/{{ apache_ssl_cert }}
+
+- name: touch key
+  file:
+    path: '/etc/pki/tls/private/{{ apache_ssl_key }}'
+    state: touch
+    owner: root
+    group: root
+    mode: 0600
+
+- name: write key
+  local_action: copy content={{ apache.ssl.pem.key }} dest=/etc/pki/tls/private/{{ apache_ssl_key }}
+
+- name: touch intermediate
+  file:
+    path: /etc/pki/tls/certs/{{ apache_ssl_interm }}'
+    state: touch
+    owner: root
+    group: root
+    mode: 0644
+
+- name: write intermediate
+  local_action: copy content={{ apache.ssl.pem.interm }} dest=/etc/pki/tls/certs/{{ apache_ssl_interm }}

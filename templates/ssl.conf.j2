@@ -17,9 +17,9 @@ SSLCryptoDevice builtin
   SSLEngine on
   SSLProtocol all -SSLv2
   SSLCipherSuite HIGH:MEDIUM:!aNULL:!MD5:!RC4:!DES:!3DES:!DSS
-  SSLCertificateFile /etc/pki/tls/certs/{{ apache.ssl.cert }}
-  SSLCertificateKeyFile /etc/pki/tls/private/{{ apache.ssl.key }}
-  SSLCertificateChainFile /etc/pki/tls/certs/{{ apache.ssl.interm }}
+  SSLCertificateFile /etc/pki/tls/certs/{{ apache_ssl_cert }}
+  SSLCertificateKeyFile /etc/pki/tls/private/{{ apache_ssl_key }}
+  SSLCertificateChainFile /etc/pki/tls/certs/{{ apache_ssl_interm }}
 
   <Files ~ "\.(cgi|shtml|phtml|php3?)$">
     SSLOptions +StdEnvVars
@@ -45,10 +45,10 @@ SSLCryptoDevice builtin
   # pass everything else to Glassfish
   ProxyPass / ajp://localhost:8009/
 
-  <Location /shib.xhtml>
-    AuthType shibboleth
-    ShibRequestSetting requireSession 1
-    require valid-user
-  </Location>
+#  <Location /shib.xhtml>
+#    AuthType shibboleth
+#    ShibRequestSetting requireSession 1
+#    require valid-user
+#  </Location>
 
 </VirtualHost>                                  
