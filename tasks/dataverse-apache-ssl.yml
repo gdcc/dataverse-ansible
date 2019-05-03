@@ -1,0 +1,60 @@
+---
+- name: are pems passed as group_vars?
+  set_fact:
+    use_pems: True
+  when: apache.ssl.pem.cert
+
+- include: dataverse-apache-ssl-pems.yml
+  when: use_pems
+
+- name: if we're not using pems, set filenames
+  set_fact:
+    apache_ssl_cert: '{{ apache.ssl.cert }}'
+    apache_ssl_key: '{{ apache.ssl.key }}'
+    apache_ssl_interm: '{{ apache.ssl.interm }}'
+  when: use_pems == False
+
+- name: copy ssl cert
+  copy:
+    src: '{{ apache.ssl.cert }}'
+    dest: '/etc/pki/tls/certs/{{ apache.ssl.cert }}'
+    owner: root
+    group: root
+    mode: 0644
+  when: ansible_os_family == "RedHat" and
+        ansible_distribution_major_version == "7" and
+        use_pems == False
+
+- name: copy ssl chain
+  copy:
+    src: '{{ apache.ssl.interm }}'
+    dest: '/etc/pki/tls/certs/{{ apache.ssl.interm }}'
+    owner: root
+    group: root
+    mode: 0644
+  when: ansible_os_family == "RedHat" and
+        ansible_distribution_major_version == "7" and
+        use_pems == False
+
+- name: copy ssl key
+  copy:
+    src: '{{ apache.ssl.key }}'
+    dest: '/etc/pki/tls/private/{{ apache.ssl.key }}'
+    owner: root
+    group: root
+    mode: 0400
+  when: ansible_os_family == "RedHat" and
+        ansible_distribution_major_version == "7" and
+        use_pems == False
+
+- name: install http redirect template
+  template: src=http.redirect.conf.j2 dest=/etc/httpd/conf.d/http.redirect.conf
+        owner=root group=root mode=0644
+  when: ansible_os_family == "RedHat" and
+        ansible_distribution_major_version == "7"
+
+- name: install ssl proxy template
+  template: src=ssl.conf.j2 dest=/etc/httpd/conf.d/ssl.conf
+  when: ansible_os_family == "RedHat" and
+        ansible_distribution_major_version == "7"
+

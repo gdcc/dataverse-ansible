@@ -1,10 +1,19 @@
+- name: default to http
+  set_fact:
+    protocol: http
+
+- name: unless ssl is enabled
+  set_fact:
+    protocol: https
+  when: apache.ssl.enabled == True
+
 - name: ansible tasks like variables, not group_vars
   set_fact:
     siteUrl: '{{ dataverse.glassfish.siteurl }}'
 
-- name: if siteUrl not passed, use fqdn. fix protocol and port in proxy branch.
+- name: if siteUrl not passed, use fqdn.
   set_fact:
-    siteUrl: 'http\://{{ ansible_fqdn }}\:8080'
+    siteUrl: '{{ protocol }}\://{{ ansible_fqdn }}'
   when: siteUrl |length < 1
 
 - name: are we in EC2?
@@ -29,14 +38,13 @@
 
 - name: now correct siteUrl
   set_fact:
-    siteUrl: 'http\://{{ public_hostname}}\:8080'
+    siteUrl: '{{ protocol }}\://{{ public_hostname}}'
   when: is_aws_environment
 
 - name: debug siteurl
   debug:
     msg: "siteurl is {{ siteUrl }}"
 
-- name: set siteurl
-  become: yes
-  become_user: "{{ dataverse.glassfish.user }}"
-  shell: '{{ glassfish_dir}}/bin/asadmin create-jvm-options "-Ddataverse.siteUrl={{ siteUrl }}"'
+- name: strip siteurl for servername directives
+  set_fact:
+    servername: "{{ siteUrl | regex_replace('[A-z]*://', '') }}"

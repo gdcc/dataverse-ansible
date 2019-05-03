@@ -1,0 +1,31 @@
+---
+
+- name: create certbot user
+  user:
+    name: '{{ letsencrypt.certbot.user }}'
+
+- name: install certbot package
+  yum:
+    name: certbot
+    state: latest
+
+- name: check if certificate already exists
+  stat:
+    path: /etc/letsencrypt/live/{{ servername }}/cert.pem
+  register: letsencrypt_cert
+
+- name: stop services to allow certbot to generate a cert
+  service:
+    name: httpd
+    state: stopped
+  when: not letsencrypt_cert.stat.exists
+
+- name: Generate new certificate if one doesn't exist.
+  command: 'certbot certonly --standalone --noninteractive --agree-tos --email {{ letsencrypt.certbot.email }} -d {{ servername }}'
+  when: not letsencrypt_cert.stat.exists
+
+- name: start services after cert has been generated
+  service:
+    name: httpd
+    state: started
+  when: not letsencrypt_cert.stat.exists
