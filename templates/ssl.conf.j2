@@ -16,7 +16,7 @@ SSLCryptoDevice builtin
 
   SSLEngine on
   SSLProtocol all -SSLv2
-  SSLCipherSuite HIGH:MEDIUM:!aNULL:!MD5:!RC4:!DES:!3DES:!DSS
+  SSLCipherSuite HIGH:MEDIUM:!aNULL:!MD5
   SSLCertificateFile /etc/pki/tls/certs/{{ apache_ssl_cert }}
   SSLCertificateKeyFile /etc/pki/tls/private/{{ apache_ssl_key }}
   SSLCertificateChainFile /etc/pki/tls/certs/{{ apache_ssl_interm }}
