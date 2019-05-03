@@ -22,8 +22,22 @@
   when: ansible_os_family == "RedHat" and
         ansible_distribution_major_version == "7"
 
+- name: set postgresql init command
+  set_fact:
+    postgres_init: 'creates=/var/lib/pgsql/{{ dataverse.postgres.version }}/data/postgresql.conf /usr/pgsql-{{ dataverse.postgres.version }}/bin/postgresql{{ dataverse_pg_version_short }}-setup initdb'
+  when: ansible_os_family == "RedHat" and
+        ansible_distribution_major_version == "7"
+
+- name: init command needs a dash on postgres 10+
+  set_fact:
+    postgres_init: 'creates=/var/lib/pgsql/{{ dataverse.postgres.version }}/data/postgresql.conf /usr/pgsql-{{ dataverse.postgres.version }}/bin/postgresql-{{ dataverse_pg_version_short }}-setup initdb'
+  when: >
+    dataverse_pg_version_short is search("1[0-9]") and
+    ansible_os_family == "RedHat" and
+    ansible_distribution_major_version == "7"
+
 - name: init postgres on RedHat / CentOS 7.
-  shell: 'creates=/var/lib/pgsql/{{ dataverse.postgres.version }}/data/postgresql.conf /usr/pgsql-{{ dataverse.postgres.version }}/bin/postgresql{{ dataverse_pg_version_short }}-setup initdb'
+  shell: '{{ postgres_init }}'
   when: ansible_os_family == "RedHat" and
         ansible_distribution_major_version == "7"
 

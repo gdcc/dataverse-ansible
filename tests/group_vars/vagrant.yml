@@ -58,7 +58,7 @@ dataverse:
     version: 1.8.0
   memheap: 1024
   postgres:
-    reporpm: https://download.postgresql.org/pub/repos/yum/9.6/redhat/rhel-7-x86_64/pgdg-centos96-9.6-3.noarch.rpm
+    reporpm: https://download.postgresql.org/pub/repos/yum/reporpms/EL-7-x86_64/pgdg-redhat-repo-latest.noarch.rpm
     version: 9.6
   previewers:
     enabled: true
