@@ -1,0 +1,61 @@
+---
+
+- name: user specified?
+  set_fact: sshkeys_user='{{ sshkeys.user }}'
+
+# TODO: break this off into ec2.yml
+- name: are we in EC2?
+  uri:
+    url: http://169.254.169.254/latest/meta-data/
+    timeout: 2
+  register: aws_uri_check
+  failed_when: False
+
+- set_fact:
+    is_aws_environment: "{{ aws_uri_check.status == 200 }}"
+
+- name: if we're in EC2, default to centos user
+  set_fact: sshkeys_user='{{ sshkeys.user }}'
+  when: is_aws_environment and
+        sshkeys_user | length < 1
+
+- name: default to ansible user
+  set_fact: sshkeys_user='{{ ansible_ssh_user }}'
+  when: sshkeys_user | length < 1
+
+- name: ensure ssh directory exists
+  file:
+    path: '~{{ sshkeys_user }}/.ssh'
+    owner: '{{ sshkeys_user }}'
+    mode: 0700
+
+- name: now authorized_keys
+  file:
+    path: '~{{ sshkeys_user }}/.ssh/authorized_keys'
+    owner: '{{ sshkeys_user }}'
+    mode: 0600
+
+- name: set authorized keys from url list
+  authorized_key:
+    user: '{{ sshkeys_user }}'
+    state: present
+    key: '{{ item }}'
+  with_items:
+    - '{{ sshkeys.urls }}'
+  ignore_errors: yes
+
+- name: copy authorized key files
+  copy:
+    src: '{{ item }}'
+    dest: '~{{ sshkeys_user }}/.ssh/{{ item }}'
+    owner: '{{ sshkeys_user }}'
+    mode: 0600
+  with_items:
+    - '{{ sshkeys.files }}'
+  ignore_errors: yes
+
+- name: add authorized keys from file list
+  shell: 'cat ~{{ sshkeys_user }}/.ssh/{{ item }} >> ~{{ sshkeys_user }}/.ssh/authorized_keys'
+  with_items:
+    - '{{ sshkeys.files }}'
+  ignore_errors: yes
