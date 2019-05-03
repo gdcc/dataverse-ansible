@@ -67,7 +67,7 @@ dataverse:
     adminuser: admin
     adminpass: notPr0d
     timeout: 180
-    siteurl: http\://irss-dls-buildbox.irss.unc.edu
+    siteurl: 
     root: /usr/local
     dir: glassfish4 # change this for payara, etc.
     zipurl: http://dlc-cdn.sun.com/glassfish/4.1/release/glassfish-4.1.zip
