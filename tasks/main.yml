@@ -51,3 +51,7 @@
 - include: dataverse-wholetale.yml
   when: dataverse.wholetale.enabled == true
   tags: wholetale
+
+- include: dataverse-api-testsuite.yml
+  when: dataverse.api.test_suite == true
+  tags: test_suite

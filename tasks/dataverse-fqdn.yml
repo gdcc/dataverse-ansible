@@ -39,7 +39,6 @@
 - name: now correct siteUrl
   set_fact:
     siteUrl: '{{ protocol }}\://{{ public_hostname}}'
-    siteUrl: 'http://{{ public_hostname}}:8080'
   when: is_aws_environment
 
 - name: escape colons in siteurl
