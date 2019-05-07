@@ -1,0 +1,14 @@
+---
+
+- name: get initial admin API token
+  script: read_API_token.sh
+  register: api_token_output
+
+- name: set api_token fact
+  set_fact:
+    api_token: "{{ api_token_output.stdout | replace('\n', '') }}"
+    cacheable: true
+
+- name: print API token
+  debug:
+    msg: "initial API token is {{ api_token }}"

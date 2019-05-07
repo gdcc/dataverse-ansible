@@ -32,7 +32,19 @@
     dest: '{{ dataverse.srcdir }}/run-test-suite.sh'
     mode: 0755
 
+- name: set user management quesadilla
+  uri:
+    url: 'http://localhost:8080/api/admin/settings/BuiltinUsers.KEY'
+    method: PUT
+    body: '{{ dataverse.usermgmtkey }}'
+
+- include: dataverse-apitoken.yml
+
 - name: run test suite
   shell: '{{ dataverse.srcdir }}/run-test-suite.sh {{ siteUrl }}'
   args:
     chdir: '{{ dataverse.srcdir }}'
+  environment:
+    DVAPIKEY: '{{ dataverse.usermgmtkey }}'
+    DV_APIKEY: '{{ dataverse.usermgmtkey }}'
+    DV_API_KEY: '{{ dataverse.usermgmtkey }}'
