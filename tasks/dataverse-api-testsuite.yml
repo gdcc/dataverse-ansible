@@ -1,0 +1,51 @@
+---
+
+- name: install maven if it isn't already
+  yum:
+    name: maven
+    state: latest
+
+- name: did we build a branch already?
+  stat:
+    path: '{{ dataverse.srcdir }}'
+  register: branch
+
+- name: if we're not in a branch, grab release source
+  get_url:
+    url: 'https://github.com/IQSS/dataverse/archive/v{{ dataverse.version }}.tar.gz'
+    dest: '/tmp'
+  when: branch.stat.exists == false
+
+- name: unarchive won't create directories for us
+  file:
+    path: '{{ dataverse.srcdir }}'
+    state: directory
+  when: branch.stat.exists == false
+
+- name: unpack, strip root directory
+  shell: 'bsdtar --strip-components=1 -C {{ dataverse.srcdir }} -xvf /tmp/dataverse-{{ dataverse.version }}.tar.gz'
+  when: branch.stat.exists == false
+
+- name: grab latest copy of run-test-suite.sh
+  get_url:
+    url: https://raw.githubusercontent.com/IQSS/dataverse/develop/conf/docker-aio/run-test-suite.sh
+    dest: '{{ dataverse.srcdir }}/run-test-suite.sh'
+    mode: 0755
+
+- name: set user management quesadilla
+  uri:
+    url: 'http://localhost:8080/api/admin/settings/BuiltinUsers.KEY'
+    method: PUT
+    body: '{{ dataverse.usermgmtkey }}'
+
+- include: dataverse-apitoken.yml
+
+- name: run test suite
+  shell: '{{ dataverse.srcdir }}/run-test-suite.sh {{ siteUrl }}'
+  args:
+    chdir: '{{ dataverse.srcdir }}'
+  environment:
+    DVAPIKEY: '{{ dataverse.usermgmtkey }}'
+    DV_APIKEY: '{{ dataverse.usermgmtkey }}'
+    DV_API_KEY: '{{ dataverse.usermgmtkey }}'
+  ignore_errors: yes

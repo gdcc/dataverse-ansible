@@ -8,18 +8,7 @@
 - include: dataverse-sampledata-examples.yml
   when: sampledir_exists.stat.exists == false
 
-- name: get initial admin API token
-  script: read_API_token.sh
-  register: api_token_output
-
-- name: set api_token fact
-  set_fact:
-    api_token: "{{ api_token_output.stdout | replace('\n', '') }}"
-    cacheable: true
-
-- name: print API token
-  debug:
-    msg: "initial API token is {{ api_token }}"
+- include: dataverse-apitoken.yml
     
 - name: publish root dataverse
   shell: 'curl -s --insecure -u {{ api_token }}: -X POST -H "In-Progress: false" --data-binary @- http://localhost:8080/dvn/api/data-deposit/v1.1/swordv2/edit/dataverse/root'

@@ -5,7 +5,7 @@
 - name: set siteurl
   become: yes
   become_user: "{{ dataverse.glassfish.user }}"
-  shell: '{{ glassfish_dir}}/bin/asadmin create-jvm-options "-Ddataverse.siteUrl={{ siteUrl }}"'
+  shell: '{{ glassfish_dir}}/bin/asadmin create-jvm-options "-Ddataverse.siteUrl={{ siteUrl_escaped }}"'
 
 - name: stop glassfish manually (systemd gums up the works)
   become: yes
