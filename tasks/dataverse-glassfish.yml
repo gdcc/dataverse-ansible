@@ -37,18 +37,34 @@
         owner={{ dataverse.glassfish.user }} group={{ dataverse.glassfish.group }}
 
 - name: remove old weld jar
-  file: name={{ glassfish_dir }}/glassfish/modules/weld-osgi-bundle.jar state=absent
+  file:
+    name: '{{ glassfish_dir }}/glassfish/modules/weld-osgi-bundle.jar'
+    state: absent
+  when: dataverse.glassfish.zipurl is match(*glassfish-4*)
 
 - name: get patched weld jar
-  get_url: url=http://central.maven.org/maven2/org/jboss/weld/weld-osgi-bundle/2.2.10.SP1/weld-osgi-bundle-2.2.10.SP1-glassfish4.jar
-        dest={{ glassfish_dir }}/glassfish/modules owner=root group=root mode=0644
+  get_url:
+    url: http://central.maven.org/maven2/org/jboss/weld/weld-osgi-bundle/2.2.10.SP1/weld-osgi-bundle-2.2.10.SP1-glassfish4.jar
+    dest: '{{ glassfish_dir }}/glassfish/modules'
+    owner: root
+    group: root
+    mode: 0644
+  when: dataverse.glassfish.zipurl is match(*glassfish-4*)
 
 - name: remove old grizzly jar
-  file: name={{ glassfish_dir }}/glassfish/modules/glassfish-grizzly-extra-all.jar state=absent
+  file:
+    name: '{{ glassfish_dir }}/glassfish/modules/glassfish-grizzly-extra-all.jar'
+    state: absent
+  when: dataverse.glassfish.zipurl is match(*glassfish-4*)
 
 - name: get patched grizzly jar
-  get_url: url=http://guides.dataverse.org/en/latest/_static/installation/files/issues/2180/grizzly-patch/glassfish-grizzly-extra-all.jar
-        dest={{ glassfish_dir }}/glassfish/modules owner=root group=root mode=0644
+  get_url:
+    url: http://guides.dataverse.org/en/latest/_static/installation/files/issues/2180/grizzly-patch/glassfish-grizzly-extra-all.jar
+    dest: '{{ glassfish_dir }}/glassfish/modules'
+    owner: root
+    group: root
+    mode: 0644
+  when: dataverse.glassfish.zipurl is match(*glassfish-4*)
 
 - name: increase resource limits for glassfish
   blockinfile:
