@@ -40,7 +40,7 @@
   file:
     name: '{{ glassfish_dir }}/glassfish/modules/weld-osgi-bundle.jar'
     state: absent
-  when: dataverse.glassfish.zipurl is match(*glassfish-4*)
+  when: dataverse.glassfish.zipurl is match(*glassfish-4.1.zip*)
 
 - name: get patched weld jar
   get_url:
@@ -49,13 +49,13 @@
     owner: root
     group: root
     mode: 0644
-  when: dataverse.glassfish.zipurl is match(*glassfish-4*)
+  when: dataverse.glassfish.zipurl is match(*glassfish-4.1.zip*)
 
 - name: remove old grizzly jar
   file:
     name: '{{ glassfish_dir }}/glassfish/modules/glassfish-grizzly-extra-all.jar'
     state: absent
-  when: dataverse.glassfish.zipurl is match(*glassfish-4*)
+  when: dataverse.glassfish.zipurl is match(*glassfish-4.1.zip*)
 
 - name: get patched grizzly jar
   get_url:
@@ -64,7 +64,7 @@
     owner: root
     group: root
     mode: 0644
-  when: dataverse.glassfish.zipurl is match(*glassfish-4*)
+  when: dataverse.glassfish.zipurl is match(*glassfish-4.1.zip*)
 
 - name: increase resource limits for glassfish
   blockinfile:
