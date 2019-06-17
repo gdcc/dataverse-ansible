@@ -1,0 +1,12 @@
+---
+
+- name: download dataverse installer
+  get_url:
+    url: https://github.com/IQSS/dataverse/releases/download/v{{ dataverse.version }}/dvinstall.zip
+    dest: /tmp
+
+- name: unzip dataverse installer
+  unarchive:
+    src: /tmp/dvinstall.zip
+    remote_src: true
+    dest: /tmp

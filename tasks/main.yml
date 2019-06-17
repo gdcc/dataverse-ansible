@@ -27,6 +27,9 @@
 - include: dataverse-glassfish.yml
   tags: glassfish
 
+- include: dataverse-get-release.yml
+  tags: release
+
 - include: dataverse-solr.yml
   tags: solr
 
