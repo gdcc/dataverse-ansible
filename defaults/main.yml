@@ -67,11 +67,12 @@ dataverse:
     logformat: ulf
     adminuser: admin
     adminpass: notPr0d
+    siteurl:
     timeout: 180
     root: /usr/local
     dir: glassfish4 # change this for payara, etc.
     zipurl: http://dlc-cdn.sun.com/glassfish/4.1/release/glassfish-4.1.zip
-    siteurl:
+    #zipurl: https://search.maven.org/remotecontent?filepath=fish/payara/distributions/payara/5.192/payara-5.192.zip
   google_analytics_key:
   java:
     version: 1.8.0
