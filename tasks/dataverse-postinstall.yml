@@ -51,6 +51,10 @@
     - { prop: ":BlockedApiEndpoints", val: "admin,test", desc: "APIs that are controlled"}
     - { prop: ":BlockedApiPolicy", val: "localhost-only", desc: "control API access"}
 
+- name: enable AllowApiTokenLookupViaApi for those so inclined
+  shell: 'curl -X PUT -d true http://localhost:8080/api/admin/settings/:AllowApiTokenLookupViaApi'
+  when: dataverse.api.allow_lookup == true
+
 - name: Fin
   debug: msg="Dataverse installation complete! Please check output logs in /tmp for further review."
 

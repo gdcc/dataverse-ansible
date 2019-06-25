@@ -23,6 +23,7 @@ dataverse:
   adminpass: admin1
   allow_signups: true
   api:
+    allow_lookup: false
     blocked_endpoints: "admin,test"
     blocked_policy: "localhost-only"
     location: "http://localhost:8080/api"
