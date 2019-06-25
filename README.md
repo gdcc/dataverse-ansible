@@ -8,7 +8,7 @@ The role installs PostgreSQL, GlassFish and other prerequisites, then deploys Da
 Running the following commands as root should install the latest released version of Dataverse.
 
 	$ git clone https://github.com/IQSS/dataverse-ansible.git dataverse
-	$ ansible-playbook --connection=local -v -i dataverse/inventory dataverse/dataverse.pb -e dataverse/defaults/main.yml
+	$ ansible-playbook --connection=local -v -i dataverse/inventory dataverse/dataverse.pb -e @dataverse/defaults/main.yml
 
 ## Configuration
 
@@ -16,14 +16,23 @@ Installation, customization, administration, and API documentation can be found 
 
 The preparation lies in the group_var options (usernames/passwords, whether to install Shibboleth, etc.).  Your \<group_vars_file> may be a set of generic defaults stored in [roles/dataverse/defaults/main.yml](roles/dataverse/defaults/main.yml), but you'll likely want to modify this file or copy it and edit to suit your needs.  Then, fire away:
 
-### Usage:
+### Full(er) Usage:
 	$ git clone https://github.com/IQSS/dataverse-ansible.git dataverse
 	$ export ANSIBLE_ROLES_PATH=.
 	$ ansible-playbook -i <inventory file> [-u <user>] [-b] [-K] -e @<group_vars_file> [-v] dataverse.pb
 
++--------+-----------------------------------------+----------+
+| option | expansion                               | required |
++========+=========================================+==========+
+| -b     | <B>ecome                                | yes      |
+| -K     | as<K> for elevelated privilege password | yes      |
+| -e     | <E>xtra variables file                  | no       |
+| -v     | run with <V>erbosity (up to three Vs)   | no       |
++--------+-----------------------------------------+----------+
+
 The role currently supports CentOS 7 with all services running on the same machine, but intends to become OS-agnostic and support multiple nodes for scalability.
 
-If you're interested in testing Dataverse locally using [Vagrant][vagrant], you'll want to clone this repository and edit the local port redirects if the http/https ports on your local machine are already in use. Note that the current Vagrant VM template requires [VirtualBox][virtualbox] 5.0 and will automatically launch the above command within your Vagrant VM.
+If you're interested in testing Dataverse locally using [Vagrant][vagrant], you'll want to clone this repository and edit the local port redirects if the http/https ports on your local machine are already in use. Note that the current Vagrant VM template requires [VirtualBox][virtualbox] 5.0+ and will automatically launch the above command within your Vagrant VM.
 
 ### To test using Vagrant:
 	$ git clone https://github.com/IQSS/dataverse-ansible
