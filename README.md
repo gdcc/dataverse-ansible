@@ -8,7 +8,7 @@ The role installs PostgreSQL, GlassFish and other prerequisites, then deploys Da
 Running the following commands as root should install the latest released version of Dataverse.
 
 	$ git clone https://github.com/IQSS/dataverse-ansible.git dataverse
-        $ ansible-playbook --connection=local -v -i dataverse/inventory dataverse/dataverse.pb -e dataverse/defaults/main.yml
+	$ ansible-playbook --connection=local -v -i dataverse/inventory dataverse/dataverse.pb -e dataverse/defaults/main.yml
 
 ## Configuration
 
