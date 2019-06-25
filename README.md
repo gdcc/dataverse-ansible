@@ -21,12 +21,12 @@ The preparation lies in the group_var options (usernames/passwords, whether to i
 	$ export ANSIBLE_ROLES_PATH=.
 	$ ansible-playbook -i <inventory file> [-u <user>] [-b] [-K] -e @<group_vars_file> [-v] dataverse.pb
 
-| option | expansion                               | required |
-| ------ | --------------------------------------- | -------- |
-| -b     | <B>ecome                                | yes      |
-| -K     | as<K> for elevelated privilege password | yes      |
-| -e     | <E>xtra variables file                  | no       |
-| -v     | run with <V>erbosity (up to three Vs)   | no       |
+| option | expansion                             | required |
+| ------ | ------------------------------------- | -------- |
+| -b     | Become                                | yes      |
+| -K     | asK for elevelated privilege password | yes      |
+| -e     | Extra variables file                  | no       |
+| -v     | run with Verbosity (up to three Vs)   | no       |
 
 The role currently supports CentOS 7 with all services running on the same machine, but intends to become OS-agnostic and support multiple nodes for scalability.
 
