@@ -39,8 +39,8 @@
 - include: dataverse-postinstall.yml
   tags: postinstall
 
-- include: dataverse-sampledata.yml
-  when: dataverse.sampledata.enabled == true
+- include: custom_sampledata.yml
+  when: dataverse.custom_sampledata.enabled == true
   tags: sampledata
 
 - include: dataverse-counter.yml

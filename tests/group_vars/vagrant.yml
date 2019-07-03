@@ -83,13 +83,13 @@ dataverse:
     version: 9.6
   previewers:
     enabled: true
-  sampledata: 
+  custom_sampledata: 
     enabled: false
-    sampledir: "{{ playbook_dir }}/sampledata"
-    sampledatasets: "{{ playbook_dir }}/sampledata/datasets"
-    sampledataverses: "{{ playbook_dir }}/sampledata/dataverses"
-    sampleusers: "{{ playbook_dir }}/sampledata/users"
-    samplefiles: "{{ playbook_dir }}/sampledata/files"
+    custom_sampledir: "{{ playbook_dir }}/custom_sampledata"
+    custom_sampledatasets: "{{ playbook_dir }}/custom_sampledata/datasets"
+    custom_sampledataverses: "{{ playbook_dir }}/custom_sampledata/dataverses"
+    custom_sampleusers: "{{ playbook_dir }}/custom_sampledata/users"
+    custom_samplefiles: "{{ playbook_dir }}/custom_sampledata/files"
   service_email: noreply@dataverse.yourinstitution.edu
   smtp: localhost
   solr:
