@@ -85,11 +85,16 @@ dataverse:
     enabled: true
   sampledata:
     enabled: false
-    sampledir: "{{ playbook_dir }}/sampledata"
-    sampledatasets: "{{ playbook_dir }}/sampledata/datasets"
-    sampledataverses: "{{ playbook_dir }}/sampledata/dataverses"
-    sampleusers: "{{ playbook_dir }}/sampledata/users"
-    samplefiles: "{{ playbook_dir }}/sampledata/files"
+    dir: /tmp/sampledata
+    repo: https://github.com/IQSS/dataverse-sample-data.git
+    venv: /tmp/sampledata_venv
+  custom_sampledata:
+    enabled: false
+    custom_sampledir: "{{ playbook_dir }}/custom_sampledata"
+    custom_sampledatasets: "{{ playbook_dir }}/custom_sampledata/datasets"
+    custom_sampledataverses: "{{ playbook_dir }}/custom_sampledata/dataverses"
+    custom_sampleusers: "{{ playbook_dir }}/custom_sampledata/users"
+    custom_samplefiles: "{{ playbook_dir }}/custom_sampledata/files"
   service_email: noreply@dataverse.yourinstitution.edu
   smtp: localhost # or the FQDN of your organization's SMTP relay
   solr:
