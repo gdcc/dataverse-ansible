@@ -83,6 +83,11 @@ dataverse:
     version: 9.6
   previewers:
     enabled: true
+  sampledata:
+    enabled: false
+    dir: /tmp/sampledata
+    repo: https://github.com/IQSS/dataverse-sample-data.git
+    venv: /tmp/sampledata_venv
   custom_sampledata: 
     enabled: false
     custom_sampledir: "{{ playbook_dir }}/custom_sampledata"
