@@ -62,3 +62,6 @@
 - include: dataverse-api-testsuite.yml
   when: dataverse.api.test_suite == true
   tags: test_suite
+
+- name: Fin
+  debug: msg="Dataverse installation complete! Please check output logs in /tmp for further review."
