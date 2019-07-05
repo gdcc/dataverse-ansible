@@ -64,10 +64,13 @@ If you needed to update the host port in the Vagrantfile due to collision, you'd
   * Site-specific and therefore not activated in the default configuration
   * `$ systemctl {start|stop|restart|status} shibd`
 
-## Sample Data
-The role will, if desired, populate the Dataverse instance with sample data, and when simply enabled via the dataverse.sampledata.enabled group variable, will create a handful of dataverses, datasets, and users. It will also upload a few small sample files snagged from the Dataverse repository's test subdirectory.
+## IQSS' Sample Data
+The role will populate the Dataverse instance with sample data from [IQSS' Sample Data repo][dataverse-sample-data] if run with the `dataverse.sampledata.enabled` group variable is set to `true`. You may fork this repo and provide your own sampledata by setting the `dataverse.sampledata.repo` group variable.
 
-You may, however, supply your own sample data by modifying and/or creating JSON files and/or shell scripts (*.sh) in the appropriate directories:
+## Custom Sample Data
+The role will, if desired, populate the Dataverse instance with custom sample data, and when simply enabled via the dataverse.custom_sampledata.enabled group variable will create a handful of dataverses, datasets, and users. It will also upload a few small sample files snagged from the Dataverse repository's test subdirectory.
+
+You may supply your own sample data by modifying and/or creating JSON files and/or shell scripts (*.sh) in the appropriate directories:
 
 	tests/sampledata/dataverses: JSON
 	tests/sampledata/users: JSON + shell script(s) to create users
@@ -91,12 +94,29 @@ If you wish to clone an existing installation, you should perform the following 
   * `$ curl http://localhost:8080/api/admin/index/clear`
   * `$ curl http://localhost:8080/api/admin/index`
 
+## External Tools and other Features
+A number of external tools have been written for Dataverse, and as requested or as noticed they show up in the Ansible role as a boolean group variable. Some are enabled by default:
+
+* [QDR's Dataverse Previewers][dataverse-previewers]
+* [WholeTale][wholetale] 
+
+Others are available but disabled by default:
+
+* [Counter Processor][counter-processor]
+
+## SSH keys, SSL certs, LetsEncrypt
+The above and many other features may be tinkered with via the [Group Vars file](defaults/main.yml).
+
 This is a community effort, written primarily by [Don Sizemore][donsizemore]. The role is under active development - pull requests, suggestions and other contributions are welcome!
 
 [![Build Status](https://travis-ci.org/IQSS/dataverse-ansible.svg?branch=master)](https://travis-ci.org/IQSS/dataverse-ansible)
 
 [ansible]: http://ansible.com
+[counter-processor]: https://github.com/IQSS/counter-processor
 [dataverse]: https://dataverse.org
+[dataverse-sample-data]: https://github.com/IQSS/dataverse-sample-data
+[dataverse-previewers]: https://qualitativedatarepository.github.io/dataverse-previewers/
 [iqss]: http://www.iq.harvard.edu
 [vagrant]: https://www.vagrantup.com
 [virtualbox]: https://www.virtualbox.org
+[wholetale]: https://wholetale.org/
