@@ -1,0 +1,58 @@
+---
+
+- name: ensure EPEL is installed
+  yum:
+    name: epel-release
+    state: latest
+
+- name: install base packages
+  yum:
+    name: "{{ packages }}"
+  vars:
+    packages:
+    - R-core
+    - R-core-devel
+
+- name: install R modules
+  command: /usr/bin/Rscript --slave --no-save --no-restore-history -e "if (! ('{{item}}' %in% installed.packages()[,'Package'])) install.packages('{{item}}', repos=c('https://cloud.r-project.org/'))"
+  with_items:
+  - R2HTML
+  - rjson
+  - DescTools
+  - Rserve
+  - haven
+
+- name: create R user and group
+  user:
+    name: '{{ rserve.user }}'
+
+- name: install Rserv.conf
+  template:
+    src: Rserv.conf.j2
+    dest: /etc/Rserv.conf
+    owner: root
+    group: root
+    mode: '0644'
+
+- name: install Rserv.pwd
+  template:
+    src: Rserv.pwd.j2
+    dest: Rserv.pwd
+    owner: root
+    group: root
+    mode: '0600'
+
+- name: install rserve.service systemd unit file
+  template:
+    src: rserve.service.j2
+    dest: /usr/lib/systemd/system/rserve.service
+    owner: root
+    group: root
+    mode: '0644'
+
+- name: reload systemd, enable rserve, start
+  systemd:
+    name: rserve
+    enabled: yes
+    daemon_reload: yes
+    state: started

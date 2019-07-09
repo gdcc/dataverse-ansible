@@ -112,8 +112,10 @@ dataverse:
     enabled: true
 
 rserve:
+  install: true
   host: rserve.yourinstitution.edu
   user: rserve
+  group: rserve
   pass: rserve
   port: 6311
 

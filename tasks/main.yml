@@ -4,6 +4,10 @@
 - include: dataverse-prereqs.yml
   tags: prereqs
 
+- include: rserve.yml
+  when: rserve.install == true
+  tags: rserve
+
 - include: dataverse-fqdn.yml
   tags: prereqs
 
