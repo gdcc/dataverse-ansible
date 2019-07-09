@@ -45,6 +45,8 @@ dataverse:
     upload_to_hub: False
     user: counter
     year_month: "2018-05"
+  dataexplorer:
+    enabled: true
   db:
     name: dvndb
     host: localhost

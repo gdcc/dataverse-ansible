@@ -1,0 +1,21 @@
+<VirtualHost *:80>
+
+  ServerName {{ servername }}
+
+  # custom error document when Glassfish isn't responding
+  ErrorDocument 503 /503.html
+  ProxyPassMatch ^/503.html$ !
+
+  # don't pass paths used by rApache and TwoRavens to Glassfish
+  ProxyPassMatch ^/RApacheInfo$ !
+  ProxyPassMatch ^/custom !
+  ProxyPassMatch ^/dataexplore !
+
+  # don't pass paths used by Shibboleth to Glassfish
+  ProxyPassMatch ^/Shibboleth.sso !
+  ProxyPassMatch ^/shibboleth-ds !
+
+  # pass everything else to Glassfish
+  ProxyPass / ajp://localhost:8009/
+
+</VirtualHost>

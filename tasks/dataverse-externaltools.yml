@@ -1,0 +1,21 @@
+---
+
+- name: enable wholetale externaltool
+  uri:
+    url: http://localhost:8080/api/admin/externalTools
+    method: POST
+    headers: 
+      Content-type: "application/json"
+    body_format: json
+    body: "{{ lookup('file', 'wholetale.json') }}"
+  when: dataverse.wholetale.enabled == true
+
+- name: enable data explorer on demand
+  uri:
+    url: http://localhost:8080/api/admin/externalTools
+    method: POST
+    headers:
+      Content-type: "application/json"
+    body_format: json
+    body: "{{ lookup('file', 'dataExplorer.json') }}"
+  when: dataverse.dataexplorer.enabled == true

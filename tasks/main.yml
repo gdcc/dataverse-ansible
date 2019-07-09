@@ -55,9 +55,8 @@
   when: dataverse.previewers.enabled == true
   tags: previewers
 
-- include: dataverse-wholetale.yml
-  when: dataverse.wholetale.enabled == true
-  tags: wholetale
+- include: dataverse-externaltools.yml
+  tags: externaltools
 
 - include: dataverse-api-testsuite.yml
   when: dataverse.api.test_suite == true
