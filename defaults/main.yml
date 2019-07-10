@@ -118,6 +118,7 @@ rserve:
   group: rserve
   pass: rserve
   port: 6311
+  workdir: /tmp/Rserv
 
 shibboleth:
   enabled: false
