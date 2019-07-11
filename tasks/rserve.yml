@@ -37,7 +37,7 @@
 - name: install Rserv.pwd
   template:
     src: Rserv.pwd.j2
-    dest: Rserv.pwd
+    dest: /etc/Rserv.pwd
     owner: root
     group: root
     mode: '0600'

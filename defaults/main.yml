@@ -113,7 +113,7 @@ dataverse:
 
 rserve:
   install: true
-  host: rserve.yourinstitution.edu
+  host: localhost
   user: rserve
   group: rserve
   pass: rserve
