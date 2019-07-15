@@ -38,8 +38,8 @@
   template:
     src: Rserv.pwd.j2
     dest: /etc/Rserv.pwd
-    owner: root
-    group: root
+    owner: '{{ rserve.user }}'
+    group: '{{ rserve.group }}'
     mode: '0600'
 
 - name: install rserve.service systemd unit file
