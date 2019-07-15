@@ -30,8 +30,18 @@
 - name: copy jhove configs
   shell: "cp /tmp/dvinstall/jhove* {{ glassfish_dir }}/glassfish/domains/{{ dataverse.glassfish.domain }}/config"
 
+- name: bash aliases won't expand in non-interactive shells
+  lineinfile:
+    path: /tmp/dvinstall/glassfish-setup.sh
+    regexp: '{{ item.regexp }}'
+    line: '{{ item.line }}'
+  with_items:
+    - { regexp: 'rserve_password_alias', line: '  ./asadmin $ASADMIN_OPTS create-jvm-options "\-Ddataverse.rserve.password=${RSERVE_PASS}"' }
+    - { regexp: 'doi_password_alias', line: '  ./asadmin $ASADMIN_OPTS create-jvm-options "\-Ddoi.password=${DOI_PASSWORD}"' }
+    - { regexp: 'db_password_alias', line: '  ./asadmin $ASADMIN_OPTS set resources.jdbc-connection-pool.dvnDbPool.property.password="${DB_PASS}"' }
+
 - name: run glassfish-setup.sh
-  shell: "cd /tmp/dvinstall && nohup ./glassfish-setup.sh > /tmp/glassfish-setup.out 2>&1"
+  shell: "nohup ./glassfish-setup.sh > /tmp/glassfish-setup.out 2>&1"
   become: yes
   become_user: "{{ dataverse.glassfish.user }}"
   environment:
@@ -53,6 +63,14 @@
     DOI_BASEURL: "{{ dataverse.doi.baseurl }}"
     DOI_USERNAME: "{{ dataverse.doi.username }}"
     DOI_PASSWORD: "{{ dataverse.doi.password }}"
+  args:
+    chdir: /tmp/dvinstall
+    executable: /bin/bash
+
+- name: negate need for password aliases
+  file:
+    name: /tmp/glassfish-setup.out
+    mode: 0600
 
 - name: set logging format
   become: yes
