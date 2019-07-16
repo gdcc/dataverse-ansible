@@ -107,7 +107,7 @@ dataverse:
   srcdir: /tmp/dataverse
   thumbnails: true
   usermgmtkey: burrito
-  version: 4.15
+  version: 4.15.1
   wholetale:
     enabled: true
 
