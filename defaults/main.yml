@@ -111,6 +111,12 @@ dataverse:
   wholetale:
     enabled: true
 
+munin:
+  install: false
+  admin:
+    user: admin
+    passwd: p4sswurd
+
 rserve:
   install: true
   host: localhost
