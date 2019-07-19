@@ -39,9 +39,14 @@ SSLCryptoDevice builtin
   ProxyPassMatch ^/RApacheInfo$ !
   ProxyPassMatch ^/custom !
   ProxyPassMatch ^/dataexplore !
+
   # don't pass paths used by Shibboleth to Glassfish
   ProxyPassMatch ^/Shibboleth.sso !
   ProxyPassMatch ^/shibboleth-ds !
+
+  # allow munin
+  ProxyPassMatch ^/munin !
+
   # pass everything else to Glassfish
   ProxyPass / ajp://localhost:8009/
 

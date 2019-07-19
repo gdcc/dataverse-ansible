@@ -113,6 +113,9 @@ dataverse:
 
 munin:
   install: true
+  admin:
+    user: admin
+    passwd: p4sswurd
 
 rserve:
   install: true

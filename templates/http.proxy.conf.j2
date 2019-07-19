@@ -15,6 +15,9 @@
   ProxyPassMatch ^/Shibboleth.sso !
   ProxyPassMatch ^/shibboleth-ds !
 
+  # allow munin, if present
+  ProxyPassMatch ^/munin !
+
   # pass everything else to Glassfish
   ProxyPass / ajp://localhost:8009/
 

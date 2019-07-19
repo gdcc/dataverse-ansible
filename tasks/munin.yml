@@ -1,14 +1,28 @@
 ---
 
-- name: munin requires epel
+- name: epel provides munin
   yum:
     name: epel-release
     state: latest
 
-- name: install munin
+- name: install munin and dependencies
   yum:
-    name: '{{ item }}'
+    name:
+      - munin
+      - munin-apache
+      - python-passlib
     state: latest
-  with_items:
-    - munin
-    - munin-apache
+
+- name: start and enable munin
+  systemd:
+    name: munin-node
+    state: started
+    enabled: yes
+
+- name: set munin admin passwd
+  htpasswd:
+    path: /etc/munin/munin-htpasswd
+    name: '{{ munin.admin.user }}'
+    password: '{{ munin.admin.passwd }}'
+    owner: root
+    mode: 0600
