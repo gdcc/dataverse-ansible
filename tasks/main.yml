@@ -66,5 +66,9 @@
   when: dataverse.api.test_suite == true
   tags: test_suite
 
+- include: munin.yml
+  when: munin.install == true
+  tags: munin
+
 - name: Fin
   debug: msg="Dataverse installation complete! Please check output logs in /tmp for further review."

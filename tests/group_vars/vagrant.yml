@@ -111,6 +111,9 @@ dataverse:
   wholetale:
     enabled: true
 
+munin:
+  install: true
+
 rserve:
   install: true
   host: localhost

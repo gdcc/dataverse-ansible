@@ -1,0 +1,14 @@
+---
+
+- name: munin requires epel
+  yum:
+    name: epel-release
+    state: latest
+
+- name: install munin
+  yum:
+    name: '{{ item }}'
+    state: latest
+  with_items:
+    - munin
+    - munin-apache
