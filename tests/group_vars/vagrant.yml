@@ -112,7 +112,7 @@ dataverse:
     enabled: true
 
 munin:
-  install: false
+  install: true
   admin:
     user: admin
     passwd: p4sswurd

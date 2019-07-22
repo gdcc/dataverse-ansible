@@ -9,6 +9,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   config.vm.synced_folder ".", "/vagrant"
   config.vm.synced_folder ".", "/etc/ansible/roles/dataverse"
 
+  config.vm.network :forwarded_port, guest: 80, host: 8880, auto_correct: true # Apache Reverse Proxy to Glassfish
   config.vm.network :forwarded_port, guest: 443, host: 8443, auto_correct: true # Apache Reverse Proxy to Glassfish
   config.vm.network :forwarded_port, guest: 5432, host: 5432, auto_correct: true # Postgres
   config.vm.network :forwarded_port, guest: 6311, host: 6311, auto_correct: true # rserve
