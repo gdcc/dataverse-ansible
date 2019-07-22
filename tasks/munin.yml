@@ -29,6 +29,19 @@
   with_fileglob:
   - /tmp/munin-monitoring/plugins/jvm/*
 
+- name: enable jstat/jvm plugins
+  file:
+    src: '/usr/share/munin/plugins/{{ item }}'
+    dest: '/etc/munin/plugins/{{ item }}'
+    state: link
+  with_items:
+    - jstat__gccount
+    - jstat__gctime
+    - jstat__heap
+    - jvm_sun_memory
+    - jvm_sun_minorgcs
+    - jvm_sun_tenuredgcs
+
 - name: start and enable munin
   systemd:
     name: munin-node
