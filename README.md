@@ -32,6 +32,14 @@ The role currently supports CentOS 7 with all services running on the same machi
 
 If you're interested in testing Dataverse locally using [Vagrant][vagrant], you'll want to clone this repository and edit the local port redirects if the http/https ports on your local machine are already in use. Note that the current Vagrant VM template requires [VirtualBox][virtualbox] 5.0+ and will automatically launch the above command within your Vagrant VM.
 
+#### Ansible Tags
+
+It is possible to run certain portions of the playbook to avoid running the entire role using ansible tags. Grab the desired tag from [tasks/main.yml](tasks/main.yml) then re-run the above playbook command, appending:
+
+`--tags "munin"`
+
+**Note:** While Ansible in general strives to achieve role idempotence, the dataverse-ansible role is merely a wrapper for the Dataverse installer, which itself is not idempotent. If you strongly desire that the role be idempotent and would like achieve this via semaphores, pull requests are welcome!
+
 ### To test using Vagrant:
 	$ git clone https://github.com/IQSS/dataverse-ansible
 	$ cd dataverse-ansible
