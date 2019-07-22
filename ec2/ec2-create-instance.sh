@@ -8,7 +8,7 @@ BRANCH_DEFAULT='develop'
 PEM_DEFAULT=${HOME}
 
 usage() {
-  echo "Usage: $0 -b <branch> -r <repo> -p <pem_dir> -g <group_vars>" 1>&2
+  echo "Usage: $0 -b <branch> -r <repo> -p <pem_dir> -g <group_vars> -a <dataverse-ansible branch>" 1>&2
   echo "default branch is develop"
   echo "default repo is https://github.com/IQSS/dataverse"
   echo "default .pem location is ${HOME}"
@@ -16,8 +16,11 @@ usage() {
   exit 1
 }
 
-while getopts ":r:b:g:p:" o; do
+while getopts ":a:r:b:g:p:" o; do
   case "${o}" in
+  a)
+    DA_BRANCH=${OPTARG}
+    ;;
   r)
     REPO_URL=${OPTARG}
     ;;
@@ -52,6 +55,11 @@ else
       GVARG+=" -e dataverse_branch=$BRANCH_DEFAULT"
       echo "building $BRANCH"
    fi
+fi
+
+# default to dataverse-ansible/master
+if [ -z "$DA_BRANCH" ]; then
+   DA_BRANCH="master"
 fi
 
 # ansible doesn't care about pem_dir (yet)
@@ -134,7 +142,7 @@ ssh -T -i $PEM_FILE -o 'StrictHostKeyChecking no' -o 'UserKnownHostsFile=/dev/nu
 sudo yum -y install epel-release
 sudo yum -y install https://releases.ansible.com/ansible/rpm/release/epel-7-x86_64/ansible-2.7.9-1.el7.ans.noarch.rpm
 sudo yum -y install git nano
-git clone https://github.com/IQSS/dataverse-ansible.git dataverse
+git clone -b "$DA_BRANCH" https://github.com/IQSS/dataverse-ansible.git dataverse
 export ANSIBLE_ROLES_PATH=.
 ansible-playbook -v -i dataverse/inventory dataverse/dataverse.pb --connection=local $GVARG
 EOF
