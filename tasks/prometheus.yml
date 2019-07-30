@@ -1,0 +1,82 @@
+---
+
+- name: add prometheus service account
+  user:
+    name: '{{ prometheus.user }}'
+
+# firewalld is outside the role scope
+#- name: punch prometheus firewall holes
+#  firewalld:
+#    port: '{{ item }}'
+#    permanent: yes
+#    state: enabled
+#  with_items:
+#  - 9090/tcp
+#  - 9100/tcp
+
+- name: unarchive won't create directory
+  file:
+    path: '{{ prometheus.root }}'
+    state: directory
+    owner: '{{ prometheus.user }}'
+    mode: '0755'
+
+- name: install prometheus
+  unarchive:
+    src: '{{ prometheus.url }}'
+    dest: '{{ prometheus.root }}'
+    owner: '{{ prometheus.user }}'
+    remote_src: yes
+    extra_opts: [--strip-components=1]
+
+# by default prometheus node-export points to localhost:9090
+# which 99% will likely want. open issue to add config here.
+
+- name: node_exporter dir must exist
+  file:
+    path: '{{ prometheus.root }}/node_exporter'
+    state: directory
+    owner: '{{ prometheus.user }}'
+    mode: '0755'
+
+- name: install node_exporter
+  unarchive:
+    src: '{{ prometheus.node_exporter }}'
+    dest: '{{ prometheus.root }}/node_exporter'
+    remote_src: yes
+    extra_opts: [--strip-components=1]
+    
+- name: place prometheus systemd template
+  template:
+    src: prometheus.service.j2
+    dest: /usr/lib/systemd/system/prometheus.service
+    owner: root
+    group: root
+    mode: 0644
+
+- name: place node_exporter systemd template
+  template:
+    src: node_exporter.service.j2
+    dest: /usr/lib/systemd/system/node_exporter.service
+    owner: root
+    group: root
+    mode: 0644
+
+- name: reload systemd
+  shell: systemctl daemon-reload
+
+- name: start and enable prometheus
+  systemd:
+    name: prometheus
+    state: started
+    enabled: yes
+
+- name: give prometheus a breather
+  pause:
+    seconds: 2
+
+- name: start and enable node_exporter
+  systemd:
+    name: prometheus
+    state: started
+    enabled: yes
