@@ -1,0 +1,12 @@
+{
+  "affiliation": "Birds Inc.", 
+  "alias": "wrens", 
+  "dataverseContacts": [
+    {
+      "contactEmail": "wrens@birds.com"
+    }
+  ],
+  "description": "A dataverse full of wrens", 
+  "name": "Wrens", 
+  "permissionRoot": "false"
+}

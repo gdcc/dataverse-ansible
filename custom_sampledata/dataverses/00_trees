@@ -1,0 +1,12 @@
+{
+  "affiliation": "Trees Inc.", 
+  "alias": "trees", 
+  "dataverseContacts": [
+    {
+      "contactEmail": "trees@trees.com"
+    }
+  ],
+  "description": "A tree dataverse with some birds", 
+  "name": "Trees", 
+  "permissionRoot": "false"
+}
