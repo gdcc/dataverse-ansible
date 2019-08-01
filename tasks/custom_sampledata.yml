@@ -2,7 +2,7 @@
 
 - name: does the sampledata directory exist?
   stat:
-    path: "{{ dataverse.sampledata.sampledir }}"
+    path: "{{ dataverse.custom_sampledata.custom_sampledir }}"
   register: sampledir_exists
 
 - include: dataverse-sampledata-examples.yml
@@ -38,7 +38,7 @@
 # in theory this should find create-users.sh and any other script
 - name: find scripts in user sampledata dir
   find:
-    path: "{{ dataverse.sampledata.sampleusers }}"
+    path: "{{ dataverse.custom_sampledata.custom_sampleusers }}"
     file_type: "file"
     pattern: '*.sh'
   register: sampleuserscript_list
@@ -46,13 +46,13 @@
 # but the above find command fails outside of vagrant(?!?)
 # so let's hard-code create-users.sh for now
 - name: run scripts in sampleuser dir
-  script: '{{ dataverse.sampledata.sampleusers }}/create-users.sh {{ dataverse.sampledata.sampleusers }}'
+  script: '{{ dataverse.custom_sampledata.custom_sampleusers }}/create-users.sh {{ dataverse.custom_sampledata.custom_sampleusers }}'
   args:
-    chdir: '{{ dataverse.sampledata.sampleusers }}'
+    chdir: '{{ dataverse.custom_sampledata.custom_sampleusers }}'
   
 - name: read sampledataverse file list
   find:
-    path: "{{ dataverse.sampledata.sampledataverses }}"
+    path: "{{ dataverse.custom_sampledata.custom_sampledataverses }}"
     file_type: "file"
   register: sampledataverses_list
 
@@ -69,26 +69,26 @@
 
 - name: read sampledatasets script list
   find:
-    path: "{{ dataverse.sampledata.sampledatasets }}"
+    path: "{{ dataverse.custom_sampledata.custom_sampledatasets }}"
     file_type: "file"
     pattern: '*.sh'
   register: sampledatasetscripts_list
 
 - name: run sampledatasets scripts
-  script: '{{ item.path }} {{ api_token }} {{ dataverse.sampledata.sampledatasets }}'
+  script: '{{ item.path }} {{ api_token }} {{ dataverse.custom_sampledata.custom_sampledatasets }}'
   args:
-    chdir: '{{ dataverse.sampledata.sampledatasets }}'
+    chdir: '{{ dataverse.custom_sampledata.custom_sampledatasets }}'
   with_items: '{{ sampledatasetscripts_list.files }}'
 
 - name: read sampledatafile script list
   find:
-    path: "{{ dataverse.sampledata.samplefiles }}"
+    path: "{{ dataverse.custom_sampledata.custom_samplefiles }}"
     file_type: "file"
     pattern: '*.sh'
   register: sampledatafilescripts_list
 
 - name: run sampledatafile scripts
-  script: '{{ item.path }} {{ api_token }} {{ dataverse.sampledata.samplefiles }}'
+  script: '{{ item.path }} {{ api_token }} {{ dataverse.custom_sampledata.custom_samplefiles }}'
   args:
-    chdir: '{{ dataverse.sampledata.samplefiles }}'
+    chdir: '{{ dataverse.custom_sampledata.custom_samplefiles }}'
   with_items: '{{ sampledatafilescripts_list.files }}'
