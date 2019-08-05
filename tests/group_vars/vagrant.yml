@@ -89,6 +89,7 @@ dataverse:
     enabled: false
     dir: /tmp/sampledata
     repo: https://github.com/IQSS/dataverse-sample-data.git
+    branch: master
     venv: /tmp/sampledata_venv
   custom_sampledata: 
     enabled: false

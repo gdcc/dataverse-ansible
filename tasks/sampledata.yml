@@ -11,6 +11,7 @@
   git:
     repo: '{{ dataverse.sampledata.repo }}'
     dest: '{{ dataverse.sampledata.dir }}'
+    version: '{{ dataverse.sampledata.branch }}'
 
 - name: create sampledata venv
   file:
