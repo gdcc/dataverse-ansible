@@ -29,8 +29,12 @@
     remote_src: yes
     extra_opts: [--strip-components=1]
 
-# by default prometheus node-export points to localhost:9090
-# which 99% will likely want. open issue to add config here.
+- name: copy prometheus config file
+  copy:
+    src: prometheus.yml
+    dest: '{{ prometheus.root }}/prometheus.yml'
+    owner: '{{ prometheus.user }}'
+    mode: 0644
 
 - name: node_exporter dir must exist
   file:
