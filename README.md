@@ -73,7 +73,7 @@ If you needed to update the host port in the Vagrantfile due to collision, you'd
   * `$ systemctl {start|stop|restart|status} shibd`
 
 ## IQSS' Sample Data
-The role will populate the Dataverse instance with sample data from [IQSS' Sample Data repo][dataverse-sample-data] if run with the `dataverse.sampledata.enabled` group variable is set to `true`. You may fork this repo and provide your own sampledata by setting the `dataverse.sampledata.repo` group variable.
+The role will populate the Dataverse instance with sample data from [IQSS' Sample Data repo][dataverse-sample-data] if run with the `dataverse.sampledata.enabled` group variable is set to `true`. You may fork this repo and provide your own sampledata by setting the `dataverse.sampledata.repo` and `dataverse.sampledata.branch` group variables.
 
 ## Custom Sample Data
 The role will, if desired, populate the Dataverse instance with custom sample data, and when simply enabled via the dataverse.custom_sampledata.enabled group variable will create a handful of dataverses, datasets, and users. It will also upload a few small sample files snagged from the Dataverse repository's test subdirectory.
