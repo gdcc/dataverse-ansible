@@ -44,17 +44,17 @@ if [ ! -z "$GRPVRS" ]; then
    GVFILE=$(basename "$GRPVRS")
    GVARG="-e @$GVFILE"
    echo "using $GRPVRS for extra vars"
-else
-   # no group_vars
-   if [ ! -z "$REPO_URL" ]; then
-      GVARG+=" -e dataverse_repo=$REPO_URL_DEFAULT"
-      echo "using $REPO_URL"
-   fi
+fi
 
-   if [ ! -z "$BRANCH" ]; then
-      GVARG+=" -e dataverse_branch=$BRANCH_DEFAULT"
-      echo "building $BRANCH"
-   fi
+# test for CLI args
+if [ ! -z "$REPO_URL" ]; then
+   GVARG+=" -e dataverse_repo=$REPO_URL"
+   echo "using repo $REPO_URL"
+fi
+
+if [ ! -z "$BRANCH" ]; then
+   GVARG+=" -e dataverse_branch=$BRANCH"
+   echo "building branch $BRANCH"
 fi
 
 # default to dataverse-ansible/master
@@ -65,7 +65,6 @@ fi
 # ansible doesn't care about pem_dir (yet)
 if [ -z "$PEM_DIR" ]; then
    PEM_DIR="$PEM_DEFAULT"
-   echo "using $PEM_DIR"
 fi
 
 AWS_CLI_VERSION=$(aws --version)
@@ -153,6 +152,6 @@ EOF
 CLICKABLE_LINK="http://${PUBLIC_DNS}:8080"
 echo "To ssh into the new instance:"
 echo "ssh -i $PEM_FILE $USER_AT_HOST"
-echo "Branch \"$BRANCH\" from $REPO_URL has been deployed to $CLICKABLE_LINK"
+echo "Branch $BRANCH from $REPO_URL has been deployed to $CLICKABLE_LINK"
 echo "When you are done, please terminate your instance with:"
 echo "aws ec2 terminate-instances --instance-ids $INSTANCE_ID"
