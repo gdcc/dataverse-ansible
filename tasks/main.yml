@@ -70,5 +70,9 @@
   when: munin.install == true
   tags: munin
 
+- include: prometheus.yml
+  when: prometheus.install == true
+  tags: prometheus
+
 - name: Fin
   debug: msg="Dataverse installation complete! Please check output logs in /tmp for further review."
