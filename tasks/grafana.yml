@@ -1,7 +1,7 @@
 ---
 
 - name: install grafana repo
-  file:
+  copy:
     src: grafana.repo
     dest: /etc/yum.repos.d/grafana.repo
     owner: root
@@ -29,12 +29,12 @@
   lineinfile:
     path: /etc/grafana/grafana.ini
     regexp: '^root_url'
-    line: 'root_url = http://{{ public_hostname }}/grafana
+    line: 'root_url = http://{{ public_hostname }}/grafana'
 
 - name: serve grafana from subdir
   lineinfile:
     path: /etc/grafana/grafana.ini
-    regexp: 'serve_from_sub_path = false'
+    regexp: 'serve_from_sub_path '
     line: 'serve_from_sub_path = true'
 
 - name: reload systemd, enable grafana, start

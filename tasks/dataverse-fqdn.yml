@@ -44,7 +44,7 @@
 - name: preserve public_hostname either way
   set_fact:
      public_hostname: '{{ ansible_fqdn }}'
-  when: is_aws_environment is not defined
+  when: public_hostname is undefined
 
 # for asadmin command
 - name: escape colons in siteurl
