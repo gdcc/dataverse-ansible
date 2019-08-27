@@ -7,6 +7,11 @@
     ProxyPassReverse "http://localhost:9090/prometheus"
   </Location>
 
+  <Location "/grafana">
+    ProxyPass "http://localhost:3000"
+    ProxyPassReverse "http://localhost:3000"
+  </Location>
+
   # custom error document when Glassfish isn't responding
   ErrorDocument 503 /503.html
   ProxyPassMatch ^/503.html$ !

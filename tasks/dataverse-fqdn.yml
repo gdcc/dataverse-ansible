@@ -41,6 +41,11 @@
     siteUrl: '{{ protocol }}\://{{ public_hostname}}'
   when: is_aws_environment
 
+- name: preserve public_hostname either way
+  set_fact:
+     public_hostname: '{{ ansible_fqdn }}'
+  when: is_aws_environment is not defined
+
 # for asadmin command
 - name: escape colons in siteurl
   set_fact: "siteUrl_escaped={{ siteUrl | regex_replace (':','\\:') }}"

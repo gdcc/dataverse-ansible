@@ -6,12 +6,30 @@
   vars:
     packages:
     - collectd
+    - collectd-generic-jmx
+    - collectd-java
     - collectd-write_prometheus
 
 - name: place collectd conf file
   copy:
     src: prometheus.conf
     dest: /etc/collectd.d/prometheus.conf
+    owner: root
+    group: root
+    mode: '0644'
+
+- name: ensure /etc/collectd.conf.d exists
+  file:
+    path: /etc/collectd.conf.d
+    state: directory
+    owner: root
+    group: root
+    mode: '0755'
+
+- name: place jmx config
+  copy:
+    src: jmx.conf
+    dest: /etc/collectd.conf.d/jmx.conf
     owner: root
     group: root
     mode: '0644'

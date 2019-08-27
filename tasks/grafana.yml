@@ -1,0 +1,46 @@
+---
+
+- name: install grafana repo
+  file:
+    src: grafana.repo
+    dest: /etc/yum.repos.d/grafana.repo
+    owner: root
+    group: root
+    mode: '0644'
+
+- name: place grafana repo key
+  get_url:
+    url: https://packages.grafana.com/gpg.key
+    dest: /etc/pki/rpm-gpg/grafana.key
+    mode: '0644'
+
+- name: install grafana
+  yum:
+    name: grafana
+    state: latest
+
+- name: enable anonymous access
+  lineinfile:
+    path: /etc/grafana/grafana.ini
+    insertafter: '^# enable anonymous access'
+    line: 'enabled = true'
+
+- name: set root_url
+  lineinfile:
+    path: /etc/grafana/grafana.ini
+    regexp: '^root_url'
+    line: 'root_url = http://{{ public_hostname }}/grafana
+
+- name: serve grafana from subdir
+  lineinfile:
+    path: /etc/grafana/grafana.ini
+    regexp: 'serve_from_sub_path = false'
+    line: 'serve_from_sub_path = true'
+
+- name: reload systemd, enable grafana, start
+  systemd:
+    name: grafana-server
+    enabled: yes
+    daemon_reload: yes
+    state: started
+
