@@ -44,3 +44,30 @@
     daemon_reload: yes
     state: started
 
+- name: create grafana datasource
+  grafana_datasource:
+    name: "prometheus"
+    grafana_url: "http://localhost:3000/"
+    grafana_user: "admin"
+    grafana_password: "admin"
+    org_id: "1"
+    ds_type: "prometheus"
+    url: "http://localhost:9000/"
+
+- name: place grafana dashboard template
+  copy:
+    src: grafana-dashboard.json
+    dest: /etc/grafana/grafana-dashboard.json
+    owner: root
+    group: root
+    mode: '0644'
+
+- name: import grafana dashboard
+  grafana_dashboard:
+    grafana_url: http://localhost:3000
+    grafana_user: "admin"
+    grafana_password: "admin"
+    state: present
+    message: Updated by ansible
+    overwrite: yes
+    path: /etc/grafana/grafana-dashboard.json
