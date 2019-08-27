@@ -1,0 +1,25 @@
+---
+
+- name: install collectd
+  yum:
+    name: '{{ packages }}'
+  vars:
+    packages:
+    - collectd
+    - collectd-write_prometheus
+
+- name: place collectd conf file
+  copy:
+    src: prometheus.conf
+    dest: /etc/collectd.d/prometheus.conf
+    owner: root
+    group: root
+    mode: '0644'
+
+- name: reload systemd, enable collectd, start
+  systemd:
+    name: collectd
+    enabled: yes
+    daemon_reload: yes
+    state: started
+

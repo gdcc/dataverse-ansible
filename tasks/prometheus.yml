@@ -1,5 +1,12 @@
 ---
 
+- name: Put SELinux in permissive mode
+  selinux:
+    policy: targeted
+    state: permissive
+
+- include: collectd.yml
+
 - name: add prometheus service account
   user:
     name: '{{ prometheus.user }}'
@@ -84,3 +91,5 @@
     name: prometheus
     state: started
     enabled: yes
+
+

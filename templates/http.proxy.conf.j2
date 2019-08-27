@@ -2,6 +2,11 @@
 
   ServerName {{ servername }}
 
+  <Location "/prometheus">
+    ProxyPass "http://localhost:9090/prometheus"
+    ProxyPassReverse "http://localhost:9090/prometheus"
+  </Location>
+
   # custom error document when Glassfish isn't responding
   ErrorDocument 503 /503.html
   ProxyPassMatch ^/503.html$ !
