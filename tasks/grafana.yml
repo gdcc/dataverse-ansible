@@ -22,6 +22,13 @@
     state: latest
   tags: grafana
 
+- name: set admin password
+  lineinfile:
+    path: /etc/grafana/grafana.ini
+    regexp: '^;admin_password'
+    line: 'admin_password = {{ grafana.grafana_password }}'
+  tags: grafana
+
 - name: enable anonymous access
   lineinfile:
     path: /etc/grafana/grafana.ini
@@ -60,7 +67,7 @@
 
 - name: create grafana datasource
   grafana_datasource:
-    access: proxy
+    access: direct
     name: "prometheus"
     grafana_url: '{{ grafana.grafana_url }}'
     grafana_user: '{{ grafana.grafana_user }}'
