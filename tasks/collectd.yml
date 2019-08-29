@@ -11,9 +11,9 @@
     - collectd-write_prometheus
 
 - name: place collectd conf file
-  copy:
-    src: prometheus.conf
-    dest: /etc/collectd.d/prometheus.conf
+  template:
+    src: collectd.conf.j2
+    dest: /etc/collectd.conf
     owner: root
     group: root
     mode: '0644'
@@ -26,7 +26,15 @@
     group: root
     mode: '0755'
 
-- name: place jmx config
+- name: place prometheus plugin conf file
+  copy:
+    src: prometheus.conf
+    dest: /etc/collectd.d/prometheus.conf
+    owner: root
+    group: root
+    mode: '0644'
+
+- name: place jmx plugin conf file
   copy:
     src: jmx.conf
     dest: /etc/collectd.conf.d/jmx.conf

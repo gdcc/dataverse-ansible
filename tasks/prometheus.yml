@@ -6,7 +6,6 @@
     state: permissive
 
 - include: collectd.yml
-- include: grafana.yml
 
 - name: add prometheus service account
   user:
@@ -93,4 +92,4 @@
     state: started
     enabled: yes
 
-
+- include: grafana.yml

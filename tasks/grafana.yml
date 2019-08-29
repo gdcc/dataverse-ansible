@@ -25,10 +25,16 @@
     insertafter: '^# enable anonymous access'
     line: 'enabled = true'
 
+- name: bind to localhost
+  lineinfile:
+    path: /etc/grafana/grafana.ini
+    regexp: '^http_addr'
+    line: 'http_addr = 127.0.0.1'
+
 - name: set root_url
   lineinfile:
     path: /etc/grafana/grafana.ini
-    regexp: '^root_url'
+    regexp: '^;root_url'
     line: 'root_url = http://{{ public_hostname }}/grafana'
 
 - name: serve grafana from subdir
@@ -46,13 +52,16 @@
 
 - name: create grafana datasource
   grafana_datasource:
+    access: proxy
     name: "prometheus"
-    grafana_url: "http://localhost:3000/"
-    grafana_user: "admin"
-    grafana_password: "admin"
-    org_id: "1"
+    grafana_url: '{{ grafana.grafana_url }}'
+    grafana_user: '{{ grafana.grafana_user }}'
+    grafana_password: '{{ grafana.grafana_password }}'
     ds_type: "prometheus"
-    url: "http://localhost:9000/"
+    url: 'http://localhost:9090/prometheus'
+    database: "prometheus"
+    is_default: "yes"
+    state: present
 
 - name: place grafana dashboard template
   copy:
@@ -64,10 +73,9 @@
 
 - name: import grafana dashboard
   grafana_dashboard:
-    grafana_url: http://localhost:3000
-    grafana_user: "admin"
-    grafana_password: "admin"
-    state: present
-    message: Updated by ansible
-    overwrite: yes
+    grafana_url: '{{ grafana.grafana_url }}'
+    grafana_user: '{{ grafana.grafana_user }}'
+    grafana_password: '{{ grafana.grafana_password }}'
     path: /etc/grafana/grafana-dashboard.json
+    overwrite: yes
+    state: present
