@@ -2,7 +2,11 @@
 
 - name: systemd no likey escaped colons
   set_fact:
-    siteUrl: "{{ siteUrl | regex_replace('\\', '') }}"
+    siteUrl: "{{ siteUrl | regex_replace('\', '') }}"
+
+- name: echo siteUrl
+  debug:
+    msg: 'siteUrl is {{ siteUrl }}'
 
 - name: install grafana repo
   copy:
