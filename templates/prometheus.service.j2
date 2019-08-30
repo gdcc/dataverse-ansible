@@ -11,7 +11,7 @@ Restart=on-failure
 #Prometheus on different path user
 ExecStart={{ prometheus.root }}/prometheus \
   --config.file={{ prometheus.root }}/prometheus.yml \
-  --web.external-url=http://localhost:9090/prometheus/ \
+  --web.external-url={{ siteUrl }}/prometheus/ \
   --storage.tsdb.path={{ prometheus.root }}/data
 
 [Install]
