@@ -69,7 +69,7 @@
   grafana_datasource:
     access: direct
     name: "prometheus"
-    grafana_url: '{{ grafana.grafana_url }}'
+    grafana_url: '{{ siteUrl }}/grafana'
     grafana_user: '{{ grafana.grafana_user }}'
     grafana_password: '{{ grafana.grafana_password }}'
     ds_type: "prometheus"
