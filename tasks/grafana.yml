@@ -90,7 +90,7 @@
 
 - name: import grafana dashboard
   grafana_dashboard:
-    grafana_url: '{{ grafana.grafana_url }}'
+    url: '{{ siteUrl }}/grafana'
     grafana_user: '{{ grafana.grafana_user }}'
     grafana_password: '{{ grafana.grafana_password }}'
     path: /etc/grafana/grafana-dashboard.json

@@ -115,7 +115,6 @@ dataverse:
 grafana:
   grafana_user: 'admin'
   grafana_password: 'admin'
-  grafana_url: 'http://localhost/grafana'
 
 munin:
   install: false
