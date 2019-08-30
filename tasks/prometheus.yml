@@ -1,5 +1,10 @@
 ---
 
+- name: systemd no likey escaped colons
+  set_fact:
+    siteUrl: "{{ siteUrl | regex_replace('\\:', ':') }}"
+  tags: grafana
+
 - name: Put SELinux in permissive mode
   selinux:
     policy: targeted
