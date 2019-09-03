@@ -1,4 +1,5 @@
 {
+  "dashboard": {
   "annotations": {
     "list": [
       {
@@ -15,7 +16,6 @@
   "editable": true,
   "gnetId": null,
   "graphTooltip": 0,
-  "id": 1,
   "links": [],
   "panels": [
     {
@@ -317,4 +317,5 @@
   "title": "overall metrics",
   "uid": "COPs6vKZk",
   "version": 4
+}
 }
