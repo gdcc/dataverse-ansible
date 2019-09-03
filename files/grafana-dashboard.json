@@ -1,4 +1,5 @@
 {
+  "dashboard": {
   "annotations": {
     "list": [
       {
@@ -317,4 +318,5 @@
   "title": "overall metrics",
   "uid": "COPs6vKZk",
   "version": 4
+}
 }
