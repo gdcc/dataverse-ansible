@@ -1,26 +1,26 @@
 ---
 # dataverse/tasks/dataverse-prereqs.yml
 
-- name: ensure EPEL repository for RedHat7/CentOS7
-  yum: name=epel-release state=latest
+- name: yum clean all, sigh...
+  shell: 'yum clean all'
   when: ansible_os_family == "RedHat" and
         ansible_distribution_major_version == "7"
 
-# fine in vagrant, kills standalone.
-#- name: update ansible
-#  yum: name=ansible state=latest
-#  when: ansible_os_family == "RedHat" and
-#        ansible_distribution_major_version == "7"
-#  tags: prereqs
-
 - name: let's use the closest centos mirror
-  file: path=/var/cache/yum/x86_64/7/timedhosts.txt state=absent
+  file:
+    path: /var/cache/yum/x86_64/7/timedhosts.txt
+    state: absent
   when: ansible_os_family == "RedHat" and
         ansible_distribution_major_version == "7"
 
 - name: makecache
   yum:
     update_cache: yes
+  when: ansible_os_family == "RedHat" and
+        ansible_distribution_major_version == "7"
+
+- name: ensure EPEL repository for RedHat7/CentOS7
+  yum: name=epel-release state=latest
   when: ansible_os_family == "RedHat" and
         ansible_distribution_major_version == "7"
 
