@@ -149,7 +149,7 @@ EOF
 # Port 8080 has been added because Ansible puts a redirect in place
 # from HTTP to HTTPS and the cert is invalid (self-signed), forcing
 # the user to click through browser warnings.
-CLICKABLE_LINK="http://${PUBLIC_DNS}:8080"
+CLICKABLE_LINK="http://${PUBLIC_DNS}"
 echo "To ssh into the new instance:"
 echo "ssh -i $PEM_FILE $USER_AT_HOST"
 echo "Branch $BRANCH from $REPO_URL has been deployed to $CLICKABLE_LINK"
