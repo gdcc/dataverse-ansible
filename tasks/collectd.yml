@@ -18,14 +18,6 @@
     group: root
     mode: '0644'
 
-- name: ensure /etc/collectd.conf.d exists
-  file:
-    path: /etc/collectd.conf.d
-    state: directory
-    owner: root
-    group: root
-    mode: '0755'
-
 - name: place prometheus plugin conf file
   copy:
     src: prometheus.conf
@@ -37,7 +29,7 @@
 - name: place jmx plugin conf file
   copy:
     src: jmx.conf
-    dest: /etc/collectd.conf.d/jmx.conf
+    dest: /etc/collectd.d/jmx.conf
     owner: root
     group: root
     mode: '0644'
