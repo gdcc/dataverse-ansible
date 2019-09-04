@@ -73,7 +73,7 @@
     grafana_user: '{{ grafana.grafana_user }}'
     grafana_password: '{{ grafana.grafana_password }}'
     ds_type: "prometheus"
-    url: 'http://localhost:9090/prometheus'
+    url: 'http://{{ siteUrl }}/prometheus'
     database: "prometheus"
     is_default: "yes"
     state: present
