@@ -112,6 +112,10 @@ dataverse:
   wholetale:
     enabled: true
 
+grafana:
+  grafana_user: 'admin'
+  grafana_password: 'admin'
+
 munin:
   install: false
   admin:
