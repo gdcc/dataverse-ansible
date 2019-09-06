@@ -51,6 +51,13 @@
   when: ansible_os_family == "RedHat" and
         ansible_distribution_major_version == "7"
 
+- name: log_lock_waits when told
+  lineinfile:
+    path: '/var/lib/pgsql/{{ dataverse.postgres.version }}/data/postgresql.conf'
+    regexp: '^#log_lock_waits'
+    line: 'log_lock_waits = on'
+  when: dataverse.postgres.log_lock_waits == true
+
 - name: enable postgres on RedHat / CentOS 7.
   service:
     name: 'postgresql-{{ dataverse.postgres.version }}'

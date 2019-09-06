@@ -22,7 +22,7 @@
   when: shibboleth.enabled == True
   tags: shibboleth
 
-- include: dataverse-postgres.yml
+- include: postgres.yml
   tags: postgres
 
 - include: dataverse-branch.yml
