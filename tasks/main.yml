@@ -60,6 +60,7 @@
   tags: previewers
 
 - include: dataverse-externaltools.yml
+  when: dataverse.externaltools.enabled == true
   tags: externaltools
 
 - include: dataverse-api-testsuite.yml

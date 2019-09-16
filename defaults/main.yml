@@ -99,6 +99,8 @@ dataverse:
     custom_sampledataverses: "{{ playbook_dir }}/custom_sampledata/dataverses"
     custom_sampleusers: "{{ playbook_dir }}/custom_sampledata/users"
     custom_samplefiles: "{{ playbook_dir }}/custom_sampledata/files"
+  externaltools:
+    enabled: true
   service_email: noreply@dataverse.yourinstitution.edu
   smtp: localhost # or the FQDN of your organization's SMTP relay
   solr:
