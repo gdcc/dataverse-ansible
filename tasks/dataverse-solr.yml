@@ -70,6 +70,7 @@
     paths: '{{ dataverse.srcdir }}/conf/solr/'
     file_type: file
     use_regex: yes
+    recurse: yes
     patterns: 'schema_*.xml'
   register: solr_files
   when: dataverse_branch != "release"
