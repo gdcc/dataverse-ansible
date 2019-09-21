@@ -67,7 +67,10 @@
 
 - name: "branch: identify solr schema files"
   find:
-    path: '{{ dataverse.srcdir }}/conf/solr/7.3.1/schema_*.xml'
+    paths: '{{ dataverse.srcdir }}/conf/solr/'
+    file_type: file
+    use_regex: yes
+    patterns: 'schema_*.xml'
   register: solr_files
   when: dataverse_branch != "release"
 
