@@ -82,11 +82,6 @@
   when: dataverse_branch != "release" and
         solr_files > 0
 
-- name: debug solr_files list
-  debug:
-    msg: 'found {{ item }}'
-  with_items: '{{ schema_files }}'
-
 - name: "branch: place solr schema files"
   copy:
     src: '{{ item }}'
