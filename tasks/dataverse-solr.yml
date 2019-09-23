@@ -75,13 +75,6 @@
   register: solr_files
   when: dataverse_branch != "release"
 
-- name: set solr files fact
-  set_fact:
-    schema_files:
-      - "{{ solr_files.files | map(attribute='path') | list }}"
-  when: dataverse_branch != "release" and
-        solr_files > 0
-
 - name: "branch: place solr schema files"
   copy:
     src: '{{ item }}'
