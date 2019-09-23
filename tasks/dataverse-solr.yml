@@ -71,7 +71,7 @@
     file_type: file
     use_regex: yes
     recurse: yes
-    patterns: 'schema_*.xml'
+    patterns: 'schema*.xml'
   register: solr_files
   when: dataverse_branch != "release"
 
@@ -81,6 +81,11 @@
       - "{{ solr_files.files | map(attribute='path') | list }}"
   when: dataverse_branch != "release" and
         solr_files > 0
+
+- name: debug solr_files list
+  debug:
+    msg: 'found {{ item }}'
+  with_items: '{{ solr_files }}'
 
 - name: "branch: place solr schema files"
   copy:
