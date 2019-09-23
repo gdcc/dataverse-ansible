@@ -40,6 +40,13 @@
 
 - include: dataverse-apitoken.yml
 
+- name: allow authenticated users to add to root
+  uri:
+    url: 'http://localhost:8080/api/dataverses/root/assignments?key={{ api_token }}'
+    method: PUT
+    body: '{"assignee":":authenticated-users","role":"fullContributor"}'
+    body_format: json
+
 - name: run test suite
   shell: '{{ dataverse.srcdir }}/run-test-suite.sh {{ siteUrl }}'
   args:
