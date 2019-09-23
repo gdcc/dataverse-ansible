@@ -96,7 +96,7 @@
     mode: 0644
     remote_src: yes
   with_items:
-  - "{{ solr_files.files | map(attribute='path') }}"
+  - "{{ solr_files.files | map(attribute='path') | list }}"
   when: dataverse_branch != "release" and
         solr_files > 0
 
