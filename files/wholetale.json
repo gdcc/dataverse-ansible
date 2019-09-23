@@ -1,7 +1,7 @@
 {
   "displayName": "Whole Tale",
   "description": "Analyze in Whole Tale",
-  "scope": "file",
+  "scope": "dataset",
   "type": "explore",
   "toolUrl": "https://data.wholetale.org/api/v1/integration/dataverse",
   "toolParameters": {
