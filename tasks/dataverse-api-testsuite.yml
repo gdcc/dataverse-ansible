@@ -56,8 +56,15 @@
     body_format: json
   tags: apitestsuite
 
+- name: the root dataverse must be published
+  uri:
+    url: 'http://localhost:8080/api/dataverses/root/actions/:publish'
+    method: POST
+    headers:
+      X-Dataverse-key: '{{ api_token }}'
+
 - name: run test suite
-  shell: '{{ dataverse.srcdir }}/run-test-suite.sh {{ siteUrl }}'
+  shell: '{{ dataverse.srcdir }}/run-test-suite.sh http://localhost:8080'
   args:
     chdir: '{{ dataverse.srcdir }}'
   environment:
