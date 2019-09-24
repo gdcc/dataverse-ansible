@@ -4,48 +4,56 @@
   yum:
     name: maven
     state: latest
+  tags: apitestsuite
 
 - name: did we build a branch already?
   stat:
     path: '{{ dataverse.srcdir }}'
   register: branch
+  tags: apitestsuite
 
 - name: if we're not in a branch, grab release source
   get_url:
     url: 'https://github.com/IQSS/dataverse/archive/v{{ dataverse.version }}.tar.gz'
     dest: '/tmp'
   when: branch.stat.exists == false
+  tags: apitestsuite
 
 - name: unarchive won't create directories for us
   file:
     path: '{{ dataverse.srcdir }}'
     state: directory
   when: branch.stat.exists == false
+  tags: apitestsuite
 
 - name: unpack, strip root directory
   shell: 'bsdtar --strip-components=1 -C {{ dataverse.srcdir }} -xvf /tmp/dataverse-{{ dataverse.version }}.tar.gz'
   when: branch.stat.exists == false
+  tags: apitestsuite
 
 - name: grab latest copy of run-test-suite.sh
   get_url:
     url: https://raw.githubusercontent.com/IQSS/dataverse/develop/conf/docker-aio/run-test-suite.sh
     dest: '{{ dataverse.srcdir }}/run-test-suite.sh'
     mode: 0755
+  tags: apitestsuite
 
 - name: set user management quesadilla
   uri:
     url: 'http://localhost:8080/api/admin/settings/BuiltinUsers.KEY'
     method: PUT
     body: '{{ dataverse.usermgmtkey }}'
+  tags: apitestsuite
 
 - include: dataverse-apitoken.yml
 
 - name: allow authenticated users to add to root
   uri:
     url: 'http://localhost:8080/api/dataverses/root/assignments?key={{ api_token }}'
-    method: PUT
+    method: POST
     body: '{"assignee":":authenticated-users","role":"fullContributor"}'
     body_format: json
+  tags: apitestsuite
 
 - name: run test suite
   shell: '{{ dataverse.srcdir }}/run-test-suite.sh {{ siteUrl }}'
@@ -56,3 +64,4 @@
     DV_APIKEY: '{{ dataverse.usermgmtkey }}'
     DV_API_KEY: '{{ dataverse.usermgmtkey }}'
   ignore_errors: yes
+  tags: apitestsuite
