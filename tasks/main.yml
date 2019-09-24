@@ -64,7 +64,7 @@
 
 - include: dataverse-api-testsuite.yml
   when: dataverse.api.test_suite == true
-  tags: test_suite
+  tags: apitestsuite
 
 - include: munin.yml
   when: munin.install == true

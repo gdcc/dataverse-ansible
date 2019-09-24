@@ -46,6 +46,7 @@
   tags: apitestsuite
 
 - include: dataverse-apitoken.yml
+  tags: apitestsuite
 
 - name: allow authenticated users to add to root
   uri:
