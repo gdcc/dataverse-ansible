@@ -7,7 +7,7 @@
   "toolParameters": {
     "queryParameters": [
       {
-        "datasetPid": "{datasetPid}"
+        "datasetId": "{datasetId}"
       },
       {
         "siteUrl": "{siteUrl}"
