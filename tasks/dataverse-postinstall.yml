@@ -29,6 +29,23 @@
   environment:
     PGPASSWORD: "{{ dataverse.db.pass }}"
 
+- name: support sequential identifiers fetch current SQL script
+  get_url:
+    url: http://guides.dataverse.org/en/latest/_downloads/createsequence.sql
+    dest: /tmp/createsequence.sql
+    mode: '0644'
+
+- name: "support sequential identifiers use db.user"
+  lineinfile:
+    path: /tmp/createsequence.sql
+    regexp: '^ALTER TABLE datasetidentifier_seq OWNER TO "dvnapp"'
+    line: 'ALTER TABLE datasetidentifier_seq OWNER TO "{{ dataverse.db.user }}";'
+
+- name: support sequential identifiers
+  shell: "psql -U {{ dataverse.db.user }} -h {{ dataverse.db.host }} -d {{ dataverse.db.name }} -f /tmp/createsequence.sql"
+  environment:
+    PGPASSWORD: "{{ dataverse.db.pass }}"
+  
 - name: suppress grizzly ajp warnings
   become: yes
   become_user: "{{ dataverse.glassfish.user }}"
