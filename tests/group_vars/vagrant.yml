@@ -111,7 +111,7 @@ dataverse:
   usermgmtkey: burrito
   version: 4.16
   wholetale:
-    enabled: true
+    enabled: false
 
 grafana:
   grafana_user: 'admin'
@@ -124,7 +124,7 @@ munin:
     passwd: p4sswurd
 
 prometheus:
-  install: true
+  install: false
   node_exporter: https://github.com/prometheus/node_exporter/releases/download/v0.18.1/node_exporter-0.18.1.linux-amd64.tar.gz
   root: /usr/local/prometheus
   url: https://github.com/prometheus/prometheus/releases/download/v2.11.1/prometheus-2.11.1.linux-amd64.tar.gz
