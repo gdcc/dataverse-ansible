@@ -29,7 +29,13 @@
   set_fact:
     dataverse_pg_version_short: "{{ dataverse.postgres.version | regex_replace('\\.','') }}"
 
-- name: install postgres on RedHat / CentOS 7.
+- name: and under RHEL/CentOS8 postgres wants the meta package installed first
+  yum:
+    name: 'postgresql{{ dataverse_pg_version_short }}'
+    state: latest
+  when: ansible_os_family == "RedHat"
+
+- name: install postgres on RedHat / CentOS
   yum:
    name: 'postgresql{{ dataverse_pg_version_short }}-server'
    state: latest
@@ -47,11 +53,11 @@
     dataverse_pg_version_short is search("1[0-9]") and
     ansible_os_family == "RedHat"
 
-- name: init postgres on RedHat / CentOS 7.
+- name: init postgres on RHEL/CentOS
   shell: '{{ postgres_init }}'
   when: ansible_os_family == "RedHat"
 
-- name: install pg_hba.conf on RedHat / CentOS 7.
+- name: install pg_hba.conf on RHEL/CentOS
   copy:
     src: pg_hba.conf
     dest: '/var/lib/pgsql/{{ dataverse.postgres.version }}/data'
@@ -67,13 +73,13 @@
     line: 'log_lock_waits = on'
   when: dataverse.postgres.log_lock_waits == true
 
-- name: enable postgres on RedHat / CentOS 7.
+- name: enable postgres on RHEL/CentOS
   service:
     name: 'postgresql-{{ dataverse.postgres.version }}'
     enabled: yes
   when: ansible_os_family == "RedHat"
 
-- name: start postgres on RedHat / CentOS 7.
+- name: start postgres on RHEL/CentOS
   service:
     name: 'postgresql-{{ dataverse.postgres.version }}'
     state: started
