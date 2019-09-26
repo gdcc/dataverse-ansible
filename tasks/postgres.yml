@@ -5,8 +5,7 @@
   yum:
     name: '{{ dataverse.postgres.reporpm }}'
     state: present
-  when: ansible_os_family == "RedHat" and
-        ansible_distribution_major_version == "7"
+  when: ansible_os_family == "RedHat"
 
 - name: tell systemd postgresql is on board
   shell: systemctl daemon-reload
@@ -19,27 +18,23 @@
   yum:
    name: 'postgresql{{ dataverse_pg_version_short }}-server'
    state: latest
-  when: ansible_os_family == "RedHat" and
-        ansible_distribution_major_version == "7"
+  when: ansible_os_family == "RedHat"
 
 - name: set postgresql init command
   set_fact:
     postgres_init: 'creates=/var/lib/pgsql/{{ dataverse.postgres.version }}/data/postgresql.conf /usr/pgsql-{{ dataverse.postgres.version }}/bin/postgresql{{ dataverse_pg_version_short }}-setup initdb'
-  when: ansible_os_family == "RedHat" and
-        ansible_distribution_major_version == "7"
+  when: ansible_os_family == "RedHat"
 
 - name: init command needs a dash on postgres 10+
   set_fact:
     postgres_init: 'creates=/var/lib/pgsql/{{ dataverse.postgres.version }}/data/postgresql.conf /usr/pgsql-{{ dataverse.postgres.version }}/bin/postgresql-{{ dataverse_pg_version_short }}-setup initdb'
   when: >
     dataverse_pg_version_short is search("1[0-9]") and
-    ansible_os_family == "RedHat" and
-    ansible_distribution_major_version == "7"
+    ansible_os_family == "RedHat"
 
 - name: init postgres on RedHat / CentOS 7.
   shell: '{{ postgres_init }}'
-  when: ansible_os_family == "RedHat" and
-        ansible_distribution_major_version == "7"
+  when: ansible_os_family == "RedHat"
 
 - name: install pg_hba.conf on RedHat / CentOS 7.
   copy:
@@ -48,8 +43,7 @@
     owner: postgres
     group: postgres
     mode: 0644
-  when: ansible_os_family == "RedHat" and
-        ansible_distribution_major_version == "7"
+  when: ansible_os_family == "RedHat"
 
 - name: log_lock_waits when told
   lineinfile:
@@ -62,15 +56,13 @@
   service:
     name: 'postgresql-{{ dataverse.postgres.version }}'
     enabled: yes
-  when: ansible_os_family == "RedHat" and
-        ansible_distribution_major_version == "7"
+  when: ansible_os_family == "RedHat"
 
 - name: start postgres on RedHat / CentOS 7.
   service:
     name: 'postgresql-{{ dataverse.postgres.version }}'
     state: started
-  when: ansible_os_family == "RedHat" and
-        ansible_distribution_major_version == "7"
+  when: ansible_os_family == "RedHat"
 
 - name: create glassfish postgres database
   postgresql_db: name={{ dataverse.db.name }}

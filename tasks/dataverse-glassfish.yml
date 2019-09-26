@@ -80,18 +80,15 @@
 - name: install glassfish systemd conf file for RedHat / CentOS7
   template: src=glassfish.service.j2 dest=/usr/lib/systemd/system/glassfish.service
         owner=root group=root mode=0644
-  when: ansible_os_family == "RedHat" and
-        ansible_distribution_major_version == "7"
+  when: ansible_os_family == "RedHat"
 
 - name: reload systemd on RedHat/CentOS7
   shell: systemctl daemon-reload
-  when: ansible_os_family == "RedHat" and
-        ansible_distribution_major_version == "7"
+  when: ansible_os_family == "RedHat"
 
 - name: enable glassfish on RedHat/CentOS7 - but don't start it with systemd during Ansible installation
   service: name=glassfish enabled=yes
-  when: ansible_os_family == "RedHat" and
-        ansible_distribution_major_version == "7"
+  when: ansible_os_family == "RedHat"
 
 - name: install glassfish upstart script for Debian/Ubuntu
   template: src=glassfish.conf.j2 dest=/etc/init
@@ -102,8 +99,7 @@
   become: yes
   become_user: "{{ dataverse.glassfish.user }}"
   shell: "{{ glassfish_dir }}/bin/asadmin start-domain {{ dataverse.glassfish.domain }}"
-  when: ansible_os_family == "RedHat" and
-        ansible_distribution_major_version == "7"
+  when: ansible_os_family == "RedHat"
 
 - name: start glassfish on Debian/Ubuntu
   service: name=glassfish state=started
