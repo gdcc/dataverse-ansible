@@ -45,8 +45,6 @@ dataverse:
     upload_to_hub: False
     user: counter
     year_month: "2018-05"
-  dataexplorer:
-    enabled: true
   db:
     name: dvndb
     host: localhost
@@ -62,6 +60,14 @@ dataverse:
     protocol: doi
     provider: FAKE
     shoulder: "FK2/"
+  externaltools:
+    datacurationtool:
+      enabled: true
+      method: demo
+    dataexplorer:
+      enabled: true
+    wholetale:
+      enabled: false
   filesdir: /usr/local/dvn/data
   glassfish:
     user: glassfish
@@ -110,8 +116,6 @@ dataverse:
   thumbnails: true
   usermgmtkey: burrito
   version: 4.16
-  wholetale:
-    enabled: true
 
 grafana:
   grafana_user: 'admin'
