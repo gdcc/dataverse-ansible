@@ -1,16 +1,16 @@
 ---
 
-- name: enable wholetale externaltool
+- name: enable data curation tool
   uri:
     url: http://localhost:8080/api/admin/externalTools
     method: POST
-    headers: 
+    headers:
       Content-type: "application/json"
     body_format: json
-    body: "{{ lookup('file', 'wholetale.json') }}"
-  when: dataverse.wholetale.enabled == true
+    body: "{{ lookup('file', 'DataCuration.json') }}"
+  when: dataverse.externaltools.datacurationtool.enabled == true
 
-- name: enable data explorer on demand
+- name: enable data explorer
   uri:
     url: http://localhost:8080/api/admin/externalTools
     method: POST
@@ -18,4 +18,14 @@
       Content-type: "application/json"
     body_format: json
     body: "{{ lookup('file', 'dataExplorer.json') }}"
-  when: dataverse.dataexplorer.enabled == true
+  when: dataverse.externaltools.dataexplorer.enabled == true
+
+- name: enable wholetale
+  uri:
+    url: http://localhost:8080/api/admin/externalTools
+    method: POST
+    headers: 
+      Content-type: "application/json"
+    body_format: json
+    body: "{{ lookup('file', 'wholetale.json') }}"
+  when: dataverse.externaltools.wholetale.enabled == true
