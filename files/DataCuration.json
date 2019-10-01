@@ -4,6 +4,7 @@
   "scope": "file",
   "type": "configure",
   "toolUrl": "https://scholarsportal.github.io/Dataverse-Data-Curation-Tool/",
+  "contentType": "text/tab-separated-values",
   "toolParameters": {
     "queryParameters": [
      {	
