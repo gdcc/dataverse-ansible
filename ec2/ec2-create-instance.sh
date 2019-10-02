@@ -8,7 +8,7 @@ BRANCH_DEFAULT='develop'
 PEM_DEFAULT=${HOME}
 
 usage() {
-  echo "Usage: $0 -b <branch> -r <repo> -p <pem_dir> -g <group_vars> -a <dataverse-ansible branch>" 1>&2
+  echo "Usage: $0 -b <branch> -r <repo> -p <pem_dir> -g <group_vars> -a <dataverse-ansible branch> -t tag" 1>&2
   echo "default branch is develop"
   echo "default repo is https://github.com/IQSS/dataverse"
   echo "default .pem location is ${HOME}"
@@ -16,7 +16,7 @@ usage() {
   exit 1
 }
 
-while getopts ":a:r:b:g:p:" o; do
+while getopts ":a:r:b:g:p:t:" o; do
   case "${o}" in
   a)
     DA_BRANCH=${OPTARG}
@@ -32,6 +32,9 @@ while getopts ":a:r:b:g:p:" o; do
     ;;
   p)
     PEM_DIR=${OPTARG}
+    ;;
+  t)
+    TAG=${OPTARG}
     ;;
   *)
     usage
@@ -55,6 +58,11 @@ fi
 if [ ! -z "$BRANCH" ]; then
    GVARG+=" -e dataverse_branch=$BRANCH"
    echo "building branch $BRANCH"
+fi
+
+if [ ! -z "$TAG" ]; then
+   TAGARG="--tag-specifications ResourceType=instance,Tags=[{Key=name,Value=$TAG}]"
+   echo "using tag $TAG"
 fi
 
 # default to dataverse-ansible/master
@@ -116,7 +124,7 @@ AMI_ID='ami-9887c6e7'
 SIZE='t2.medium'
 echo "Creating EC2 instance"
 # TODO: Add some error checking for "ec2 run-instances".
-INSTANCE_ID=$(aws ec2 run-instances --image-id $AMI_ID --security-groups $SECURITY_GROUP --count 1 --instance-type $SIZE --key-name $PEM_DIR/$KEY_NAME --query 'Instances[0].InstanceId' --block-device-mappings '[ { "DeviceName": "/dev/sda1", "Ebs": { "DeleteOnTermination": true } } ]' | tr -d \")
+INSTANCE_ID=$(aws ec2 run-instances --image-id $AMI_ID --security-groups $SECURITY_GROUP $TAGARG --count 1 --instance-type $SIZE --key-name $PEM_DIR/$KEY_NAME --query 'Instances[0].InstanceId' --block-device-mappings '[ { "DeviceName": "/dev/sda1", "Ebs": { "DeleteOnTermination": true } } ]' | tr -d \")
 echo "Instance ID: "$INSTANCE_ID
 echo "giving instance 60 seconds to wake up..."
 sleep 60

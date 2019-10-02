@@ -87,7 +87,6 @@ dataverse:
     version: 1.8.0
   memheap: 2048
   postgres:
-    reporpm: https://download.postgresql.org/pub/repos/yum/reporpms/EL-7-x86_64/pgdg-redhat-repo-latest.noarch.rpm
     version: 9.6
     log_lock_waits: true
   previewers:
