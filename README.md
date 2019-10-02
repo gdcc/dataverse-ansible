@@ -66,6 +66,7 @@ If you needed to update the host port in the Vagrantfile due to collision, you'd
 * Postgres (database)
   * Default data/config location: */var/lib/pgsql/9.6/data/*
   * `$ systemctl {start|stop|restart|status} postgresql-9.6`
+  * **Note:** as of this writing, RHEL/CentOS8 are compiled- and will only work with PostgresQL 10+
 * Shibboleth
   * Provides an additional authentication provider.
   * Default config location: */etc/shibboleth/shibboleth2.xml*
