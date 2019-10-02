@@ -4,6 +4,7 @@
   "scope": "file",
   "type": "explore",
   "toolUrl": "https://scholarsportal.github.io/Dataverse-Data-Explorer/",
+  "contentType": "text/tab-separated-values",
   "toolParameters": {
     "queryParameters": [
      {	
