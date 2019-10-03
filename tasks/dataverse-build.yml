@@ -21,24 +21,6 @@
     - "{{ dataverse.srcdir }}/scripts/installer/install"
     - "{{ dataverse.srcdir }}/scripts/installer/glassfish-setup.sh"
 
-# grab installers 
-# remote copy doesn't currently support recursive copy of directory
-#- name: copy api script data directory
-#  copy:
-#    src: "{{ dataverse.srcdir }}/scripts/api/data"
-#    dest: "/tmp/dvinstall/"
-#    remote_src: yes
-
-# surgical method of editing version in pom.xml just pisses off xpath
-#- name: depending on branch, the project version in pom.xml doesn't always match.
-#  xml:
-#    path: "{{ dataverse.srcdir }}/pom.xml"
-#    namespaces:
-#      ns: http://maven.apache.org/POM/4.0.0
-#    xpath: ns:project:version
-#    value: "{{ dataverse.version }}"
-#    pretty_print: yes
-
 - name: older branches specify an older version in pom.xml. use current.
   get_url:
     url: https://raw.githubusercontent.com/IQSS/dataverse/develop/pom.xml
@@ -80,6 +62,13 @@
   shell: "mvn -Dmaven.test.skip=true -T 2C package > mvn.out"
   args:
     chdir: "{{ dataverse.srcdir }}"
+  when: dataverse.unittests.enabled == false
+
+- name: build warfile. tail /tmp/dataverse/mvn.out for gory details.
+  shell: "mvn {{ dataverse.unittests.argument }} -T 2C package > mvn.out"
+  args:
+    chdir: "{{ dataverse.srcdir }}"
+  when: dataverse.unittests.enabled == true
 
 - name: copy warfile over release
   copy:
