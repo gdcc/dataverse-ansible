@@ -6,6 +6,7 @@
 REPO_URL_DEFAULT='https://github.com/IQSS/dataverse.git'
 BRANCH_DEFAULT='develop'
 PEM_DEFAULT=${HOME}
+AWS_AMI_DEFAULT='ami-9887c6e7'
 
 usage() {
   echo "Usage: $0 -b <branch> -r <repo> -p <pem_dir> -g <group_vars> -a <dataverse-ansible branch> -i aws_image -s aws_size -t aws_tag" 1>&2
@@ -13,7 +14,7 @@ usage() {
   echo "default repo is https://github.com/IQSS/dataverse"
   echo "default .pem location is ${HOME}"
   echo "example group_vars may be retrieved from https://raw.githubusercontent.com/IQSS/dataverse-ansible/master/defaults/main.yml"
-  echo "default AWS AMI ID is ami-9887c6e7"
+  echo "default AWS AMI ID is $AWS_AMI_DEFAULT"
   echo "default AWS size is t2.medium"
   exit 1
 }
@@ -76,7 +77,7 @@ fi
 if [ ! -z "$AWS_IMAGE" ]; then
    AMI_ID=$AWS_IMAGE
 else
-   AMI_ID="ami-9887c6e7"
+   AMI_ID="$AWS_AMI_DEFAULT"
 fi 
 echo "using $AMI_ID"
 
