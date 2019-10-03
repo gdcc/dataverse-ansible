@@ -58,13 +58,13 @@
     line: "build.number={{ dataverse_branch }}-{{ commit }}"
     create: yes
 
-- name: build warfile. tail /tmp/dataverse/mvn.out for gory details.
+- name: build warfile with default tests. tail /tmp/dataverse/mvn.out for gory details.
   shell: "mvn -T 2C package > mvn.out"
   args:
     chdir: "{{ dataverse.srcdir }}"
   when: dataverse.unittests.enabled == false
 
-- name: build warfile. tail /tmp/dataverse/mvn.out for gory details.
+- name: build warfile with specified tests. tail /tmp/dataverse/mvn.out for gory details.
   shell: "mvn {{ dataverse.unittests.argument }} -T 2C package > mvn.out"
   args:
     chdir: "{{ dataverse.srcdir }}"
