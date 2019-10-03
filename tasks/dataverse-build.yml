@@ -59,7 +59,7 @@
     create: yes
 
 - name: build warfile. tail /tmp/dataverse/mvn.out for gory details.
-  shell: "mvn -Dmaven.test.skip=true -T 2C package > mvn.out"
+  shell: "mvn -T 2C package > mvn.out"
   args:
     chdir: "{{ dataverse.srcdir }}"
   when: dataverse.unittests.enabled == false
