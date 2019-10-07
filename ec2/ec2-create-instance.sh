@@ -6,17 +6,20 @@
 REPO_URL_DEFAULT='https://github.com/IQSS/dataverse.git'
 BRANCH_DEFAULT='develop'
 PEM_DEFAULT=${HOME}
+AWS_AMI_DEFAULT='ami-9887c6e7'
 
 usage() {
-  echo "Usage: $0 -b <branch> -r <repo> -p <pem_dir> -g <group_vars> -a <dataverse-ansible branch>" 1>&2
+  echo "Usage: $0 -b <branch> -r <repo> -p <pem_dir> -g <group_vars> -a <dataverse-ansible branch> -i aws_image -s aws_size -t aws_tag" 1>&2
   echo "default branch is develop"
   echo "default repo is https://github.com/IQSS/dataverse"
   echo "default .pem location is ${HOME}"
   echo "example group_vars may be retrieved from https://raw.githubusercontent.com/IQSS/dataverse-ansible/master/defaults/main.yml"
+  echo "default AWS AMI ID is $AWS_AMI_DEFAULT"
+  echo "default AWS size is t2.medium"
   exit 1
 }
 
-while getopts ":a:r:b:g:p:" o; do
+while getopts ":a:r:b:g:p:i:s:t:" o; do
   case "${o}" in
   a)
     DA_BRANCH=${OPTARG}
@@ -32,6 +35,15 @@ while getopts ":a:r:b:g:p:" o; do
     ;;
   p)
     PEM_DIR=${OPTARG}
+    ;;
+  i)
+    AWS_IMAGE=${OPTARG}
+    ;;
+  s)
+    AWS_SIZE=${OPTARG}
+    ;;
+  t)
+    TAG=${OPTARG}
     ;;
   *)
     usage
@@ -55,6 +67,30 @@ fi
 if [ ! -z "$BRANCH" ]; then
    GVARG+=" -e dataverse_branch=$BRANCH"
    echo "building branch $BRANCH"
+fi
+
+# The AMI ID may change in the future and the way to look it up is with the following command, which takes a long time to run:
+# aws ec2 describe-images  --owners 'aws-marketplace' --filters 'Name=product-code,Values=aw0evgkw8e5c1q413zgy5pjce' --query 'sort_by(Images, &CreationDate)[-1].[ImageId]' --output 'text'
+# To use an AMI, one must subscribe to it via the AWS GUI.
+# AMI IDs are specific to the region.
+
+if [ ! -z "$AWS_IMAGE" ]; then
+   AMI_ID=$AWS_IMAGE
+else
+   AMI_ID="$AWS_AMI_DEFAULT"
+fi 
+echo "using $AMI_ID"
+
+if [ ! -z "$AWS_SIZE" ]; then
+   SIZE=$AWS_SIZE
+else
+   SIZE="t2.medium"
+fi
+echo "using $SIZE"
+
+if [ ! -z "$TAG" ]; then
+   TAGARG="--tag-specifications ResourceType=instance,Tags=[{Key=name,Value=$TAG}]"
+   echo "using tag $TAG"
 fi
 
 # default to dataverse-ansible/master
@@ -104,19 +140,9 @@ else
   exit 1
 fi
 
-# The AMI ID may change in the future and the way to look it up is with the
-# following command, which takes a long time to run:
-#
-# aws ec2 describe-images  --owners 'aws-marketplace' --filters 'Name=product-code,Values=aw0evgkw8e5c1q413zgy5pjce' --query 'sort_by(Images, &CreationDate)[-1].[ImageId]' --output 'text'
-#
-# To use this AMI, we subscribed to it from the AWS GUI.
-# AMI IDs are specific to the region.
-AMI_ID='ami-9887c6e7'
-# Smaller than medium lead to Maven and Solr problems.
-SIZE='t2.medium'
 echo "Creating EC2 instance"
 # TODO: Add some error checking for "ec2 run-instances".
-INSTANCE_ID=$(aws ec2 run-instances --image-id $AMI_ID --security-groups $SECURITY_GROUP --count 1 --instance-type $SIZE --key-name $PEM_DIR/$KEY_NAME --query 'Instances[0].InstanceId' --block-device-mappings '[ { "DeviceName": "/dev/sda1", "Ebs": { "DeleteOnTermination": true } } ]' | tr -d \")
+INSTANCE_ID=$(aws ec2 run-instances --image-id $AMI_ID --security-groups $SECURITY_GROUP $TAGARG --count 1 --instance-type $SIZE --key-name $PEM_DIR/$KEY_NAME --query 'Instances[0].InstanceId' --block-device-mappings '[ { "DeviceName": "/dev/sda1", "Ebs": { "DeleteOnTermination": true } } ]' | tr -d \")
 echo "Instance ID: "$INSTANCE_ID
 echo "giving instance 60 seconds to wake up..."
 sleep 60

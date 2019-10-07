@@ -3,8 +3,7 @@
 
 - name: yum clean all, sigh...
   shell: 'yum clean all'
-  when: ansible_os_family == "RedHat" and
-        ansible_distribution_major_version == "7"
+  when: ansible_os_family == "RedHat"
 
 - name: let's use the closest centos mirror
   file:
@@ -21,21 +20,28 @@
 
 - name: ensure EPEL repository for RedHat7/CentOS7
   yum: name=epel-release state=latest
-  when: ansible_os_family == "RedHat" and
-        ansible_distribution_major_version == "7"
+  when: ansible_os_family == "RedHat"
 
 - name: install java-nnn-openjdk and other packages for RedHat/CentOS.
   yum:
-   name: ['bash-completion', 'elinks', 'git', 'java-{{ dataverse.java.version }}-openjdk-devel', 'jq', 'mlocate', 'net-tools', 'perl', 'python-psycopg2', 'sudo', 'unzip', 'vim-enhanced']
+   name: ['bash-completion', 'elinks', 'git', 'java-{{ dataverse.java.version }}-openjdk-devel', 'jq', 'mlocate', 'net-tools', 'perl', 'sudo', 'unzip', 'vim-enhanced']
    state: latest
-  when: ansible_os_family == "RedHat" and
-        ansible_distribution_major_version == "7"
+  when: ansible_os_family == "RedHat"
   tags: prereqs
 
-- name: install ImageMagick for RedHat/CentOS to allow thumbnail generation
+- name: install ImageMagick for RHEL/CentOS7 to allow thumbnail generation
   yum: name=ImageMagick state=latest
   when:
     - ansible_os_family == "RedHat"
     - ansible_distribution_major_version == "7"
+    - dataverse.thumbnails
+  tags: prereqs
+
+- name: install GraphicsMagic on RHEL/CentOS8
+  dnf:
+    name: GraphicsMagick
+  when:
+    - ansible_os_family == "RedHat"
+    - ansible_distribution_major_version == "8"
     - dataverse.thumbnails
   tags: prereqs

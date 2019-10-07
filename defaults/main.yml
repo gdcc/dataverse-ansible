@@ -45,8 +45,6 @@ dataverse:
     upload_to_hub: False
     user: counter
     year_month: "2018-05"
-  dataexplorer:
-    enabled: true
   db:
     name: dvndb
     host: localhost
@@ -62,6 +60,14 @@ dataverse:
     protocol: doi
     provider: FAKE
     shoulder: "FK2/"
+  externaltools:
+    datacurationtool:
+      enabled: true
+      method: demo
+    dataexplorer:
+      enabled: true
+    wholetale:
+      enabled: false
   filesdir: /usr/local/dvn/data
   glassfish:
     user: glassfish
@@ -81,7 +87,6 @@ dataverse:
     version: 1.8.0
   memheap: 2048
   postgres:
-    reporpm: https://download.postgresql.org/pub/repos/yum/reporpms/EL-7-x86_64/pgdg-redhat-repo-latest.noarch.rpm
     version: 9.6
     log_lock_waits: true
   previewers:
@@ -108,10 +113,11 @@ dataverse:
     version: 7.3.1
   srcdir: /tmp/dataverse
   thumbnails: true
+  unittests:
+    enabled: false
+    argument: '-DcompilerArgument=-Xlint:unchecked test -P all-unit-tests'
   usermgmtkey: burrito
   version: 4.16
-  wholetale:
-    enabled: true
 
 grafana:
   grafana_user: 'admin'
