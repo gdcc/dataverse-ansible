@@ -171,21 +171,21 @@ ssh -T -i $PEM_FILE -o 'StrictHostKeyChecking no' -o 'UserKnownHostsFile=/dev/nu
 sudo yum -y install epel-release
 sudo yum -y install https://releases.ansible.com/ansible/rpm/release/epel-7-x86_64/ansible-2.7.9-1.el7.ans.noarch.rpm
 sudo yum -y install git nano
-git clone -b "$DA_BRANCH" https://github.com/IQSS/dataverse-ansible.git dataverse
+git clone -b $DA_BRANCH https://github.com/IQSS/dataverse-ansible.git dataverse
 export ANSIBLE_ROLES_PATH=.
 ansible-playbook -v -i dataverse/inventory dataverse/dataverse.pb --connection=local $GVARG
 EOF
 
 if [ ! -z "$LOCAL_LOG_PATH" ]; then
+   echo "copying logs to $LOCAL_LOG_PATH."
    # 1 accept SSH keys
-   ssh-keyscan -H ${PUBLIC_DNS} -i $PEM_FILE >> ~/.ssh/known_hosts
+   ssh-keyscan ${PUBLIC_DNS} >> ~/.ssh/known_hosts
    # 2 logdir should exist
    mkdir -p $LOCAL_LOG_PATH
-   echo "copying logs to $LOCAL_LOG_PATH."
    # 3 grab logs for local processing in jenkins
-   rsync -av --ignore-missing-args centos@$HOSTNAME:/tmp/dataverse/target/site $LOCAL_LOG_PATH/
-   rsync -av --ignore-missing-args centos@$HOSTNAME:/tmp/dataverse/target/surefire-reports $LOCAL_LOG_PATH/
-   rsync -av centos@$HOSTNAME:/usr/local/glassfish4/glassfish/domains/domain1/logs/server* $LOCAL_LOG_PATH/
+   rsync -av -e "ssh -i $PEM_FILE" --ignore-missing-args centos@$PUBLIC_DNS:/tmp/dataverse/target/site $LOCAL_LOG_PATH/
+   rsync -av -e "ssh -i $PEM_FILE" --ignore-missing-args centos@$PUBLIC_DNS:/tmp/dataverse/target/surefire-reports $LOCAL_LOG_PATH/
+   rsync -av -e "ssh -i $PEM_FILE" centos@$PUBLIC_DNS:/usr/local/glassfish4/glassfish/domains/domain1/logs/server* $LOCAL_LOG_PATH/
 fi
 
 # Port 8080 has been added because Ansible puts a redirect in place
