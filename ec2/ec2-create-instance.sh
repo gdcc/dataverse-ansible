@@ -9,17 +9,18 @@ PEM_DEFAULT=${HOME}
 AWS_AMI_DEFAULT='ami-9887c6e7'
 
 usage() {
-  echo "Usage: $0 -b <branch> -r <repo> -p <pem_dir> -g <group_vars> -a <dataverse-ansible branch> -i aws_image -s aws_size -t aws_tag" 1>&2
+  echo "Usage: $0 -b <branch> -r <repo> -p <pem_dir> -g <group_vars> -a <dataverse-ansible branch> -i aws_image -s aws_size -t aws_tag -l local_log_path" 1>&2
   echo "default branch is develop"
   echo "default repo is https://github.com/IQSS/dataverse"
   echo "default .pem location is ${HOME}"
   echo "example group_vars may be retrieved from https://raw.githubusercontent.com/IQSS/dataverse-ansible/master/defaults/main.yml"
   echo "default AWS AMI ID is $AWS_AMI_DEFAULT"
   echo "default AWS size is t2.medium"
+  echo "local log path"
   exit 1
 }
 
-while getopts ":a:r:b:g:p:i:s:t:" o; do
+while getopts ":a:r:b:g:p:i:s:t:l:" o; do
   case "${o}" in
   a)
     DA_BRANCH=${OPTARG}
@@ -44,6 +45,9 @@ while getopts ":a:r:b:g:p:i:s:t:" o; do
     ;;
   t)
     TAG=${OPTARG}
+    ;;
+  l)
+    LOCAL_LOG_PATH=${OPTARG}
     ;;
   *)
     usage
@@ -167,10 +171,22 @@ ssh -T -i $PEM_FILE -o 'StrictHostKeyChecking no' -o 'UserKnownHostsFile=/dev/nu
 sudo yum -y install epel-release
 sudo yum -y install https://releases.ansible.com/ansible/rpm/release/epel-7-x86_64/ansible-2.7.9-1.el7.ans.noarch.rpm
 sudo yum -y install git nano
-git clone -b "$DA_BRANCH" https://github.com/IQSS/dataverse-ansible.git dataverse
+git clone -b $DA_BRANCH https://github.com/IQSS/dataverse-ansible.git dataverse
 export ANSIBLE_ROLES_PATH=.
 ansible-playbook -v -i dataverse/inventory dataverse/dataverse.pb --connection=local $GVARG
 EOF
+
+if [ ! -z "$LOCAL_LOG_PATH" ]; then
+   echo "copying logs to $LOCAL_LOG_PATH."
+   # 1 accept SSH keys
+   ssh-keyscan ${PUBLIC_DNS} >> ~/.ssh/known_hosts
+   # 2 logdir should exist
+   mkdir -p $LOCAL_LOG_PATH
+   # 3 grab logs for local processing in jenkins
+   rsync -av -e "ssh -i $PEM_FILE" --ignore-missing-args centos@$PUBLIC_DNS:/tmp/dataverse/target/site $LOCAL_LOG_PATH/
+   rsync -av -e "ssh -i $PEM_FILE" --ignore-missing-args centos@$PUBLIC_DNS:/tmp/dataverse/target/surefire-reports $LOCAL_LOG_PATH/
+   rsync -av -e "ssh -i $PEM_FILE" centos@$PUBLIC_DNS:/usr/local/glassfish4/glassfish/domains/domain1/logs/server* $LOCAL_LOG_PATH/
+fi
 
 # Port 8080 has been added because Ansible puts a redirect in place
 # from HTTP to HTTPS and the cert is invalid (self-signed), forcing
