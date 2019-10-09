@@ -73,3 +73,9 @@
     DV_API_KEY: '{{ dataverse.usermgmtkey }}'
   ignore_errors: yes
   tags: apitestsuite
+
+- name: generate HTML reports
+  shell: 'mvn surefire-report:report'
+  args:
+    chdir: '{{ dataverse.srcdir }}'
+  tags: apitestsuite
