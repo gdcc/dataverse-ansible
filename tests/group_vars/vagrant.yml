@@ -117,7 +117,7 @@ dataverse:
     enabled: true
     argument: '-DcompilerArgument=-Xlint:unchecked test -P all-unit-tests'
   usermgmtkey: burrito
-  version: 4.16
+  version: 4.17
 
 grafana:
   grafana_user: 'admin'
