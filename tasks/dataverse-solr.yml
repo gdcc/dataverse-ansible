@@ -74,7 +74,6 @@
   - "{{ solr_release_files.files | map(attribute='path') | list }}"
   when: dataverse_branch != "release" and
         solr_release_files > 0
-  when: dataverse_branch == "release"
 
 - name: "branch: identify solr schema files"
   find:
