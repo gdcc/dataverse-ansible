@@ -72,7 +72,7 @@
     mode: 0644
   with_items:
   - "{{ solr_release_files.files | map(attribute='path') | list }}"
-  when: dataverse_branch != "release" and
+  when: dataverse_branch == "release" and
         solr_release_files > 0
 
 - name: "branch: identify solr schema files"
