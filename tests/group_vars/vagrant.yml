@@ -88,6 +88,7 @@ dataverse:
   memheap: 1024
   postgres:
     version: 9.6
+    jdbcurl: https://jdbc.postgresql.org/download/postgresql-42.2.8.jar
     log_lock_waits: true
   previewers:
     enabled: true
@@ -114,7 +115,7 @@ dataverse:
   srcdir: /tmp/dataverse
   thumbnails: true
   unittests:
-    enabled: true
+    enabled: false
     argument: '-DcompilerArgument=-Xlint:unchecked test -P all-unit-tests'
   usermgmtkey: burrito
   version: 4.16
