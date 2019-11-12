@@ -88,6 +88,7 @@ dataverse:
   memheap: 1024
   postgres:
     version: 9.6
+    jdbcurl: https://jdbc.postgresql.org/download/postgresql-42.2.8.jar
     log_lock_waits: true
   previewers:
     enabled: true

@@ -24,8 +24,18 @@
 - name: fix perms on dataverse-war
   file: path=/tmp/dvinstall/dataverse.war mode=0644
 
-- name: install jdbc driver
+- name: set jdbcurl
+  set_fact: jdbcurl='{{ dataverse.postgres.jdbcurl }}'
+
+- name: install release jdbc driver
   shell: "/bin/cp /tmp/dvinstall/pgdriver/postgresql-*.jar {{ glassfish_dir }}/glassfish/lib/"
+  when: jdbcurl|length == 0
+
+- name: install custom jdbc driver
+  get_url:
+    url: '{{ dataverse.postgres.jdbcurl }}'
+    dest: '{{ glassfish_dir }}/glassfish/lib/'
+  when: jdbcurl | length > 0
 
 - name: copy jhove configs
   shell: "cp /tmp/dvinstall/jhove* {{ glassfish_dir }}/glassfish/domains/{{ dataverse.glassfish.domain }}/config"
