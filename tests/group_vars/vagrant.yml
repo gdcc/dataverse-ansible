@@ -27,7 +27,7 @@ dataverse:
     blocked_endpoints: "admin,test"
     blocked_policy: "localhost-only"
     location: "http://localhost:8080/api"
-    test_suite: false
+    test_suite: true
   copyright: "Your Institution"
   counter:
     enabled: false
