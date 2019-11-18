@@ -45,6 +45,10 @@ dataverse:
     upload_to_hub: False
     user: counter
     year_month: "2018-05"
+  custom_metadata_blocks:
+    enabled: false
+    urls:
+      - https://github.com/IQSS/dataverse/files/3744336/codemeta.tsv.txt
   db:
     name: dvndb
     host: localhost
