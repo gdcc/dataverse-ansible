@@ -46,7 +46,7 @@ dataverse:
     user: counter
     year_month: "2018-05"
   custom_metadata_blocks:
-    enabled: true
+    enabled: false
     urls:
       - https://github.com/IQSS/dataverse/files/3744336/codemeta.tsv.txt
   db:
