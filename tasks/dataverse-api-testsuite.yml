@@ -6,29 +6,29 @@
     state: latest
   tags: apitestsuite
 
-- name: did we build a branch already?
+- name: do we have a pom.xml
   stat:
-    path: '{{ dataverse.srcdir }}'
-  register: branch
+    path: '{{ dataverse.srcdir }}/pom.xml'
+  register: pom_xml
   tags: apitestsuite
 
 - name: if we're not in a branch, grab release source
   get_url:
     url: 'https://github.com/IQSS/dataverse/archive/v{{ dataverse.version }}.tar.gz'
     dest: '/tmp'
-  when: branch.stat.exists == false
+  when: pom_xml.stat.exists == false
   tags: apitestsuite
 
 - name: unarchive won't create directories for us
   file:
     path: '{{ dataverse.srcdir }}'
     state: directory
-  when: branch.stat.exists == false
+  when: pom_xml.stat.exists == false
   tags: apitestsuite
 
 - name: unpack, strip root directory
   shell: 'bsdtar --strip-components=1 -C {{ dataverse.srcdir }} -xvf /tmp/dataverse-{{ dataverse.version }}.tar.gz'
-  when: branch.stat.exists == false
+  when: pom_xml.stat.exists == false
   tags: apitestsuite
 
 - name: grab latest copy of run-test-suite.sh
