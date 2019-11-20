@@ -6,10 +6,11 @@ After = syslog.target network.target remote-fs.target nss-lookup.target
 Type = forking
 User={{ dataverse.solr.user }}
 Group={{ dataverse.solr.group }}
-WorkingDirectory = {{ dataverse.solr.root }}/server/solr/collection1
-ExecStart = {{ dataverse.solr.root }}/bin/solr start
+WorkingDirectory = {{ dataverse.solr.root }}
+ExecStart = {{ dataverse.solr.root }}/bin/solr start -j "jetty.host={{ dataverse.solr.listen }}"
 ExecStop = {{ dataverse.solr.root }}/bin/solr stop
 Restart=on-failure
+LimitNPROC=65000
 LimitNOFILE=65000
 
 [Install]
