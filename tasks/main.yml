@@ -24,6 +24,9 @@
 - include: dataverse-branch.yml
   when: dataverse_branch != "release"
 
+- include: jacoco-download.yml
+  when: dataverse.jacoco.enabled == true
+
 - include: dataverse-glassfish.yml
   tags: glassfish
 

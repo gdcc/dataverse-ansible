@@ -73,6 +73,9 @@ dataverse:
     dir: glassfish4 # change this for payara, etc.
     zipurl: http://dlc-cdn.sun.com/glassfish/4.1/release/glassfish-4.1.zip
   google_analytics_key:
+  jacoco:
+    enabled: true
+    home: /tmp/jacoco
   java:
     version: 1.8.0
   memheap: 1024

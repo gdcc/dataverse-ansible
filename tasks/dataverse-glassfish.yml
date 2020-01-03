@@ -67,6 +67,15 @@
   when: ansible_os_family == "RedHat" and
         ansible_distribution_major_version == "7"
 
+- name: place jacoco jarfile
+  copy: 
+    src: '{{ dataverse.jacoco.home }}/lib/org.jacoco.agent-0.8.1.201803210924.jar'
+    dest: '{{ glassfish_dir }}/glassfish/lib/'
+    owner: '{{ dataverse.glassfish.user }}'
+    group: '{{ dataverse.glassfish.user }}'
+    remote_src: yes
+  when: dataverse.jacoco.enabled == true
+
 - name: reload systemd on RedHat/CentOS7
   shell: systemctl daemon-reload
   when: ansible_os_family == "RedHat" and

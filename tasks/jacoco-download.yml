@@ -1,0 +1,15 @@
+---
+
+- name: ensure jacoco home exists
+  file:
+    path: '{{ dataverse.jacoco.home }}'
+    state: directory
+    owner: root
+    group: root
+    mode: 0755
+
+- name: download jacoco. currently 0.8.1 is required per pom.xml
+  unarchive:
+    src: http://search.maven.org/remotecontent?filepath=org/jacoco/jacoco/0.8.1/jacoco-0.8.1.zip
+    dest: '{{ dataverse.jacoco.home }}'
+    remote_src: yes

@@ -59,6 +59,9 @@
   become_user: "{{ dataverse.glassfish.user }}"
   shell: "{{ glassfish_dir }}/bin/asadmin set-log-file-format {{ dataverse.glassfish.logformat }}"
 
+- include: jacoco-instrument.yml
+  when: dataverse.jacoco.enabled == true
+
 - name: deploy dataverse.war
   become: yes
   become_user: "{{ dataverse.glassfish.user }}"
