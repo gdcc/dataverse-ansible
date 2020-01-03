@@ -1,0 +1,34 @@
+<VirtualHost *:80>
+
+  ServerName {{ servername }}
+
+  <Location "/prometheus">
+    ProxyPass "http://localhost:9090/prometheus"
+    ProxyPassReverse "http://localhost:9090/prometheus"
+  </Location>
+
+  <Location "/grafana">
+    ProxyPass "http://localhost:3000"
+    ProxyPassReverse "http://localhost:3000"
+  </Location>
+
+  # custom error document when Glassfish isn't responding
+  ErrorDocument 503 /503.html
+  ProxyPassMatch ^/503.html$ !
+
+  # don't pass paths used by rApache and TwoRavens to Glassfish
+  ProxyPassMatch ^/RApacheInfo$ !
+  ProxyPassMatch ^/custom !
+  ProxyPassMatch ^/dataexplore !
+
+  # don't pass paths used by Shibboleth to Glassfish
+  ProxyPassMatch ^/Shibboleth.sso !
+  ProxyPassMatch ^/shibboleth-ds !
+
+  # allow munin, if present
+  ProxyPassMatch ^/munin !
+
+  # pass everything else to Glassfish
+  ProxyPass / ajp://localhost:8009/
+
+</VirtualHost>

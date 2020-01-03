@@ -1,0 +1,99 @@
+---
+
+- name: install grafana repo
+  copy:
+    src: grafana.repo
+    dest: /etc/yum.repos.d/grafana.repo
+    owner: root
+    group: root
+    mode: '0644'
+  tags: grafana
+
+- name: place grafana repo key
+  get_url:
+    url: https://packages.grafana.com/gpg.key
+    dest: /etc/pki/rpm-gpg/grafana.key
+    mode: '0644'
+  tags: grafana
+
+- name: install grafana
+  yum:
+    name: grafana
+    state: latest
+  tags: grafana
+
+- name: set admin password
+  lineinfile:
+    path: /etc/grafana/grafana.ini
+    regexp: '^;admin_password'
+    line: 'admin_password = {{ grafana.grafana_password }}'
+  tags: grafana
+
+- name: enable anonymous access
+  lineinfile:
+    path: /etc/grafana/grafana.ini
+    insertafter: '^# enable anonymous access'
+    line: 'enabled = true'
+  tags: grafana
+
+- name: bind to localhost
+  lineinfile:
+    path: /etc/grafana/grafana.ini
+    regexp: '^http_addr'
+    line: 'http_addr = 127.0.0.1'
+  tags: grafana
+
+- name: set root_url
+  lineinfile:
+    path: /etc/grafana/grafana.ini
+    regexp: '^;root_url'
+    line: 'root_url = http://{{ public_hostname }}/grafana'
+  tags: grafana
+
+- name: serve grafana from subdir
+  lineinfile:
+    path: /etc/grafana/grafana.ini
+    regexp: 'serve_from_sub_path '
+    line: 'serve_from_sub_path = true'
+  tags: grafana
+
+- name: reload systemd, enable grafana, start
+  systemd:
+    name: grafana-server
+    enabled: yes
+    daemon_reload: yes
+    state: started
+  tags: grafana
+
+- name: create grafana datasource
+  grafana_datasource:
+    access: direct
+    name: "prometheus"
+    grafana_url: '{{ siteUrl }}/grafana'
+    grafana_user: '{{ grafana.grafana_user }}'
+    grafana_password: '{{ grafana.grafana_password }}'
+    ds_type: "prometheus"
+    url: '{{ siteUrl }}/prometheus'
+    database: "prometheus"
+    is_default: "yes"
+    state: present
+  tags: grafana
+
+- name: place grafana dashboard template
+  copy:
+    src: grafana-dashboard.json
+    dest: /etc/grafana/grafana-dashboard.json
+    owner: root
+    group: root
+    mode: '0644'
+  tags: grafana
+
+- name: import grafana dashboard
+  grafana_dashboard:
+    grafana_url: '{{ siteUrl }}/grafana'
+    grafana_user: '{{ grafana.grafana_user }}'
+    grafana_password: '{{ grafana.grafana_password }}'
+    path: /etc/grafana/grafana-dashboard.json
+    overwrite: yes
+    state: present
+  tags: grafana

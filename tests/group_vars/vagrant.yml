@@ -23,10 +23,11 @@ dataverse:
   adminpass: admin1
   allow_signups: true
   api:
+    allow_lookup: false
     blocked_endpoints: "admin,test"
     blocked_policy: "localhost-only"
     location: "http://localhost:8080/api"
-    test_suite: false
+    test_suite: true
   copyright: "Your Institution"
   counter:
     enabled: false
@@ -44,6 +45,10 @@ dataverse:
     upload_to_hub: False
     user: counter
     year_month: "2018-05"
+  custom_metadata_blocks:
+    enabled: false
+    urls:
+      - https://github.com/IQSS/dataverse/files/3744336/codemeta.tsv.txt
   db:
     name: dvndb
     host: localhost
@@ -59,6 +64,14 @@ dataverse:
     protocol: doi
     provider: FAKE
     shoulder: "FK2/"
+  externaltools:
+    datacurationtool:
+      enabled: true
+      method: demo
+    dataexplorer:
+      enabled: true
+    wholetale:
+      enabled: false
   filesdir: /usr/local/dvn/data
   glassfish:
     user: glassfish
@@ -72,6 +85,7 @@ dataverse:
     root: /usr/local
     dir: glassfish4 # change this for payara, etc.
     zipurl: http://dlc-cdn.sun.com/glassfish/4.1/release/glassfish-4.1.zip
+    #zipurl: https://search.maven.org/remotecontent?filepath=fish/payara/distributions/payara/5.192/payara-5.192.zip
   google_analytics_key:
   jacoco:
     enabled: true
@@ -80,17 +94,24 @@ dataverse:
     version: 1.8.0
   memheap: 1024
   postgres:
-    reporpm: https://download.postgresql.org/pub/repos/yum/reporpms/EL-7-x86_64/pgdg-redhat-repo-latest.noarch.rpm
     version: 9.6
+    jdbcurl: 
+    log_lock_waits: true
   previewers:
     enabled: true
-  sampledata: 
+  sampledata:
     enabled: false
-    sampledir: "{{ playbook_dir }}/sampledata"
-    sampledatasets: "{{ playbook_dir }}/sampledata/datasets"
-    sampledataverses: "{{ playbook_dir }}/sampledata/dataverses"
-    sampleusers: "{{ playbook_dir }}/sampledata/users"
-    samplefiles: "{{ playbook_dir }}/sampledata/files"
+    dir: /tmp/sampledata
+    repo: https://github.com/IQSS/dataverse-sample-data.git
+    branch: master
+    venv: /tmp/sampledata_venv
+  custom_sampledata: 
+    enabled: false
+    custom_sampledir: "{{ playbook_dir }}/custom_sampledata"
+    custom_sampledatasets: "{{ playbook_dir }}/custom_sampledata/datasets"
+    custom_sampledataverses: "{{ playbook_dir }}/custom_sampledata/dataverses"
+    custom_sampleusers: "{{ playbook_dir }}/custom_sampledata/users"
+    custom_samplefiles: "{{ playbook_dir }}/custom_sampledata/files"
   service_email: noreply@dataverse.yourinstitution.edu
   smtp: localhost
   solr:
@@ -98,18 +119,40 @@ dataverse:
     root: /usr/local/solr
     user: solr
     version: 7.3.1
+    listen: 127.0.0.1
   srcdir: /tmp/dataverse
   thumbnails: true
-  usermgmtkey: burrito
-  version: 4.14
-  wholetale:
+  unittests:
     enabled: true
+    argument: '-DcompilerArgument=-Xlint:unchecked test -P all-unit-tests'
+  usermgmtkey: burrito
+  version: 4.18.1
+
+grafana:
+  grafana_user: 'admin'
+  grafana_password: 'admin'
+
+munin:
+  install: false
+  admin:
+    user: admin
+    passwd: p4sswurd
+
+prometheus:
+  install: false
+  node_exporter: https://github.com/prometheus/node_exporter/releases/download/v0.18.1/node_exporter-0.18.1.linux-amd64.tar.gz
+  root: /usr/local/prometheus
+  url: https://github.com/prometheus/prometheus/releases/download/v2.11.1/prometheus-2.11.1.linux-amd64.tar.gz
+  user: prometheus
 
 rserve:
+  install: true
   host: localhost
   user: rserve
+  group: rserve
   pass: rserve
   port: 6311
+  workdir: /tmp/Rserv
 
 shibboleth:
   enabled: false

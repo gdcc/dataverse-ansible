@@ -1,0 +1,12 @@
+{
+  "affiliation": "Trees Inc.", 
+  "alias": "spruce", 
+  "dataverseContacts": [
+    {
+      "contactEmail": "spruce@trees.com"
+    }
+  ],
+  "description": "A spruce with some birds", 
+  "name": "Spruce", 
+  "permissionRoot": "false"
+}

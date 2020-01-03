@@ -4,6 +4,10 @@
 - include: dataverse-prereqs.yml
   tags: prereqs
 
+- include: rserve.yml
+  when: rserve.install == true
+  tags: rserve
+
 - include: dataverse-fqdn.yml
   tags: prereqs
 
@@ -18,7 +22,7 @@
   when: shibboleth.enabled == True
   tags: shibboleth
 
-- include: dataverse-postgres.yml
+- include: postgres.yml
   tags: postgres
 
 - include: dataverse-branch.yml
@@ -30,6 +34,9 @@
 - include: dataverse-glassfish.yml
   tags: glassfish
 
+- include: dataverse-get-release.yml
+  tags: release
+
 - include: dataverse-solr.yml
   tags: solr
 
@@ -39,9 +46,13 @@
 - include: dataverse-postinstall.yml
   tags: postinstall
 
-- include: dataverse-sampledata.yml
+- include: sampledata.yml
   when: dataverse.sampledata.enabled == true
   tags: sampledata
+
+- include: custom_sampledata.yml
+  when: dataverse.custom_sampledata.enabled == true
+  tags: custom_sampledata
 
 - include: dataverse-counter.yml
   when: dataverse.counter.enabled == true
@@ -51,10 +62,20 @@
   when: dataverse.previewers.enabled == true
   tags: previewers
 
-- include: dataverse-wholetale.yml
-  when: dataverse.wholetale.enabled == true
-  tags: wholetale
+- include: dataverse-externaltools.yml
+  tags: externaltools
 
 - include: dataverse-api-testsuite.yml
   when: dataverse.api.test_suite == true
-  tags: test_suite
+  tags: apitestsuite
+
+- include: munin.yml
+  when: munin.install == true
+  tags: munin
+
+- include: prometheus.yml
+  when: prometheus.install == true
+  tags: prometheus
+
+- name: Fin
+  debug: msg="Dataverse installation complete! Please check output logs in /tmp for further review."

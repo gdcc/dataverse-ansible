@@ -1,0 +1,43 @@
+---
+
+- name: install collectd
+  yum:
+    name: '{{ packages }}'
+  vars:
+    packages:
+    - collectd
+    - collectd-generic-jmx
+    - collectd-java
+    - collectd-write_prometheus
+
+- name: place collectd conf file
+  template:
+    src: collectd.conf.j2
+    dest: /etc/collectd.conf
+    owner: root
+    group: root
+    mode: '0644'
+
+- name: place prometheus plugin conf file
+  copy:
+    src: prometheus.conf
+    dest: /etc/collectd.d/prometheus.conf
+    owner: root
+    group: root
+    mode: '0644'
+
+- name: place jmx plugin conf file
+  copy:
+    src: jmx.conf
+    dest: /etc/collectd.d/jmx.conf
+    owner: root
+    group: root
+    mode: '0644'
+
+- name: reload systemd, enable collectd, start
+  systemd:
+    name: collectd
+    enabled: yes
+    daemon_reload: yes
+    state: started
+

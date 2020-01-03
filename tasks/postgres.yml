@@ -1,69 +1,90 @@
 ---
 # dataverse/tasks/dataverse-postgres.yml
 
-- name: install postgres repo RPM.
+- name: install postgres repo RPM
   yum:
-    name: '{{ dataverse.postgres.reporpm }}'
+    name: 'https://download.postgresql.org/pub/repos/yum/reporpms/EL-{{ ansible_distribution_major_version }}-x86_64/pgdg-redhat-repo-latest.noarch.rpm'
     state: present
+  when: ansible_os_family == "RedHat"
+
+- name: "rhel/centos8: disable postgresql proper in the OS"
+  shell: 'dnf -qy module disable postgresql'
+  when: ansible_os_family == "RedHat" and
+        ansible_distribution_major_version == "8"
+
+- name: python-psycopg2 for RHEL/CentOS7
+  yum:
+    name: python-psycopg2
+    state: installed
   when: ansible_os_family == "RedHat" and
         ansible_distribution_major_version == "7"
 
-- name: tell systemd postgresql is on board
-  shell: systemctl daemon-reload
+- name: python3-psycopg2 for RHEL/CentOS8
+  dnf:
+    name: python3-psycopg2
+    state: installed
+  when: ansible_os_family == "RedHat" and
+        ansible_distribution_major_version == "8"
 
 - name: postgres uses differing version syntax in a few commands/packages
   set_fact:
     dataverse_pg_version_short: "{{ dataverse.postgres.version | regex_replace('\\.','') }}"
 
-- name: install postgres on RedHat / CentOS 7.
+- name: install postgres on RedHat / CentOS
   yum:
    name: 'postgresql{{ dataverse_pg_version_short }}-server'
    state: latest
-  when: ansible_os_family == "RedHat" and
-        ansible_distribution_major_version == "7"
+  when: ansible_os_family == "RedHat"
 
 - name: set postgresql init command
   set_fact:
     postgres_init: 'creates=/var/lib/pgsql/{{ dataverse.postgres.version }}/data/postgresql.conf /usr/pgsql-{{ dataverse.postgres.version }}/bin/postgresql{{ dataverse_pg_version_short }}-setup initdb'
-  when: ansible_os_family == "RedHat" and
-        ansible_distribution_major_version == "7"
+  when: ansible_os_family == "RedHat"
 
 - name: init command needs a dash on postgres 10+
   set_fact:
     postgres_init: 'creates=/var/lib/pgsql/{{ dataverse.postgres.version }}/data/postgresql.conf /usr/pgsql-{{ dataverse.postgres.version }}/bin/postgresql-{{ dataverse_pg_version_short }}-setup initdb'
   when: >
     dataverse_pg_version_short is search("1[0-9]") and
-    ansible_os_family == "RedHat" and
-    ansible_distribution_major_version == "7"
+    ansible_os_family == "RedHat"
 
-- name: init postgres on RedHat / CentOS 7.
+- name: have we init-ed postgres yet?
+  stat:
+    path: '/var/lib/pgsql/{{ dataverse.postgres.version }}/data'
+  register: postgres_parent
+
+- name: init postgres on RHEL/CentOS
   shell: '{{ postgres_init }}'
   when: ansible_os_family == "RedHat" and
-        ansible_distribution_major_version == "7"
+        postgres_parent.stat.isdir is defined
 
-- name: install pg_hba.conf on RedHat / CentOS 7.
+- name: install pg_hba.conf on RHEL/CentOS
   copy:
     src: pg_hba.conf
     dest: '/var/lib/pgsql/{{ dataverse.postgres.version }}/data'
     owner: postgres
     group: postgres
     mode: 0644
-  when: ansible_os_family == "RedHat" and
-        ansible_distribution_major_version == "7"
+  when: ansible_os_family == "RedHat"
 
-- name: enable postgres on RedHat / CentOS 7.
+- name: log_lock_waits when told
+  lineinfile:
+    path: '/var/lib/pgsql/{{ dataverse.postgres.version }}/data/postgresql.conf'
+    regexp: '^#log_lock_waits'
+    line: 'log_lock_waits = on'
+  when: dataverse.postgres.log_lock_waits == true
+
+- name: enable postgres on RHEL/CentOS
   service:
     name: 'postgresql-{{ dataverse.postgres.version }}'
     enabled: yes
-  when: ansible_os_family == "RedHat" and
-        ansible_distribution_major_version == "7"
+  when: ansible_os_family == "RedHat"
 
-- name: start postgres on RedHat / CentOS 7.
+- name: start postgres on RHEL/CentOS
   service:
     name: 'postgresql-{{ dataverse.postgres.version }}'
     state: started
-  when: ansible_os_family == "RedHat" and
-        ansible_distribution_major_version == "7"
+  when: ansible_os_family == "RedHat"
 
 - name: create glassfish postgres database
   postgresql_db: name={{ dataverse.db.name }}

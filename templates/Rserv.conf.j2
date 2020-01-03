@@ -1,0 +1,12 @@
+workdir {{ rserve.workdir }}
+pwdfile /etc/Rserv.pwd
+remote enable
+auth required
+plaintext disable
+fileio enable
+
+port {{ rserve.port }}
+maxinbuf 262144
+
+maxsendbuf 0
+

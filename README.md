@@ -3,18 +3,42 @@
 This [Ansible][ansible] role aims to install [Dataverse][dataverse] and its prerequisites.
 The role installs PostgreSQL, GlassFish and other prerequisites, then deploys Dataverse.
 
+## Quickstart
+
+Running the following commands as root should install the latest released version of Dataverse.
+
+	$ git clone https://github.com/IQSS/dataverse-ansible.git dataverse
+	$ ansible-playbook --connection=local -v -i dataverse/inventory dataverse/dataverse.pb -e dataverse/defaults/main.yml
+
+## Configuration
+
 Installation, customization, administration, and API documentation can be found in the [Dataverse 4 Guides](http://guides.dataverse.org/en/latest/).
 
 The preparation lies in the group_var options (usernames/passwords, whether to install Shibboleth, etc.).  Your \<group_vars_file> may be a set of generic defaults stored in [roles/dataverse/defaults/main.yml](roles/dataverse/defaults/main.yml), but you'll likely want to modify this file or copy it and edit to suit your needs.  Then, fire away:
 
-### Usage:
+### Full(er) Usage:
 	$ git clone https://github.com/IQSS/dataverse-ansible.git dataverse
 	$ export ANSIBLE_ROLES_PATH=.
 	$ ansible-playbook -i <inventory file> [-u <user>] [-b] [-K] -e @<group_vars_file> [-v] dataverse.pb
 
-The role currently supports CentOS 7 with all services running on the same machine, but intends to become OS-agnostic and support multiple nodes for scalability.
+| option | expansion                             | required |
+| ------ | ------------------------------------- | -------- |
+| -b     | Become                                | yes      |
+| -K     | asK for elevelated privilege password | yes      |
+| -e     | Extra variables file                  | no       |
+| -v     | run with Verbosity (up to three Vs)   | no       |
 
-If you're interested in testing Dataverse locally using [Vagrant][vagrant], you'll want to clone this repository and edit the local port redirects if the http/https ports on your local machine are already in use. Note that the current Vagrant VM template requires [VirtualBox][virtualbox] 5.0 and will automatically launch the above command within your Vagrant VM.
+The role currently supports CentOS 7 and 8 with all services running on the same machine, but intends to become OS-agnostic and support multiple nodes for scalability.
+
+If you're interested in testing Dataverse locally using [Vagrant][vagrant], you'll want to clone this repository and edit the local port redirects if the http/https ports on your local machine are already in use. Note that the current Vagrant VM template requires [VirtualBox][virtualbox] 5.0+ and will automatically launch the above command within your Vagrant VM.
+
+#### Ansible Tags
+
+It is possible to run certain portions of the playbook to avoid running the entire role using ansible tags. Grab the desired tag from [tasks/main.yml](tasks/main.yml) then re-run the above playbook command, appending:
+
+`--tags "munin"`
+
+**Note:** While Ansible in general strives to achieve role idempotence, the dataverse-ansible role is merely a wrapper for the Dataverse installer, which itself is not idempotent. If you strongly desire that the role be idempotent and would like achieve this via semaphores, pull requests are welcome!
 
 ### To test using Vagrant:
 	$ git clone https://github.com/IQSS/dataverse-ansible
@@ -42,16 +66,20 @@ If you needed to update the host port in the Vagrantfile due to collision, you'd
 * Postgres (database)
   * Default data/config location: */var/lib/pgsql/9.6/data/*
   * `$ systemctl {start|stop|restart|status} postgresql-9.6`
+  * **Note:** as of this writing, RHEL/CentOS8 are compiled- and will only work with PostgresQL 10+
 * Shibboleth
   * Provides an additional authentication provider.
   * Default config location: */etc/shibboleth/shibboleth2.xml*
   * Site-specific and therefore not activated in the default configuration
   * `$ systemctl {start|stop|restart|status} shibd`
 
-## Sample Data
-The role will, if desired, populate the Dataverse instance with sample data, and when simply enabled via the dataverse.sampledata.enabled group variable, will create a handful of dataverses, datasets, and users. It will also upload a few small sample files snagged from the Dataverse repository's test subdirectory.
+## IQSS' Sample Data
+The role will populate the Dataverse instance with sample data from [IQSS' Sample Data repo][dataverse-sample-data] if run with the `dataverse.sampledata.enabled` group variable is set to `true`. You may fork this repo and provide your own sampledata by setting the `dataverse.sampledata.repo` and `dataverse.sampledata.branch` group variables.
 
-You may, however, supply your own sample data by modifying and/or creating JSON files and/or shell scripts (*.sh) in the appropriate directories:
+## Custom Sample Data
+The role will, if desired, populate the Dataverse instance with custom sample data, and when simply enabled via the dataverse.custom_sampledata.enabled group variable will create a handful of dataverses, datasets, and users. It will also upload a few small sample files snagged from the Dataverse repository's test subdirectory.
+
+You may supply your own sample data by modifying and/or creating JSON files and/or shell scripts (*.sh) in the appropriate directories:
 
 	tests/sampledata/dataverses: JSON
 	tests/sampledata/users: JSON + shell script(s) to create users
@@ -75,12 +103,29 @@ If you wish to clone an existing installation, you should perform the following 
   * `$ curl http://localhost:8080/api/admin/index/clear`
   * `$ curl http://localhost:8080/api/admin/index`
 
+## External Tools and other Features
+A number of external tools have been written for Dataverse, and as requested or as noticed they show up in the Ansible role as a boolean group variable. Some are enabled by default:
+
+* [QDR's Dataverse Previewers][dataverse-previewers]
+* [WholeTale][wholetale] 
+
+Others are available but disabled by default:
+
+* [Counter Processor][counter-processor]
+
+## SSH keys, SSL certs, LetsEncrypt
+The above and many other features may be tinkered with via the [Group Vars file](defaults/main.yml).
+
 This is a community effort, written primarily by [Don Sizemore][donsizemore]. The role is under active development - pull requests, suggestions and other contributions are welcome!
 
 [![Build Status](https://travis-ci.org/IQSS/dataverse-ansible.svg?branch=master)](https://travis-ci.org/IQSS/dataverse-ansible)
 
 [ansible]: http://ansible.com
+[counter-processor]: https://github.com/IQSS/counter-processor
 [dataverse]: https://dataverse.org
+[dataverse-sample-data]: https://github.com/IQSS/dataverse-sample-data
+[dataverse-previewers]: https://qualitativedatarepository.github.io/dataverse-previewers/
 [iqss]: http://www.iq.harvard.edu
 [vagrant]: https://www.vagrantup.com
 [virtualbox]: https://www.virtualbox.org
+[wholetale]: https://wholetale.org/

@@ -1,0 +1,61 @@
+---
+
+- name: ensure python3.4+. dataverse-counter wants 3.6, so let's go with that.
+  yum:
+    name:
+    - python36
+    - python36-pip
+    state: latest
+
+- name: clone sampledata repo
+  git:
+    repo: '{{ dataverse.sampledata.repo }}'
+    dest: '{{ dataverse.sampledata.dir }}'
+    version: '{{ dataverse.sampledata.branch }}'
+
+- name: create sampledata venv
+  file:
+    path: '{{ dataverse.sampledata.venv }}'
+    state: directory
+    mode: '0755'
+
+- name: create venv
+  shell: 'python3 -m venv {{ dataverse.sampledata.venv }}'
+
+- name: source venv
+  shell: 'source {{ dataverse.sampledata.venv }}/bin/activate'
+
+- name: install dependencies
+  shell: 'pip3 install -r requirements.txt'
+  args: 
+    chdir: '{{ dataverse.sampledata.dir }}'
+
+- name: copy dvconfig.py.sample to dvconfig.py
+  copy:
+    src: '{{ dataverse.sampledata.dir }}/dvconfig.py.sample'
+    dest: '{{ dataverse.sampledata.dir }}/dvconfig.py'
+    remote_src: yes
+
+- name: strip backslash from siteUrl
+  set_fact:
+    siteUrl_stripped: '{{ siteUrl | regex_replace ("\\", "") }}'
+
+- name: set siteUrl in dvconfig.py
+  replace:
+    dest: '{{ dataverse.sampledata.dir }}/dvconfig.py'
+    regexp: "^base_url = 'https://demo.dataverse.org'$"
+    replace: "base_url = '{{ siteUrl_stripped }}'"
+
+# ansible forgets this fact why...?
+- include: dataverse-apitoken.yml
+
+- name: set api token in dvconfig.py
+  replace:
+    dest: '{{ dataverse.sampledata.dir }}/dvconfig.py'
+    regexp: "^api_token = ''$"
+    replace: "api_token = '{{ api_token }}'"
+
+- name: run sampledata
+  shell: 'python3 create_sample_data.py'
+  args:
+    chdir: '{{ dataverse.sampledata.dir }}'

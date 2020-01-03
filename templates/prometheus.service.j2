@@ -1,0 +1,18 @@
+[Unit]
+Description=Prometheus Server
+Documentation=https://prometheus.io/docs/introduction/overview/
+After=network-online.target
+
+[Service]
+User=prometheus
+Restart=on-failure
+
+#Change this line if you download the 
+#Prometheus on different path user
+ExecStart={{ prometheus.root }}/prometheus \
+  --config.file={{ prometheus.root }}/prometheus.yml \
+  --web.external-url={{ siteUrl }}/prometheus/ \
+  --storage.tsdb.path={{ prometheus.root }}/data
+
+[Install]
+WantedBy=multi-user.target

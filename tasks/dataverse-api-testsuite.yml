@@ -4,44 +4,67 @@
   yum:
     name: maven
     state: latest
+  tags: apitestsuite
 
-- name: did we build a branch already?
+- name: do we have a pom.xml
   stat:
-    path: '{{ dataverse.srcdir }}'
-  register: branch
+    path: '{{ dataverse.srcdir }}/pom.xml'
+  register: pom_xml
+  tags: apitestsuite
 
 - name: if we're not in a branch, grab release source
   get_url:
     url: 'https://github.com/IQSS/dataverse/archive/v{{ dataverse.version }}.tar.gz'
     dest: '/tmp'
-  when: branch.stat.exists == false
+  when: pom_xml.stat.exists == false
+  tags: apitestsuite
 
 - name: unarchive won't create directories for us
   file:
     path: '{{ dataverse.srcdir }}'
     state: directory
-  when: branch.stat.exists == false
+  when: pom_xml.stat.exists == false
+  tags: apitestsuite
 
 - name: unpack, strip root directory
   shell: 'bsdtar --strip-components=1 -C {{ dataverse.srcdir }} -xvf /tmp/dataverse-{{ dataverse.version }}.tar.gz'
-  when: branch.stat.exists == false
+  when: pom_xml.stat.exists == false
+  tags: apitestsuite
 
 - name: grab latest copy of run-test-suite.sh
   get_url:
     url: https://raw.githubusercontent.com/IQSS/dataverse/develop/conf/docker-aio/run-test-suite.sh
     dest: '{{ dataverse.srcdir }}/run-test-suite.sh'
     mode: 0755
+  tags: apitestsuite
 
 - name: set user management quesadilla
   uri:
     url: 'http://localhost:8080/api/admin/settings/BuiltinUsers.KEY'
     method: PUT
     body: '{{ dataverse.usermgmtkey }}'
+  tags: apitestsuite
 
 - include: dataverse-apitoken.yml
+  tags: apitestsuite
+
+- name: allow authenticated users to add to root
+  uri:
+    url: 'http://localhost:8080/api/dataverses/root/assignments?key={{ api_token }}'
+    method: POST
+    body: '{"assignee":":authenticated-users","role":"fullContributor"}'
+    body_format: json
+  tags: apitestsuite
+
+- name: the root dataverse must be published
+  uri:
+    url: 'http://localhost:8080/api/dataverses/root/actions/:publish'
+    method: POST
+    headers:
+      X-Dataverse-key: '{{ api_token }}'
 
 - name: run test suite
-  shell: '{{ dataverse.srcdir }}/run-test-suite.sh {{ siteUrl }}'
+  shell: '{{ dataverse.srcdir }}/run-test-suite.sh http://localhost:8080'
   args:
     chdir: '{{ dataverse.srcdir }}'
   environment:
@@ -49,3 +72,10 @@
     DV_APIKEY: '{{ dataverse.usermgmtkey }}'
     DV_API_KEY: '{{ dataverse.usermgmtkey }}'
   ignore_errors: yes
+  tags: apitestsuite
+
+- name: generate HTML reports
+  shell: 'mvn surefire-report:report'
+  args:
+    chdir: '{{ dataverse.srcdir }}'
+  tags: apitestsuite

@@ -2,9 +2,7 @@
 # dataverse/tests/site.yml
 
 - name: Test out the dataverse role
-
   hosts: dataverse
-
   become: true
 
 # i consider this outside the scope of this role. dls 20180913
@@ -20,5 +18,4 @@
 #      with_items: [80/tcp, 443/tcp, 8080/tcp, 8181/tcp, 8983/tcp]
 
   roles:
-
     - role: dataverse

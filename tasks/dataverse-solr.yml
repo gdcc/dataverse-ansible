@@ -3,15 +3,13 @@
 
 - name: ensure EPEL repository for RedHat/CentOS 7
   yum: name=epel-release state=latest
-  when: ansible_os_family == "RedHat" and
-        ansible_distribution_major_version == "7"
+  when: ansible_os_family == "RedHat"
 
 - name: install Solr pre-reqs for RedHat/CentOS 7
   yum:
     name: ['java-1.8.0-openjdk-devel', 'lsof']
     state: latest
-  when: ansible_os_family == "RedHat" and
-        ansible_distribution_major_version == "7"
+  when: ansible_os_family == "RedHat"
 
 - name: create solr service group
   group: name="{{ dataverse.solr.group }}" state=present
@@ -55,37 +53,62 @@
 - name: clean up solr distro files
   file: path="/tmp/solr-{{ dataverse.solr.version }}" state=absent
 
-# ----- solr schema.xml ------------------------------------------
-- name: place release solr schema
-  get_url:
-        url: "https://github.com/IQSS/dataverse/releases/download/v4.10/schema.xml"
-        dest: "{{ dataverse.solr.root }}/server/solr/collection1/conf/"
-        owner: "{{ dataverse.solr.user }}"
-        group: "{{ dataverse.solr.group }}"
-        mode: 0644
+- name: "release: identify solr schema files"
+  find:
+    paths: /tmp/dvinstall/
+    file_type: file
+    use_regex: yes
+    recurse: yes
+    patterns: 'schema*'
+  register: solr_release_files
   when: dataverse_branch == "release"
 
-- name: place branch solr schema
-  copy: 
-        src: "{{ dataverse.srcdir }}/conf/solr/{{ dataverse.solr.version }}/schema.xml"
-        dest: "{{ dataverse.solr.root }}/server/solr/collection1/conf/" 
+- name: "release: place solr schema"
+  copy:
+    src: '{{ item }}'
+    dest: "{{ dataverse.solr.root }}/server/solr/collection1/conf/"
+    owner: "{{ dataverse.solr.user }}"
+    group: "{{ dataverse.solr.group }}"
+    mode: 0644
+  with_items:
+  - "{{ solr_release_files.files | map(attribute='path') | list }}"
+  when: dataverse_branch == "release" and
+        solr_release_files > 0
+
+- name: "branch: identify solr schema files"
+  find:
+    paths: '{{ dataverse.srcdir }}/conf/solr/'
+    file_type: file
+    use_regex: yes
+    recurse: yes
+    patterns: 'schema*'
+  register: solr_files
+  when: dataverse_branch != "release"
+
+- name: "branch: place solr schema files"
+  copy:
+    src: '{{ item }}'
+    dest: '{{ dataverse.solr.root }}/server/solr/collection1/conf'
+    owner: '{{ dataverse.solr.user }}'
+    group: '{{ dataverse.solr.group }}'
+    mode: 0644
+    remote_src: yes
+  with_items:
+  - "{{ solr_files.files | map(attribute='path') | list }}"
+  when: dataverse_branch != "release" and
+        solr_files > 0
+
+- name: "release: place solrconfig"
+  copy:
+        src: "/tmp/dvinstall/solrconfig.xml"
+        dest: "{{ dataverse.solr.root }}/server/solr/collection1/conf/"
         owner: "{{ dataverse.solr.user }}"
         group: "{{ dataverse.solr.group }}"
         mode: 0644
         remote_src: yes
-  when: dataverse_branch != "release"
-
-# ----- solrconfig.xml -------------------------------------------
-- name: get solrconfig
-  get_url:
-        url: "https://github.com/IQSS/dataverse/releases/download/v4.10/solrconfig.xml"
-        dest: "{{ dataverse.solr.root }}/server/solr/collection1/conf/"
-        owner: "{{ dataverse.solr.user }}"
-        group: "{{ dataverse.solr.group }}"
-        mode: 0644
   when: dataverse_branch == "release"
 
-- name: copy branch solrconfig.xml
+- name: "branch: place solrconfig"
   copy:
         src: "{{ dataverse.srcdir }}/conf/solr/{{ dataverse.solr.version }}/solrconfig.xml"
         dest: "{{ dataverse.solr.root }}/server/solr/collection1/conf/"
@@ -125,8 +148,7 @@
 - name: install solr systemd conf file for RedHat/CentOS
   template: src=solr.service.j2 dest=/usr/lib/systemd/system/solr.service
         owner=root group=root mode=0644
-  when: ansible_os_family == "RedHat" and
-        ansible_distribution_major_version == "7"
+  when: ansible_os_family == "RedHat"
 
 - name: increase resource limits for solr
   blockinfile:
@@ -141,15 +163,18 @@
 
 - name: reload systemd
   shell: systemctl daemon-reload
-  when: ansible_os_family == "RedHat" and
-        ansible_distribution_major_version == "7"
+  when: ansible_os_family == "RedHat"
 
 - name: enable solr on boot, start solr
   service: name=solr enabled=yes state=started
-  when: ansible_os_family == "RedHat" and
-        ansible_distribution_major_version == "7"
+  when: ansible_os_family == "RedHat"
 
 - name: create collection1 core
   shell: "{{ dataverse.solr.root }}/bin/solr create_core -c collection1 -d {{ dataverse.solr.root }}/server/solr/collection1/conf/"
   become: yes
   become_user: "{{ dataverse.solr.user }}"
+
+- name: disable service account shell
+  user:
+    name: '{{ dataverse.solr.user }}'
+    shell: /sbin/nologin
