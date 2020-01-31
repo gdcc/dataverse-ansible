@@ -30,4 +30,3 @@
   shell: 'jar cf /tmp/dvinstall/dataverse.war *'
   args:
     chdir: /tmp/dvinstall/jacoco
-

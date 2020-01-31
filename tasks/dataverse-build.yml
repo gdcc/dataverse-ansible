@@ -43,14 +43,15 @@
   shell: 'cd "{{ dataverse.srcdir }}" && git log --oneline | head -1 | awk "{print $1}"'
   register: bcout
 
-- debug:
-    msg: "bcout is {{ bcout }}"
-
 - set_fact:
     commit='{{ bcout.stdout.split(" ")[0] }}'
 
-- debug:
-    msg: "commit is {{ commit }}"
+- set_fact:
+    jacoco_arg=''
+
+- set_fact:
+    jacoco_arg='-Djacoco.skip.instrument=false'
+  when: dataverse.jacoco.enabled == true
 
 - name: add branch name, branch_commit to BuildNumber.properties
   lineinfile:
@@ -65,7 +66,7 @@
   when: dataverse.unittests.enabled == false
 
 - name: build warfile with specified tests. tail /tmp/dataverse/mvn.out for gory details.
-  shell: "mvn {{ dataverse.unittests.argument }} -T 2C package > mvn.out"
+  shell: "mvn {{ dataverse.unittests.argument }} {{ jacoco_arg }} -T 2C package > mvn.out"
   args:
     chdir: "{{ dataverse.srcdir }}"
   when: dataverse.unittests.enabled == true

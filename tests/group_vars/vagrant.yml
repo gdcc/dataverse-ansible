@@ -166,5 +166,5 @@ sshkeys:
 
 # un-nesting the below so's we can pass them at the CLI
 
-dataverse_branch: release
-dataverse_repo: https://github.com/IQSS/dataverse.git
+dataverse_branch: 6124_jacoco_coverage
+dataverse_repo: https://github.com/OdumInstitute/dataverse.git
