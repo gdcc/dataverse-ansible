@@ -88,7 +88,8 @@
   shell: "{{ glassfish_dir }}/bin/asadmin set-log-file-format {{ dataverse.glassfish.logformat }}"
 
 - include: jacoco-instrument.yml
-  when: dataverse.jacoco.enabled == true
+  when: dataverse.jacoco.enabled == true and
+        dataverse_repo != "release"
 
 - name: deploy dataverse.war
   become: yes

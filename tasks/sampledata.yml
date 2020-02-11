@@ -59,3 +59,9 @@
   shell: 'python3 create_sample_data.py'
   args:
     chdir: '{{ dataverse.sampledata.dir }}'
+
+- name: give dataverse a breather to avoid timeouts
+  wait_for:
+    timeout: 30
+
+
