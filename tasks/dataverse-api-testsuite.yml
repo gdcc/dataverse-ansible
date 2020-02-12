@@ -56,12 +56,18 @@
     body_format: json
   tags: apitestsuite
 
+- name: is root dataverse already published
+  stat:
+     path: /tmp/dataverse/root_dv_published
+  register: root_dv_published
+
 - name: the root dataverse must be published
   uri:
     url: 'http://localhost:8080/api/dataverses/root/actions/:publish'
     method: POST
     headers:
       X-Dataverse-key: '{{ api_token }}'
+  when: root_dv_published.stat.exists == False
 
 - name: run test suite
   shell: '{{ dataverse.srcdir }}/run-test-suite.sh http://localhost:8080'

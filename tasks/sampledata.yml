@@ -60,6 +60,11 @@
   args:
     chdir: '{{ dataverse.sampledata.dir }}'
 
+- name: sampledata publishes root dataverse
+  file:
+    path: '/tmp/dataverse/root_dv_published'
+    state: touch
+
 - name: give dataverse a breather to avoid timeouts
   wait_for:
     timeout: 30
