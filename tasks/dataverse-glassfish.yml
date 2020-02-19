@@ -44,7 +44,6 @@
 
 - name: get patched weld jar for glassfish-4.1
   get_url:
-    #url: https://repo1.maven.org/maven2/org/jboss/weld/weld-osgi-bundle/2.2.10.SP1/weld-osgi-bundle-2.2.10.SP1.jar
     url: 'https://search.maven.org/remotecontent?filepath=org/jboss/weld/weld-osgi-bundle/2.2.10.Final/weld-osgi-bundle-2.2.10.Final-glassfish4.jar'
     dest: '{{ glassfish_dir }}/glassfish/modules'
     owner: root
@@ -82,6 +81,19 @@
   template: src=glassfish.service.j2 dest=/usr/lib/systemd/system/glassfish.service
         owner=root group=root mode=0644
   when: ansible_os_family == "RedHat"
+
+- name: place jarfile
+  copy:
+    src: '{{ dataverse.jacoco.home }}/lib/jacocoagent.jar'
+    dest: '{{ dataverse.glassfish.root }}/{{ dataverse.glassfish.dir }}/glassfish/lib/jacocoagent.jar'
+  when: dataverse.jacoco.enabled == true
+
+- name: name java agent
+  lineinfile:
+    path: '{{ glassfish_dir }}/glassfish/domains/{{ dataverse.glassfish.domain }}/config/domain.xml'
+    line: '        <jvm-options>-Djavaagent:{{ dataverse.glassfish.root }}/{{ glassfish_dir }}/glassfish/lib/jacocoagent.jar</jvm-options>'
+    insertafter: 'dataverse.timerServer'
+  when: dataverse.jacoco.enabled == true
 
 - name: reload systemd on RedHat/CentOS7
   shell: systemctl daemon-reload

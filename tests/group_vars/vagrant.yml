@@ -27,7 +27,7 @@ dataverse:
     blocked_endpoints: "admin,test"
     blocked_policy: "localhost-only"
     location: "http://localhost:8080/api"
-    test_suite: true
+    test_suite: false
   copyright: "Your Institution"
   counter:
     enabled: false
@@ -87,6 +87,9 @@ dataverse:
     zipurl: http://dlc-cdn.sun.com/glassfish/4.1/release/glassfish-4.1.zip
     #zipurl: https://search.maven.org/remotecontent?filepath=fish/payara/distributions/payara/5.192/payara-5.192.zip
   google_analytics_key:
+  jacoco:
+    enabled: false
+    home: /tmp/jacoco
   java:
     version: 1.8.0
   memheap: 1024

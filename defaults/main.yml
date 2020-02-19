@@ -87,6 +87,9 @@ dataverse:
     zipurl: http://dlc-cdn.sun.com/glassfish/4.1/release/glassfish-4.1.zip
     #zipurl: https://search.maven.org/remotecontent?filepath=fish/payara/distributions/payara/5.192/payara-5.192.zip
   google_analytics_key:
+  jacoco:
+    enabled: false
+    home: /tmp/jacoco
   java:
     version: 1.8.0
   memheap: 2048

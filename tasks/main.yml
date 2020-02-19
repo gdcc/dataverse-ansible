@@ -28,6 +28,10 @@
 - include: dataverse-branch.yml
   when: dataverse_branch != "release"
 
+- include: jacoco-download.yml
+  when: dataverse.jacoco.enabled == true and
+        dataverse_repo != "release"
+
 - include: dataverse-glassfish.yml
   tags: glassfish
 
@@ -65,6 +69,10 @@
 - include: dataverse-api-testsuite.yml
   when: dataverse.api.test_suite == true
   tags: apitestsuite
+
+- include: jacoco-generate_report.yml
+  when: dataverse.jacoco.enabled == true and
+        dataverse_repo != "release"
 
 - include: munin.yml
   when: munin.install == true

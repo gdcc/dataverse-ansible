@@ -1,0 +1,17 @@
+---
+
+# write out jacoco_exec
+- include: restart_glassfish.yml
+
+- name: ensure jacoco can write out report
+  file:
+    path: '{{ dataverse.srcdir }}/target/coverage-it'
+    state: directory
+    owner: '{{ dataverse.glassfish.user }}'
+    group: '{{ dataverse.glassfish.group }}'
+    mode: '0755'
+
+- name: create code coverage report
+  shell: 'java -jar /tmp/jacoco/lib/jacococli.jar report --classfiles target/classes --sourcefiles src/main/java --html target/coverage-it/ {{ dataverse.glassfish.root }}/{{ dataverse.glassfish.dir }}/glassfish/domains/{{ dataverse.glassfish.domain }}/config/jacoco.exec'
+  args:
+    chdir: '{{ dataverse.srcdir }}'

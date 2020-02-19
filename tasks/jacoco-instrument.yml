@@ -1,0 +1,32 @@
+---
+
+- name: need a working directory
+  file:
+    path: /tmp/dvinstall/jacoco
+    owner: root
+    group: root
+    state: directory
+
+- name: copy dataverse.war
+  copy:
+    src: /tmp/dvinstall/dataverse.war
+    dest: /tmp/dvinstall/jacoco/dataverse.war
+    remote_src: yes
+
+- name: explode warfile
+  shell: 'jar xf dataverse.war'
+  args:
+    chdir: /tmp/dvinstall/jacoco
+
+- name: rename classes directory
+  command: mv /tmp/dvinstall/jacoco/WEB-INF/classes /tmp/dvinstall/jacoco/WEB-INF/classes-orig
+
+- name: instrument classes
+  shell: 'java -jar {{ dataverse.jacoco.home }}/lib/jacococli.jar instrument WEB-INF/classes-orig/ --dest WEB-INF/classes'
+  args:
+    chdir: /tmp/dvinstall/jacoco
+
+- name: create new warfile
+  shell: 'jar cf /tmp/dvinstall/dataverse.war *'
+  args:
+    chdir: /tmp/dvinstall/jacoco
