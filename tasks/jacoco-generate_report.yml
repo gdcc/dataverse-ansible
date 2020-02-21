@@ -11,7 +11,12 @@
     group: '{{ dataverse.glassfish.group }}'
     mode: '0755'
 
+- name: merge jacoco exec files
+  shell: 'java -jar {{ dataverse.jacoco.home }}/lib/jacococli.jar merge {{ glassfish_dir }}/glassfish/domains/{{ dataverse.glassfish.domain }}/config/jacoco.exec {{ dataverse.srcdir }}/target/jacoco.exec --destfile {{ dataverse.srcdir }}/target/jacoco_merged.exec'
+  args:
+    chdir: '{{ jacoco.home }}'
+
 - name: create code coverage report
-  shell: 'java -jar /tmp/jacoco/lib/jacococli.jar report --classfiles target/classes --sourcefiles src/main/java --html target/coverage-it/ {{ dataverse.glassfish.root }}/{{ dataverse.glassfish.dir }}/glassfish/domains/{{ dataverse.glassfish.domain }}/config/jacoco.exec'
+  shell: 'java -jar {{ dataverse.jacoco.home }}/lib/jacococli.jar report --classfiles target/classes --sourcefiles src/main/java --html target/coverage-it/ {{ dataverse.srcdir }}/target/jacoco_merged.exec'
   args:
     chdir: '{{ dataverse.srcdir }}'

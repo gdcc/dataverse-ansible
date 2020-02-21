@@ -82,16 +82,16 @@
         owner=root group=root mode=0644
   when: ansible_os_family == "RedHat"
 
-- name: place jarfile
+- name: agent must be on glassfish classpath
   copy:
     src: '{{ dataverse.jacoco.home }}/lib/jacocoagent.jar'
     dest: '{{ dataverse.glassfish.root }}/{{ dataverse.glassfish.dir }}/glassfish/lib/jacocoagent.jar'
   when: dataverse.jacoco.enabled == true
 
-- name: name java agent
+- name: configure jacoco agent
   lineinfile:
     path: '{{ glassfish_dir }}/glassfish/domains/{{ dataverse.glassfish.domain }}/config/domain.xml'
-    line: '        <jvm-options>-Djavaagent:{{ dataverse.glassfish.root }}/{{ glassfish_dir }}/glassfish/lib/jacocoagent.jar</jvm-options>'
+    line: '        <jvm-options>-Djavaagent:{{ dataverse.glassfish.root }}/{{ dataverse.glassfish.dir }}/glassfish/lib/jacocoagent.jar'
     insertafter: 'dataverse.timerServer'
   when: dataverse.jacoco.enabled == true
 
