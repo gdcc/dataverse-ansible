@@ -190,6 +190,9 @@ if [ ! -z "$LOCAL_LOG_PATH" ]; then
    rsync -av -e "ssh -i $PEM_FILE" --ignore-missing-args centos@$PUBLIC_DNS:/tmp/dataverse/mvn.out $LOCAL_LOG_PATH/
    # 5 jacoco
    rsync -av -e "ssh -i $PEM_FILE" --ignore-missing-args centos@$PUBLIC_DNS:/tmp/dataverse/target/coverage-it $LOCAL_LOG_PATH/
+   rsync -av -e "ssh -i $PEM_FILE" --ignore-missing-args centos@$PUBLIC_DNS:/tmp/dataverse/target/*.exec $LOCAL_LOG_PATH/
+   rsync -av -e "ssh -i $PEM_FILE" --ignore-missing-args centos@$PUBLIC_DNS:/tmp/dataverse/target/classes $LOCAL_LOG_PATH/
+   rsync -av -e "ssh -i $PEM_FILE" --ignore-missing-args centos@$PUBLIC_DNS:/tmp/dataverse/src $LOCAL_LOG_PATH/
 fi
 
 # Port 8080 has been added because Ansible puts a redirect in place
