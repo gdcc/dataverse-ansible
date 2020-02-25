@@ -1,5 +1,5 @@
 ---
-# dataverse/tasks/dataverse-solr.yml
+# dataverse/tasks/solr.yml
 
 - name: ensure EPEL repository for RedHat/CentOS 7
   yum: name=epel-release state=latest
@@ -43,7 +43,7 @@
 - name: populate collection1
   shell: "/bin/cp -r {{ dataverse.solr.root }}/server/solr/configsets/_default {{ dataverse.solr.root }}/server/solr/collection1"
 
-- name: solr user needs to own some of the subdirectories to run non-root
+- name: chown some subdirectories to solr service account
   file: path="{{ item }}" state=directory recurse=yes
         owner="{{ dataverse.solr.user }}" group="{{ dataverse.solr.group }}"
   with_items:
@@ -169,10 +169,12 @@
   service: name=solr enabled=yes state=started
   when: ansible_os_family == "RedHat"
 
-- name: create collection1 core
-  shell: "{{ dataverse.solr.root }}/bin/solr create_core -c collection1 -d {{ dataverse.solr.root }}/server/solr/collection1/conf/"
-  become: yes
-  become_user: "{{ dataverse.solr.user }}"
+- name: create collection1 on startup
+  lineinfile:
+    path: '{{ dataverse.solr.root }}/server/solr/collection1/core.properties'
+    line: 'name=collection1'
+    state: present
+    create: yes
 
 - name: disable service account shell
   user:
