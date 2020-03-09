@@ -4,7 +4,7 @@
 VAGRANTFILE_API_VERSION = "2"
 
 Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
-  config.vm.box = "bento/centos-7.6"
+  config.vm.box = "bento/centos-7.7"
 
   config.vm.synced_folder ".", "/vagrant"
   config.vm.synced_folder ".", "/etc/ansible/roles/dataverse"
@@ -34,8 +34,8 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     ansible.verbose = true
   end
 
-  config.vm.provider :virtualbox do |vbox|
-    vbox.cpus = 2
-    vbox.memory = 2048
+  config.vm.provider "virtualbox" do |vbox|
+    vbox.cpus = 4
+    vbox.memory = 4096
   end
 end
