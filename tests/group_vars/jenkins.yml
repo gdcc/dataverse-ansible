@@ -92,7 +92,7 @@ dataverse:
     home: /tmp/jacoco
   java:
     version: 1.8.0
-  memheap: 1024
+  memheap: 8192
   postgres:
     version: 9.6
     jdbcurl: 
@@ -100,7 +100,7 @@ dataverse:
   previewers:
     enabled: true
   sampledata:
-    enabled: true
+    enabled: false
     dir: /tmp/sampledata
     repo: https://github.com/IQSS/dataverse-sample-data.git
     branch: master
@@ -130,7 +130,7 @@ dataverse:
 
 grafana:
   grafana_user: 'admin'
-  grafana_password: 'admin'
+  grafana_password: 'adm1n'
 
 munin:
   install: false
@@ -139,7 +139,7 @@ munin:
     passwd: p4sswurd
 
 prometheus:
-  install: false
+  install: true
   node_exporter: https://github.com/prometheus/node_exporter/releases/download/v0.18.1/node_exporter-0.18.1.linux-amd64.tar.gz
   root: /usr/local/prometheus
   url: https://github.com/prometheus/prometheus/releases/download/v2.11.1/prometheus-2.11.1.linux-amd64.tar.gz
@@ -166,5 +166,5 @@ sshkeys:
 
 # un-nesting the below so's we can pass them at the CLI
 
-dataverse_branch: release
+dataverse_branch: develop
 dataverse_repo: https://github.com/IQSS/dataverse.git
