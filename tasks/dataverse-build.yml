@@ -79,3 +79,11 @@
     remote_src: yes
   with_fileglob:
     - "{{ dataverse.srcdir }}/target/dataverse*.war"
+
+- name: place redeploy script
+  template:
+    src: redeploy.sh.j2
+    dest: '{{ dataverse.srcdir }}/redeploy.sh'
+    owner: root
+    group: root
+    mode: 0755
