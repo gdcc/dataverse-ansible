@@ -1,6 +1,10 @@
 ---
 # dataverse/defaults/main.yml
 
+# un-nested so we can pass them at the CLI
+dataverse_branch: release
+dataverse_repo: https://github.com/IQSS/dataverse.git
+
 apache:
   ssl:
     enabled: false
@@ -164,7 +168,3 @@ sshkeys:
   urls:
   user:
 
-# un-nesting the below so's we can pass them at the CLI
-
-dataverse_branch: release
-dataverse_repo: https://github.com/IQSS/dataverse.git
