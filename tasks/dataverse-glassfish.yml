@@ -1,6 +1,10 @@
 ---
 # dataverse/tasks/dataverse-glassfish.yml
 
+- name:
+  debug:
+    msg: '##### GLASSFISH #####'
+
 - name: construct glassfish_dir
   set_fact:
     glassfish_dir: '{{ dataverse.glassfish.root }}/{{ dataverse.glassfish.dir }}'

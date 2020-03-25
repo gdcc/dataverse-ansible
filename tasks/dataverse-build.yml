@@ -1,5 +1,9 @@
 # datavarse/tasks/dataverse-build.yml
 
+- name: 
+  debug:
+    msg: '##### BUILD WARFILE #####'
+
 - name: install maven
   yum:
     name: maven

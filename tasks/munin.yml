@@ -1,5 +1,9 @@
 ---
 
+- name:
+  debug:
+    msg: '##### MUNIN #####'
+
 - name: epel provides munin
   yum:
     name: epel-release

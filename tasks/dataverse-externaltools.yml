@@ -1,5 +1,9 @@
 ---
 
+- name:
+  debug:
+    msg: '##### INSTALL EXTERNAL TOOLS #####'
+
 - name: enable data curation tool
   uri:
     url: http://localhost:8080/api/admin/externalTools

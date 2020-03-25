@@ -1,5 +1,9 @@
 ---
 
+- name:
+  debug:
+    msg: '##### DOWNLOAD {{ dataverse.version }} DVINSTALL #####'
+
 - name: download dataverse installer
   get_url:
     url: https://github.com/IQSS/dataverse/releases/download/v{{ dataverse.version }}/dvinstall.zip

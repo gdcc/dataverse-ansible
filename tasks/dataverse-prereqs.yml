@@ -1,7 +1,11 @@
 ---
 # dataverse/tasks/dataverse-prereqs.yml
 
-- name: yum clean all, sigh...
+- name:
+  debug:
+    msg: '##### INSTALL PREREQUISITE PACKAGES #####'
+
+- name: yum clean all
   shell: 'yum clean all'
   when: ansible_os_family == "RedHat"
 
@@ -19,7 +23,9 @@
         ansible_distribution_major_version == "7"
 
 - name: ensure EPEL repository for RedHat7/CentOS7
-  yum: name=epel-release state=latest
+  yum:
+    name: epel-release
+    state: latest
   when: ansible_os_family == "RedHat"
 
 - name: install java-nnn-openjdk and other packages for RedHat/CentOS.
@@ -29,15 +35,17 @@
   when: ansible_os_family == "RedHat"
   tags: prereqs
 
-- name: install ImageMagick for RHEL/CentOS7 to allow thumbnail generation
-  yum: name=ImageMagick state=latest
+- name: install ImageMagick on RHEL/CentOS7 for thumbnail generation
+  yum:
+    name: ImageMagick
+    state: latest
   when:
     - ansible_os_family == "RedHat"
     - ansible_distribution_major_version == "7"
     - dataverse.thumbnails
   tags: prereqs
 
-- name: install GraphicsMagic on RHEL/CentOS8
+- name: install GraphicsMagic on RHEL/CentOS8 for thumbnail generation
   dnf:
     name: GraphicsMagick
   when:

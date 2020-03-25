@@ -1,5 +1,9 @@
 ---
 
+- name:
+  debug:
+    msg: '##### DOWNLOAD JACOCO #####'
+
 - name: ensure jacoco home exists
   file:
     path: '{{ dataverse.jacoco.home }}'

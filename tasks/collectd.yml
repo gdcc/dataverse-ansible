@@ -1,5 +1,9 @@
 ---
 
+- name:
+  debug:
+    msg: '##### COLLECTD #####'
+
 - name: install collectd
   yum:
     name: '{{ packages }}'

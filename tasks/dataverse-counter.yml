@@ -1,5 +1,9 @@
 ---
 
+- name:
+  debug:
+    msg: '##### MAKE DATA COUNT #####'
+
 - name: install python36
   yum:
     name: python36

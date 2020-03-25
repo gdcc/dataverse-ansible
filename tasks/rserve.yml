@@ -1,5 +1,9 @@
 ---
 
+- name:
+  debug:
+    msg: '##### BEGIN RSERVE INSTALLATION #####'
+
 - name: ensure EPEL is installed
   yum:
     name: epel-release

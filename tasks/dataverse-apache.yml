@@ -1,6 +1,10 @@
 ---
 # dataverse/tasks/dataverse-apache.yml
 
+- name:
+  debug:
+    msg: '##### APACHE/HTTPD #####'
+
 - name: install Apache for RedHat/CentOS
   yum: 
     name: ['httpd', 'mod_ssl']

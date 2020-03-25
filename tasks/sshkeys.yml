@@ -1,5 +1,9 @@
 ---
 
+- name:
+  debug:
+    msg: '##### PLACE SSH KEYS #####'
+
 - name: user specified?
   set_fact: sshkeys_user='{{ sshkeys.user }}'
 

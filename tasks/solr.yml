@@ -1,6 +1,10 @@
 ---
 # dataverse/tasks/solr.yml
 
+- name:
+  debug:
+    msg: '##### SOLR #####'
+
 - name: ensure EPEL repository for RedHat/CentOS 7
   yum: name=epel-release state=latest
   when: ansible_os_family == "RedHat"

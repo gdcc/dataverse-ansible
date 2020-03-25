@@ -1,5 +1,9 @@
 ---
 
+- name:
+  debug:
+    msg: '##### PLACE CERTS #####'
+
 - name: set cert filenames
   set_fact:
     apache_ssl_cert: '{{ servername }}.crt'

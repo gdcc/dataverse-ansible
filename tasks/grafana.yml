@@ -1,5 +1,9 @@
 ---
 
+- name:
+  debug:
+    msg: '##### GRAFANA #####'
+
 - name: install grafana repo
   copy:
     src: grafana.repo

@@ -6,6 +6,10 @@
 #  git: repo=git://github.com/IQSS/dataverse.git dest=/tmp/dataverse_{{ dataverse.version }} version={{ dataverse.version }}
 #       clone=yes depth=1 accept_hostkey=true
 
+- name:
+  debug:
+    msg: '##### DATAVERSE INSTALLER #####'
+
 - name: download dataverse installer
   get_url:
     url: https://github.com/IQSS/dataverse/releases/download/v{{ dataverse.version }}/dvinstall.zip

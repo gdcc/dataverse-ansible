@@ -1,5 +1,9 @@
 # dataverse/tasks/dataverse-branch.yml
 
+- name:
+  debug:
+    msg: '##### CLONE BRANCH #####'
+
 - name: clone specified branch
   git:
     repo: "{{ dataverse_repo }}"

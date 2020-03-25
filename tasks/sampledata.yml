@@ -1,5 +1,9 @@
 ---
 
+- name:
+  debug:
+    msg: '##### SAMPLEDATA #####'
+
 - name: ensure python3.4+. dataverse-counter wants 3.6, so let's go with that.
   yum:
     name:

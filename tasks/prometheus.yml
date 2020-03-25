@@ -1,5 +1,9 @@
 ---
 
+- name:
+  debug:
+    msg: '##### PROMETHEUS #####'
+
 - name: systemd no likey escaped colons
   set_fact:
     siteUrl: "{{ siteUrl | regex_replace('\\\\:', ':') }}"

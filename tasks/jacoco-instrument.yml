@@ -1,5 +1,9 @@
 ---
 
+- name:
+  debug:
+    msg: '##### INSTRUMENT WARFILE #####'
+
 - name: need a working directory
   file:
     path: /tmp/dvinstall/jacoco

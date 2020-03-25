@@ -1,5 +1,9 @@
 ---
 
+- name:
+  debug:
+    msg: '##### GENERATE JACOCO REPORT #####'
+
 # write out jacoco_exec
 - include: restart_glassfish.yml
 

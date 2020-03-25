@@ -1,5 +1,9 @@
 ---
 
+- name:
+  debug:
+    msg: '##### RUN INTEGRATION TESTS #####'
+
 - name: install maven if it isn't already
   yum:
     name: maven

@@ -2,6 +2,10 @@
 
 # dataverse/tasks/dataverse-postinstall.yml
 
+- name:
+  debug:
+    msg: '##### POST-INSTALL GLASSFISH CONFIGURATION #####'
+
 - name: set siteurl
   become: yes
   become_user: "{{ dataverse.glassfish.user }}"

@@ -1,5 +1,9 @@
 ---
 
+- name:
+  debug:
+    msg: '##### DATAVERSE PREVIEWERS #####'
+
 - name: enable dataverse-previewers
   script: dataverse-previewers.sh
   tags: previewers

@@ -1,5 +1,9 @@
 ---
 
+- name:
+  debug:
+    msg: '##### CUSTOM SAMPLEDATA #####'
+
 - name: does the sampledata directory exist?
   stat:
     path: "{{ dataverse.custom_sampledata.custom_sampledir }}"

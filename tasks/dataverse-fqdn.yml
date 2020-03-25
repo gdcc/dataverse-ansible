@@ -1,3 +1,9 @@
+---
+
+- name:
+  debug:
+    msg: '##### GET FQDN #####'
+
 - name: default to http
   set_fact:
     protocol: http
