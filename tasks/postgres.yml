@@ -91,9 +91,12 @@
   when: ansible_os_family == "RedHat"
 
 - name: create glassfish postgres database
-  postgresql_db: name={{ db.postgres.name }}
+  postgresql_db:
+    name: '{{ db.postgres.name }}'
 
 - name: create glassfish postgres user, set permissions
-  postgresql_user: db={{ db.postgres.name }} name={{ db.postgres.user }}
-        password={{ db.postgres.pass }}
-        role_attr_flags=NOSUPERUSER,CREATEDB,CREATEROLE,INHERIT,LOGIN
+  postgresql_user:
+    db: '{{ db.postgres.name }}'
+    name: '{{ db.postgres.user }}'
+    password: '{{ db.postgres.pass }}'
+    role_attr_flags: 'NOSUPERUSER,CREATEDB,CREATEROLE,INHERIT,LOGIN'
