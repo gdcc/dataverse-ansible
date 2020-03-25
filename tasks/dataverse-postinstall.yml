@@ -63,9 +63,9 @@
   when: dataverse.custom_metadata_blocks.enabled == True
 
 - name: populate reference data
-  shell: "psql -U {{ dataverse.db.user }} -h {{ dataverse.db.host }} -d {{ dataverse.db.name }} -f /tmp/dvinstall/reference_data.sql"
+  shell: "psql -U {{ db.postgres.user }} -h {{ db.postgres.host }} -d {{ db.postgres.name }} -f /tmp/dvinstall/reference_data.sql"
   environment:
-    PGPASSWORD: "{{ dataverse.db.pass }}"
+    PGPASSWORD: "{{ db.postgres.pass }}"
 
 - name: support sequential identifiers fetch current SQL script
   get_url:
@@ -77,12 +77,12 @@
   lineinfile:
     path: /tmp/createsequence.sql
     regexp: '^ALTER TABLE datasetidentifier_seq OWNER TO "dvnapp"'
-    line: 'ALTER TABLE datasetidentifier_seq OWNER TO "{{ dataverse.db.user }}";'
+    line: 'ALTER TABLE datasetidentifier_seq OWNER TO "{{ db.postgres.user }}";'
 
 - name: support sequential identifiers
-  shell: "psql -U {{ dataverse.db.user }} -h {{ dataverse.db.host }} -d {{ dataverse.db.name }} -f /tmp/createsequence.sql"
+  shell: "psql -U {{ db.postgres.user }} -h {{ db.postgres.host }} -d {{ db.postgres.name }} -f /tmp/createsequence.sql"
   environment:
-    PGPASSWORD: "{{ dataverse.db.pass }}"
+    PGPASSWORD: "{{ db.postgres.pass }}"
   
 - name: suppress grizzly ajp warnings
   become: yes

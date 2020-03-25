@@ -53,12 +53,6 @@ dataverse:
     enabled: false
     urls:
       - https://github.com/IQSS/dataverse/files/3744336/codemeta.tsv.txt
-  db:
-    name: dvndb
-    host: localhost
-    user: dvnuser
-    pass: dvnsecret
-    port: 5432
   demo: false
   doi:
     authority: "10.5072"
@@ -97,10 +91,6 @@ dataverse:
   java:
     version: 1.8.0
   memheap: 1024
-  postgres:
-    version: 9.6
-    jdbcurl: 
-    log_lock_waits: true
   previewers:
     enabled: true
   sampledata:
@@ -131,6 +121,18 @@ dataverse:
     argument: '-DcompilerArgument=-Xlint:unchecked test -P all-unit-tests'
   usermgmtkey: burrito
   version: 4.19
+
+db:
+  postgres:
+    name: dvndb
+    host: localhost
+    user: dvnuser
+    pass: dvnsecret
+    jdbcurl:
+    log_lock_waits: true
+    version: 9.6
+    port: 5432
+  use_rds: false
 
 grafana:
   grafana_user: 'admin'
