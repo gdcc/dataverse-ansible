@@ -1,6 +1,6 @@
 ---
 
-- name:
+- name: get fqdn
   debug:
     msg: '##### GET FQDN #####'
 

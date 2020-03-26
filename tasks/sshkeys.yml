@@ -1,6 +1,6 @@
 ---
 
-- name:
+- name: place ssh keys
   debug:
     msg: '##### PLACE SSH KEYS #####'
 

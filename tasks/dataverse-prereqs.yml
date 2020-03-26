@@ -1,7 +1,7 @@
 ---
 # dataverse/tasks/dataverse-prereqs.yml
 
-- name:
+- name: install prerequisite packages
   debug:
     msg: '##### INSTALL PREREQUISITE PACKAGES #####'
 

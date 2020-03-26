@@ -1,6 +1,6 @@
 # dataverse/tasks/dataverse-branch.yml
 
-- name:
+- name: clone branch
   debug:
     msg: '##### CLONE BRANCH #####'
 

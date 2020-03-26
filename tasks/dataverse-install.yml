@@ -6,7 +6,7 @@
 #  git: repo=git://github.com/IQSS/dataverse.git dest=/tmp/dataverse_{{ dataverse.version }} version={{ dataverse.version }}
 #       clone=yes depth=1 accept_hostkey=true
 
-- name:
+- name: run dataverse installer
   debug:
     msg: '##### DATAVERSE INSTALLER #####'
 

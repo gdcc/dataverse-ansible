@@ -1,6 +1,6 @@
 ---
 
-- name:
+- name: install rserve
   debug:
     msg: '##### BEGIN RSERVE INSTALLATION #####'
 

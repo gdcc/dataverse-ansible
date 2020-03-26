@@ -1,6 +1,6 @@
 ---
 
-- name:
+- name: install external tools
   debug:
     msg: '##### INSTALL EXTERNAL TOOLS #####'
 

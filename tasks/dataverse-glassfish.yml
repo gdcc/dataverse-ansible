@@ -1,7 +1,7 @@
 ---
 # dataverse/tasks/dataverse-glassfish.yml
 
-- name:
+- name: install glassfish
   debug:
     msg: '##### GLASSFISH #####'
 

@@ -1,6 +1,6 @@
 # datavarse/tasks/dataverse-build.yml
 
-- name: 
+- name: build warfile
   debug:
     msg: '##### BUILD WARFILE #####'
 

@@ -2,7 +2,7 @@
 
 # dataverse/tasks/dataverse-postinstall.yml
 
-- name:
+- name: postinstall glassfish configuration
   debug:
     msg: '##### POST-INSTALL GLASSFISH CONFIGURATION #####'
 

@@ -1,6 +1,6 @@
 ---
 
-- name:
+- name: begin collectd task
   debug:
     msg: '##### COLLECTD #####'
 

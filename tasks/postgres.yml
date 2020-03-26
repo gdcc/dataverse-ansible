@@ -1,7 +1,7 @@
 ---
 # dataverse/tasks/db.postgres.yml
 
-- name:
+- name: install postgres
   debug:
     msg: '##### POSTGRES #####'
 

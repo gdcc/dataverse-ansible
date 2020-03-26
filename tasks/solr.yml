@@ -1,7 +1,7 @@
 ---
 # dataverse/tasks/solr.yml
 
-- name:
+- name: install solr
   debug:
     msg: '##### SOLR #####'
 
