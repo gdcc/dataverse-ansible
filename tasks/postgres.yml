@@ -34,33 +34,45 @@
   set_fact:
     dataverse_pg_version_short: "{{ db.postgres.version | regex_replace('\\.','') }}"
 
-- name: install postgres on RedHat / CentOS
+- name: install postgres server on RedHat / CentOS
   yum:
    name: 'postgresql{{ dataverse_pg_version_short }}-server'
    state: latest
-  when: ansible_os_family == "RedHat"
+  when: ansible_os_family == "RedHat" and
+        db.use_rds == false
+
+- name: install postgres client on RedHat / CentOS for RDS
+  yum:
+    name: 'postgres{{ dataverse_pg_version_short }}'
+    state: latest
+  when: ansible_os_family == "RedHat" and
+        db.use_rds == true
 
 - name: set postgresql init command
   set_fact:
     postgres_init: 'creates=/var/lib/pgsql/{{ db.postgres.version }}/data/postgresql.conf /usr/pgsql-{{ db.postgres.version }}/bin/postgresql{{ dataverse_pg_version_short }}-setup initdb'
-  when: ansible_os_family == "RedHat"
+  when: ansible_os_family == "RedHat" and
+        db.use_rds == false
 
 - name: init command needs a dash on postgres 10+
   set_fact:
     postgres_init: 'creates=/var/lib/pgsql/{{ db.postgres.version }}/data/postgresql.conf /usr/pgsql-{{ db.postgres.version }}/bin/postgresql-{{ dataverse_pg_version_short }}-setup initdb'
   when: >
     dataverse_pg_version_short is search("1[0-9]") and
-    ansible_os_family == "RedHat"
+    ansible_os_family == "RedHat" and
+    db.use_rds == false
 
 - name: have we init-ed postgres yet?
   stat:
     path: '/var/lib/pgsql/{{ db.postgres.version }}/data'
-  register: postgres_parent
+  register: postgres_parent 
+  when: db.use_rds == false
 
 - name: init postgres on RHEL/CentOS
   shell: '{{ postgres_init }}'
   when: ansible_os_family == "RedHat" and
-        postgres_parent.stat.isdir is defined
+        postgres_parent.stat.isdir is defined and
+        db.use_rds == false
 
 - name: install pg_hba.conf on RHEL/CentOS
   copy:
@@ -69,30 +81,35 @@
     owner: postgres
     group: postgres
     mode: 0644
-  when: ansible_os_family == "RedHat"
+  when: ansible_os_family == "RedHat" and
+        db.use_rds == false
 
 - name: log_lock_waits when told
   lineinfile:
     path: '/var/lib/pgsql/{{ db.postgres.version }}/data/postgresql.conf'
     regexp: '^#log_lock_waits'
     line: 'log_lock_waits = on'
-  when: db.postgres.log_lock_waits == true
+  when: db.postgres.log_lock_waits == true and
+        db.use_rds == false
 
 - name: enable postgres on RHEL/CentOS
   service:
     name: 'postgresql-{{ db.postgres.version }}'
     enabled: yes
-  when: ansible_os_family == "RedHat"
+  when: ansible_os_family == "RedHat" and
+        db.use_rds == false
 
 - name: start postgres on RHEL/CentOS
   service:
     name: 'postgresql-{{ db.postgres.version }}'
     state: started
-  when: ansible_os_family == "RedHat"
+  when: ansible_os_family == "RedHat" and
+        db.use_rds == false
 
 - name: create glassfish postgres database
   postgresql_db:
     name: '{{ db.postgres.name }}'
+  when: db.use_rds == false
 
 - name: create glassfish postgres user, set permissions
   postgresql_user:
@@ -100,3 +117,4 @@
     name: '{{ db.postgres.user }}'
     password: '{{ db.postgres.pass }}'
     role_attr_flags: 'NOSUPERUSER,CREATEDB,CREATEROLE,INHERIT,LOGIN'
+  when: db.use_rds == false

@@ -27,7 +27,6 @@
   tags: shibboleth
 
 - include: postgres.yml
-  when: db.use_rds == false
   tags: postgres
 
 - include: dataverse-branch.yml
