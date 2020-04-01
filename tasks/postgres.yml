@@ -60,7 +60,7 @@
 - name: init postgres on RHEL/CentOS
   shell: '{{ postgres_init }}'
   when: ansible_os_family == "RedHat" and
-        postgres_parent.stat.isdir is defined
+        postgres_parent.stat.isdir == false
 
 - name: install pg_hba.conf on RHEL/CentOS
   copy:
