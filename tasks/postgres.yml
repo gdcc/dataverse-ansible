@@ -54,7 +54,7 @@
 
 - name: have we init-ed postgres yet?
   stat:
-    path: '/var/lib/pgsql/{{ db.postgres.version }}/data/initdb.log'
+    path: '/var/lib/pgsql/{{ db.postgres.version }}/initdb.log'
   register: postgres_initdb
 
 - name: init postgres on RHEL/CentOS
