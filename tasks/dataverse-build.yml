@@ -72,12 +72,12 @@
 
 - name: copy warfile over release
   copy:
-    src: "{{ item }}"
-    dest: "/tmp/dvinstall/dataverse.war"
-    backup: yes
+    src: '{{ dataverse.srcdir }}/target/dataverse-{{ dataverse.version }}.war'
+    dest: '/tmp/dvinstall/dataverse.war'
+    owner: root
+    group: root
+    mode: 0644
     remote_src: yes
-  with_fileglob:
-    - "{{ dataverse.srcdir }}/target/dataverse*.war"
 
 - name: place redeploy script
   template:
