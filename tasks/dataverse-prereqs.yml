@@ -30,7 +30,7 @@
 
 - name: install java-nnn-openjdk and other packages for RedHat/CentOS.
   yum:
-   name: ['bash-completion', 'elinks', 'git', 'java-{{ dataverse.java.version }}-openjdk-devel', 'jq', 'mlocate', 'net-tools', 'perl', 'sudo', 'unzip', 'vim-enhanced']
+   name: ['bash-completion', 'git', 'java-{{ dataverse.java.version }}-openjdk-devel', 'jq', 'mlocate', 'net-tools', 'perl', 'sudo', 'unzip', 'vim-enhanced']
    state: latest
   when: ansible_os_family == "RedHat"
   tags: prereqs
