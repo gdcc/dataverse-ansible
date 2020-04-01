@@ -54,13 +54,13 @@
 
 - name: have we init-ed postgres yet?
   stat:
-    path: '/var/lib/pgsql/{{ db.postgres.version }}/data'
-  register: postgres_parent
+    path: '/var/lib/pgsql/{{ db.postgres.version }}/data/initdb.log'
+  register: postgres_initdb
 
 - name: init postgres on RHEL/CentOS
   shell: '{{ postgres_init }}'
   when: ansible_os_family == "RedHat" and
-        postgres_parent.stat.isdir == false
+        postgres_initdb.stat.exists == false
 
 - name: install pg_hba.conf on RHEL/CentOS
   copy:
