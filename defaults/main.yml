@@ -98,7 +98,7 @@ dataverse:
     dir: /tmp/sampledata
     repo: https://github.com/IQSS/dataverse-sample-data.git
     branch: master
-    venv: /tmp/sampledata_venv
+    venv: /tmp/sampledata/venv
   custom_sampledata:
     enabled: false
     custom_sampledir: "{{ playbook_dir }}/custom_sampledata"
@@ -120,7 +120,7 @@ dataverse:
     enabled: false
     argument: '-DcompilerArgument=-Xlint:unchecked test -P all-unit-tests'
   usermgmtkey: burrito
-  version: 4.19
+  version: '4.20'
 
 db:
   postgres:
