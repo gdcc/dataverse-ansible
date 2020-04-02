@@ -4,11 +4,17 @@
   debug:
     msg: '##### SAMPLEDATA #####'
 
+# grab siteUrl so sampledata can run standalone
+- include: dataverse-fqdn.yml
+
+# grab apitoken so sampledata can run standalone
+- include: dataverse-apitoken.yml
+
 - name: ensure python3.4+. dataverse-counter wants 3.6, so let's go with that.
   yum:
     name:
     - python36
-    - python36-pip
+    - python3-pip
     state: latest
 
 - name: clone sampledata repo
@@ -49,9 +55,6 @@
     dest: '{{ dataverse.sampledata.dir }}/dvconfig.py'
     regexp: "^base_url = 'https://demo.dataverse.org'$"
     replace: "base_url = '{{ siteUrl_stripped }}'"
-
-# ansible forgets this fact why...?
-- include: dataverse-apitoken.yml
 
 - name: set api token in dvconfig.py
   replace:

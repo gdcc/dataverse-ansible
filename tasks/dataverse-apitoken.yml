@@ -6,5 +6,5 @@
 
 - name: set api_token fact
   set_fact:
-    api_token: "{{ api_token_output.stdout | replace('\n', '') }}"
+    api_token: "{{ api_token_output.stdout | trim }}"
     cacheable: true
