@@ -144,6 +144,9 @@ munin:
     user: admin
     passwd: p4sswurd
 
+postfix:
+  enabled: true
+
 prometheus:
   install: false
   node_exporter: https://github.com/prometheus/node_exporter/releases/download/v0.18.1/node_exporter-0.18.1.linux-amd64.tar.gz

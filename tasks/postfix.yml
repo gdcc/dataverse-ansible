@@ -1,0 +1,30 @@
+---
+
+- name: install postfix
+  yum:
+    name: postfix
+    state: latest
+
+- name: set public hostname
+  lineinfile:
+    path: /etc/postfix/main.cf
+    line: 'myhostname = {{ public_hostname }}'
+    insertbefore: '^#myhostname'
+
+- name: set mydomain
+  lineinfile:
+    path: /etc/postfix/main.cf
+    line: 'mydomain = {{ public_hostname }}'
+    insertbefore: '^#mydomain'
+
+- name: set origin hostname
+  lineinfile:
+    path: /etc/postfix/main.cf
+    line: 'myorigin = {{ public_hostname }}'
+    insertbefore: '^#myorigin'
+
+- name: enable and start postfix
+  systemd:
+    name: postfix
+    enabled: yes
+    state: started
