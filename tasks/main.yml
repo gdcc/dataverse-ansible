@@ -19,6 +19,10 @@
   when: sshkeys.enabled == True
   tags: sshkeys
 
+- include: postfix.yml
+  when: postfix.enabled == true
+  tags: postfix
+
 - include: dataverse-apache.yml
   tags: apache
 
