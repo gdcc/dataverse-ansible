@@ -43,7 +43,7 @@
 
 - name: install postgres client on RedHat / CentOS for RDS
   yum:
-    name: 'postgres{{ dataverse_pg_version_short }}'
+    name: 'postgresql{{ dataverse_pg_version_short }}'
     state: latest
   when: ansible_os_family == "RedHat" and
         db.use_rds == true
