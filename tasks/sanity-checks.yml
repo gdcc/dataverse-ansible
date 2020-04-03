@@ -1,0 +1,17 @@
+---
+
+- name: rhel and centos 8 don't play nice with postgresql9.6
+  set_fact:
+    die: "RHEL/CentOS8's psycopg2 isn't backwards-compatible with PostgresQL 9.6. Use PostgresQL 10 or higher."
+  when: ansible_os_family == "RedHat" and
+        ansible_distribution_major_version == "8" and
+        db.postgres.version < 10
+
+- name: squawk
+  debug:
+    msg: '{{ die }}'
+  when: die is defined
+
+- name: bail
+  meta: end_play
+  when: die is defined

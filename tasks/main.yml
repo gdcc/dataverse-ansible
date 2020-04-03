@@ -5,6 +5,9 @@
   debug:
     msg: '##### BEGIN ANSIBLE ROLE #####'
 
+- include: sanity-checks.yml
+  tags: prereqs
+
 - include: dataverse-prereqs.yml
   tags: prereqs
 
