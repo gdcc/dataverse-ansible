@@ -29,7 +29,7 @@
   file: path=/tmp/dvinstall/dataverse.war mode=0644
 
 - name: set jdbcurl
-  set_fact: jdbcurl='{{ dataverse.postgres.jdbcurl }}'
+  set_fact: jdbcurl='{{ db.postgres.jdbcurl }}'
 
 - name: install release jdbc driver
   shell: "/bin/cp /tmp/dvinstall/pgdriver/postgresql-*.jar {{ glassfish_dir }}/glassfish/lib/"
@@ -37,7 +37,7 @@
 
 - name: install custom jdbc driver
   get_url:
-    url: '{{ dataverse.postgres.jdbcurl }}'
+    url: '{{ db.postgres.jdbcurl }}'
     dest: '{{ glassfish_dir }}/glassfish/lib/'
   when: jdbcurl | length > 0
 
@@ -63,11 +63,11 @@
     GLASSFISH_ROOT: "{{ glassfish_dir }}"
     GLASSFISH_DOMAIN: "{{ dataverse.glassfish.domain }}"
     FILES_DIR: "{{ dataverse.filesdir }}"
-    DB_NAME: "{{ dataverse.db.name }}"
-    DB_PORT: "{{ dataverse.db.port }}"
-    DB_HOST: "{{ dataverse.db.host }}"
-    DB_USER: "{{ dataverse.db.user }}"
-    DB_PASS: "{{ dataverse.db.pass }}"
+    DB_NAME: "{{ db.postgres.name }}"
+    DB_PORT: "{{ db.postgres.port }}"
+    DB_HOST: "{{ db.postgres.host }}"
+    DB_USER: "{{ db.postgres.user }}"
+    DB_PASS: "{{ db.postgres.pass }}"
     RSERVE_HOST: "{{ rserve.host }}"
     RSERVE_PORT: "{{ rserve.port }}"
     RSERVE_USER: "{{ rserve.user }}"
