@@ -1,6 +1,6 @@
 ---
 
-- name:
+- name: begin cert placement
   debug:
     msg: '##### PLACE CERTS #####'
 

@@ -1,7 +1,7 @@
 ---
 # dataverse/tasks/dataverse-apache.yml
 
-- name:
+- name: begin apache task
   debug:
     msg: '##### APACHE/HTTPD #####'
 

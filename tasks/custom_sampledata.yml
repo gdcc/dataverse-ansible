@@ -1,6 +1,6 @@
 ---
 
-- name:
+- name: begin custom sampledata task
   debug:
     msg: '##### CUSTOM SAMPLEDATA #####'
 

@@ -120,7 +120,7 @@ dataverse:
     enabled: true
     argument: '-DcompilerArgument=-Xlint:unchecked test -P all-unit-tests'
   usermgmtkey: burrito
-  version: 4.19
+  version: '4.20'
 
 db:
   postgres:

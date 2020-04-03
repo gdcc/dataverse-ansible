@@ -1,6 +1,6 @@
 ---
 
-- name:
+- name: begin integration test task
   debug:
     msg: '##### RUN INTEGRATION TESTS #####'
 

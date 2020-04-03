@@ -1,6 +1,6 @@
 ---
 
-- name:
+- name: generate jacoco report
   debug:
     msg: '##### GENERATE JACOCO REPORT #####'
 

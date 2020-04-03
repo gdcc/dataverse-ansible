@@ -1,7 +1,7 @@
 ---
 # dataverse/tasks/main.yml
 
-- name:
+- name: begin dataverse ansible role
   debug:
     msg: '##### BEGIN ANSIBLE ROLE #####'
 

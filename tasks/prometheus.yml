@@ -1,6 +1,6 @@
 ---
 
-- name:
+- name: install prometheus
   debug:
     msg: '##### PROMETHEUS #####'
 

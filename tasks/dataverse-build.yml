@@ -1,6 +1,6 @@
 # datavarse/tasks/dataverse-build.yml
 
-- name: 
+- name: build warfile
   debug:
     msg: '##### BUILD WARFILE #####'
 
@@ -24,11 +24,6 @@
     - "{{ dataverse.srcdir }}/scripts/api/post-install-api-block.sh"
     - "{{ dataverse.srcdir }}/scripts/installer/install"
     - "{{ dataverse.srcdir }}/scripts/installer/glassfish-setup.sh"
-
-- name: older branches specify an older version in pom.xml. use current.
-  get_url:
-    url: https://raw.githubusercontent.com/IQSS/dataverse/develop/pom.xml
-    dest: "{{ dataverse.srcdir }}/pom.xml"
 
 - name: copy api script data directory
   shell: "/bin/cp -r {{ dataverse.srcdir }}/scripts/api/data /tmp/dvinstall/"
@@ -77,12 +72,12 @@
 
 - name: copy warfile over release
   copy:
-    src: "{{ item }}"
-    dest: "/tmp/dvinstall/dataverse.war"
-    backup: yes
+    src: '{{ dataverse.srcdir }}/target/dataverse-{{ dataverse.version }}.war'
+    dest: '/tmp/dvinstall/dataverse.war'
+    owner: root
+    group: root
+    mode: 0644
     remote_src: yes
-  with_fileglob:
-    - "{{ dataverse.srcdir }}/target/dataverse*.war"
 
 - name: place redeploy script
   template:

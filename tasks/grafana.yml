@@ -1,6 +1,6 @@
 ---
 
-- name:
+- name: install grafana
   debug:
     msg: '##### GRAFANA #####'
 

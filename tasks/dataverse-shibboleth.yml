@@ -1,7 +1,7 @@
 ---
 # dataverse/tasks/dataverse-shibboleth.yml
 
-- name:
+- name: install shibboleth
   debug:
     msg: '##### SHIBBOLETH #####'
 

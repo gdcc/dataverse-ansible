@@ -1,7 +1,7 @@
 ---
 # dataverse/tasks/db.postgres.yml
 
-- name:
+- name: install postgres
   debug:
     msg: '##### POSTGRES #####'
 
@@ -64,14 +64,14 @@
 
 - name: have we init-ed postgres yet?
   stat:
-    path: '/var/lib/pgsql/{{ db.postgres.version }}/data'
-  register: postgres_parent 
+    path: '/var/lib/pgsql/{{ db.postgres.version }}/initdb.log'
+  register: postgres_initdb
   when: db.use_rds == false
 
 - name: init postgres on RHEL/CentOS
   shell: '{{ postgres_init }}'
   when: ansible_os_family == "RedHat" and
-        postgres_parent.stat.isdir is defined and
+        postgres_initdb.stat.exists == false
         db.use_rds == false
 
 - name: install pg_hba.conf on RHEL/CentOS
