@@ -56,3 +56,4 @@
 - name: start s3-test container
   docker-compose:
     files: '{{ ansible_env.HOME }}/localstack-compose.yml'
+    state: present
