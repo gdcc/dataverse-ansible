@@ -9,12 +9,12 @@ services:
       - "{{ localstack.web_ui }}-{{ localstack.web_ui }}:{{ localstack.web_ui }}-{{ localstack.web_ui }}"
     environment:
       - SERVICES=s3
-      - DEBUG={{ localstack.debug }}'
+      - DEBUG={{ localstack.debug }}
       - DATA_DIR={{ localstack.data_dir }}
       - PORT_WEB_UI={{ localstack.web_ui }}
       - LOCALSTACK_HOSTNAME={{ localstack.hostname_external }}
       - LAMBDA_EXECUTOR=local
       - DOCKER_HOST=unix:///var/run/docker.sock
     volumes:
-      - "${TMPDIR:-/tmp/localstack}:/tmp/localstack"
+      - "/tmp/localstack}:/tmp/localstack"
       - "/var/run/docker.sock:/var/run/docker.sock"
