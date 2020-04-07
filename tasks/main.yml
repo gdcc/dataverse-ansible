@@ -52,6 +52,10 @@
 - include: solr.yml
   tags: solr
 
+- include: localstack.yml
+  when: localstack.enabled == true
+  tags: localstack
+
 - include: dataverse-install.yml
   tags: dataverse
 
