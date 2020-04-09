@@ -140,7 +140,8 @@ localstack:
     cidr: 
     repo: https://download.docker.com/linux/centos/docker-ce.repo
   container: 's3-test'
-  data_dir: /tmp/localstack/data
+  # set to /tmp/localstack/data to enable persistence
+  data_dir:
   debug: true
   hostname_external:
   web_ui: 8888
