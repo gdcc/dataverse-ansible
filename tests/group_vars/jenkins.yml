@@ -135,7 +135,7 @@ grafana:
   grafana_password: 'adm1n'
 
 localstack:
-  enabled: true
+  enabled: false
   docker:
     cidr: 
     repo: https://download.docker.com/linux/centos/docker-ce.repo

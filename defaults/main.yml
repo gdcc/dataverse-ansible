@@ -139,9 +139,9 @@ grafana:
   grafana_password: 'admin'
 
 localstack:
-  enabled: true
+  enabled: false
   docker:
-    cidr: '192.168.77.0/24'
+    cidr: 
     repo: https://download.docker.com/linux/centos/docker-ce.repo
   container: 's3-test'
   data_dir: /tmp/localstack/data
