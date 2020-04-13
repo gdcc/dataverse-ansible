@@ -138,6 +138,18 @@ grafana:
   grafana_user: 'admin'
   grafana_password: 'admin'
 
+localstack:
+  enabled: false
+  docker:
+    cidr: 
+    repo: https://download.docker.com/linux/centos/docker-ce.repo
+  container: 's3-test'
+  # set to /tmp/localstack/data to enable persistence
+  data_dir:
+  debug: true
+  hostname_external: 
+  web_ui: 8888
+
 munin:
   install: false
   admin:
