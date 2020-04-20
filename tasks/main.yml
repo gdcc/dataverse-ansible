@@ -56,6 +56,14 @@
   when: localstack.enabled == true
   tags: localstack
 
+- include: s3.yml
+  when: s3.enabled == true
+  tags: s3
+
+- include: localstack_create.yml
+  when: localstack.enabled == true
+  tags: localstack 
+
 - include: dataverse-install.yml
   tags: dataverse
 

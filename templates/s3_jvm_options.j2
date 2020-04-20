@@ -1,0 +1,19 @@
+        <jvm-options>-Ddataverse.files.storage-driver-id=s3</jvm-options>
+        <jvm-options>-Ddataverse.files.s3.type=s3</jvm-options>
+        <jvm-options>-Ddataverse.files.s3.bucket-name={{ s3.bucket }}</jvm-options>
+        {% if s3['download_redirect'] == true %}
+        <jvm-options>-Ddataverse.files.s3.direct-download=true</jvm-options>
+	{% endif %}
+        {% if s3['upload_redirect'] == true %}
+        <jvm-options>-Ddataverse.files.s3.direct-upload=true</jvm-options>
+	{% endif %}
+        {% if s3['custom_endpoint_url'] is defined %}
+        <jvm-options>-Ddataverse.files.s3.custom-endpoint-url={{ s3.custom_endpoint_url }}</jvm-options>
+	{% endif %}
+        <jvm-options>-Ddataverse.files.s3.url-expiration-minutes={{ s3.url_expiration_minutes }}</jvm-options>
+        {% if s3['profile'] is defined %}
+        <jvm-options>-Ddataverse.files.s3.profile={{ s3.profile }}</jvm-options>
+	{% endif %}
+        {% if s3['path_style_access'] == true %}
+        <jvm-options>-Ddataverse.files.s3.path-style-access=true</jvm-options>
+	{% endif %}

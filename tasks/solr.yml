@@ -25,7 +25,7 @@
   when: dataverse.solr.user != "root"
 
 - name: download and unzip solr
-  get_url: url="https://archive.apache.org/dist/lucene/solr/{{ dataverse.solr.version }}/solr-{{ dataverse.solr.version }}.tgz" dest=/tmp
+  get_url: url="http://mirrors.ibiblio.org/apache/lucene/solr/{{ dataverse.solr.version }}/solr-{{ dataverse.solr.version }}.tgz" dest=/tmp
 
 - name: untar solr
   shell: "tar xvzC /tmp -f /tmp/solr-{{ dataverse.solr.version }}.tgz"

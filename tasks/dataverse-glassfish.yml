@@ -70,6 +70,15 @@
     mode: 0644
   when: dataverse.glassfish.zipurl is match(".*glassfish-4.1.zip")
 
+- name: place patched JSF jar
+  copy:
+    src: jakarta.faces_dv.jar
+    dest: '{{ glassfish_dir }}/glassfish/modules/jakarta.faces.jar'
+    owner: root
+    group: root
+    mode: 0644
+  when: dataverse.glassfish.zipurl is match(".*payara-5.*")
+
 - name: increase resource limits for glassfish
   blockinfile:
     path: /etc/security/limits.conf

@@ -1,0 +1,75 @@
+---
+
+- name: we need awscli
+  yum:
+    name: awscli
+    state: latest
+
+- name: ensure dot dir exists
+  file:
+    path: '~{{ dataverse.glassfish.user }}/.aws'
+    state: directory
+    owner: '{{ dataverse.glassfish.user }}'
+    group: '{{ dataverse.glassfish.group }}'
+    mode: '0700'
+    
+- name: place aws credentials
+  template:
+    src: aws_credentials.j2
+    dest: '~{{ dataverse.glassfish.user }}/.aws/credentials'
+    owner: '{{ dataverse.glassfish.user }}'
+    group: '{{ dataverse.glassfish.group }}'
+    mode: '0600'
+
+- name: place aws config
+  template:
+    src: aws_config.j2
+    dest: '~{{ dataverse.glassfish.user }}/.aws/config'
+    owner: '{{ dataverse.glassfish.user }}'
+    group: '{{ dataverse.glassfish.group }}'
+    mode: '0600'
+
+# blockinfile claims to insert these options but doesn't. just issue asadmin commands instead. sigh.
+#- name: set s3 jvm options
+#  blockinfile:
+#    path: '{{ glassfish_dir }}/glassfish/domains/{{ dataverse.glassfish.domain }}/config/domain.xml'
+#    block: "{{ lookup('template', 'templates/s3_jvm_options.j2') }}"
+#    insertafter: '^       <jvm-options>-Djdbc.drivers=org.apache.derby.jdbc.ClientDriver</jvm-options>'
+#    marker: "<!-- {mark} -->"
+
+- name: set storage-driver-id to s3
+  shell: '{{ glassfish_dir}}/bin/asadmin create-jvm-options "-Ddataverse.files.storage-driver-id=s3"'
+
+- name: set s3 type to s3
+  shell: '{{ glassfish_dir}}/bin/asadmin create-jvm-options "-Ddataverse.files.s3.type=s3"'
+
+- name: set s3 label to s3
+  shell: '{{ glassfish_dir}}/bin/asadmin create-jvm-options "-Ddataverse.files.s3.label={{ s3.label }}"'
+
+- name: set s3 bucket name
+  shell: '{{ glassfish_dir}}/bin/asadmin create-jvm-options "-Ddataverse.files.s3.bucket-name={{ s3.bucket_name }}"'
+
+- name: set s3 url expiration minutes
+  shell: '{{ glassfish_dir}}/bin/asadmin create-jvm-options "-Ddataverse.files.s3.url-expiration-minutes={{ s3.url_expiration_minutes }}"'
+
+# optional s3 settings
+
+- name: set s3 direct download
+  shell: '{{ glassfish_dir}}/bin/asadmin create-jvm-options "-Ddataverse.files.s3.direct-download={{ s3.download_redirect }}"'
+  when: s3.download_redirect == true
+
+- name: set s3 direct upload
+  shell: '{{ glassfish_dir}}/bin/asadmin create-jvm-options "-Ddataverse.files.s3.direct-upload={{ s3.upload_redirect }}"'
+  when: s3.upload_redirect == true
+
+- name: escape custom endpoint url colons
+  set_fact: "custom_endpoint_escaped={{ s3.custom_endpoint_url | regex_replace (':','\\:') }}"
+  when: s3.custom_endpoint_url | length > 0
+
+- name: set s3 custom endpoint url
+  shell: '{{ glassfish_dir}}/bin/asadmin create-jvm-options "-Ddataverse.files.s3.custom-endpoint-url={{ custom_endpoint_escaped }}"'
+  when: s3.custom_endpoint_url | length > 0
+
+- name: set s3 path style access
+  shell: '{{ glassfish_dir}}/bin/asadmin create-jvm-options "-Ddataverse.files.s3.path-style-access={{ s3.path_style_access }}"'
+  when: s3.path_style_access == true
