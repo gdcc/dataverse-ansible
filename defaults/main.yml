@@ -182,7 +182,7 @@ s3:
   secret_access_key: s3cr3t_4cc355_k3y
   bucket_name: s3-test
   create_bucket: true
-  # for non-amazon services. escape colons for asadmin
+  # for non-amazon services.
   custom_endpoint_url: "http://localhost:4572"
   download_redirect: true
   ingestsizelimit:
