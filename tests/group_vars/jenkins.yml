@@ -181,11 +181,13 @@ s3:
   # for non-amazon services.
   custom_endpoint_url: "http://localhost:4572"
   download_redirect: true
+  files_type: s3
   ingestsizelimit:
   label: s3-test
   # for localstack this must be true
   path_style_access: true
   region: us-east-1
+  storage_driver_id: s3
   upload_redirect: true
   url_expiration_minutes: 60
 

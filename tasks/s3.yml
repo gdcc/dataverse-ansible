@@ -29,19 +29,11 @@
     group: '{{ dataverse.glassfish.group }}'
     mode: '0600'
 
-# blockinfile claims to insert these options but doesn't. just issue asadmin commands instead. sigh.
-#- name: set s3 jvm options
-#  blockinfile:
-#    path: '{{ glassfish_dir }}/glassfish/domains/{{ dataverse.glassfish.domain }}/config/domain.xml'
-#    block: "{{ lookup('template', 'templates/s3_jvm_options.j2') }}"
-#    insertafter: '^       <jvm-options>-Djdbc.drivers=org.apache.derby.jdbc.ClientDriver</jvm-options>'
-#    marker: "<!-- {mark} -->"
-
 - name: set storage-driver-id to s3
-  shell: '{{ glassfish_dir}}/bin/asadmin create-jvm-options "-Ddataverse.files.storage-driver-id=s3"'
+  shell: '{{ glassfish_dir}}/bin/asadmin create-jvm-options "-Ddataverse.files.storage-driver-id={{ s3.storage_driver_id }}"'
 
 - name: set s3 type to s3
-  shell: '{{ glassfish_dir}}/bin/asadmin create-jvm-options "-Ddataverse.files.s3.type=s3"'
+  shell: '{{ glassfish_dir}}/bin/asadmin create-jvm-options "-Ddataverse.files.s3.type={{ s3.files_type }}"'
 
 - name: set s3 label to s3
   shell: '{{ glassfish_dir}}/bin/asadmin create-jvm-options "-Ddataverse.files.s3.label={{ s3.label }}"'
