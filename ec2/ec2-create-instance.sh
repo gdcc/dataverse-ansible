@@ -15,7 +15,7 @@ usage() {
   echo "default .pem location is ${HOME}"
   echo "example group_vars may be retrieved from https://raw.githubusercontent.com/IQSS/dataverse-ansible/master/defaults/main.yml"
   echo "default AWS AMI ID is $AWS_AMI_DEFAULT"
-  echo "default AWS size is t2.medium"
+  echo "default AWS size is t2.xlarge to avoid OoM killer during integration tests"
   echo "local log path"
   exit 1
 }
@@ -88,7 +88,7 @@ echo "using $AMI_ID"
 if [ ! -z "$AWS_SIZE" ]; then
    SIZE=$AWS_SIZE
 else
-   SIZE="t2.medium"
+   SIZE="t2.xlarge"
 fi
 echo "using $SIZE"
 
