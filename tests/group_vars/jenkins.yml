@@ -173,7 +173,7 @@ rserve:
   workdir: /tmp/Rserv
 
 s3:
-  enabled: true
+  enabled: false
   access_key: 4cc355_k3y
   secret_access_key: s3cr3t_4cc355_k3y
   bucket_name: s3-test
