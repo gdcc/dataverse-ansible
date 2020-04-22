@@ -15,7 +15,7 @@ usage() {
   echo "default .pem location is ${HOME}"
   echo "example group_vars may be retrieved from https://raw.githubusercontent.com/IQSS/dataverse-ansible/master/defaults/main.yml"
   echo "default AWS AMI ID is $AWS_AMI_DEFAULT"
-  echo "default AWS size is t2.medium"
+  echo "default AWS size is t2.xlarge to avoid OoM killer during integration tests"
   echo "local log path"
   exit 1
 }
@@ -88,7 +88,7 @@ echo "using $AMI_ID"
 if [ ! -z "$AWS_SIZE" ]; then
    SIZE=$AWS_SIZE
 else
-   SIZE="t2.medium"
+   SIZE="t2.xlarge"
 fi
 echo "using $SIZE"
 
@@ -169,8 +169,7 @@ fi
 # TODO: Add some error checking for this ssh command.
 ssh -T -i $PEM_FILE -o 'StrictHostKeyChecking no' -o 'UserKnownHostsFile=/dev/null' -o 'ConnectTimeout=300' $USER_AT_HOST <<EOF
 sudo yum -y install epel-release
-sudo yum -y install https://releases.ansible.com/ansible/rpm/release/epel-7-x86_64/ansible-2.7.9-1.el7.ans.noarch.rpm
-sudo yum -y install git nano
+sudo yum -y install ansible git nano
 git clone -b $DA_BRANCH https://github.com/IQSS/dataverse-ansible.git dataverse
 export ANSIBLE_ROLES_PATH=.
 ansible-playbook -v -i dataverse/inventory dataverse/dataverse.pb --connection=local $GVARG

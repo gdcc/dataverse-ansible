@@ -86,6 +86,7 @@ dataverse:
     home: /tmp/jacoco
   java:
     version: 1.8.0
+  maxfileuploadsizeinbytes:
   memheap: 8192
   previewers:
     enabled: true
@@ -170,6 +171,25 @@ rserve:
   pass: rserve
   port: 6311
   workdir: /tmp/Rserv
+
+s3:
+  enabled: false
+  access_key: 4cc355_k3y
+  secret_access_key: s3cr3t_4cc355_k3y
+  bucket_name: s3-test
+  create_bucket: true
+  # for non-amazon services.
+  custom_endpoint_url: "http://localhost:4572"
+  download_redirect: true
+  files_type: s3
+  ingestsizelimit:
+  label: s3-test
+  # for localstack this must be true
+  path_style_access: true
+  region: us-east-1
+  storage_driver_id: s3
+  upload_redirect: true
+  url_expiration_minutes: 60
 
 shibboleth:
   enabled: false
