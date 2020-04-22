@@ -46,7 +46,7 @@
 
 - name: bash aliases won't expand in non-interactive shells
   lineinfile:
-    path: /tmp/dvinstall/glassfish-setup.sh
+    path: /tmp/dvinstall/as-setup.sh
     regexp: '{{ item.regexp }}'
     line: '{{ item.line }}'
   with_items:
