@@ -2,7 +2,7 @@
 # dataverse/tests/group_vars/vagrant.yml
 
 # un-nested so we can pass them at the CLI
-dataverse_branch: release
+dataverse_branch: develop
 dataverse_repo: https://github.com/IQSS/dataverse.git
 
 apache:
@@ -31,7 +31,7 @@ dataverse:
     blocked_endpoints: "admin,test"
     blocked_policy: "localhost-only"
     location: "http://localhost:8080/api"
-    test_suite: true
+    test_suite: false
   copyright: "Your Institution"
   counter:
     enabled: false
@@ -57,6 +57,7 @@ dataverse:
   doi:
     authority: "10.5072"
     baseurl: "https://mds.test.datacite.org/"
+    mdcbaseurl: "https://api.test.datacite.org/"
     username: "test.account"
     password: "not.my.password"
     protocol: doi
@@ -117,13 +118,14 @@ dataverse:
   srcdir: /tmp/dataverse
   thumbnails: true
   unittests:
-    enabled: true
+    enabled: false
     argument: '-DcompilerArgument=-Xlint:unchecked test -P all-unit-tests'
   usermgmtkey: burrito
   version: '4.20'
 
 db:
   postgres:
+    adminpass: DVn33dsth1s
     name: dvndb
     host: localhost
     user: dvnuser

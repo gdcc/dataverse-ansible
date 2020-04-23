@@ -121,6 +121,7 @@ dataverse:
 
 db:
   postgres:
+    adminpass: DVn33dsth1s
     name: dvndb
     host: localhost
     user: dvnuser

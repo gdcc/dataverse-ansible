@@ -14,7 +14,6 @@
   get_url:
     url: https://github.com/IQSS/dataverse/releases/download/v{{ dataverse.version }}/dvinstall.zip
     dest: /tmp
-    # checksum: sha1:7ef1fb48956cfd509e55488f2908e9a4ae923a45 # requires ansible ≥2.0
 
 - name: unzip dataverse installer
   unarchive:
@@ -41,9 +40,7 @@
     dest: '{{ glassfish_dir }}/glassfish/lib/'
   when: jdbcurl | length > 0
 
-- name: copy jhove configs
-  shell: "cp /tmp/dvinstall/jhove* {{ glassfish_dir }}/glassfish/domains/{{ dataverse.glassfish.domain }}/config"
-
+# python3 installer calls as-setup.sh
 - name: bash aliases won't expand in non-interactive shells
   lineinfile:
     path: /tmp/dvinstall/as-setup.sh
@@ -59,37 +56,38 @@
     path: /tmp/dvinstall/as-setup.sh
     mode: 0755
 
-- name: run as-setup.sh
-  shell: "nohup ./as-setup.sh > /tmp/as-setup.out 2>&1"
-  become: yes
-  become_user: "{{ dataverse.glassfish.user }}"
-  environment:
-    HOST_ADDRESS: "{{ servername }}"
-    GLASSFISH_ROOT: "{{ glassfish_dir }}"
-    GLASSFISH_DOMAIN: "{{ dataverse.glassfish.domain }}"
-    FILES_DIR: "{{ dataverse.filesdir }}"
-    DB_NAME: "{{ db.postgres.name }}"
-    DB_PORT: "{{ db.postgres.port }}"
-    DB_HOST: "{{ db.postgres.host }}"
-    DB_USER: "{{ db.postgres.user }}"
-    DB_PASS: "{{ db.postgres.pass }}"
-    RSERVE_HOST: "{{ rserve.host }}"
-    RSERVE_PORT: "{{ rserve.port }}"
-    RSERVE_USER: "{{ rserve.user }}"
-    RSERVE_PASS: "{{ rserve.pass }}"
-    SMTP_SERVER: "{{ dataverse.smtp }}"
-    MEM_HEAP_SIZE: "{{ dataverse.memheap }}"
-    DOI_BASEURL: "{{ dataverse.doi.baseurl }}"
-    DOI_USERNAME: "{{ dataverse.doi.username }}"
-    DOI_PASSWORD: "{{ dataverse.doi.password }}"
+- name: grab current copies of installer source
+  get_url:
+    url: 'https://raw.githubusercontent.com/IQSS/dataverse/develop/scripts/installer/{{ item }}'
+    dest: '/tmp/dvinstall/{{ item }}'
+    mode: '0755'
+  with_items:
+    - install.py
+    - installConfig.py
+    - installAppServer.py
+    - installUtils.py
+
+- name: place default.config
+  template:
+    src: default.config.j2
+    dest: /tmp/dvinstall/default.config
+    owner: root
+    group: root
+    mode: 0644
+
+- name: fire off installer
+  become: true
+  become_user: '{{ dataverse.glassfish.user }}'
+  shell: /usr/bin/python3 /tmp/dvinstall/install.py -f --config_file=default.config --noninteractive
   args:
     chdir: /tmp/dvinstall
-    executable: /bin/bash
 
-- name: negate need for password aliases
-  file:
-    name: /tmp/as-setup.out
-    mode: 0600
+# install.py doesn't currently log this output
+#- name: negate need for password aliases
+#  file:
+#    name: /tmp/as-setup.out
+#    mode: 0600
+#  ignore_errors: yes
 
 - name: set logging format
   become: yes
@@ -99,8 +97,3 @@
 - include: jacoco-instrument.yml
   when: dataverse.jacoco.enabled == true and
         dataverse_repo != "release"
-
-- name: deploy dataverse.war
-  become: yes
-  become_user: "{{ dataverse.glassfish.user }}"
-  shell: "nohup {{ glassfish_dir }}/bin/asadmin deploy /tmp/dvinstall/dataverse.war"
