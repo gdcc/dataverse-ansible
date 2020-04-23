@@ -40,7 +40,7 @@
     dest: '{{ glassfish_dir }}/glassfish/lib/'
   when: jdbcurl | length > 0
 
-# python3 installer still calls glassfish-setup.sh
+# python3 installer calls as-setup.sh
 - name: bash aliases won't expand in non-interactive shells
   lineinfile:
     path: /tmp/dvinstall/as-setup.sh
@@ -66,7 +66,6 @@
     - installConfig.py
     - installAppServer.py
     - installUtils.py
-    - interactive.config
 
 - name: place default.config
   template:
