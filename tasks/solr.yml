@@ -184,3 +184,7 @@
   user:
     name: '{{ dataverse.solr.user }}'
     shell: /sbin/nologin
+
+- name: set solr_url, use variables later
+  set_fact:
+    solr_url: 'http://localhost:8983'

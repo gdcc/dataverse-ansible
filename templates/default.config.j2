@@ -1,16 +1,34 @@
-ADMIN_EMAIL	 	{{ dataverse.service_email }}
-GLASSFISH_DIRECTORY	{{ glassfish_dir }}
-HOST_DNS_ADDRESS	{{ servername }}
-MAIL_SERVER		{{ dataverse.smtp }}
-POSTGRES_ADMIN_PASSWORD	{{ db.postgres.admin_pass }}
-POSTGRES_SERVER		{{ db.postgres.host }}
-POSTGRES_PORT		{{ db.postgres.port }}
-POSTGRES_DATABASE	{{ db.postgres.name }}
-POSTGRES_USER		{{ db.postgres.user }}
-POSTGRES_PASSWORD	{{ db.postgres.pass }}
-RSERVE_HOST		{{ rserve.host }}
-RSERVE_PORT		{{ rserve.port }}
-RSERVE_USER		{{ rserve.user }}
-RSERVE_PASSWORD		{{ rserve.pass }}
-SOLR_LOCATION		localhost:8983
-TWORAVENS_LOCATION	NOT INSTALLED
+[glassfish]
+HOST_DNS_ADDRESS = {{ servername }}
+GLASSFISH_USER = {{ dataverse.glassfish.user }}
+GLASSFISH_DIRECTORY = {{ dataverse.glassfish.root }}/{{ dataverse.glassfish.dir }}
+GLASSFISH_ADMIN_USER = {{ dataverse.glassfish.adminuser }}
+GLASSFISH_ADMIN_PASSWORD = {{ dataverse.glassfish.adminpass }}
+GLASSFISH_HEAP = {{ dataverse.memheap }}
+
+[database]
+POSTGRES_ONLY = false
+POSTGRES_SERVER	= {{ db.postgres.host }}
+POSTGRES_PORT = {{ db.postgres.port }}
+POSTGRES_DATABASE = {{ db.postgres.name }}
+POSTGRES_USER = {{ db.postgres.user }}
+POSTGRES_PASSWORD = {{ db.postgres.pass }}
+POSTGRES_ADMIN_PASSWORD = {{ db.postgres.adminpass }}
+
+[system]
+ADMIN_EMAIL = {{ dataverse.service_email }}
+MAIL_SERVER = {{ dataverse.smtp }}
+SOLR_LOCATION = LOCAL
+TWORAVENS_LOCATION = NOT_INSTALLED
+
+[rserve]
+RSERVE_HOST = {{ rserve.host }}
+RSERVE_PORT = {{ rserve.port }}
+RSERVE_USER = {{ rserve.user }}
+RSERVE_PASSWORD = {{ rserve.pass }}
+
+[doi]
+DOI_USERNAME = {{ dataverse.doi.username }}
+DOI_PASSWORD = {{ dataverse.doi.password }}
+DOI_BASEURL = {{ dataverse.doi.baseurl }}
+DOI_MDCBASEURL = {{ dataverse.doi.mdcbaseurl }}

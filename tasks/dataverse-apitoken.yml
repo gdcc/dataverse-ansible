@@ -1,10 +1,28 @@
 ---
 
+#- name: get initial admin API token
+#  script: read_API_token.sh
+#  register: api_token_output
+
 - name: get initial admin API token
-  script: read_API_token.sh
-  register: api_token_output
+  postgresql_query:
+    db: '{{ dataverse.db.name }}'
+    login_user: '{{ dataverse.db.user }}'
+    login_password: '{{ dataverse.db.pass }}'
+    query: select tokenstring from apitoken where authenticateduser_id = '1'
+  register: query_result
+
+- name: print result
+  set_fact:
+    queryresult_list: '{{ query_result.query_result }}'
 
 - name: set api_token fact
   set_fact:
-    api_token: "{{ api_token_output.stdout | trim }}"
+    api_token: '{{ item.tokenstring }}'
     cacheable: true
+  with_items:
+  - '{{ queryresult_list }}'
+
+- name: print API token
+  debug:
+    msg: "initial API token is {{ api_token }}"

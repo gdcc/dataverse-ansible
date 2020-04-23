@@ -56,7 +56,8 @@ dataverse:
   demo: false
   doi:
     authority: "10.5072"
-    baseurl: https://mds.test.datacite.org/
+    baseurl: "https://mds.test.datacite.org/"
+    mdcbaseurl: "https://api.test.datacite.org/"
     username: "testaccount"
     password: "notmypassword"
     protocol: doi
@@ -125,6 +126,7 @@ dataverse:
 
 db:
   postgres:
+    adminpass: DVn33dsth1s
     name: dvndb
     host: localhost
     user: dvnuser

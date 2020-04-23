@@ -16,20 +16,6 @@
   when: ansible_os_family == "RedHat" and
         ansible_distribution_major_version == "8"
 
-- name: python-psycopg2 for RHEL/CentOS7
-  yum:
-    name: python-psycopg2
-    state: installed
-  when: ansible_os_family == "RedHat" and
-        ansible_distribution_major_version == "7"
-
-- name: python3-psycopg2 for RHEL/CentOS8
-  dnf:
-    name: python3-psycopg2
-    state: installed
-  when: ansible_os_family == "RedHat" and
-        ansible_distribution_major_version == "8"
-
 - name: postgres uses differing version syntax in a few commands/packages
   set_fact:
     dataverse_pg_version_short: "{{ db.postgres.version | regex_replace('\\.','') }}"
@@ -105,6 +91,11 @@
     state: started
   when: ansible_os_family == "RedHat" and
         db.use_rds == false
+
+- name: dataverse python installer wants to be a postgres admin
+  postgresql_user:
+    name: postgres
+    password: '{{ db.postgres.adminpass }}'
 
 - name: create glassfish postgres database
   postgresql_db:
