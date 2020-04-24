@@ -118,7 +118,7 @@ dataverse:
   srcdir: /tmp/dataverse
   thumbnails: true
   unittests:
-    enabled: false
+    enabled: true
     argument: '-DcompilerArgument=-Xlint:unchecked test -P all-unit-tests'
   usermgmtkey: burrito
   version: '4.20'
