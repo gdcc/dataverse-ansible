@@ -40,7 +40,18 @@
     dest: '{{ glassfish_dir }}/glassfish/lib/'
   when: jdbcurl | length > 0
 
-# python3 installer calls as-setup.sh
+- name: grab current copies of installer source
+  get_url:
+    url: 'https://raw.githubusercontent.com/IQSS/dataverse/develop/scripts/installer/{{ item }}'
+    dest: '/tmp/dvinstall/{{ item }}'
+    mode: '0755'
+  with_items:
+    - install.py
+    - installConfig.py
+    - installAppServer.py
+    - installUtils.py
+    - as-setup.sh
+
 - name: bash aliases won't expand in non-interactive shells
   lineinfile:
     path: /tmp/dvinstall/as-setup.sh
@@ -55,17 +66,6 @@
   file:
     path: /tmp/dvinstall/as-setup.sh
     mode: 0755
-
-- name: grab current copies of installer source
-  get_url:
-    url: 'https://raw.githubusercontent.com/IQSS/dataverse/develop/scripts/installer/{{ item }}'
-    dest: '/tmp/dvinstall/{{ item }}'
-    mode: '0755'
-  with_items:
-    - install.py
-    - installConfig.py
-    - installAppServer.py
-    - installUtils.py
 
 - name: place default.config
   template:
