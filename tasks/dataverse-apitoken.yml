@@ -6,9 +6,9 @@
 
 - name: get initial admin API token
   postgresql_query:
-    db: '{{ dataverse.db.name }}'
-    login_user: '{{ dataverse.db.user }}'
-    login_password: '{{ dataverse.db.pass }}'
+    db: '{{ db.postgres.name }}'
+    login_user: '{{ db.postgres.user }}'
+    login_password: '{{ db.postgres.pass }}'
     query: select tokenstring from apitoken where authenticateduser_id = '1'
   register: query_result
 
