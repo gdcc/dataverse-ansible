@@ -47,11 +47,11 @@
 # optional s3 settings
 
 - name: set s3 direct download
-  shell: '{{ glassfish_dir}}/bin/asadmin create-jvm-options "-Ddataverse.files.s3.direct-download={{ s3.download_redirect }}"'
+  shell: '{{ glassfish_dir}}/bin/asadmin create-jvm-options "-Ddataverse.files.s3.download-redirect={{ s3.download_redirect }}"'
   when: s3.download_redirect == true
 
 - name: set s3 direct upload
-  shell: '{{ glassfish_dir}}/bin/asadmin create-jvm-options "-Ddataverse.files.s3.direct-upload={{ s3.upload_redirect }}"'
+  shell: '{{ glassfish_dir}}/bin/asadmin create-jvm-options "-Ddataverse.files.s3.upload-redirect={{ s3.upload_redirect }}"'
   when: s3.upload_redirect == true
 
 - name: escape custom endpoint url colons
