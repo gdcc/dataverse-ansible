@@ -2,7 +2,7 @@
 # dataverse/tests/group_vars/vagrant.yml
 
 # un-nested so we can pass them at the CLI
-dataverse_branch: develop
+dataverse_branch: release
 dataverse_repo: https://github.com/IQSS/dataverse.git
 
 apache:
@@ -83,11 +83,13 @@ dataverse:
     siteurl: 
     root: /usr/local
     dir: payara5
-    zipurl: https://search.maven.org/remotecontent?filepath=fish/payara/distributions/payara/5.201/payara-5.201.zip
+    #zipurl: https://search.maven.org/remotecontent?filepath=fish/payara/distributions/payara/5.201/payara-5.201.zip
+    zipurl: http://dlc-cdn.sun.com/glassfish/4.1/release/glassfish-4.1.zip
   google_analytics_key:
   jacoco:
     enabled: false
     home: /tmp/jacoco
+    version: 0.8.5
   java:
     version: 1.8.0
   maxfileuploadsizeinbytes:
@@ -157,7 +159,7 @@ prometheus:
   user: prometheus
 
 rserve:
-  install: true
+  install: false
   host: localhost
   user: rserve
   group: rserve
