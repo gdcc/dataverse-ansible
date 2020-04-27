@@ -75,6 +75,10 @@
     group: root
     mode: 0644
 
+- include: jacoco-instrument.yml
+  when: dataverse.jacoco.enabled == true and
+        dataverse_repo != "release"
+
 - name: fire off installer
   become: true
   become_user: '{{ dataverse.glassfish.user }}'
@@ -94,6 +98,3 @@
   become_user: "{{ dataverse.glassfish.user }}"
   shell: "{{ glassfish_dir }}/bin/asadmin set-log-file-format {{ dataverse.glassfish.logformat }}"
 
-- include: jacoco-instrument.yml
-  when: dataverse.jacoco.enabled == true and
-        dataverse_repo != "release"
