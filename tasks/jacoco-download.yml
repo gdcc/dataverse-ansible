@@ -12,6 +12,6 @@
 
 - name: download jacoco. currently 0.8.1 is required per pom.xml
   unarchive:
-    src: https://repo1.maven.org/maven2/org/jacoco/jacoco/0.8.1/jacoco-0.8.1.zip
+    src: https://repo1.maven.org/maven2/org/jacoco/jacoco/{{ dataverse.jacoco.version }}/jacoco-{{ dataverse.jacoco.version }}.zip
     dest: '{{ dataverse.jacoco.home }}'
     remote_src: yes

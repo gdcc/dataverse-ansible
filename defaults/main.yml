@@ -89,6 +89,7 @@ dataverse:
   jacoco:
     enabled: false
     home: /tmp/jacoco
+    version: 0.8.1
   java:
     version: 1.8.0
   maxfileuploadsizeinbytes:
