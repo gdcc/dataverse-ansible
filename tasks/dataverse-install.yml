@@ -27,36 +27,6 @@
 - name: fix perms on dataverse-war
   file: path=/tmp/dvinstall/dataverse.war mode=0644
 
-# python installer fails to place jdbc driver
-- name: set jdbcurl
-  set_fact: jdbcurl='{{ db.postgres.jdbcurl }}'
-  when: postgres['jdbcurl'] is defined
-
-- name: install custom jdbc driver
-  get_url:
-    url: '{{ db.postgres.jdbcurl }}'
-    dest: '{{ glassfish_dir }}/glassfish/modules/'
-  when: jdbcurl is defined and
-        jdbcurl | length > 0
-
-- name: allow installer write access for release jdbc driver
-  file:
-    path: '{{ glassfish_dir }}/glassfish/lib'
-    state: directory
-    owner: '{{ dataverse.glassfish.user }}'
-  when: jdbcurl is undefined
-
-- name: install release jdbc driver
-  shell: "/bin/cp /tmp/dvinstall/pgdriver/postgresql-*.jar {{ glassfish_dir }}/glassfish/lib/"
-  when: jdbcurl is undefined
-
-- name: temporarily allow installer write access for upgraded jakarta jar
-  file:
-    path: '{{ glassfish_dir }}/glassfish/modules'
-    owner: '{{ dataverse.glassfish.user }}'
-    recurse: yes
-  #when: dataverse.glassfish.zipurl is match(".*payara-5.*")
-
 - name: grab current copies of installer source
   get_url:
     url: 'https://raw.githubusercontent.com/IQSS/dataverse/develop/scripts/installer/{{ item }}'
