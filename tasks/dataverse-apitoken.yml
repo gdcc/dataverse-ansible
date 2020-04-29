@@ -1,9 +1,5 @@
 ---
 
-#- name: get initial admin API token
-#  script: read_API_token.sh
-#  register: api_token_output
-
 - name: get initial admin API token
   postgresql_query:
     db: '{{ db.postgres.name }}'
