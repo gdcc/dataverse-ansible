@@ -43,6 +43,9 @@
   when: dataverse.jacoco.enabled == true and
         dataverse_repo != "release"
 
+- include: dataverse-download.yml
+  tags: glassfish
+
 - include: dataverse-glassfish.yml
   tags: glassfish
 

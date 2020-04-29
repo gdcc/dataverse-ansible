@@ -70,6 +70,7 @@
     mode: 0644
   when: dataverse.glassfish.zipurl is match(".*glassfish-4.1.zip")
 
+# python installer fails to copy this for whatever reason
 - name: place patched JSF jar
   copy:
     src: jakarta.faces_dv.jar
@@ -78,6 +79,30 @@
     group: root
     mode: 0644
   when: dataverse.glassfish.zipurl is match(".*payara-5.*")
+
+# python installer fails to place jdbc driver for whatever reason
+# and we want this configurable for testing updated drivers anyway
+- name: set jdbcurl
+  set_fact: jdbcurl='{{ db.postgres.jdbcurl }}'
+  when: postgres['jdbcurl'] is defined
+
+- name: install custom jdbc driver
+  get_url:
+    url: '{{ db.postgres.jdbcurl }}'
+    dest: '{{ glassfish_dir }}/glassfish/modules/'
+  when: jdbcurl is defined and
+        jdbcurl | length > 0
+
+- name: allow installer write access for release jdbc driver
+  file:
+    path: '{{ glassfish_dir }}/glassfish/lib'
+    state: directory
+    owner: '{{ dataverse.glassfish.user }}'
+  when: jdbcurl is undefined
+
+- name: install release jdbc driver
+  shell: "/bin/cp /tmp/dvinstall/pgdriver/postgresql-*.jar {{ glassfish_dir }}/glassfish/lib/"
+  when: jdbcurl is undefined
 
 - name: increase resource limits for glassfish
   blockinfile:

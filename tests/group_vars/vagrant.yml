@@ -73,8 +73,8 @@ dataverse:
       enabled: false
   filesdir: /usr/local/dvn/data
   glassfish:
-    user: payara
-    group: payara
+    user: glassfish
+    group: glassfish
     domain: domain1
     logformat: ulf
     adminuser: admin
@@ -82,7 +82,7 @@ dataverse:
     timeout: 180
     siteurl: 
     root: /usr/local
-    dir: payara5
+    dir: glassfish4
     #zipurl: https://search.maven.org/remotecontent?filepath=fish/payara/distributions/payara/5.201/payara-5.201.zip
     zipurl: http://dlc-cdn.sun.com/glassfish/4.1/release/glassfish-4.1.zip
   google_analytics_key:

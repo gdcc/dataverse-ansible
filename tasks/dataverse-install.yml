@@ -10,35 +10,11 @@
   debug:
     msg: '##### DATAVERSE INSTALLER #####'
 
-- name: download dataverse installer
-  get_url:
-    url: https://github.com/IQSS/dataverse/releases/download/v{{ dataverse.version }}/dvinstall.zip
-    dest: /tmp
-
-- name: unzip dataverse installer
-  unarchive:
-    src: /tmp/dvinstall.zip
-    remote_src: true
-    dest: /tmp
-
 - include: dataverse-build.yml
   when: dataverse_branch != "release"
   
 - name: fix perms on dataverse-war
   file: path=/tmp/dvinstall/dataverse.war mode=0644
-
-- name: set jdbcurl
-  set_fact: jdbcurl='{{ db.postgres.jdbcurl }}'
-
-- name: install release jdbc driver
-  shell: "/bin/cp /tmp/dvinstall/pgdriver/postgresql-*.jar {{ glassfish_dir }}/glassfish/lib/"
-  when: jdbcurl|length == 0
-
-- name: install custom jdbc driver
-  get_url:
-    url: '{{ db.postgres.jdbcurl }}'
-    dest: '{{ glassfish_dir }}/glassfish/lib/'
-  when: jdbcurl | length > 0
 
 - name: grab current copies of installer source
   get_url:
@@ -51,6 +27,25 @@
     - installAppServer.py
     - installUtils.py
     - as-setup.sh
+  #when: dataverse_branch != "release"
+
+- name: grab api setup scripts as well
+  get_url:
+    url: 'https://raw.githubusercontent.com/IQSS/dataverse/develop/scripts/api/{{ item }}'
+    dest: '/tmp/dvinstall/{{ item }}'
+    mode: '0755'
+  with_items:
+    - setup-all.sh
+    - setup-datasetfields.sh
+    - setup-builtin-roles.sh
+    - setup-identity-providers.sh
+  #when: dataverse_branch != "release"
+
+- name: set dataverse adminpass in setup-all
+  lineinfile:
+    path: /tmp/dvinstall/setup-all.sh
+    regexp: '^DV_SU_PASSWORD'
+    line: 'DV_SU_PASSWORD="{{ dataverse.adminpass }}"'
 
 - name: bash aliases won't expand in non-interactive shells
   lineinfile:
@@ -79,14 +74,19 @@
   when: dataverse.jacoco.enabled == true and
         dataverse_repo != "release"
 
+- name: allow installer write access
+  file:
+    path: /tmp/dvinstall
+    owner: '{{ dataverse.glassfish.user }}'
+
 - name: fire off installer
-  become: true
+  script: '/usr/bin/python /tmp/dvinstall/install.py -f --config_file=default.config --noninteractive > /tmp/dvinstall/install.out 2>&1'
+  become: yes
   become_user: '{{ dataverse.glassfish.user }}'
-  shell: /usr/bin/python3 /tmp/dvinstall/install.py -f --config_file=default.config --noninteractive
   args:
     chdir: /tmp/dvinstall
 
-# install.py doesn't currently log this output
+# install.py doesn't currently log this output, nothing sensitive in install.out
 #- name: negate need for password aliases
 #  file:
 #    name: /tmp/as-setup.out
