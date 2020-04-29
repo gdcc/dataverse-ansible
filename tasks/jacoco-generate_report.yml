@@ -21,6 +21,6 @@
     chdir: '{{ dataverse.jacoco.home }}'
 
 - name: create code coverage report
-  shell: 'java -jar {{ dataverse.jacoco.home }}/lib/jacococli.jar report --classfiles target/classes --sourcefiles src/main/java --html target/coverage-it/ {{ dataverse.srcdir }}/target/jacoco.exec'
+  shell: 'java -jar {{ dataverse.jacoco.home }}/lib/jacococli.jar report --classfiles target/classes --sourcefiles src/main/java --html target/coverage-it/ {{ dataverse.srcdir }}/target/jacoco_merged.exec'
   args:
     chdir: '{{ dataverse.srcdir }}'
