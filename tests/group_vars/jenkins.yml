@@ -49,6 +49,8 @@ dataverse:
     enabled: false
     urls:
       - https://github.com/IQSS/dataverse/files/3744336/codemeta.tsv.txt
+  default:
+    config:
   demo: false
   doi:
     authority: "10.5072"
