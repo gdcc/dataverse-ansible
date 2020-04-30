@@ -62,13 +62,27 @@
     path: /tmp/dvinstall/as-setup.sh
     mode: 0755
 
-- name: place default.config
+- name: register default_config
+  set_fact:
+    default_config: '{{ dataverse.default.config }}'
+
+- name: place default.config template
   template:
     src: default.config.j2
     dest: /tmp/dvinstall/default.config
     owner: root
     group: root
     mode: 0644
+  when: default_config|length == 0
+
+- name: place default.config
+  copy:
+    src: default.config
+    dest: /tmp/dvinstall/default.config
+    owner: '{{ dataverse.glassfish.user }}'
+    group: '{{ dataverse.glassfish.group }}'
+    mode: 0600
+  when: default_config|length > 0
 
 - include: jacoco-instrument.yml
   when: dataverse.jacoco.enabled == true and
