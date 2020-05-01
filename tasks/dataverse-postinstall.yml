@@ -69,22 +69,24 @@
 #  environment:
 #    PGPASSWORD: "{{ db.postgres.pass }}"
 
-- name: support sequential identifiers fetch current SQL script
-  get_url:
-    url: http://guides.dataverse.org/en/latest/_downloads/createsequence.sql
-    dest: /tmp/createsequence.sql
-    mode: '0644'
-
-- name: "support sequential identifiers use db.user"
-  lineinfile:
-    path: /tmp/createsequence.sql
-    regexp: '^ALTER TABLE datasetidentifier_seq OWNER TO "dvnapp"'
-    line: 'ALTER TABLE datasetidentifier_seq OWNER TO "{{ db.postgres.user }}";'
-
-- name: support sequential identifiers
-  shell: "psql -U {{ db.postgres.user }} -h {{ db.postgres.host }} -d {{ db.postgres.name }} -f /tmp/createsequence.sql"
-  environment:
-    PGPASSWORD: "{{ db.postgres.pass }}"
+# leonid says not installing this by default is a good thing
+# almost nobody needs it
+#- name: support sequential identifiers fetch current SQL script
+#  get_url:
+#    url: http://guides.dataverse.org/en/latest/_downloads/createsequence.sql
+#    dest: /tmp/createsequence.sql
+#    mode: '0644'
+#
+#- name: "support sequential identifiers use db.user"
+#  lineinfile:
+#    path: /tmp/createsequence.sql
+#    regexp: '^ALTER TABLE datasetidentifier_seq OWNER TO "dvnapp"'
+#    line: 'ALTER TABLE datasetidentifier_seq OWNER TO "{{ db.postgres.user }}";'
+#
+#- name: support sequential identifiers
+#  shell: "psql -U {{ db.postgres.user }} -h {{ db.postgres.host }} -d {{ db.postgres.name }} -f /tmp/createsequence.sql"
+#  environment:
+#    PGPASSWORD: "{{ db.postgres.pass }}"
   
 - name: suppress grizzly ajp warnings
   become: yes
