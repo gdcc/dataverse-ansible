@@ -143,7 +143,7 @@
 - name: fix payara-5.201 for java-1.8.0_252
   lineinfile:
     path: '{{ glassfish_dir }}/glassfish/domains/{{ dataverse.glassfish.domain }}/config/domain.xml'
-    line: '        <jvm-options>[1.8.0u191|1.8.0u251]-Xbootclasspath/p:${com.sun.aas.installRoot}/lib/grizzly-npn-bootstrap-1.8.jar</jvm-options>'
+    line: '        <jvm-options>[1.8.0u191|1.8.0u251]-Xbootclasspath/p:${com.sun.aas.installRoot}/lib/grizzly-npn-bootstrap-1.8.1.jar</jvm-options>'
     insertafter: '.*grizzly-npn-bootstrap-1.8.jar.*'
   when: dataverse.glassfish.zipurl is match(".*payara-5.201.*")
 
@@ -151,7 +151,7 @@
   lineinfile:
     path: '{{ glassfish_dir }}/glassfish/domains/{{ dataverse.glassfish.domain }}/config/domain.xml'
     line: '        <jvm-options>[1.8.0u252|1.8.0u500]-Xbootclasspath/p:${com.sun.aas.installRoot}/lib/grizzly-npn-api.jar</jvm-options>'
-    insertafter: '.*grizzly-npn-bootstrap-1.8.jar.*'
+    insertafter: '.*grizzly-npn-bootstrap-1.8.1.jar.*'
   when: dataverse.glassfish.zipurl is match(".*payara-5.201.*")
 
 - name: reload systemd on RedHat/CentOS7
