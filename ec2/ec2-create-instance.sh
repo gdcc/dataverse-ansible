@@ -9,18 +9,19 @@ PEM_DEFAULT=${HOME}
 AWS_AMI_DEFAULT='ami-9887c6e7'
 
 usage() {
-  echo "Usage: $0 -b <branch> -r <repo> -p <pem_dir> -g <group_vars> -a <dataverse-ansible branch> -i aws_image -s aws_size -t aws_tag -l local_log_path" 1>&2
+  echo "Usage: $0 -b <branch> -r <repo> -p <pem_dir> -g <group_vars> -a <dataverse-ansible branch> -i aws_image -s aws_size -t aws_tag -l local_log_path -d" 1>&2
   echo "default branch is develop"
   echo "default repo is https://github.com/IQSS/dataverse"
   echo "default .pem location is ${HOME}"
   echo "example group_vars may be retrieved from https://raw.githubusercontent.com/IQSS/dataverse-ansible/master/defaults/main.yml"
   echo "default AWS AMI ID is $AWS_AMI_DEFAULT"
-  echo "default AWS size is t2.xlarge to avoid OoM killer during integration tests"
-  echo "local log path"
+  echo "default AWS size is t2.xlarge to avoid OoM killer during integration tests (otherwise, t2.large should be fine)"
+  echo "local log path will rsync Payara, Jacoco, Maven and other logs back to the specified path"
+  echo "-d will destroy ("terminate") the AWS instance once testing and reporting completes"
   exit 1
 }
 
-while getopts ":a:r:b:g:p:i:s:t:l:" o; do
+while getopts ":a:r:b:g:p:i:s:t:l:d" o; do
   case "${o}" in
   a)
     DA_BRANCH=${OPTARG}
@@ -48,6 +49,9 @@ while getopts ":a:r:b:g:p:i:s:t:l:" o; do
     ;;
   l)
     LOCAL_LOG_PATH=${OPTARG}
+    ;;
+  d)
+    DESTROY=true
     ;;
   *)
     usage
@@ -148,7 +152,12 @@ echo "Creating EC2 instance"
 # TODO: Add some error checking for "ec2 run-instances".
 INSTANCE_ID=$(aws ec2 run-instances --image-id $AMI_ID --security-groups $SECURITY_GROUP $TAGARG --count 1 --instance-type $SIZE --key-name $PEM_DIR/$KEY_NAME --query 'Instances[0].InstanceId' --block-device-mappings '[ { "DeviceName": "/dev/sda1", "Ebs": { "DeleteOnTermination": true } } ]' | tr -d \")
 echo "Instance ID: "$INSTANCE_ID
+
+DESTROY_CMD="aws ec2 terminate-instances --instance-ids $INSTANCE_ID"
+echo "When you are done, please terminate your instance with:"
+echo "$DESTROY_CMD"
 echo "giving instance 60 seconds to wake up..."
+
 sleep 60
 echo "End creating EC2 instance"
 
@@ -198,8 +207,14 @@ fi
 # from HTTP to HTTPS and the cert is invalid (self-signed), forcing
 # the user to click through browser warnings.
 CLICKABLE_LINK="http://${PUBLIC_DNS}"
-echo "To ssh into the new instance:"
-echo "ssh -i $PEM_FILE $USER_AT_HOST"
 echo "Branch $BRANCH from $REPO_URL has been deployed to $CLICKABLE_LINK"
-echo "When you are done, please terminate your instance with:"
-echo "aws ec2 terminate-instances --instance-ids $INSTANCE_ID"
+
+if [ -z "$DESTROY" ]; then
+   echo "To ssh into the new instance:"
+   echo "ssh -i $PEM_FILE $USER_AT_HOST"
+   echo "When you are done, please terminate your instance with:"
+   echo "$DESTROY_CMD"
+else
+   echo "destroying AWS instance"
+   eval $DESTROY_CMD
+fi
