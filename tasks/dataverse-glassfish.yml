@@ -13,18 +13,22 @@
   file: path={{ glassfish_dir }} state=directory
         owner=root group=root mode=0755
 
-- name: download and unzip glassfish4
-  get_url:
-    url: '{{ dataverse.glassfish.zipurl }}'
-    dest: /tmp/glassfish.zip
-
 - name: bsdtar can unzip in smarter ways
   yum:
     name: bsdtar
     state: latest
 
+- name: download glassfish zip
+  get_url:
+    url: '{{ dataverse.glassfish.zipurl }}'
+    checksum: '{{ dataverse.glassfish.zipchecksum }}'
+    dest: /tmp/glassfish.zip
+  register: glassfish_zip_download
+
 - name: unzip to glassfish root without name/version tld
   shell: 'bsdtar --strip-components=1 -C {{ glassfish_dir }} -xvf /tmp/glassfish.zip'
+  when: glassfish_zip_download.changed
+  notify: enable and restart glassfish
 
 - name: create glassfish service group
   group: name={{ dataverse.glassfish.group }} state=present
@@ -45,6 +49,7 @@
     name: '{{ glassfish_dir }}/glassfish/modules/weld-osgi-bundle.jar'
     state: absent
   when: dataverse.glassfish.zipurl is match(".*glassfish-4.1.zip")
+  notify: enable and restart glassfish
 
 - name: get patched weld jar for glassfish-4.1
   get_url:
@@ -54,12 +59,14 @@
     group: root
     mode: 0644
   when: dataverse.glassfish.zipurl is match(".*glassfish-4.1.zip")
+  notify: enable and restart glassfish
 
 - name: remove old grizzly jar included with glassfish-4.1
   file:
     name: '{{ glassfish_dir }}/glassfish/modules/glassfish-grizzly-extra-all.jar'
     state: absent
   when: dataverse.glassfish.zipurl is match(".*glassfish-4.1.zip")
+  notify: enable and restart glassfish
 
 - name: get patched grizzly jar for glassfish-4.1
   get_url:
@@ -69,6 +76,7 @@
     group: root
     mode: 0644
   when: dataverse.glassfish.zipurl is match(".*glassfish-4.1.zip")
+  notify: enable and restart glassfish
 
 # python installer fails to copy this for whatever reason
 - name: place patched JSF jar
@@ -79,12 +87,14 @@
     group: root
     mode: 0644
   when: dataverse.glassfish.zipurl is match(".*payara-5.*")
+  notify: enable and restart glassfish
 
 # python installer fails to place jdbc driver for whatever reason
 # and we want this configurable for testing updated drivers anyway
 - name: set jdbcurl
   set_fact: jdbcurl='{{ db.postgres.jdbcurl }}'
   when: postgres['jdbcurl'] is defined
+  notify: enable and restart glassfish
 
 - name: install custom jdbc driver
   get_url:
@@ -92,6 +102,7 @@
     dest: '{{ glassfish_dir }}/glassfish/modules/'
   when: jdbcurl is defined and
         jdbcurl | length > 0
+  notify: enable and restart glassfish
 
 - name: allow installer write access for release jdbc driver
   file:
@@ -99,32 +110,48 @@
     state: directory
     owner: '{{ dataverse.glassfish.user }}'
   when: jdbcurl is undefined
+  notify: enable and restart glassfish
 
 - name: install release jdbc driver
-  shell: "/bin/cp /tmp/dvinstall/pgdriver/postgresql-*.jar {{ glassfish_dir }}/glassfish/lib/"
+  copy:
+    src: "{{ item }}"
+    dest: "{{ glassfish_dir }}/glassfish/lib/"
+    remote_src: true
   when: jdbcurl is undefined
+  notify: enable and restart glassfish
+  with_fileglob: /tmp/dvinstall/pgdriver/postgresql-*.jar
 
 - name: increase resource limits for glassfish
   blockinfile:
     path: /etc/security/limits.conf
     block: |
       {{ item.user }} {{ item.type }} {{ item.descriptor }} {{ item.value }}
+    marker: '# {mark} ANSIBLE MANAGED BLOCK {{ item.user }} {{ item.type }} {{ item.descriptor }}'
   with_items:
     - { user: "{{ dataverse.glassfish.user }}", type: soft, descriptor: nproc, value: 65000 }
     - { user: "{{ dataverse.glassfish.user }}", type: hard, descriptor: nproc, value: 65000 }
     - { user: "{{ dataverse.glassfish.user }}", type: soft, descriptor: nofile, value: 65000 }
     - { user: "{{ dataverse.glassfish.user }}", type: hard, descriptor: nofile, value: 65000 }
+  notify: enable and restart glassfish
 
 - name: install glassfish systemd conf file for RedHat / CentOS7
   template: src=glassfish.service.j2 dest=/usr/lib/systemd/system/glassfish.service
         owner=root group=root mode=0644
   when: ansible_os_family == "RedHat"
+  notify: reload systemd
+
+- name: install glassfish systemd conf file for Debian
+  template: src=glassfish.service.j2 dest=/etc/systemd/system/glassfish.service
+        owner=root group=root mode=0644
+  when: ansible_os_family == "Debian"
+  notify: reload systemd
 
 - name: agent must be on glassfish classpath
   copy:
     src: '{{ dataverse.jacoco.home }}/lib/jacocoagent.jar'
     dest: '{{ dataverse.glassfish.root }}/{{ dataverse.glassfish.dir }}/glassfish/lib/jacocoagent.jar'
   when: dataverse.jacoco.enabled == true
+  notify: enable and restart glassfish
 
 - name: configure jacoco agent
   lineinfile:
@@ -132,6 +159,7 @@
     line: '        <jvm-options>-Djavaagent:{{ dataverse.glassfish.root }}/{{ dataverse.glassfish.dir }}/glassfish/lib/jacocoagent.jar'
     insertafter: 'dataverse.timerServer'
   when: dataverse.jacoco.enabled == true
+  notify: enable and restart glassfish
 
 - name: fix payara-5.201 for java-1.8.0_252
   lineinfile:
@@ -139,6 +167,7 @@
     line: '                <jvm-options>[1.8.0u191|1.8.0u500]-Xbootclasspath/p:${com.sun.aas.installRoot}/lib/grizzly-npn-bootstrap-1.8.1.jar</jvm-options>'
     state: absent
   when: dataverse.glassfish.zipurl is match(".*payara-5.201.*")
+  notify: enable and restart glassfish
 
 - name: fix payara-5.201 for java-1.8.0_252
   lineinfile:
@@ -146,6 +175,7 @@
     line: '        <jvm-options>[1.8.0u191|1.8.0u251]-Xbootclasspath/p:${com.sun.aas.installRoot}/lib/grizzly-npn-bootstrap-1.8.1.jar</jvm-options>'
     insertafter: '.*grizzly-npn-bootstrap-1.8.jar.*'
   when: dataverse.glassfish.zipurl is match(".*payara-5.201.*")
+  notify: enable and restart glassfish
 
 - name: fix payara-5.201 for java-1.8.0_252
   lineinfile:
@@ -153,26 +183,19 @@
     line: '        <jvm-options>[1.8.0u252|1.8.0u500]-Xbootclasspath/p:${com.sun.aas.installRoot}/lib/grizzly-npn-api.jar</jvm-options>'
     insertafter: '.*grizzly-npn-bootstrap-1.8.1.jar.*'
   when: dataverse.glassfish.zipurl is match(".*payara-5.201.*")
-
-- name: reload systemd on RedHat/CentOS7
-  shell: systemctl daemon-reload
-  when: ansible_os_family == "RedHat"
-
-- name: enable glassfish on RedHat/CentOS7 - but don't start it with systemd during Ansible installation
-  service: name=glassfish enabled=yes
-  when: ansible_os_family == "RedHat"
+  notify: enable and restart glassfish
 
 - name: install glassfish upstart script for Debian/Ubuntu
   template: src=glassfish.conf.j2 dest=/etc/init
         owner=root group=root mode=0644
   when: ansible_os_family == "Debian"
+  notify: enable and restart glassfish
 
-- name: start glassfish with asadmin so subsequent Ansible-initiated restarts succeed on RedHat/CentOS
-  become: yes
-  become_user: "{{ dataverse.glassfish.user }}"
-  shell: "{{ glassfish_dir }}/bin/asadmin start-domain {{ dataverse.glassfish.domain }}"
-  when: ansible_os_family == "RedHat"
+- name: flush hadlers to start glassfish and possibly reload systemd
+  meta: flush_handlers
 
-- name: start glassfish on Debian/Ubuntu
-  service: name=glassfish state=started
-  when: ansible_os_family == "Debian"
+#- name: start glassfish with asadmin so subsequent Ansible-initiated restarts succeed on RedHat/CentOS
+#  become: yes
+#  become_user: "{{ dataverse.glassfish.user }}"
+#  shell: "{{ glassfish_dir }}/bin/asadmin start-domain {{ dataverse.glassfish.domain }}"
+#  when: ansible_os_family == "RedHat"
