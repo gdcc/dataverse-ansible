@@ -16,27 +16,65 @@
     state: latest
   when: ansible_os_family == "RedHat"
 
-- name: install mod_ssl template
-  template: src=ssl.conf.j2 dest=/etc/httpd/conf.d/ssl.conf
-        owner=root group=root mode=0644
-  when: ansible_os_family == "RedHat"
+- name: install Shibboleth for Debian/Ubuntu
+  package:
+    name: shibboleth-sp2-utils, libapache2-mod-shib2, libapache2-mod-jk
+    state: latest
+  when: ansible_os_family == "Debian"
 
 - name: install shibboleth2.xml template
   template: src=shibboleth2.xml.j2 dest=/etc/shibboleth/shibboleth2.xml
         owner=root group=root mode=0644
+  notify:
+    - enable and restart shibd
 
 - name: copy attribute-map.xml file
   copy: src=attribute-map.xml dest=/etc/shibboleth/attribute-map.xml
         owner=root group=root mode=0644
+  notify: enable and restart shibd
+
+- name: openssl configuration for shibboleth certificate
+  template: src=shibboleth-openssl.cnf.j2 dest=/etc/shibboleth/openssl.cnf backup=yes
+  register: shibboleth_openssl_conf
+
+- name: generate shibboleth certificate
+  shell: cd /etc/shibboleth/; openssl req -new -x509 -days 3652 -nodes -out sp-cert.pem -keyout sp-key.pem -batch -config openssl.cnf
+         creates=/etc/shibboleth/sp-cert.pem
+  when: shibboleth_openssl_conf.changed
+  notify: enable and restart shibd
+
+- name: set shibboleth certificate permissions
+  file: path=/etc/shibboleth/sp-key.pem owner=_shibd
+  notify: enable and restart shibd
 
 - name: copy TestShib IdP metadata XML file
   copy: src=dataverse-idp-metadata.xml dest=/etc/shibboleth/dataverse-idp-metadata.xml
         owner=root group=root mode=0644
+  notify:
+    - enable and restart apache
+    - enable and restart shibd
 
-- name: enable and start shibd on RedHat / CentOS 7.
-  service: name=shibd enabled=yes state=started
-  when: ansible_os_family == "RedHat"
+- name: get shibAuthProvider.json to host
+  get_url:
+    url: https://github.com/IQSS/dataverse/releases/download/v4.6.1/shibAuthProvider.json
+    dest: /tmp/shibAuthProvider.json
+  register: shibAuthProvider_json_download
 
-- name: restart httpd on RedHat / CentOS 7.
-  service: name=httpd state=restarted
-  when: ansible_os_family == "RedHat"
+- name: enable shibboleth authentication in dataverse
+  uri:
+    url: http://localhost:8080/api/admin/authenticationProviders
+    method: POST
+    src: /tmp/shibAuthProvider.json
+    body_format: json
+    remote_src: yes
+    status_code: 201
+  when: shibAuthProvider_json_download.changed
+
+- name: enable apache shib module on Debian
+  apache2_module:
+    state: present
+    name: "{{ item }}"
+  with_items:
+    - shib2
+  when: ansible_os_family == "Debian"    ## CHECKME -- does this need to be Debian-specific?
+  notify: enable and restart apache
