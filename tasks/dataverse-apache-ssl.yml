@@ -6,8 +6,7 @@
 
 - name: are pems passed as group_vars?
   set_fact:
-    use_pems: True
-  when: apache.ssl.pem.cert
+    use_pems: "{{ apache.ssl.pem.cert | default('', true) | trim != '' }}"
 
 - include: dataverse-apache-ssl-pems.yml
   when: use_pems
@@ -26,8 +25,12 @@
     owner: root
     group: root
     mode: 0644
-  when: ansible_os_family == "RedHat" and
-        use_pems == False
+  when:
+   - ansible_os_family == "RedHat"
+   - use_pems == False
+   - not apache.ssl.remote_cert
+   - apache.ssl.enabled
+  notify: enable and restart apache
 
 - name: copy ssl chain
   copy:
@@ -36,8 +39,13 @@
     owner: root
     group: root
     mode: 0644
-  when: ansible_os_family == "RedHat" and
-        use_pems == False
+    remote_src: '{{ apache.ssl.remote_cert }}'
+  when:
+   - ansible_os_family == "RedHat"
+   - use_pems == False
+   - not apache.ssl.remote_cert
+   - apache.ssl.enabled
+  notify: enable and restart apache
 
 - name: copy ssl key
   copy:
@@ -46,14 +54,40 @@
     owner: root
     group: root
     mode: 0400
-  when: ansible_os_family == "RedHat" and
-        use_pems == False
+    remote_src: '{{ apache.ssl.remote_cert }}'
+  when:
+   - ansible_os_family == "RedHat"
+   - use_pems == False
+   - not apache.ssl.remote_cert
+   - apache.ssl.enabled
+  notify: enable and restart apache
 
 - name: install http redirect template
-  template: src=http.redirect.conf.j2 dest=/etc/httpd/conf.d/http.redirect.conf
+  template: src=http.redirect.conf.j2 dest="{{ apache_virtualhost_dir }}/http.redirect.conf"
         owner=root group=root mode=0644
-  when: ansible_os_family == "RedHat"
+  when: apache.ssl.enabled
+  notify: enable and restart apache
 
-- name: install ssl proxy template
-  template: src=ssl.conf.j2 dest=/etc/httpd/conf.d/ssl.conf
-  when: ansible_os_family == "RedHat"
+- name: remove redirect conf if ssl is disabled
+  file: path="{{ apache_virtualhost_dir }}/http.redirect.conf" state=absent
+  when: not apache.ssl.enabled
+  notify: enable and restart apache
+
+- name: remove outdated ssl.conf
+  file: path="{{ apache_virtualhost_dir }}/ssl.conf" state=absent
+  notify: enable and restart apache
+
+- name: decide what to do about apache ssl-related modules
+  set_fact:
+    ssl_modules_state: "{{ apache.ssl.enabled | ternary ('present', 'absent') }}"
+
+- name: enable/diable apache ssl and rewrite mods on Debian
+  apache2_module:
+    state: "{{ ssl_modules_state }}"
+    name: "{{ item }}"
+    ignore_configcheck: true
+  with_items:
+    - ssl
+    - rewrite
+  when: ansible_os_family == "Debian"    ## CHECKME -- does this need to be Debian-specific?
+  notify: enable and restart apache
