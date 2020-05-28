@@ -1,11 +1,12 @@
+{% if apache.ssl.enabled %}
 <IfModule ssl_module>
-{% if ansible_os_family == "RedHat" %}
-  Listen 443 https
-{% endif %}
+  {% if ansible_os_family == "RedHat" %}
+Listen 443 https
+  {% endif %}
 
-{% if ansible_os_family == "RedHat" %}
+  {% if ansible_os_family == "RedHat" %}
   SSLPassPhraseDialog exec:/usr/libexec/httpd-ssl-pass-dialog
-{% endif %}
+  {% endif %}
   SSLSessionCache         shmcb:/run/httpd/sslcache(512000)
   SSLSessionCacheTimeout  300
   SSLRandomSeed startup file:/dev/urandom  256
@@ -13,7 +14,6 @@
   SSLCryptoDevice builtin
 </IfModule>
 
-{% if apache.ssl.enabled %}
 <VirtualHost _default_:{{ apache.ssl.port }}>
 {% else %}
 <VirtualHost _default_:{{ apache.port }}>
@@ -21,30 +21,33 @@
 
 {% if apache.behind_ssl_reverse_proxy %}
   ServerName https://{{ servername }}
-  ShibURLScheme https
+  <IfModule shib_module>
+    ShibURLScheme https
+  </IfModule>
 {% else %}
   ServerName {{ servername }}
 {% endif %}
 
-  <IfModule ssl_module>
-{% if ansible_os_family == "RedHat" %}
-    ErrorLog logs/ssl_error_log
-    TransferLog logs/ssl_access_log
-{% endif %}
+{% if apache.ssl.enabled %}
+    <IfModule ssl_module>
+  {% if ansible_os_family == "RedHat" %}
+      ErrorLog logs/ssl_error_log
+      TransferLog logs/ssl_access_log
+  {% endif %}
     LogLevel warn
 
     SSLEngine on
     SSLProtocol all -SSLv2
     SSLCipherSuite HIGH:MEDIUM:!aNULL:!MD5
-{% if apache.ssl.remote_cert %}
+  {% if apache.ssl.remote_cert %}
     SSLCertificateFile {{ apache.ssl.cert }}
     SSLCertificateKeyFile {{ apache.ssl.key }}
     SSLCertificateChainFile {{ apache.ssl.interm }}
-{% elif apache_ssl_cert is defined %}
+  {% elif apache_ssl_cert is defined %}
     SSLCertificateFile /etc/pki/tls/certs/{{ apache_ssl_cert }}
     SSLCertificateKeyFile /etc/pki/tls/private/{{ apache_ssl_key }}
     SSLCertificateChainFile /etc/pki/tls/certs/{{ apache_ssl_interm }}
-{% endif %}
+  {% endif %}
 
     <Files ~ "\.(cgi|shtml|phtml|php3?)$">
       SSLOptions +StdEnvVars
@@ -53,11 +56,12 @@
       SSLOptions +StdEnvVars
     </Directory>
 
-{% if ansible_os_family == "RedHat" %}
+  {% if ansible_os_family == "RedHat" %}
     CustomLog logs/ssl_request_log \
           "%t %h %{SSL_PROTOCOL}x %{SSL_CIPHER}x \"%r\" %b"
-{% endif %}
+  {% endif %}
   </IfModule>
+{% endif %}
 
   <Location "/prometheus">
     ProxyPass "http://localhost:9090/prometheus"
@@ -83,16 +87,18 @@
 
 {% if shibboleth.enabled %}
 
-  # don't pass paths used by Shibboleth to Glassfish
-  ProxyPassMatch ^/Shibboleth.sso !
-  ProxyPassMatch ^/shibboleth-ds !
-  ProxyPassMatch ^/shibboleth-sp !
+  <IfModule shib_module>
+    # don't pass paths used by Shibboleth to Glassfish
+    ProxyPassMatch ^/Shibboleth.sso !
+    ProxyPassMatch ^/shibboleth-ds !
+    ProxyPassMatch ^/shibboleth-sp !
 
-  <Location /shib.xhtml>
-    AuthType shibboleth
-    ShibRequestSetting requireSession 1
-    require shibboleth
-  </Location>
+    <Location /shib.xhtml>
+      AuthType shibboleth
+      ShibRequestSetting requireSession 1
+      require shibboleth
+    </Location>
+  </IfModule>
 {% endif %}
 
   # pass everything else to Glassfish

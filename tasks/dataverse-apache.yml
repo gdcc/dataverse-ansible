@@ -53,11 +53,20 @@
   when: ansible_os_family == "Debian"
   notify: enable and restart apache
 
+- name: reconfigure Listen directive on RedHat
+  lineinfile:
+    path: "{{ apache_config_base_dir }}/conf/httpd.conf"
+    regexp: '^Listen'
+    line: 'Listen {{ apache.port }}'
+  when: ansible_os_family == "RedHat"
+  notify: enable and restart apache
+
 - name: install own ports.conf on Debian
   template:
     src: ports.conf.j2
     dest: "{{ apache_config_base_dir }}/ports.conf"
   when: ansible_os_family == "Debian" ## TODO where is this in RedHat? ## it would be nicer to use than the Listen statement at the start of the virtualhost
+  notify: enable and restart apache
 
 - name: install unified http proxy config
   template:
