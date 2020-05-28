@@ -16,7 +16,9 @@
   tags: rserve
 
 - include: dataverse-fqdn.yml
-  tags: prereqs
+  tags:
+   - prereqs
+   - apache
 
 - include: sshkeys.yml
   when: sshkeys.enabled == True
