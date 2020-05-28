@@ -217,4 +217,6 @@ if [ -z "$DESTROY" ]; then
 else
    echo "destroying AWS instance"
    eval $DESTROY_CMD
+   echo "removing EC2 PEM"
+   rm -f $PEM_FILE
 fi
