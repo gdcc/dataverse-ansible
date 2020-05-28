@@ -71,7 +71,7 @@
 
 - name: have we init-ed postgres yet?
   stat:
-    path: '/var/lib/pgsql/{{ db.postgres.version }}/main/initdb.log'
+    path: '/var/lib/pgsql/{{ db.postgres.version }}/initdb.log'
   register: postgres_initdb
   when: db.use_rds == false
 
@@ -107,7 +107,7 @@
 
 - name: log_lock_waits when told
   lineinfile:
-    path: '/usr/lib/pgsql/{{ db.postgres.version }}/data/postgresql.conf'
+    path: '/var/lib/pgsql/{{ db.postgres.version }}/data/postgresql.conf'
     regexp: '^#log_lock_waits'
     line: 'log_lock_waits = on'
   when: db.postgres.log_lock_waits == true and
@@ -120,10 +120,13 @@
     path: '/etc/postgresql/{{ db.postgres.version }}/main/postgresql.conf'
     regexp: '^#log_lock_waits'
     line: 'log_lock_waits = on'
-  when: db.postgres.log_lock_waits == true and
-        db.use_rds == false and
-        ansible_os_family == "Debian"
+  when:
+   - ansible_os_family == "Debian"
+   - db.postgres.log_lock_waits
+   - not db.use_rds
   notify: enable and restart postgres
+
+- meta: flush_handlers
 
 - name: dataverse python installer wants to be a postgres admin
   postgresql_user:
