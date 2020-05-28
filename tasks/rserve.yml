@@ -34,6 +34,9 @@
   apt_key:
     keyserver: keys.gnupg.net
     id: E19F5F87128899B192B1A2C2AD5F960A256A04AF
+  when:
+  - ansible_distribution == "Debian"
+  - ansible_distribution_major_version == "10"
 
 - name: add backports for Debian Buster to get R 3.6
   apt_repository: repo='deb http://cloud.r-project.org/bin/linux/debian buster-cran35/'
