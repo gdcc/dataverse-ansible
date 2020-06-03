@@ -87,7 +87,7 @@ Listen 443 https
 
 {% if shibboleth.enabled %}
 
-  <IfModule shib_module>
+  <IfModule mod_shib>
     # don't pass paths used by Shibboleth to Glassfish
     ProxyPassMatch ^/Shibboleth.sso !
     ProxyPassMatch ^/shibboleth-ds !
