@@ -25,13 +25,23 @@
   when: dataverse.solr.user != "root"
 
 - name: download and unzip solr
-  get_url: url="https://archive.apache.org/dist/lucene/solr/{{ dataverse.solr.version }}/solr-{{ dataverse.solr.version }}.tgz" dest=/tmp
+  get_url:
+    url: "https://archive.apache.org/dist/lucene/solr/{{ dataverse.solr.version }}/solr-{{ dataverse.solr.version }}.tgz"
+    checksum: "{{ dataverse.solr.checksum }}"
+    dest: /tmp
+  register: solr_installer_download
 
 - name: untar solr
-  shell: "tar xvzC /tmp -f /tmp/solr-{{ dataverse.solr.version }}.tgz"
+#  shell: "tar xvzC /tmp -f /tmp/solr-{{ dataverse.solr.version }}.tgz"
+  unarchive:
+    src: /tmp/solr-{{ dataverse.solr.version }}.tgz
+    remote_src: true
+    dest: /tmp
+  when: solr_installer_download.changed
 
 - name: remove solr root directory
   file: path="{{ dataverse.solr.root }}" state=absent
+  when: solr_installer_download.changed
 
 - name: ensure solr directory exists
   file: path="{{ dataverse.solr.root }}" state=directory
@@ -39,6 +49,7 @@
 
 - name: copy solr distro files into solr root
   shell: "/bin/cp -r /tmp/solr-{{ dataverse.solr.version }}/* {{ dataverse.solr.root }}"
+  when: solr_installer_download.changed
 
 - name: solr doesn't create its log directory until runtime
   file: path="{{ dataverse.solr.root }}/server/logs" state=directory
@@ -46,6 +57,7 @@
 
 - name: populate collection1
   shell: "/bin/cp -r {{ dataverse.solr.root }}/server/solr/configsets/_default {{ dataverse.solr.root }}/server/solr/collection1"
+  when: solr_installer_download.changed
 
 - name: chown some subdirectories to solr service account
   file: path="{{ item }}" state=directory recurse=yes
@@ -74,6 +86,7 @@
     owner: "{{ dataverse.solr.user }}"
     group: "{{ dataverse.solr.group }}"
     mode: 0644
+    remote_src: yes
   with_items:
   - "{{ solr_release_files.files | map(attribute='path') | list }}"
   when: dataverse_branch == "release" and
@@ -136,7 +149,7 @@
   lineinfile:
         dest: "{{ dataverse.solr.root }}/server/etc/jetty.xml"
         regexp: "requestHeaderSize"
-        state: absent        
+        state: absent
 
 - name: insert requestHeaderSize
   lineinfile:
@@ -154,11 +167,17 @@
         owner=root group=root mode=0644
   when: ansible_os_family == "RedHat"
 
+- name: install solr systemd conf file for Debian
+  template: src=solr.service.j2 dest=/etc/systemd/system/solr.service
+        owner=root group=root mode=0644
+  when: ansible_os_family == "Debian"
+
 - name: increase resource limits for solr
   blockinfile:
     path: /etc/security/limits.conf
     block: |
       {{ item.user }} {{ item.type }} {{ item.descriptor }} {{ item.value }}
+    marker: '# {mark} ANSIBLE MANAGED BLOCK {{ item.user }} {{ item.type }} {{ item.descriptor }}'
   with_items:
     - { user: "{{ dataverse.solr.user }}", type: soft, descriptor: nproc, value: 65000 }
     - { user: "{{ dataverse.solr.user }}", type: hard, descriptor: nproc, value: 65000 }
@@ -174,11 +193,11 @@
 
 - name: reload systemd
   shell: systemctl daemon-reload
-  when: ansible_os_family == "RedHat"
+#  when: ansible_os_family == "RedHat"
 
 - name: enable solr on boot, start solr
   service: name=solr enabled=yes state=started
-  when: ansible_os_family == "RedHat"
+#  when: ansible_os_family == "RedHat"
 
 - name: disable service account shell
   user:
