@@ -72,7 +72,7 @@ dataverse:
     dataexplorer:
       enabled: true
     wholetale:
-      enabled: false
+      enabled: true
   filesdir: /usr/local/dvn/data
   glassfish:
     user: payara
@@ -135,7 +135,7 @@ db:
     pass: dvnsecret
     jdbcurl:
     log_lock_waits: true
-    version: 9.6
+    version: 10
     port: 5432
   use_rds: false
 
@@ -160,7 +160,7 @@ prometheus:
   user: prometheus
 
 rserve:
-  install: false
+  install: true
   host: localhost
   user: rserve
   group: rserve
@@ -177,11 +177,13 @@ s3:
   # for non-amazon services.
   custom_endpoint_url: "http://localhost:4572"
   download_redirect: true
+  files_type: s3
   ingestsizelimit:
   label: s3-test
   # for localstack this must be true
   path_style_access: true
   region: us-east-1
+  storage_driver_id: s3
   upload_redirect: true
   url_expiration_minutes: 60
 
