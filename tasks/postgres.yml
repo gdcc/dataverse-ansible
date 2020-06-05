@@ -9,7 +9,15 @@
   yum:
     name: python-psycopg2
     state: latest
-  when: ansible_os_family == "RedHat"
+  when: ansible_os_family == "RedHat" and
+        ansible_distribution_major_version == "7"
+
+- name: ansible postgres module wants python3-psycopg2
+  dnf:
+    name: python3-psycopg2
+    state: latest
+  when: ansible_os_family == "RedHat" and
+        ansible_distribution_major_version == "8"
 
 - name: install postgres repo RPM
   yum:

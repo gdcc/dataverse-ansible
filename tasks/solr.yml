@@ -77,7 +77,7 @@
   with_items:
   - "{{ solr_release_files.files | map(attribute='path') | list }}"
   when: dataverse_branch == "release" and
-        solr_release_files > 0
+        solr_release_files is defined
 
 - name: "branch: identify solr schema files"
   find:
@@ -100,7 +100,7 @@
   with_items:
   - "{{ solr_files.files | map(attribute='path') | list }}"
   when: dataverse_branch != "release" and
-        solr_files > 0
+        solr_files is defined
 
 - name: "release: place solrconfig"
   copy:
