@@ -4,7 +4,6 @@
   debug:
     msg: '##### DATAVERSE STORAGE CONFIGURATION #####'
 
-
 - name: get default dataverse storage-driver-id
   shell: "{{ glassfish_dir}}/bin/asadmin list-jvm-options | grep dataverse.files.storage-driver-id | sed 's/.*=//'"
   register: dataverse_files_storage_driver_id
@@ -47,6 +46,10 @@
 #- debug: msg="dataverse.filesdir | trim == {{ dataverse.filesdir | trim }}"
 #- debug: msg="default_dataverse_files_directory1.stdout == {{ default_dataverse_files_directory1.stdout }}"
 #- debug: msg="default_dataverse_files_directory1.stdout != dataverse.filesdir == {{ default_dataverse_files_directory1.stdout != dataverse.filesdir }}"
+
+- name: glassfish should own dataverse.filesdir
+  file: path={{ dataverse.filesdir }} state=directory
+        owner={{ dataverse.glassfish.user }} group={{ dataverse.glassfish.group }}
 
 - name: set default dataverse storage directory if different
   shell: "{{ glassfish_dir}}/bin/asadmin delete-jvm-options \"-D{{ item }}={{ default_dataverse_files_directory1.stdout }}\";

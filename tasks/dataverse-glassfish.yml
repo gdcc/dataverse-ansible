@@ -32,10 +32,6 @@
   file: path={{ glassfish_dir }}/glassfish/domains/{{ dataverse.glassfish.domain }} owner={{ dataverse.glassfish.user }}
         group={{ dataverse.glassfish.group }} state=directory recurse=yes
 
-- name: glassfish should own dataverse.filesdir
-  file: path={{ dataverse.filesdir }} state=directory
-        owner={{ dataverse.glassfish.user }} group={{ dataverse.glassfish.group }}
-
 - name: remove old weld jar included with glassfish-4.1
   file:
     name: '{{ glassfish_dir }}/glassfish/modules/weld-osgi-bundle.jar'
