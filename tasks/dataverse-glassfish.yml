@@ -5,10 +5,6 @@
   debug:
     msg: '##### GLASSFISH #####'
 
-- name: construct glassfish_dir
-  set_fact:
-    glassfish_dir: '{{ dataverse.glassfish.root }}/{{ dataverse.glassfish.dir }}'
-
 - name: glassfish_dir must exist
   file: path={{ glassfish_dir }} state=directory
         owner=root group=root mode=0755

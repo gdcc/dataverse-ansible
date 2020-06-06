@@ -11,6 +11,13 @@
 - include: dataverse-prereqs.yml
   tags: prereqs
 
+- include: dataverse-required-variables.yml
+  tags:
+   - glassfish
+   - dataverse
+   - storage
+   - postinstall
+
 - include: rserve.yml
   when: rserve.install == true
   tags: rserve
@@ -69,6 +76,9 @@
 
 - include: dataverse-install.yml
   tags: dataverse
+
+- include: dataverse-storage.yml
+  tags: storage
 
 - include: dataverse-postinstall.yml
   tags: postinstall

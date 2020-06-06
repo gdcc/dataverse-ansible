@@ -1,0 +1,59 @@
+---
+
+- name: dataverse storage configuration
+  debug:
+    msg: '##### DATAVERSE STORAGE CONFIGURATION #####'
+
+
+- name: get default dataverse storage-driver-id
+  shell: "{{ glassfish_dir}}/bin/asadmin list-jvm-options | grep dataverse.files.storage-driver-id | sed 's/.*=//'"
+  register: dataverse_files_storage_driver_id
+  changed_when: false
+
+- name: calculate default storage-driver-id
+  set_fact:
+    default_storage_driver_id: "{{ ((dataverse_files_storage_driver_id.stdout | trim) == '') | ternary('file',dataverse_files_storage_driver_id.stdout) }}"
+
+- name: set default storage-driver-id if not set
+  command: "{{ glassfish_dir}}/bin/asadmin create-jvm-options \"-Ddataverse.files.storage-driver-id={{ default_storage_driver_id }}\""
+  when: (dataverse_files_storage_driver_id.stdout | trim) == ''
+
+- name: get default dataverse storage directory
+  shell: "{{ glassfish_dir}}/bin/asadmin list-jvm-options | grep dataverse.files.directory | sed 's/.*=//'"
+  register: default_dataverse_files_directory1
+  changed_when: false
+
+- name: get dataverse storage directory for '{{ default_storage_driver_id }}'
+  shell: "{{ glassfish_dir}}/bin/asadmin list-jvm-options | grep dataverse.files.{{ default_storage_driver_id }}.directory | sed 's/.*=//'"
+  register: default_dataverse_files_directory2
+  changed_when: false
+
+- name: sanity check -- dataverse storage directories
+  fail:
+    msg: "Dataverse storage directories for default must match!"
+  when: default_dataverse_files_directory1.stdout != default_dataverse_files_directory2.stdout
+
+- name: get dataverse storage type for '{{ default_storage_driver_id }}'
+  shell: "{{ glassfish_dir}}/bin/asadmin list-jvm-options | grep dataverse.files.{{ default_storage_driver_id }}.type | sed 's/.*=//'"
+  register: default_dataverse_files_type
+  changed_when: false
+
+- name: sanity check -- storage type for dafault must be 'file' if dataverse.filesdir is not empty
+  meta: end_play
+  when:
+   - default_dataverse_files_type.stdout != 'file'
+   - (dataverse.filesdir | trim) == ''
+
+#- debug: msg="dataverse.filesdir | trim == {{ dataverse.filesdir | trim }}"
+#- debug: msg="default_dataverse_files_directory1.stdout == {{ default_dataverse_files_directory1.stdout }}"
+#- debug: msg="default_dataverse_files_directory1.stdout != dataverse.filesdir == {{ default_dataverse_files_directory1.stdout != dataverse.filesdir }}"
+
+- name: set default dataverse storage directory if different
+  shell: "{{ glassfish_dir}}/bin/asadmin delete-jvm-options \"-D{{ item }}={{ default_dataverse_files_directory1.stdout }}\";
+          {{ glassfish_dir}}/bin/asadmin create-jvm-options \"-D{{ item }}={{ dataverse.filesdir }}\""
+  with_items:
+   - dataverse.files.directory
+   - dataverse.files.{{ default_storage_driver_id }}.directory
+  when:
+   - (dataverse.filesdir | trim) != ''
+   - default_dataverse_files_directory1.stdout != dataverse.filesdir
