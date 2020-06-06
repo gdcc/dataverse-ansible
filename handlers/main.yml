@@ -1,10 +1,9 @@
 ---
 
-- name: enable and restart httpd on RedHat/CentOS 7
+- name: enable and restart httpd on RedHat/CentOS
   service: name=httpd enabled=yes state=restarted
   when:
    - ansible_os_family == "RedHat"
-   - ansible_distribution_major_version == "7"
   listen: enable and restart apache
 
 - name: enable and start apache2 on Debian
