@@ -117,6 +117,7 @@ dataverse:
     root: /usr/local/solr
     user: solr
     version: 7.7.2
+    checksum: sha256:eb8ee4038f25364328355de3338e46961093e39166c9bcc28b5915ae491320df
     listen: 127.0.0.1
   srcdir: /tmp/dataverse
   thumbnails: true
