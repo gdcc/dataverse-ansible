@@ -4,6 +4,8 @@
   debug:
     msg: '##### DATAVERSE STORAGE CONFIGURATION #####'
 
+- name: flushing handlers to start glassfish if needed
+  meta: flush_handlers
 
 - name: get default dataverse storage-driver-id
   shell: "{{ glassfish_dir}}/bin/asadmin list-jvm-options | grep dataverse.files.storage-driver-id | sed 's/.*=//'"
@@ -26,7 +28,7 @@
   fail:
     msg: "Storage type for default must be 'file' if dataverse.filesdirs is not empty."
   when:
-   - default_dataverse_filestores_type is defined
+   - default_dataverse_filestores_type.skipped is not defined
    - default_dataverse_filestores_type.stdout != ''
    - default_dataverse_filestores_type.stdout != 'file'
 
