@@ -5,10 +5,6 @@
   debug:
     msg: '##### GLASSFISH #####'
 
-- name: construct glassfish_dir
-  set_fact:
-    glassfish_dir: '{{ dataverse.glassfish.root }}/{{ dataverse.glassfish.dir }}'
-
 - name: glassfish_dir must exist
   file: path={{ glassfish_dir }} state=directory
         owner=root group=root mode=0755
@@ -35,10 +31,6 @@
 - name: glassfish service account should own {{ dataverse.glassfish.domain }}
   file: path={{ glassfish_dir }}/glassfish/domains/{{ dataverse.glassfish.domain }} owner={{ dataverse.glassfish.user }}
         group={{ dataverse.glassfish.group }} state=directory recurse=yes
-
-- name: glassfish should own dataverse.filesdir
-  file: path={{ dataverse.filesdir }} state=directory
-        owner={{ dataverse.glassfish.user }} group={{ dataverse.glassfish.group }}
 
 - name: remove old weld jar included with glassfish-4.1
   file:

@@ -79,6 +79,8 @@ dataverse:
     wholetale:
       enabled: false
   filesdir: /usr/local/dvn/data
+  filesdirs: []
+#   - label: /path/to/filestore   ## this is a sample entry for further file stores
   glassfish:
     user: payara
     group: payara
