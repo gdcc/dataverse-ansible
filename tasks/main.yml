@@ -17,6 +17,7 @@
    - dataverse
    - storage
    - postinstall
+   - s3
 
 - include: rserve.yml
   when: rserve.install == true
@@ -78,6 +79,7 @@
   tags: dataverse
 
 - include: dataverse-storage.yml
+  when: dataverse.filesdirs[0] is defined
   tags: storage
 
 - include: dataverse-postinstall.yml

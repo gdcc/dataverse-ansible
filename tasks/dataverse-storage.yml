@@ -4,59 +4,185 @@
   debug:
     msg: '##### DATAVERSE STORAGE CONFIGURATION #####'
 
+
 - name: get default dataverse storage-driver-id
   shell: "{{ glassfish_dir}}/bin/asadmin list-jvm-options | grep dataverse.files.storage-driver-id | sed 's/.*=//'"
-  register: dataverse_files_storage_driver_id
+  register: dataverse_filestores_storage_driver_id
   changed_when: false
 
 - name: calculate default storage-driver-id
   set_fact:
-    default_storage_driver_id: "{{ ((dataverse_files_storage_driver_id.stdout | trim) == '') | ternary('file',dataverse_files_storage_driver_id.stdout) }}"
-
-- name: set default storage-driver-id if not set
-  command: "{{ glassfish_dir}}/bin/asadmin create-jvm-options \"-Ddataverse.files.storage-driver-id={{ default_storage_driver_id }}\""
-  when: (dataverse_files_storage_driver_id.stdout | trim) == ''
-
-- name: get default dataverse storage directory
-  shell: "{{ glassfish_dir}}/bin/asadmin list-jvm-options | grep dataverse.files.directory | sed 's/.*=//'"
-  register: default_dataverse_files_directory1
-  changed_when: false
-
-- name: get dataverse storage directory for '{{ default_storage_driver_id }}'
-  shell: "{{ glassfish_dir}}/bin/asadmin list-jvm-options | grep dataverse.files.{{ default_storage_driver_id }}.directory | sed 's/.*=//'"
-  register: default_dataverse_files_directory2
-  changed_when: false
-
-- name: sanity check -- dataverse storage directories
-  fail:
-    msg: "Dataverse storage directories for default must match!"
-  when: default_dataverse_files_directory1.stdout != default_dataverse_files_directory2.stdout
+    default_storage_driver_id: "{{ ((dataverse_filestores_storage_driver_id.stdout | trim) == '') | ternary(dataverse.filesdirs[0].label,dataverse_filestores_storage_driver_id.stdout) }}"
 
 - name: get dataverse storage type for '{{ default_storage_driver_id }}'
   shell: "{{ glassfish_dir}}/bin/asadmin list-jvm-options | grep dataverse.files.{{ default_storage_driver_id }}.type | sed 's/.*=//'"
-  register: default_dataverse_files_type
+  register: default_dataverse_filestores_type
+  changed_when: false
+  when: (dataverse_filestores_storage_driver_id.stdout | trim) != ''
+
+## Later, we may implement ansible support mixed s3/swift and file storage where s3/swift is the default.
+## You can do that manually now, if you want to: just set dataverse.filesdirs to [], and add file stores manually.
+- name: sanity check -- storage type
+  fail:
+    msg: "Storage type for default must be 'file' if dataverse.filesdirs is not empty."
+  when:
+   - default_dataverse_filestores_type is defined
+   - default_dataverse_filestores_type.stdout != ''
+   - default_dataverse_filestores_type.stdout != 'file'
+
+- name: delete default storage-driver-id if not same as defined
+  command: "{{ glassfish_dir}}/bin/asadmin delete-jvm-options \"-Ddataverse.files.storage-driver-id={{ default_storage_driver_id }}\""
+  when: default_storage_driver_id != dataverse.filesdirs[0].label
+
+- name: set default storage-driver-id if not set or changed
+  command: "{{ glassfish_dir}}/bin/asadmin create-jvm-options \"-Ddataverse.files.storage-driver-id={{ dataverse.filesdirs[0].label }}\""
+  when: dataverse_filestores_storage_driver_id.stdout != dataverse.filesdirs[0].label
+
+- name: get default dataverse storage directory
+  shell: "{{ glassfish_dir}}/bin/asadmin list-jvm-options | grep dataverse.files.directory | sed 's/.*=//'"
+  register: default_dataverse_filestores_directory
   changed_when: false
 
-- name: sanity check -- storage type for dafault must be 'file' if dataverse.filesdir is not empty
-  meta: end_play
-  when:
-   - default_dataverse_files_type.stdout != 'file'
-   - (dataverse.filesdir | trim) == ''
+- name: delete default dataverse storage directory if changed
+  command: "{{ glassfish_dir}}/bin/asadmin delete-jvm-options \"-Ddataverse.files.directory={{ default_dataverse_filestores_directory.stdout }}\""
+  when: 
+   - (default_dataverse_filestores_directory.stdout | trim) != ''
+   - default_dataverse_filestores_directory.stdout != dataverse.filesdirs[0].path
+
+- name: set default dataverse storage directory if not set or changed
+  command: "{{ glassfish_dir}}/bin/asadmin create-jvm-options \"-Ddataverse.files.directory={{ dataverse.filesdirs[0].path }}\""
+  when: default_dataverse_filestores_directory.stdout != dataverse.filesdirs[0].path
+
+- name: get all dataverse storage labels
+  shell: "{{ glassfish_dir}}/bin/asadmin list-jvm-options | grep dataverse.files.[a-zA-Z0-9_-]*.label | sed 's/.*=//'"
+  register: dataverse_filestores_labels
+  changed_when: false
+
+- name: get all dataverse storage types
+  shell: "{{ glassfish_dir}}/bin/asadmin list-jvm-options | grep dataverse.files.{{ item }}.type | sed 's/.*=//'"
+  register: dataverse_filestores_types
+  changed_when: false
+  with_items: "{{ dataverse_filestores_labels.stdout_lines }}"
+
+- name: create dictionary and label list with dataverse storage types
+  set_fact:
+    dataverse_filestores_types_onserver: "{{ dataverse_filestores_types_onserver | 
+                                             combine( { item.item: item.stdout } )
+                                          }}"
+    dataverse_filestores_typelabels_onserver: "{{ dataverse_filestores_typelabels_onserver +
+                                              [ item.item ] }}"
+  with_items: "{{ dataverse_filestores_types.results }}"
+  vars:
+    dataverse_filestores_types_onserver: []
+    dataverse_filestores_typelabels_onserver: []
+
+- name: create list and dictionary of defined labels
+  set_fact:
+    dataverse_defined_filestores_labels_dict: "{{ dataverse_defined_filestores_labels_dict |
+                                                  combine( {item.label: item.label} )
+                                               }}"
+    dataverse_defined_filestores_labels_list: "{{ dataverse_defined_filestores_labels_list +
+                                                  [ item.label ] }}"
+  with_items: "{{ dataverse.filesdirs }}"
+  vars:
+    dataverse_defined_filestores_labels_dict: []
+    dataverse_defined_filestores_labels_list: []
+
+- name: get all dataverse storage directories
+  shell: "{{ glassfish_dir}}/bin/asadmin list-jvm-options | grep dataverse.files.{{ item }}.directory | sed 's/.*=//'"
+  register: dataverse_filestores_directories
+  changed_when: false
+  with_items: "{{ dataverse_filestores_labels.stdout_lines }}"
+
+- name: create list of dictionaries with dataverse file storage directories
+  set_fact:
+    dataverse_filestores_onserver: "{{ (dataverse_filestores_types_onserver[item.item]!='file') |
+                                       ternary(dataverse_filestores_onserver,
+                                               dataverse_filestores_onserver +
+                                                 [ { 'label': item.item,
+                                                     'path': item.stdout }
+                                                 ]
+                                              )
+                                    }}"
+  with_items: "{{ dataverse_filestores_directories.results }}"
+  vars:
+    dataverse_filestores_onserver: []
+
+- name: calculate required changes to dataverse_filestores
+  set_fact:
+    dataverse_filestores_to_delete: "{{ dataverse_filestores_onserver | difference(dataverse.filesdirs) }}"
+    dataverse_filestores_to_create: "{{ dataverse.filesdirs | difference(dataverse_filestores_onserver) }}"
+    dataverse_filestores_labels_to_delete: "{{ dataverse_filestores_labels.stdout_lines | difference(dataverse_defined_filestores_labels_list) }}"
+    dataverse_filestores_labels_to_create: "{{ dataverse_defined_filestores_labels_list | difference(dataverse_filestores_labels.stdout_lines) }}"
+
+- name: calculate required changes to dataverse_filestore type entries
+  set_fact:
+    dataverse_filestores_type_to_delete: "{{ (dataverse_filestores_types_onserver[item]=='file' and
+                                              dataverse_defined_filestores_labels_dict[item] is not defined) |
+                                             ternary(dataverse_filestores_type_to_delete +
+                                                       [ { 'label': item,
+                                                           'type': dataverse_filestores_types_onserver[item] }
+                                                       ],
+                                                     dataverse_filestores_type_to_delete )
+                                          }}"
+  with_items: "{{ dataverse_filestores_typelabels_onserver }}"
+  vars:
+    dataverse_filestores_type_to_delete: []
+
+- name: calculate required changes to dataverse_filestore type entries
+  set_fact:
+    dataverse_filestores_type_to_create: "{{ (dataverse_filestores_types_onserver[item] is defined) |
+                                             ternary(dataverse_filestores_type_to_create,
+                                                     dataverse_filestores_type_to_create +
+                                                       [ { 'label': item,
+                                                           'type': 'file' }
+                                                       ] )
+                                          }}"
+  with_items: "{{ dataverse_defined_filestores_labels_list }}"
+  vars:
+    dataverse_filestores_type_to_create: []
+
+#- debug: msg="{{ dataverse_filestores_typelabels_onserver }}"
+#- debug: msg="{{ dataverse_filestores_types_onserver['file']=='file' }}"
+#- debug: msg="{{ dataverse_defined_filestores_labels_dict['file'] is not defined }}"
+#- debug: msg="{{ dataverse_filestores_to_delete }}"
+#- debug: msg="{{ dataverse_filestores_to_create }}"
+#- debug: msg="{{ dataverse_filestores_type_to_delete }}"
+#- debug: msg="{{ dataverse_filestores_type_to_create }}"
+#- debug: msg="{{ dataverse_filestores_labels_to_delete }}"
+#- debug: msg="{{ dataverse_filestores_labels_to_create }}"
+
+#- fail: msg=argh
 
 #- debug: msg="dataverse.filesdir | trim == {{ dataverse.filesdir | trim }}"
-#- debug: msg="default_dataverse_files_directory1.stdout == {{ default_dataverse_files_directory1.stdout }}"
-#- debug: msg="default_dataverse_files_directory1.stdout != dataverse.filesdir == {{ default_dataverse_files_directory1.stdout != dataverse.filesdir }}"
+#- debug: msg="default_dataverse_filestores_directory1.stdout == {{ default_dataverse_filestores_directory1.stdout }}"
+#- debug: msg="default_dataverse_filestores_directory1.stdout != dataverse.filesdir == {{ default_dataverse_filestores_directory1.stdout != dataverse.filesdir }}"
 
-- name: glassfish should own dataverse.filesdir
-  file: path={{ dataverse.filesdir }} state=directory
+- name: glassfish should own dataverse.filesdirs
+  file: path={{ item.path }} state=directory
         owner={{ dataverse.glassfish.user }} group={{ dataverse.glassfish.group }}
+  with_items: "{{ dataverse.filesdirs }}"
 
-- name: set default dataverse storage directory if different
-  shell: "{{ glassfish_dir}}/bin/asadmin delete-jvm-options \"-D{{ item }}={{ default_dataverse_files_directory1.stdout }}\";
-          {{ glassfish_dir}}/bin/asadmin create-jvm-options \"-D{{ item }}={{ dataverse.filesdir }}\""
-  with_items:
-   - dataverse.files.directory
-   - dataverse.files.{{ default_storage_driver_id }}.directory
-  when:
-   - (dataverse.filesdir | trim) != ''
-   - default_dataverse_files_directory1.stdout != dataverse.filesdir
+- name: delete changed/removed dataverse storage directories
+  command: "{{ glassfish_dir}}/bin/asadmin delete-jvm-options \"-Ddataverse.files.{{ item.label }}.directory={{ item.path }}\""
+  with_items: "{{ dataverse_filestores_to_delete }}"
+
+- name: set new/changed dataverse storage directories
+  command: "{{ glassfish_dir}}/bin/asadmin create-jvm-options \"-Ddataverse.files.{{ item.label }}.directory={{ item.path }}\""
+  with_items: "{{ dataverse_filestores_to_create }}"
+
+- name: delete changed/removed dataverse storage types
+  command: "{{ glassfish_dir}}/bin/asadmin delete-jvm-options \"-Ddataverse.files.{{ item.label }}.type=file\""
+  with_items: "{{ dataverse_filestores_type_to_delete }}"
+
+- name: set new/changed dataverse storage types
+  command: "{{ glassfish_dir}}/bin/asadmin create-jvm-options \"-Ddataverse.files.{{ item.label }}.type=file\""
+  with_items: "{{ dataverse_filestores_type_to_create }}"
+
+- name: delete changed/removed dataverse storage labels
+  command: "{{ glassfish_dir}}/bin/asadmin delete-jvm-options \"-Ddataverse.files.{{ item }}.label={{ item }}\""
+  with_items: "{{ dataverse_filestores_labels_to_delete }}"
+
+- name: set new/changed dataverse storage labels
+  command: "{{ glassfish_dir}}/bin/asadmin create-jvm-options \"-Ddataverse.files.{{ item }}.label={{ item }}\""
+  with_items: "{{ dataverse_filestores_labels_to_create }}"
