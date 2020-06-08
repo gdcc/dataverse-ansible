@@ -8,6 +8,8 @@ dataverse_repo: https://github.com/IQSS/dataverse.git
 apache:
   ssl:
     enabled: false
+    remote_cert: false
+    port: 443
     cert: 
     interm: 
     key: 
@@ -15,6 +17,9 @@ apache:
       cert: 
       key: 
       interm: 
+  port: 80
+  behind_reverse_proxy: false
+  behind_ssl_reverse_proxy: false
 
 letsencrypt:
   enabled: false

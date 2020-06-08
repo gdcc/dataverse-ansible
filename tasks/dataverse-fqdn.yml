@@ -11,7 +11,7 @@
 - name: unless ssl is enabled
   set_fact:
     protocol: https
-  when: apache.ssl.enabled == True
+  when: apache.ssl.enabled == True or apache.behind_ssl_reverse_proxy
 
 - name: ansible tasks like variables, not group_vars
   set_fact:
