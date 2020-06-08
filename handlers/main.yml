@@ -1,0 +1,40 @@
+---
+
+- name: enable and restart httpd on RedHat/CentOS
+  service: name=httpd enabled=yes state=restarted
+  when:
+   - ansible_os_family == "RedHat"
+  listen: enable and restart apache
+
+- name: enable and start apache2 on Debian
+  service: name=apache2 enabled=yes state=restarted
+  when: ansible_os_family == "Debian"
+  listen: enable and restart apache
+
+- name: enable and restart shibd
+  service: name=shibd enabled=yes state=restarted
+
+- name: enable and start postgres on RHEL/CentOS
+  service:
+    name: 'postgresql-{{ db.postgres.version }}'
+    state: restarted
+    enabled: yes
+  when: db.use_rds == false and
+        ansible_os_family == "RedHat"
+  listen: enable and restart postgres
+
+- name: enable and restart postgres on Debian
+  service:
+    name: 'postgresql'
+    state: restarted
+    enabled: yes
+  when: db.use_rds == false and
+        ansible_os_family == "Debian"
+  listen: enable and restart postgres
+
+- name: reload systemd
+  systemd: daemon_reload=true
+
+- name: enable and restart glassfish
+  service: name=glassfish enabled=yes state=restarted
+
