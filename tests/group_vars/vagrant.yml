@@ -78,7 +78,16 @@ dataverse:
       enabled: true
     wholetale:
       enabled: true
-  filesdir: /usr/local/dvn/data
+  ## The first item of 'filesdirs' is the default filestore
+  ## If you change the label, be prepared to change the SQL database if there are already files here
+  ## It is better practice to add a new data store and then migrate to it later
+  ## Also, changing the default storage takes effect immediately for temp files, but
+  ## only after restart for publishing (i.e. without restart the temp files will be moved to the old default data store at publish time).
+  filesdirs:
+    - label: file
+      path: /usr/local/dvn/data
+#   - label: label
+#     path: /path/to/filestore   ## this is a sample entry for further file stores
   glassfish:
     user: payara
     group: payara
