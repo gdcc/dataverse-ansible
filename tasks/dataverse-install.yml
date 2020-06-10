@@ -93,6 +93,13 @@
     path: /tmp/dvinstall
     owner: '{{ dataverse.glassfish.user }}'
 
+- name: patch installAppServer.py so that FILES_DIR points to the correct location
+  lineinfile:
+    path: /tmp/dvinstall/installAppServer.py
+    regexp: "^   os.environ..FILES_DIR.. = "
+    line: "   os.environ['FILES_DIR'] = \"{{ dataverse.filesdirs[0].path }}\""
+  when: dataverse.filesdirs[0] is defined
+
 - name: fire off installer
   script: '/usr/bin/python /tmp/dvinstall/install.py -f --config_file=default.config --noninteractive > /tmp/dvinstall/install.out 2>&1'
   become: yes
