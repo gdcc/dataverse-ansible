@@ -163,12 +163,12 @@
   command: '{{ glassfish_dir}}/bin/asadmin delete-jvm-options "{{ item }}"'
   with_items: "{{ to_delete_config_lines }}"
 
-- name: delete all settings in domain.xml as may create double entries on restart
-  lineinfile:
-    path: '{{ glassfish_dir }}/glassfish/domains/{{ dataverse.glassfish.domain }}/config/domain.xml'
-    regexp: '{{ item }}'
-    state: absent
-  with_items: "{{ to_delete_config_lines }}"
+#- name: delete all settings in domain.xml as may create double entries on restart
+#  lineinfile:
+#    path: '{{ glassfish_dir }}/glassfish/domains/{{ dataverse.glassfish.domain }}/config/domain.xml'
+#    regexp: '{{ item }}'
+#    state: absent
+#  with_items: "{{ to_delete_config_lines }}"
 
 - name: glassfish should own dataverse.filesdirs
   file: path={{ item.path }} state=directory
