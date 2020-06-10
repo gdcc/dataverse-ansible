@@ -12,16 +12,14 @@ https://wiki.shibboleth.net/confluence/display/SHIB2/NativeSPConfiguration
     clockSkew="1800">
 
     <!-- FIXME: change the entityID to your hostname. -->
-    <ApplicationDefaults entityID="https://{{ servername }}/sp"
-        REMOTE_USER="eppn" attributePrefix="AJP_">
+    <ApplicationDefaults entityID="{{ dataverse.glassfish.siteurl }}/sp"
+        REMOTE_USER="eduPersonPrincipalName" attributePrefix="AJP_">
 
         <!-- You should use secure cookies if at all possible.  See cookieProps in this Wiki article. -->
         <!-- https://wiki.shibboleth.net/confluence/display/SHIB2/NativeSPSessions -->
         <Sessions lifetime="28800" timeout="3600" checkAddress="false" relayState="ss:mem" handlerSSL="false">
 
-	    <SSO>
-	      SAML2 SAML1
-	    </SSO>
+            {{ shibboleth.SSO }}
 
             <!-- SAML and local-only logout. -->
             <!-- https://wiki.shibboleth.net/confluence/display/SHIB2/NativeSPServiceLogout -->
@@ -34,7 +32,29 @@ https://wiki.shibboleth.net/confluence/display/SHIB2/NativeSPConfiguration
             -->
 
             <!-- Extension service that generates "approximate" metadata based on SP configuration. -->
-            <Handler type="MetadataGenerator" Location="/Metadata" signing="false"/>
+            <Handler type="MetadataGenerator" Location="/Metadata" signing="false" http="false" https="true">
+{% for item in shibboleth.requestedAttributes %}
+                {{ item }}
+{% endfor %}
+{% for item in shibboleth.contactPerson %}
+               <md:ContactPerson contactType="{{ item.type }}">
+                    <md:GivenName>{{ item.givenName }}</md:GivenName>
+                    <md:SurName>{{ item.surName }}</md:SurName>
+                    <md:EmailAddress>{{ item.emailAddress }}</md:EmailAddress>
+               </md:ContactPerson>
+{% endfor %}
+{% for item in shibboleth.UIInfo %}
+               <mdui:UIInfo xmlns:mdui="urn:oasis:names:tc:SAML:metadata:ui">
+                   <mdui:DisplayName xml:lang="{{ item.lang }}">{{ item.DisplayName }}</mdui:DisplayName>
+                   <mdui:Description xml:lang="{{ item.lang }}">{{ item.Description }}</mdui:Description>
+                   <mdui:InformationURL xml:lang="{{ item.lang }}">{{ item.InformationURL }}</mdui:InformationURL>
+                   <mdui:PrivacyStatementURL xml:lang="{{ item.lang }}">{{ item.PrivacyStatementURL }}</mdui:PrivacyStatementURL>
+{% if item.Logo is defined %}
+                   <mdui:Logo height="{{ item.Logo.height }}" width="{{ item.Logo.width }}" xml:lang="{{ item.lang }}">{{ item.Logo.url }}</mdui:Logo>
+{% endif %}
+               </mdui:UIInfo>
+{% endfor %}
+            </Handler>
 
             <!-- Status reporting service. -->
             <Handler type="Status" Location="/Status" acl="127.0.0.1"/>
@@ -53,8 +73,12 @@ https://wiki.shibboleth.net/confluence/display/SHIB2/NativeSPConfiguration
 
         <!-- Loads and trusts a metadata file that describes only the Testshib IdP and how to communicate with it. -->
         <!-- IdPs we want allow go in /etc/shibboleth/dataverse-idp-metadata.xml -->
-        <MetadataProvider type="XML" file="dataverse-idp-metadata.xml" backingFilePath="local-idp-metadata.xml" legacyOrgNames="true" reloadInterval="7200"/>
-
+        {{ shibboleth.MetadataProvider }}
+        <!--
+          <MetadataProvider type="Dynamic" ignoreTransport="true">
+            <Subst>ANSIBLE_VARS/entities/$entityID</Subst>
+          </MetadataProvider>
+        -->
         <!-- Attribute and trust options you shouldn't need to change. -->
         <AttributeExtractor type="XML" validate="true" path="attribute-map.xml"/>
         <AttributeResolver type="Query" subjectMatch="true"/>
