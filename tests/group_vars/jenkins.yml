@@ -33,6 +33,20 @@ dataverse:
     blocked_policy: "localhost-only"
     location: "http://localhost:8080/api"
     test_suite: true
+  branding:
+    enabled: false
+    directory: "{{ playbook_dir }}/files/branding"
+    favicons_directory: "{{ playbook_dir }}/files/favicons"
+    fileSettings:
+     - setting: HeaderCustomizationFile
+       file: custom-header.html
+     - setting: StyleCustomizationFile
+       file: custom-stylesheet.css
+     - setting: LogoCustomizationFile
+       file: topbanner001w425_darkbg.png'
+    otherSettings:
+     - setting: FooterCopyright
+       value: Your institute name here
   copyright: "Your Institution"
   counter:
     enabled: false
