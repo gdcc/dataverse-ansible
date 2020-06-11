@@ -114,6 +114,7 @@ dataverse:
     root: /usr/local
     dir: glassfish5
     zipurl: https://search.maven.org/remotecontent?filepath=fish/payara/distributions/payara/5.201/payara-5.201.zip
+    zipchecksum: sha256:19fc1b472c003d7287e4671c061ee720ac408f3f56e74ba4a5c36b40ffdcd674
   google_analytics_key:
   jacoco:
     enabled: false
