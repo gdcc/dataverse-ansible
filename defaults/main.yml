@@ -124,6 +124,20 @@ dataverse:
     custom_sampledataverses: "{{ playbook_dir }}/custom_sampledata/dataverses"
     custom_sampleusers: "{{ playbook_dir }}/custom_sampledata/users"
     custom_samplefiles: "{{ playbook_dir }}/custom_sampledata/files"
+  branding:
+    enabled: false
+    directory: "{{ playbook_dir }}/files/branding"
+    favicons_directory: "{{ playbook_dir }}/files/favicons"
+    fileSettings:
+     - setting: HeaderCustomizationFile
+       file: custom-header.html
+     - setting: StyleCustomizationFile
+       file: custom-stylesheet.css
+     - setting: LogoCustomizationFile
+       file: topbanner001w425_darkbg.png'
+    otherSettings:
+     - setting: FooterCopyright
+       value: Your institute name here
   service_email: noreply@dataverse.yourinstitution.edu
   smtp: localhost # or the FQDN of your organization's SMTP relay
   solr:

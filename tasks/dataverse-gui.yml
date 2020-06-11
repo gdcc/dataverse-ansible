@@ -1,0 +1,44 @@
+---
+
+# dataverse/tasks/dataverse-gui.yml
+# install gui modifications (branding and favicons), if defined
+
+- name: calculate destination directories
+  set_fact:
+    gui_file_path: '{{ glassfish_dir }}/glassfish/domains/{{dataverse.glassfish.domain}}/applications/dataverse'
+    favicon_file_path: '{{ glassfish_dir }}/glassfish/domains/{{dataverse.glassfish.domain}}/applications/dataverse/resources/images/fav/'
+
+- name: Applying GUI design
+  debug:
+    msg: '##### Applying GUI design #####'
+
+- name: Copy favicons
+  copy:
+    src: '{{ item }}'
+    dest: '{{ favicon_file_path }}'
+    mode: '0644'
+  with_fileglob: '{{ dataverse.branding.favicons_directory }}/*.ico'
+
+- name: copy branding files
+  copy:
+    src: branding
+    dest: '{{ gui_file_path }}'
+    mode: '0644'
+
+- name: Update branding file settings on server
+  uri:
+    url: http://localhost:8080/api/admin/settings/:{{ item.setting }}
+    method: PUT
+    body: '{{ gui_file_path }}/branding/{{ item.file }}'
+    status_code: 200
+  with_items: '{{ dataverse.branding.fileSettings }}'
+
+
+- name: Update other branding settings on server
+  uri:
+    url: http://localhost:8080/api/admin/settings/:{{ item.setting }}
+    method: PUT
+    body: "{{ item.value }}"
+    status_code: 200
+  with_items: '{{ dataverse.branding.otherSettings }}'
+
