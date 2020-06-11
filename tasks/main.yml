@@ -11,12 +11,22 @@
 - include: dataverse-prereqs.yml
   tags: prereqs
 
+- include: dataverse-required-variables.yml
+  tags:
+   - glassfish
+   - dataverse
+   - storage
+   - postinstall
+   - s3
+
 - include: rserve.yml
   when: rserve.install == true
   tags: rserve
 
 - include: dataverse-fqdn.yml
-  tags: prereqs
+  tags:
+   - prereqs
+   - apache
 
 - include: sshkeys.yml
   when: sshkeys.enabled == True
@@ -28,10 +38,6 @@
 
 - include: dataverse-apache.yml
   tags: apache
-
-- include: dataverse-shibboleth.yml
-  when: shibboleth.enabled == True
-  tags: shibboleth
 
 - include: postgres.yml
   tags: postgres
@@ -70,8 +76,16 @@
 - include: dataverse-install.yml
   tags: dataverse
 
+- include: dataverse-storage.yml
+  when: dataverse.filesdirs[0] is defined
+  tags: storage
+
 - include: dataverse-postinstall.yml
   tags: postinstall
+
+- include: dataverse-shibboleth.yml
+  when: shibboleth.enabled == True
+  tags: shibboleth
 
 - include: sampledata.yml
   when: dataverse.sampledata.enabled == true

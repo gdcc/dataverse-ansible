@@ -1,0 +1,7 @@
+---
+
+### calculate variables required by multiple tags
+
+- name: construct glassfish_dir
+  set_fact:
+    glassfish_dir: '{{ dataverse.glassfish.root }}/{{ dataverse.glassfish.dir }}'

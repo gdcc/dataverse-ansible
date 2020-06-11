@@ -8,6 +8,8 @@ dataverse_repo: https://github.com/IQSS/dataverse.git
 apache:
   ssl:
     enabled: false
+    remote_cert: false
+    port: 443
     cert: 
     interm: 
     key: 
@@ -15,6 +17,9 @@ apache:
       cert: 
       key: 
       interm: 
+  port: 80
+  behind_reverse_proxy: false
+  behind_ssl_reverse_proxy: false
 
 letsencrypt:
   enabled: false
@@ -72,8 +77,17 @@ dataverse:
     dataexplorer:
       enabled: true
     wholetale:
-      enabled: false
-  filesdir: /usr/local/dvn/data
+      enabled: true
+  ## The first item of 'filesdirs' is the default filestore
+  ## If you change the label, be prepared to change the SQL database if there are already files here
+  ## It is better practice to add a new data store and then migrate to it later
+  ## Also, changing the default storage takes effect immediately for temp files, but
+  ## only after restart for publishing (i.e. without restart the temp files will be moved to the old default data store at publish time).
+  filesdirs:
+    - label: file
+      path: /usr/local/dvn/data
+#   - label: label
+#     path: /path/to/filestore   ## this is a sample entry for further file stores
   glassfish:
     user: payara
     group: payara
@@ -118,6 +132,7 @@ dataverse:
     user: solr
     version: 7.7.2
     listen: 127.0.0.1
+    checksum: sha256:eb8ee4038f25364328355de3338e46961093e39166c9bcc28b5915ae491320df
   srcdir: /tmp/dataverse
   thumbnails: true
   unittests:
@@ -135,7 +150,7 @@ db:
     pass: dvnsecret
     jdbcurl:
     log_lock_waits: true
-    version: 9.6
+    version: 10
     port: 5432
   use_rds: false
 
@@ -160,7 +175,7 @@ prometheus:
   user: prometheus
 
 rserve:
-  install: false
+  install: true
   host: localhost
   user: rserve
   group: rserve
@@ -177,11 +192,13 @@ s3:
   # for non-amazon services.
   custom_endpoint_url: "http://localhost:4572"
   download_redirect: true
+  files_type: s3
   ingestsizelimit:
   label: s3-test
   # for localstack this must be true
   path_style_access: true
   region: us-east-1
+  storage_driver_id: s3
   upload_redirect: true
   url_expiration_minutes: 60
 

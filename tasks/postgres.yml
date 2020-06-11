@@ -5,11 +5,19 @@
   debug:
     msg: '##### POSTGRES #####'
 
-- name: ansible postgres module wants python-psycopg2
-  yum:
+- name: ansible postgres module wants python-psycopg2 on debian and RedHat 7
+  package:
     name: python-psycopg2
     state: latest
-  when: ansible_os_family == "RedHat"
+  when: not (ansible_os_family == "RedHat" and
+             ansible_distribution_major_version == "8")
+
+- name: ansible postgres module wants python3-psycopg2
+  dnf:
+    name: python3-psycopg2
+    state: latest
+  when: ansible_os_family == "RedHat" and
+        ansible_distribution_major_version == "8"
 
 - name: install postgres repo RPM
   yum:
@@ -33,12 +41,28 @@
   when: ansible_os_family == "RedHat" and
         db.use_rds == false
 
+- name: install postgres server on Debian
+  apt:
+   name: 'postgresql-{{ dataverse_pg_version_short }}'
+   state: latest
+  when: ansible_os_family == "Debian" and
+        db.use_rds == false
+
+
 - name: install postgres client on RedHat / CentOS for RDS
   yum:
     name: 'postgresql{{ dataverse_pg_version_short }}'
     state: latest
   when: ansible_os_family == "RedHat" and
         db.use_rds == true
+
+- name: install postgres client on Debian
+  apt:
+    name: 'postgresql-client-{{ dataverse_pg_version_short }}'
+    state: latest
+  when: ansible_os_family == "Debian" and
+        db.use_rds == true
+
 
 - name: set postgresql init command
   set_fact:
@@ -62,9 +86,10 @@
 
 - name: init postgres on RHEL/CentOS
   shell: '{{ postgres_init }}'
-  when: ansible_os_family == "RedHat" and
-        postgres_initdb.stat.exists == false and
-        db.use_rds == false
+  when: postgres_initdb.stat.exists == false and
+        db.use_rds == false and
+        ansible_os_family == "RedHat"
+  notify: enable and restart postgres
 
 - name: install pg_hba.conf on RHEL/CentOS
   copy:
@@ -75,6 +100,19 @@
     mode: 0644
   when: ansible_os_family == "RedHat" and
         db.use_rds == false
+  notify: enable and restart postgres
+
+- name: install pg_hba.conf on Debian
+  copy:
+    src: pg_hba.conf
+    dest: '/etc/postgresql/{{ db.postgres.version }}/main'
+    owner: postgres
+    group: postgres
+    mode: 0644
+  when: ansible_os_family == "Debian" and
+        db.use_rds == false
+  notify: enable and restart postgres
+
 
 - name: log_lock_waits when told
   lineinfile:
@@ -82,21 +120,22 @@
     regexp: '^#log_lock_waits'
     line: 'log_lock_waits = on'
   when: db.postgres.log_lock_waits == true and
-        db.use_rds == false
+        db.use_rds == false and
+        ansible_os_family == "RedHat"
+  notify: enable and restart postgres
 
-- name: enable postgres on RHEL/CentOS
-  service:
-    name: 'postgresql-{{ db.postgres.version }}'
-    enabled: yes
-  when: ansible_os_family == "RedHat" and
-        db.use_rds == false
+- name: log_lock_waits when told
+  lineinfile:
+    path: '/etc/postgresql/{{ db.postgres.version }}/main/postgresql.conf'
+    regexp: '^#log_lock_waits'
+    line: 'log_lock_waits = on'
+  when:
+   - ansible_os_family == "Debian"
+   - db.postgres.log_lock_waits
+   - not db.use_rds
+  notify: enable and restart postgres
 
-- name: start postgres on RHEL/CentOS
-  service:
-    name: 'postgresql-{{ db.postgres.version }}'
-    state: started
-  when: ansible_os_family == "RedHat" and
-        db.use_rds == false
+- meta: flush_handlers
 
 - name: dataverse python installer wants to be a postgres admin
   postgresql_user:

@@ -5,6 +5,22 @@
   debug:
     msg: '##### APACHE/HTTPD #####'
 
+- name: httpd variables
+  set_fact:
+    apache_config_base_dir: "{{ (ansible_os_family == 'RedHat') | ternary ('/etc/httpd', '/etc/apache2') }}"
+
+- name: httpd variables for RedHat/CentOS
+  set_fact:
+    apache_virtualhost_dir: "{{ apache_config_base_dir }}/conf.d"
+    apache_config_dir: "{{ apache_config_base_dir }}/conf.d"
+  when: ansible_os_family == "RedHat"
+
+- name: httpd variables for Debian/Ubuntu
+  set_fact:
+    apache_virtualhost_dir: "{{ apache_config_base_dir }}/sites-enabled"
+    apache_config_dir: "{{ apache_config_base_dir }}/conf-enabled"
+  when: ansible_os_family == "Debian"
+
 - name: install Apache for RedHat/CentOS
   yum: 
     name: ['httpd', 'mod_ssl']
@@ -12,35 +28,69 @@
   when: ansible_os_family == "RedHat" and
         ansible_distribution_major_version == "7"
 
-- name: install http proxy when SSL disabled
+- name: install Apache for Debian/Ubuntu
+  package:
+    name: apache2
+    state: latest
+  when: ansible_os_family == "Debian"
+  notify: enable and restart apache
+
+- name: enable apache mods on Debian
+  apache2_module:
+    state: present
+    name: "{{ item }}"
+  with_items:
+    - proxy
+    - proxy_http
+    - proxy_ajp
+  when: ansible_os_family == "Debian"    ## CHECKME -- does this need to be Debian-specific?
+  notify: enable and restart apache
+
+- name: disable default Debian site
+  file:
+    path: "{{ apache_virtualhost_dir }}/000-default.conf"
+    state: absent
+  when: ansible_os_family == "Debian"
+  notify: enable and restart apache
+
+- name: reconfigure Listen directive on RedHat
+  lineinfile:
+    path: "{{ apache_config_base_dir }}/conf/httpd.conf"
+    regexp: '^Listen'
+    line: 'Listen {{ apache.port }}'
+  when: ansible_os_family == "RedHat"
+  notify: enable and restart apache
+
+- name: install own ports.conf on Debian
+  template:
+    src: ports.conf.j2
+    dest: "{{ apache_config_base_dir }}/ports.conf"
+  when: ansible_os_family == "Debian" ## TODO where is this in RedHat? ## it would be nicer to use than the Listen statement at the start of the virtualhost
+  notify: enable and restart apache
+
+- name: install unified http proxy config
   template:
     src: http.proxy.conf.j2
-    dest: /etc/httpd/conf.d/http.proxy.conf
+    dest: "{{ apache_virtualhost_dir }}/http.proxy.conf"
     owner: root
     group: root
     mode: '0644'
-  when: ansible_os_family == "RedHat" and
-        ansible_distribution_major_version == "7"
-        and apache.ssl.enabled == false
-
-- include: dataverse-apache-ssl.yml
-  when: ansible_os_family == "RedHat" and
-        ansible_distribution_major_version == "7"
-        and apache.ssl.enabled == true
-        and letsencrypt.enabled == false
+  notify: enable and restart apache
 
 - include: certbot.yml
-  when: ansible_os_family == "RedHat" and
-        ansible_distribution_major_version == "7"
-        and apache.ssl.enabled == true
-        and letsencrypt.enabled == true
+  when:
+    - ansible_os_family == "RedHat"
+    - ansible_distribution_major_version == "7"
+    - apache.ssl.enabled
+    - letsencrypt.enabled
+
+- include: dataverse-apache-ssl.yml
+  when:
+    - letsencrypt.enabled == false
 
 - name: install proxy error boilerplate
-  copy: src=503.html dest=/etc/httpd/conf.d owner=root group=root mode=0644
-  when: ansible_os_family == "RedHat" and
-        ansible_distribution_major_version == "7"
+  copy: src=503.html dest="{{ apache_config_dir }}" owner=root group=root mode=0644
+  notify: enable and restart apache
 
-- name: enable and start httpd on RedHat/CentOS 7
-  service: name=httpd enabled=yes state=started
-  when: ansible_os_family == "RedHat" and
-        ansible_distribution_major_version == "7"
+- name: run handlers -- this runs the apache restart scripts
+  meta: flush_handlers

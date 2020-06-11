@@ -8,6 +8,7 @@
   yum:
     name: epel-release
     state: latest
+  when: ansible_os_family == "RedHat"
 
 - name: RHEL8 needs codeready-builder
   rhsm_repository:
@@ -27,6 +28,37 @@
     packages:
     - R-core
     - R-core-devel
+  when: ansible_os_family == "RedHat"
+
+- name: add keys for R backports for Debian Buster
+  apt_key:
+    keyserver: keys.gnupg.net
+    id: E19F5F87128899B192B1A2C2AD5F960A256A04AF
+  when:
+  - ansible_distribution == "Debian"
+  - ansible_distribution_major_version == "10"
+
+- name: add backports for Debian Buster to get R 3.6
+  apt_repository: repo='deb http://cloud.r-project.org/bin/linux/debian buster-cran35/'
+  when:
+  - ansible_distribution == "Debian"
+  - ansible_distribution_major_version == "10"
+
+- name: install base packages on Debian Buster
+  apt:
+    name: r-base-core, r-base-dev
+    default_release: "buster-cran35"
+    state: latest
+  when:
+  - ansible_distribution == "Debian"
+  - ansible_distribution_major_version == "10"
+
+- name: install base packages on Debian/Ubuntu ## we hope bullseye and others will have a good version (Ubuntu 20.04 has R 3.6) -- if not, we will need further handlers for them
+  package:
+    name: r-base-core, r-base-dev
+  when:
+  - ansible_os_family == "Debian"
+  - ansible_distribution != "Debian" or ansible_distribution_major_version != "10"
 
 - name: detect number of system cores
   set_fact:
@@ -44,14 +76,28 @@
     state: present
     create: yes
 
-- name: install R modules
-  command: /usr/bin/Rscript --slave --no-save --no-restore-history -e "if (! ('{{item}}' %in% installed.packages()[,'Package'])) install.packages('{{item}}', repos=c('https://cloud.r-project.org/', Ncpus='{{ num_cores }}'))"
+- name: detect installed R modules
+  command: /usr/bin/Rscript --slave --no-save --no-restore-history -e "if (! ('{{item}}' %in% installed.packages()[,'Package'])) print('{{item}}')"
   with_items:
   - R2HTML
   - rjson
   - DescTools
   - Rserve
   - haven
+  register: not_installed_r_modules
+  changed_when: false                ## this just for registering a variable, it does not change anyting by itself
+
+- name: process module detection output
+  set_fact:
+    modules_to_install: "{{ not_installed_r_modules.results | map(attribute='stdout') | map('regex_replace','^.* .','')
+                            | map('regex_replace','.$','') | select('match', '[a-zA-Z]+') | list }}"
+
+- debug: msg='The following modules are not installed -- {{ modules_to_install }}'
+
+- name: install R modules
+  command: /usr/bin/Rscript --slave --no-save --no-restore-history -e "install.packages('{{ item }}', repos=c('https://cloud.r-project.org/', Ncpus='{{ num_cores }}'))"
+  with_items: "{{ modules_to_install }}"
+  when: modules_to_install is defined
 
 - name: create R user and group
   user:
