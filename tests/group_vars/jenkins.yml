@@ -116,8 +116,6 @@ dataverse:
     enabled: true
     home: /tmp/jacoco
     version: 0.8.1
-  java:
-    version: 1.8.0
   maxfileuploadsizeinbytes:
   memheap: 8192
   previewers:
@@ -168,6 +166,9 @@ db:
 grafana:
   grafana_user: 'admin'
   grafana_password: 'adm1n'
+
+java:
+  version: 1.8.0
 
 localstack:
   enabled: false

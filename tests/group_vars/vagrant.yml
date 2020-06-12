@@ -2,7 +2,7 @@
 # dataverse/tests/group_vars/vagrant.yml
 
 # un-nested so we can pass them at the CLI
-dataverse_branch: release
+dataverse_branch: develop
 dataverse_repo: https://github.com/IQSS/dataverse.git
 
 apache:
@@ -36,7 +36,7 @@ dataverse:
     blocked_endpoints: "admin,test"
     blocked_policy: "localhost-only"
     location: "http://localhost:8080/api"
-    test_suite: false
+    test_suite: true
   branding:
     enabled: false
     directory: "{{ playbook_dir }}/files/branding"
@@ -120,8 +120,6 @@ dataverse:
     enabled: false
     home: /tmp/jacoco
     version: 0.8.1
-  java:
-    version: 1.8.0
   maxfileuploadsizeinbytes:
   memheap: 1024
   previewers:
@@ -172,6 +170,9 @@ db:
 grafana:
   grafana_user: 'admin'
   grafana_password: 'admin'
+
+java:
+  version: 1.8.0
 
 munin:
   install: false
