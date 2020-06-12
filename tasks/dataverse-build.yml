@@ -9,6 +9,14 @@
     name: maven
     state: latest
 
+- name: maven rpm requires openjdk-1.8 but maybe we want newer
+  alternatives:
+    name: java
+    link: /usr/bin/java
+    path: '/usr/lib/jvm/java-{{ java.version }}-openjdk/bin/java'
+  when: ansible_os_family == "RedHat" and
+        java.version != '1.8.0'
+
 - name: wedge in dataverse-bundled files before building from branch
   copy:
     src: "{{ item }}"
