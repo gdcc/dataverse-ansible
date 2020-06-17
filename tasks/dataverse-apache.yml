@@ -25,8 +25,7 @@
   yum: 
     name: ['httpd', 'mod_ssl']
     state: latest
-  when: ansible_os_family == "RedHat" and
-        ansible_distribution_major_version == "7"
+  when: ansible_os_family == "RedHat"
 
 - name: install Apache for Debian/Ubuntu
   package:
@@ -80,7 +79,6 @@
 - include: certbot.yml
   when:
     - ansible_os_family == "RedHat"
-    - ansible_distribution_major_version == "7"
     - apache.ssl.enabled
     - letsencrypt.enabled
 
