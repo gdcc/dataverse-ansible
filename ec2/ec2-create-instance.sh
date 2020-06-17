@@ -6,7 +6,12 @@
 REPO_URL_DEFAULT='https://github.com/IQSS/dataverse.git'
 BRANCH_DEFAULT='develop'
 PEM_DEFAULT=${HOME}
-AWS_AMI_DEFAULT='ami-9887c6e7'
+
+# centos image list at https://wiki.centos.org/Cloud/AWS
+# centos 7
+#AWS_AMI_DEFAULT='ami-9887c6e7'
+# centos 8.2, us-east-1
+AWS_AMI_DEFAULT='ami-01ca03df4a6012157'
 
 usage() {
   echo "Usage: $0 -b <branch> -r <repo> -p <pem_dir> -g <group_vars> -a <dataverse-ansible branch> -i aws_image -s aws_size -t aws_tag -l local_log_path -d" 1>&2
@@ -156,9 +161,9 @@ echo "Instance ID: "$INSTANCE_ID
 DESTROY_CMD="aws ec2 terminate-instances --instance-ids $INSTANCE_ID"
 echo "When you are done, please terminate your instance with:"
 echo "$DESTROY_CMD"
-echo "giving instance 60 seconds to wake up..."
+echo "giving instance 90 seconds to wake up..."
 
-sleep 60
+sleep 90
 echo "End creating EC2 instance"
 
 PUBLIC_DNS=$(aws ec2 describe-instances --instance-ids $INSTANCE_ID --query "Reservations[*].Instances[*].[PublicDnsName]" --output text)

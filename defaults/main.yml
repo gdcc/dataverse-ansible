@@ -163,7 +163,7 @@ db:
     pass: dvnsecret
     jdbcurl: 
     log_lock_waits: true
-    version: 9.6
+    version: 10
     port: 5432
   use_rds: false
 
