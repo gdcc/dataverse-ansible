@@ -5,5 +5,7 @@ The role installs PostgreSQL, GlassFish and other prerequisites, then deploys Da
 
 The role is currently housed beneath [IQSS][iqss] and may be found [here][current], but will move to this repository in the near future.
 
-[iqss]: http://www.iq.harvard.edu
+[ansible]: http://ansible.com
 [current]: https://github.com/IQSS/dataverse-ansible
+[dataverse]: https://dataverse.org
+[iqss]: http://www.iq.harvard.edu
