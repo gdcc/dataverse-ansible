@@ -84,3 +84,11 @@
   when:
     - ansible_os_family == "Debian"
   tags: prereqs
+
+- name: Dataverse installer calls /usr/bin/python explicitly
+  alternatives:
+    name: python
+    link: /usr/bin/python
+    path: '/usr/bin/python3'
+  when: ansible_os_family == "RedHat" and
+        ansible_distribution_major_version == "8"
