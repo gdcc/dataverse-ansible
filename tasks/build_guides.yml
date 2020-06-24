@@ -1,0 +1,56 @@
+---
+
+- name: CentOS8 needs PowerTools
+  shell: "dnf config-manager --enable PowerTools"
+  when: ansible_distribution == "CentOS" and
+        ansible_distribution_major_version == "8"
+
+- name: install build prerequisites
+  package:
+    name:
+      - make
+      - python3-sphinx
+      - graphviz
+  when: ansible_os_family == 'RedHat' and
+        ansible_distribution_major_version == '8'
+
+- name: if branch is release, use develop for guides
+  set_fact:
+    dataverse_branch: 'develop'
+  when: dataverse_branch == 'release'
+
+- name: do we have the source already
+  stat:
+    path: '{{ dataverse.srcdir }}'
+  register: dv_src
+
+- name: grab source if needed
+  git:
+    repo: '{{ dataverse_repo }}'
+    dest: '{{ dataverse.srcdir }}'
+    version: '{{ dataverse_branch }}'
+  when: dv_src.stat.exists is defined
+
+- name: build guides
+  shell: 'make clean && make html && make epub && cp build/epub/Dataverse.epub build/html'
+  args:
+    chdir: '{{ dataverse.srcdir }}/doc/sphinx-guides'
+
+- name: copy claims it creates dest but doesn't
+  file:
+    path: '/var/www/html/en/{{ dataverse_branch }}'
+    state: directory
+    mode: '0755'
+
+- name: drop into document root
+  copy:
+    src: '{{ dataverse.srcdir }}/doc/sphinx-guides/build/html/'
+    dest: '/var/www/html/en/{{ dataverse_branch }}'
+    remote_src: yes
+  when: ansible_os_family == 'RedHat'
+
+- name: set NavbarGuidesUrl
+  uri:
+    url: 'http://localhost:8080/api/admin/settings/:NavbarGuidesUrl'
+    method: PUT
+    body: '{{ dataverse.glassfish.siteurl }}/en/{{ dataverse_branch }}/user'
