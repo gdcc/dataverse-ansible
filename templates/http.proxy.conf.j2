@@ -85,6 +85,9 @@ Listen 443 https
   # allow munin
   ProxyPassMatch ^/munin !
 
+  # allow guides
+  ProxyPassMatch ^/en !
+
 {% if shibboleth.enabled %}
 
   <IfModule mod_shib>

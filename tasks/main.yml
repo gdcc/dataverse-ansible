@@ -119,6 +119,10 @@
   when: dataverse.jacoco.enabled == true and
         dataverse_repo != "release"
 
+- include: build_guides.yml
+  when: build_guides == true
+  tags: build_guides
+
 - include: munin.yml
   when: munin.install == true
   tags: munin

@@ -155,6 +155,8 @@ dataverse:
   usermgmtkey: burrito
   version: '4.20'
 
+build_guides: false
+
 db:
   postgres:
     adminpass: DVn33dsth1s
