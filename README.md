@@ -118,7 +118,7 @@ The above and many other features may be tinkered with via the [Group Vars file]
 
 This is a community effort, written primarily by [Don Sizemore][donsizemore]. The role is under active development - pull requests, suggestions and other contributions are welcome!
 
-[![Build Status](https://travis-ci.org/GlobalDataverseCommunityConsortium/dataverse-ansible.svg?branch=master)](https://travis-ci.org/IQSS/dataverse-ansible)
+[![Build Status](https://travis-ci.org/GlobalDataverseCommunityConsortium/dataverse-ansible.svg?branch=master)](https://travis-ci.org/GlobalDataverseCommunityConsortium/dataverse-ansible)
 
 [ansible]: http://ansible.com
 [counter-processor]: https://github.com/IQSS/counter-processor
