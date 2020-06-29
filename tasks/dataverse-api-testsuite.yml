@@ -31,7 +31,7 @@
   tags: apitestsuite
 
 - name: unpack, strip root directory
-  shell: 'bsdtar --strip-components=1 -C {{ dataverse.srcdir }} -xvf /tmp/dataverse-{{ dataverse.version }}.tar.gz'
+  shell: 'bsdtar --strip-components=1 -C {{ dataverse.srcdir }} -xf /tmp/dataverse-{{ dataverse.version }}.tar.gz'
   when: pom_xml.stat.exists == false
   tags: apitestsuite
 

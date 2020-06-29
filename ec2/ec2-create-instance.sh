@@ -6,6 +6,7 @@
 REPO_URL_DEFAULT='https://github.com/IQSS/dataverse.git'
 BRANCH_DEFAULT='develop'
 PEM_DEFAULT=${HOME}
+VERBOSE_ARG=""
 
 # centos image list at https://wiki.centos.org/Cloud/AWS
 # centos 7
@@ -14,7 +15,7 @@ PEM_DEFAULT=${HOME}
 AWS_AMI_DEFAULT='ami-01ca03df4a6012157'
 
 usage() {
-  echo "Usage: $0 -b <branch> -r <repo> -p <pem_dir> -g <group_vars> -a <dataverse-ansible branch> -i aws_image -s aws_size -t aws_tag -l local_log_path -d" 1>&2
+  echo "Usage: $0 -b <branch> -r <repo> -p <pem_dir> -g <group_vars> -a <dataverse-ansible branch> -i aws_image -s aws_size -t aws_tag -l local_log_path -d -v" 1>&2
   echo "default branch is develop"
   echo "default repo is https://github.com/IQSS/dataverse"
   echo "default .pem location is ${HOME}"
@@ -23,10 +24,11 @@ usage() {
   echo "default AWS size is t2.xlarge to avoid OoM killer during integration tests (otherwise, t2.large should be fine)"
   echo "local log path will rsync Payara, Jacoco, Maven and other logs back to the specified path"
   echo "-d will destroy ("terminate") the AWS instance once testing and reporting completes"
+  echo "-v increases Ansible output verbosity"
   exit 1
 }
 
-while getopts ":a:r:b:g:p:i:s:t:l:d" o; do
+while getopts ":a:r:b:g:p:i:s:t:l:dv" o; do
   case "${o}" in
   a)
     DA_BRANCH=${OPTARG}
@@ -57,6 +59,9 @@ while getopts ":a:r:b:g:p:i:s:t:l:d" o; do
     ;;
   d)
     DESTROY=true
+    ;;
+  v)
+    VERBOSE=true
     ;;
   *)
     usage
@@ -114,6 +119,11 @@ fi
 # ansible doesn't care about pem_dir (yet)
 if [ -z "$PEM_DIR" ]; then
    PEM_DIR="$PEM_DEFAULT"
+fi
+
+# verbosity
+if [ ! -z "$VERBOSE" ]; then
+   VERBOSE_ARG="-v"
 fi
 
 AWS_CLI_VERSION=$(aws --version)
@@ -182,11 +192,11 @@ fi
 # epel-release is installed first to ensure the latest ansible is installed after
 # TODO: Add some error checking for this ssh command.
 ssh -T -i $PEM_FILE -o 'StrictHostKeyChecking no' -o 'UserKnownHostsFile=/dev/null' -o 'ConnectTimeout=300' $USER_AT_HOST <<EOF
-sudo yum -y install epel-release
-sudo yum -y install ansible git nano
+sudo yum -q -y install epel-release
+sudo yum -q -y install ansible git nano
 git clone -b $DA_BRANCH https://github.com/GlobalDataverseCommunityConsortium/dataverse-ansible.git dataverse
 export ANSIBLE_ROLES_PATH=.
-ansible-playbook -v -i dataverse/inventory dataverse/dataverse.pb --connection=local $GVARG
+ansible-playbook $VERBOSE_ARG -i dataverse/inventory dataverse/dataverse.pb --connection=local $GVARG
 EOF
 
 if [ ! -z "$LOCAL_LOG_PATH" ]; then

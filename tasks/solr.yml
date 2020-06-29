@@ -32,7 +32,6 @@
   register: solr_installer_download
 
 - name: untar solr
-#  shell: "tar xvzC /tmp -f /tmp/solr-{{ dataverse.solr.version }}.tgz"
   unarchive:
     src: /tmp/solr-{{ dataverse.solr.version }}.tgz
     remote_src: true

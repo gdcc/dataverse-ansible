@@ -22,7 +22,7 @@
   register: glassfish_zip_download
 
 - name: unzip to glassfish root without name/version tld
-  shell: 'bsdtar --strip-components=1 -C {{ glassfish_dir }} -xvf /tmp/glassfish.zip'
+  shell: 'bsdtar --strip-components=1 -C {{ glassfish_dir }} -xf /tmp/glassfish.zip'
   when: glassfish_zip_download.changed
   notify: enable and restart glassfish
 
