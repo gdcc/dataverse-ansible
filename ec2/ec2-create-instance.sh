@@ -18,7 +18,7 @@ usage() {
   echo "default branch is develop"
   echo "default repo is https://github.com/IQSS/dataverse"
   echo "default .pem location is ${HOME}"
-  echo "example group_vars may be retrieved from https://raw.githubusercontent.com/IQSS/dataverse-ansible/master/defaults/main.yml"
+  echo "example group_vars may be retrieved from https://raw.githubusercontent.com/GlobalDataverseCommunityConsortium/dataverse-ansible/master/defaults/main.yml"
   echo "default AWS AMI ID is $AWS_AMI_DEFAULT"
   echo "default AWS size is t2.xlarge to avoid OoM killer during integration tests (otherwise, t2.large should be fine)"
   echo "local log path will rsync Payara, Jacoco, Maven and other logs back to the specified path"
@@ -184,7 +184,7 @@ fi
 ssh -T -i $PEM_FILE -o 'StrictHostKeyChecking no' -o 'UserKnownHostsFile=/dev/null' -o 'ConnectTimeout=300' $USER_AT_HOST <<EOF
 sudo yum -y install epel-release
 sudo yum -y install ansible git nano
-git clone -b $DA_BRANCH https://github.com/IQSS/dataverse-ansible.git dataverse
+git clone -b $DA_BRANCH https://github.com/GlobalDataverseCommunityConsortium/dataverse-ansible.git dataverse
 export ANSIBLE_ROLES_PATH=.
 ansible-playbook -v -i dataverse/inventory dataverse/dataverse.pb --connection=local $GVARG
 EOF

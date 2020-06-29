@@ -7,7 +7,7 @@ The role installs PostgreSQL, GlassFish and other prerequisites, then deploys Da
 
 Running the following commands as root should install the latest released version of Dataverse.
 
-	$ git clone https://github.com/IQSS/dataverse-ansible.git dataverse
+	$ git clone https://github.com/GlobalDataverseCommunityConsortium/dataverse-ansible.git dataverse
 	$ ansible-playbook --connection=local -v -i dataverse/inventory dataverse/dataverse.pb -e dataverse/defaults/main.yml
 
 ## Configuration
@@ -17,7 +17,7 @@ Installation, customization, administration, and API documentation can be found 
 The preparation lies in the group_var options (usernames/passwords, whether to install Shibboleth, etc.).  Your \<group_vars_file> may be a set of generic defaults stored in [roles/dataverse/defaults/main.yml](roles/dataverse/defaults/main.yml), but you'll likely want to modify this file or copy it and edit to suit your needs.  Then, fire away:
 
 ### Full(er) Usage:
-	$ git clone https://github.com/IQSS/dataverse-ansible.git dataverse
+	$ git clone https://github.com/GlobalDataverseCommunityConsortium/dataverse-ansible.git dataverse
 	$ export ANSIBLE_ROLES_PATH=.
 	$ ansible-playbook -i <inventory file> [-u <user>] [-b] [-K] -e @<group_vars_file> [-v] dataverse.pb
 
@@ -41,7 +41,7 @@ It is possible to run certain portions of the playbook to avoid running the enti
 **Note:** While Ansible in general strives to achieve role idempotence, the dataverse-ansible role is merely a wrapper for the Dataverse installer, which itself is not idempotent. If you strongly desire that the role be idempotent and would like achieve this via semaphores, pull requests are welcome!
 
 ### To test using Vagrant:
-	$ git clone https://github.com/IQSS/dataverse-ansible
+	$ git clone https://github.com/GlobalDataverseCommunityConsortium/dataverse-ansible
 	$ cd dataverse-ansible
 	$ vagrant up
 
@@ -118,7 +118,7 @@ The above and many other features may be tinkered with via the [Group Vars file]
 
 This is a community effort, written primarily by [Don Sizemore][donsizemore]. The role is under active development - pull requests, suggestions and other contributions are welcome!
 
-[![Build Status](https://travis-ci.org/IQSS/dataverse-ansible.svg?branch=master)](https://travis-ci.org/IQSS/dataverse-ansible)
+[![Build Status](https://travis-ci.org/GlobalDataverseCommunityConsortium/dataverse-ansible.svg?branch=master)](https://travis-ci.org/IQSS/dataverse-ansible)
 
 [ansible]: http://ansible.com
 [counter-processor]: https://github.com/IQSS/counter-processor
