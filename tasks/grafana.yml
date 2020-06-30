@@ -1,5 +1,8 @@
 ---
 
+# for hostname and siteUrl
+- include: dataverse-fqdn.yml
+
 - name: install grafana
   debug:
     msg: '##### GRAFANA #####'
