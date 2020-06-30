@@ -196,7 +196,7 @@ munin:
     passwd: p4sswurd
 
 postfix:
-  enabled: true
+  enabled: false
 
 prometheus:
   install: false
