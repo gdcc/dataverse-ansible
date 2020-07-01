@@ -95,7 +95,7 @@
 - debug: msg='The following modules are not installed -- {{ modules_to_install }}'
 
 - name: install R modules
-  command: /usr/bin/Rscript --slave --no-save --no-restore-history -e "install.packages('{{ item }}', repos=c('https://cloud.r-project.org/', Ncpus='{{ num_cores }}'))"
+  command: /usr/bin/Rscript --slave --no-save --no-restore-history -e "install.packages('{{ item }}', repos=c('https://cloud.r-project.org/', Ncpus='{{ num_cores }}', quiet=TRUE))"
   with_items: "{{ modules_to_install }}"
   when: modules_to_install is defined
 
