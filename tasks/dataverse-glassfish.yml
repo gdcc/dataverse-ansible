@@ -70,17 +70,6 @@
   when: dataverse.glassfish.zipurl is match(".*glassfish-4.1.zip")
   notify: enable and restart glassfish
 
-# python installer fails to copy this for whatever reason
-- name: place patched JSF jar
-  copy:
-    src: jakarta.faces_dv.jar
-    dest: '{{ glassfish_dir }}/glassfish/modules/jakarta.faces.jar'
-    owner: root
-    group: root
-    mode: 0644
-  when: dataverse.glassfish.zipurl is match(".*payara-5.201.*")
-  notify: enable and restart glassfish
-
 # python installer fails to place jdbc driver for whatever reason
 # and we want this configurable for testing updated drivers anyway
 - name: set jdbcurl
