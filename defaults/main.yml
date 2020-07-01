@@ -233,6 +233,10 @@ s3:
   upload_redirect: true
   url_expiration_minutes: 60
 
+schemaspy:
+  enabled: false
+  jarurl: https://github.com/schemaspy/schemaspy/releases/download/v6.1.0/schemaspy-6.1.0.jar
+
 shibboleth:
   enabled: false
   repo: "http://download.opensuse.org/repositories/security:/shibboleth/CentOS_7/security:shibboleth.repo"

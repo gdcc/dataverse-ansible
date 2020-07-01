@@ -131,6 +131,10 @@
   when: prometheus.install == true
   tags: prometheus
 
+- include: schemaspy.yml
+  when: schemaspy.enabled == true
+  tags: schemaspy
+
 - name: Fin
   debug:
     msg: '##### END ANSIBLE ROLE #####'

@@ -1,0 +1,34 @@
+---
+
+- name: download schemaspy
+  get_url:
+    url: '{{ schemaspy.jarurl }}'
+    dest: /tmp/schemaspy.jar
+
+- name: ensure output dir exists
+  file:
+    path: '/var/www/html/schemaspy/{{ dataverse_branch }}'
+    state: directory
+    owner: root
+    group: root
+    mode: '0755'
+
+- name: find postgresql drivers
+  find:
+    path: /tmp/dvinstall/pgdriver/
+    patterns: '*.jar'
+    file_type: file
+  register: pgdriver_list
+
+- name: just the one, dear
+  set_fact:
+    pgdriver: '{{ pgdriver_list.files[0].path }}'
+
+- name: schemaspy says it doesn't need graphviz but it does
+  package:
+    name: graphviz
+    state: latest
+
+- name: run schemaspy
+  shell:
+    cmd: '/usr/bin/java -jar /tmp/schemaspy.jar -t pgsql -host {{ db.postgres.host }} -db {{ db.postgres.name }} -u {{ db.postgres.user }} -p {{ db.postgres.pass }} -s public -dp {{ pgdriver }} -o /var/www/html/schemaspy/{{ dataverse_branch }}'

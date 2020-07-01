@@ -88,6 +88,11 @@ Listen 443 https
   # allow guides
   ProxyPassMatch ^/en !
 
+{% if schemaspy.enabled == true %}
+  # allow schemaspy
+  ProxyPassMatch ^/schemaspy !
+{% endif %}
+
 {% if shibboleth.enabled %}
 
   <IfModule mod_shib>
