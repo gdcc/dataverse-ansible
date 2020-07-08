@@ -142,30 +142,6 @@
   when: dataverse.jacoco.enabled == true
   notify: enable and restart glassfish
 
-- name: fix payara-5.201 for java-1.8.0_252
-  lineinfile:
-    path: '{{ glassfish_dir }}/glassfish/domains/{{ dataverse.glassfish.domain }}/config/domain.xml'
-    line: '                <jvm-options>[1.8.0u191|1.8.0u500]-Xbootclasspath/p:${com.sun.aas.installRoot}/lib/grizzly-npn-bootstrap-1.8.1.jar</jvm-options>'
-    state: absent
-  when: dataverse.glassfish.zipurl is match(".*payara-5.201.*")
-  notify: enable and restart glassfish
-
-- name: fix payara-5.201 for java-1.8.0_252
-  lineinfile:
-    path: '{{ glassfish_dir }}/glassfish/domains/{{ dataverse.glassfish.domain }}/config/domain.xml'
-    line: '        <jvm-options>[1.8.0u191|1.8.0u251]-Xbootclasspath/p:${com.sun.aas.installRoot}/lib/grizzly-npn-bootstrap-1.8.1.jar</jvm-options>'
-    insertafter: '.*grizzly-npn-bootstrap-1.8.jar.*'
-  when: dataverse.glassfish.zipurl is match(".*payara-5.201.*")
-  notify: enable and restart glassfish
-
-- name: fix payara-5.201 for java-1.8.0_252
-  lineinfile:
-    path: '{{ glassfish_dir }}/glassfish/domains/{{ dataverse.glassfish.domain }}/config/domain.xml'
-    line: '        <jvm-options>[1.8.0u252|1.8.0u500]-Xbootclasspath/p:${com.sun.aas.installRoot}/lib/grizzly-npn-api.jar</jvm-options>'
-    insertafter: '.*grizzly-npn-bootstrap-1.8.1.jar.*'
-  when: dataverse.glassfish.zipurl is match(".*payara-5.201.*")
-  notify: enable and restart glassfish
-
 - name: install glassfish upstart script for older Debian/Ubuntu
   template: src=glassfish.conf.j2 dest=/etc/init
         owner=root group=root mode=0644
@@ -176,9 +152,3 @@
 
 - name: flush hadlers to start glassfish and possibly reload systemd
   meta: flush_handlers
-
-#- name: start glassfish with asadmin so subsequent Ansible-initiated restarts succeed on RedHat/CentOS
-#  become: yes
-#  become_user: "{{ dataverse.glassfish.user }}"
-#  shell: "{{ glassfish_dir }}/bin/asadmin start-domain {{ dataverse.glassfish.domain }}"
-#  when: ansible_os_family == "RedHat"
