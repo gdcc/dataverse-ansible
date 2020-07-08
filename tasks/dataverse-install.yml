@@ -27,7 +27,7 @@
     - installAppServer.py
     - installUtils.py
     - as-setup.sh
-  #when: dataverse_branch != "release"
+  when: dataverse.glassfish.zipurl is match(".*payara-5.*")
 
 - name: grab api setup scripts as well
   get_url:
@@ -39,7 +39,7 @@
     - setup-datasetfields.sh
     - setup-builtin-roles.sh
     - setup-identity-providers.sh
-  #when: dataverse_branch != "release"
+  when: dataverse.glassfish.zipurl is match(".*payara-5.*")
 
 - name: set dataverse adminpass in setup-all
   lineinfile:
@@ -56,11 +56,13 @@
     - { regexp: 'rserve_password_alias', line: '  ./asadmin $ASADMIN_OPTS create-jvm-options "\-Ddataverse.rserve.password=${RSERVE_PASS}"' }
     - { regexp: 'doi_password_alias', line: '  ./asadmin $ASADMIN_OPTS create-jvm-options "\-Ddoi.password=${DOI_PASSWORD}"' }
     - { regexp: 'db_password_alias', line: '  ./asadmin $ASADMIN_OPTS set "resources.jdbc-connection-pool.dvnDbPool.property.password=${DB_PASS}"' }
+  when: dataverse.glassfish.zipurl is match(".*payara-5.*")
 
 - name: ensure as-setup.sh is executable
   file:
     path: /tmp/dvinstall/as-setup.sh
     mode: 0755
+  when: dataverse.glassfish.zipurl is match(".*payara-5.*")
 
 - name: register default_config
   set_fact:
@@ -98,7 +100,8 @@
     path: /tmp/dvinstall/installAppServer.py
     regexp: "^   os.environ..FILES_DIR.. = "
     line: "   os.environ['FILES_DIR'] = \"{{ dataverse.filesdirs[0].path }}\""
-  when: dataverse.filesdirs[0] is defined
+  when: dataverse.filesdirs[0] is defined and
+        dataverse.glassfish.zipurl is match(".*payara-5.*")
 
 - name: fire off installer
   script: '/usr/bin/python /tmp/dvinstall/install.py -f --config_file=default.config --noninteractive > /tmp/dvinstall/install.out 2>&1'
