@@ -79,7 +79,7 @@
 - name: install custom jdbc driver
   get_url:
     url: '{{ db.postgres.jdbcurl }}'
-    dest: '{{ glassfish_dir }}/glassfish/modules/'
+    dest: '{{ glassfish_dir }}/glassfish/lib/'
   when: jdbc_url|default(None)
 
 - name: allow installer write access for release jdbc driver
