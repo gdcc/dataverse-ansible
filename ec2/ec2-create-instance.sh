@@ -145,10 +145,13 @@ if [[ "$?" -ne 0 ]]; then
   exit 1
 fi
 
-if [[ $(git ls-remote --heads $REPO_URL $BRANCH | wc -l) -eq 0 ]]; then
-  echo "Branch \"$BRANCH\" does not exist at $REPO_URL"
-  usage
-  exit 1
+# don't check for branch if using group_vars
+if [ -z "$GRPVRS" ]; then
+   if [[ $(git ls-remote --heads $REPO_URL $BRANCH | wc -l) -eq 0 ]]; then
+     echo "Branch \"$BRANCH\" does not exist at $REPO_URL"
+     usage
+     exit 1
+   fi
 fi
 
 SECURITY_GROUP='dataverse-sg'
