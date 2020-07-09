@@ -73,32 +73,28 @@
 # python installer fails to place jdbc driver for whatever reason
 # and we want this configurable for testing updated drivers anyway
 - name: set jdbcurl
-  set_fact: jdbcurl='{{ db.postgres.jdbcurl }}'
-  when: postgres['jdbcurl'] is defined
-  notify: enable and restart glassfish
+  set_fact:
+   jdbc_url='{{ db.postgres.jdbcurl }}'
 
 - name: install custom jdbc driver
   get_url:
     url: '{{ db.postgres.jdbcurl }}'
-    dest: '{{ glassfish_dir }}/glassfish/modules/'
-  when: jdbcurl is defined and
-        jdbcurl | length > 0
-  notify: enable and restart glassfish
+    dest: '{{ glassfish_dir }}/glassfish/lib/'
+  when: jdbc_url|default(None)
 
 - name: allow installer write access for release jdbc driver
   file:
     path: '{{ glassfish_dir }}/glassfish/lib'
     state: directory
     owner: '{{ dataverse.glassfish.user }}'
-  when: jdbcurl is undefined
-  notify: enable and restart glassfish
+  when: not jdbc_url|default(None)
 
 - name: install release jdbc driver
   copy:
     src: "{{ item }}"
     dest: "{{ glassfish_dir }}/glassfish/lib/"
     remote_src: true
-  when: jdbcurl is undefined
+  when: not jdbc_url|default(None)
   notify: enable and restart glassfish
   with_fileglob: /tmp/dvinstall/pgdriver/postgresql-*.jar
 
