@@ -3,8 +3,8 @@
 # For docs, see the "Deployment" page in the Dev Guide.
 
 # repo and branch defaults
-REPO_URL_DEFAULT='https://github.com/IQSS/dataverse.git'
-BRANCH_DEFAULT='develop'
+REPO_URL_DEFAULT="https://github.com/IQSS/dataverse.git"
+BRANCH_DEFAULT="develop"
 PEM_DEFAULT=${HOME}
 VERBOSE_ARG=""
 
@@ -76,15 +76,28 @@ if [ ! -z "$GRPVRS" ]; then
    echo "using $GRPVRS for extra vars"
 fi
 
-# test for CLI args
+# test for specified GitHub repo
 if [ ! -z "$REPO_URL" ]; then
    GVARG+=" -e dataverse_repo=$REPO_URL"
    echo "using repo $REPO_URL"
 fi
 
+# test for specified branch
 if [ ! -z "$BRANCH" ]; then
    GVARG+=" -e dataverse_branch=$BRANCH"
    echo "building branch $BRANCH"
+fi
+
+# if no repo and no group_vars, use default repo
+if [ -z "$REPO_URL" ] && [ -z "$GRPVRS" ]; then
+   REPO_URL=$REPO_URL_DEFAULT
+   echo "using default repo: $REPO_URL"
+fi
+
+# if no branch and no group_vars, use default branch
+if [ -z "$BRANCH" ] && [ -z "$GRPVRS" ]; then
+   BRANCH=$BRANCH_DEFAULT
+   echo "using default branch $BRANCH"
 fi
 
 # The AMI ID may change in the future and the way to look it up is with the following command, which takes a long time to run:
@@ -132,10 +145,13 @@ if [[ "$?" -ne 0 ]]; then
   exit 1
 fi
 
-if [[ $(git ls-remote --heads $REPO_URL $BRANCH | wc -l) -eq 0 ]]; then
-  echo "Branch \"$BRANCH\" does not exist at $REPO_URL"
-  usage
-  exit 1
+# don't check for branch if using group_vars
+if [ -z "$GRPVRS" ]; then
+   if [[ $(git ls-remote --heads $REPO_URL $BRANCH | wc -l) -eq 0 ]]; then
+     echo "Branch \"$BRANCH\" does not exist at $REPO_URL"
+     usage
+     exit 1
+   fi
 fi
 
 SECURITY_GROUP='dataverse-sg'
