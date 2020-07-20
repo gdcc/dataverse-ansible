@@ -42,6 +42,13 @@
     mode: 0755
   tags: apitestsuite
 
+- name: run only specified tests
+  lineinfile:
+    path: /tmp/dataverse/run-test-suite.sh
+    regexp: '^mvn test.*'
+    line: 'mvn test -Dtest={{ dataverse.api.tests }} -Ddataverse.test.baseurl=$dvurl'
+  when: dataverse.api.tests != "all"
+
 - name: set user management quesadilla
   uri:
     url: 'http://localhost:8080/api/admin/settings/BuiltinUsers.KEY'
