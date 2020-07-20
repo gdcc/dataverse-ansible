@@ -37,6 +37,10 @@ dataverse:
     blocked_policy: "localhost-only"
     location: "http://localhost:8080/api"
     test_suite: false
+    # possible test values from https://github.com/IQSS/dataverse/blob/develop/conf/docker-aio/run-test-suite.sh#L11
+    # beware DataversesIT and DatasetsIT at minimum must be run for any other tests to succeed. have fun.
+    #tests: "DataversesIT,DatasetsIT,AdminIT"
+    tests: all
   branding:
     enabled: false
     directory: "{{ playbook_dir }}/files/branding"
