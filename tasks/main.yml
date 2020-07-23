@@ -111,6 +111,10 @@
 - include: dataverse-externaltools.yml
   tags: externaltools
 
+- include: prometheus.yml
+  when: prometheus.install == true
+  tags: prometheus
+
 - include: dataverse-api-testsuite.yml
   when: dataverse.api.test_suite == true
   tags: apitestsuite
@@ -126,10 +130,6 @@
 - include: munin.yml
   when: munin.install == true
   tags: munin
-
-- include: prometheus.yml
-  when: prometheus.install == true
-  tags: prometheus
 
 - include: schemaspy.yml
   when: schemaspy.enabled == true
