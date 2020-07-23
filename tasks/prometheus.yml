@@ -3,11 +3,12 @@
 - name: install prometheus
   debug:
     msg: '##### PROMETHEUS #####'
+  tags: prometheus
 
 - name: systemd no likey escaped colons
   set_fact:
     siteUrl: "{{ siteUrl | regex_replace('\\\\:', ':') }}"
-  tags: grafana
+  tags: prometheus
 
 - debug:
     msg: "siteUrl is {{ siteUrl }}"
@@ -16,12 +17,15 @@
   selinux:
     policy: targeted
     state: permissive
+  tags: prometheus
 
 - include: collectd.yml
+  tags: prometheus
 
 - name: add prometheus service account
   user:
     name: '{{ prometheus.user }}'
+  tags: prometheus
 
 # firewalld is outside the role scope
 #- name: punch prometheus firewall holes
@@ -39,6 +43,7 @@
     state: directory
     owner: '{{ prometheus.user }}'
     mode: '0755'
+  tags: prometheus
 
 - name: install prometheus
   unarchive:
@@ -47,6 +52,7 @@
     owner: '{{ prometheus.user }}'
     remote_src: yes
     extra_opts: [--strip-components=1]
+  tags: prometheus
 
 - name: copy prometheus config file
   copy:
@@ -54,6 +60,7 @@
     dest: '{{ prometheus.root }}/prometheus.yml'
     owner: '{{ prometheus.user }}'
     mode: 0644
+  tags: prometheus
 
 - name: node_exporter dir must exist
   file:
@@ -61,6 +68,7 @@
     state: directory
     owner: '{{ prometheus.user }}'
     mode: '0755'
+  tags: prometheus
 
 - name: install node_exporter
   unarchive:
@@ -68,6 +76,7 @@
     dest: '{{ prometheus.root }}/node_exporter'
     remote_src: yes
     extra_opts: [--strip-components=1]
+  tags: prometheus
     
 - name: place prometheus systemd template
   template:
@@ -76,6 +85,7 @@
     owner: root
     group: root
     mode: 0644
+  tags: prometheus
 
 - name: place node_exporter systemd template
   template:
@@ -84,24 +94,30 @@
     owner: root
     group: root
     mode: 0644
+  tags: prometheus
 
 - name: reload systemd
   shell: systemctl daemon-reload
+  tags: prometheus
 
 - name: start and enable prometheus
   systemd:
     name: prometheus
     state: started
     enabled: yes
+  tags: prometheus
 
 - name: give prometheus a breather
   pause:
     seconds: 2
+  tags: prometheus
 
 - name: start and enable node_exporter
   systemd:
     name: prometheus
     state: started
     enabled: yes
+  tags: prometheus
 
 - include: grafana.yml
+  tags: grafana

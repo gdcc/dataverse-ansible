@@ -2,6 +2,7 @@
 
 # for hostname and siteUrl
 - include: dataverse-fqdn.yml
+  tags: grafana
 
 - name: install grafana
   debug:
@@ -72,15 +73,19 @@
     state: started
   tags: grafana
 
+- name: strip backslash from siteUrl
+  set_fact:
+    siteUrl_stripped: '{{ siteUrl | regex_replace ("\\", "") }}'
+
 - name: create grafana datasource
   grafana_datasource:
     access: direct
     name: "prometheus"
-    grafana_url: '{{ siteUrl }}/grafana'
+    grafana_url: '{{ siteUrl_stripped }}/grafana'
     grafana_user: '{{ grafana.grafana_user }}'
     grafana_password: '{{ grafana.grafana_password }}'
     ds_type: "prometheus"
-    url: '{{ siteUrl }}/prometheus'
+    url: '{{ siteUrl_stripped }}/prometheus'
     database: "prometheus"
     is_default: "yes"
     state: present
@@ -97,7 +102,7 @@
 
 - name: import grafana dashboard
   grafana_dashboard:
-    grafana_url: '{{ siteUrl }}/grafana'
+    grafana_url: '{{ siteUrl_stripped }}/grafana'
     grafana_user: '{{ grafana.grafana_user }}'
     grafana_password: '{{ grafana.grafana_password }}'
     path: /etc/grafana/grafana-dashboard.json
