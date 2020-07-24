@@ -115,6 +115,7 @@
   postgresql_user:
     name: postgres
     password: '{{ db.postgres.adminpass }}'
+  when: db.use_rds == false
 
 - name: create glassfish postgres database
   postgresql_db:
