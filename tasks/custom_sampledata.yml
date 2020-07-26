@@ -50,7 +50,7 @@
 # but the above find command fails outside of vagrant(?!?)
 # so let's hard-code create-users.sh for now
 - name: run scripts in sampleuser dir
-  script: '{{ dataverse.custom_sampledata.custom_sampleusers }}/create-users.sh {{ dataverse.custom_sampledata.custom_sampleusers }}'
+  shell: '{{ dataverse.custom_sampledata.custom_sampleusers }}/create-users.sh {{ dataverse.custom_sampledata.custom_sampleusers }}'
   args:
     chdir: '{{ dataverse.custom_sampledata.custom_sampleusers }}'
   
@@ -79,7 +79,7 @@
   register: sampledatasetscripts_list
 
 - name: run sampledatasets scripts
-  script: '{{ item.path }} {{ api_token }} {{ dataverse.custom_sampledata.custom_sampledatasets }}'
+  shell: '{{ item.path }} {{ api_token }} {{ dataverse.custom_sampledata.custom_sampledatasets }}'
   args:
     chdir: '{{ dataverse.custom_sampledata.custom_sampledatasets }}'
   with_items: '{{ sampledatasetscripts_list.files }}'
@@ -92,7 +92,7 @@
   register: sampledatafilescripts_list
 
 - name: run sampledatafile scripts
-  script: '{{ item.path }} {{ api_token }} {{ dataverse.custom_sampledata.custom_samplefiles }}'
+  shell: '{{ item.path }} {{ api_token }} {{ dataverse.custom_sampledata.custom_samplefiles }}'
   args:
     chdir: '{{ dataverse.custom_sampledata.custom_samplefiles }}'
   with_items: '{{ sampledatafilescripts_list.files }}'

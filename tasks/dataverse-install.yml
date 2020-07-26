@@ -104,7 +104,7 @@
         dataverse.glassfish.zipurl is not match(".*glassfish-4.1.zip")
 
 - name: fire off installer
-  script: '/usr/bin/python /tmp/dvinstall/install.py -f --config_file=default.config --noninteractive > /tmp/dvinstall/install.out 2>&1'
+  shell: '/usr/bin/python /tmp/dvinstall/install.py -f --config_file=default.config --noninteractive > /tmp/dvinstall/install.out 2>&1'
   become: yes
   become_user: '{{ dataverse.glassfish.user }}'
   args:
