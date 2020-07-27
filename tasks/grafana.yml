@@ -56,13 +56,6 @@
     regexp: 'serve_from_sub_path '
     line: 'serve_from_sub_path = true'
 
-- name: reload systemd, enable grafana, start
-  systemd:
-    name: grafana-server
-    enabled: yes
-    daemon_reload: yes
-    state: started
-
 - name: create grafana datasource
   grafana_datasource:
     access: direct
@@ -76,19 +69,34 @@
     is_default: "yes"
     state: present
 
+#- name: import grafana dashboard
+#  grafana_dashboard:
+#    grafana_url: '{{ siteUrl }}/grafana'
+#    grafana_user: '{{ grafana.grafana_user }}'
+#    grafana_password: '{{ grafana.grafana_password }}'
+#    path: /etc/grafana/grafana-dashboard.json
+#    overwrite: yes
+#    state: present
+
+- name: remove grafana sample templates
+  file:
+    path: '{{ item }}'
+    state: absent
+  with_items:
+    - /etc/grafana/provisioning/dashboards/sample.yaml
+    - /etc/grafana/provisioning/datasources/sample.yaml
+
 - name: place grafana dashboard template
   copy:
     src: grafana-dashboard.json
-    dest: /etc/grafana/grafana-dashboard.json
+    dest: /etc/grafana/provisioning/dashboards/grafana-dashboard.json
     owner: root
     group: root
     mode: '0644'
 
-- name: import grafana dashboard
-  grafana_dashboard:
-    grafana_url: '{{ siteUrl }}/grafana'
-    grafana_user: '{{ grafana.grafana_user }}'
-    grafana_password: '{{ grafana.grafana_password }}'
-    path: /etc/grafana/grafana-dashboard.json
-    overwrite: yes
-    state: present
+- name: reload systemd, enable grafana, start
+  systemd:
+    name: grafana-server
+    enabled: yes
+    daemon_reload: yes
+    state: started
