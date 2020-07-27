@@ -3,6 +3,10 @@
 # for hostname and siteUrl
 - include: dataverse-fqdn.yml
 
+- strip siteurl for grafana
+  set_fact:
+    - siteUrl: {{ siteUrl | regex_replace ('\\:',':') }}
+
 - name: install grafana
   debug:
     msg: '##### GRAFANA #####'
