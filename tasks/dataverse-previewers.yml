@@ -12,7 +12,6 @@
 
 - name: enable dataverse-previewers
   shell: '{{ ansible_user_dir }}/dataverse-previewers.sh'
-  tags: previewers
 
 - name: clean up dataverse-previewers.sh script
   file:

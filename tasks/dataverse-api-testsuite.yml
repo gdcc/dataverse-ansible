@@ -8,39 +8,33 @@
   yum:
     name: maven
     state: latest
-  tags: apitestsuite
 
 - name: do we have a pom.xml
   stat:
     path: '{{ dataverse.srcdir }}/pom.xml'
   register: pom_xml
-  tags: apitestsuite
 
 - name: if we're not in a branch, grab release source
   get_url:
     url: 'https://github.com/IQSS/dataverse/archive/v{{ dataverse.version }}.tar.gz'
     dest: '/tmp'
   when: pom_xml.stat.exists == false
-  tags: apitestsuite
 
 - name: unarchive won't create directories for us
   file:
     path: '{{ dataverse.srcdir }}'
     state: directory
   when: pom_xml.stat.exists == false
-  tags: apitestsuite
 
 - name: unpack, strip root directory
   shell: 'bsdtar --strip-components=1 -C {{ dataverse.srcdir }} -xf /tmp/dataverse-{{ dataverse.version }}.tar.gz'
   when: pom_xml.stat.exists == false
-  tags: apitestsuite
 
 - name: grab latest copy of run-test-suite.sh
   get_url:
     url: https://raw.githubusercontent.com/IQSS/dataverse/develop/conf/docker-aio/run-test-suite.sh
     dest: '{{ dataverse.srcdir }}/run-test-suite.sh'
     mode: 0755
-  tags: apitestsuite
 
 - name: run only specified tests
   lineinfile:
@@ -54,10 +48,8 @@
     url: 'http://localhost:8080/api/admin/settings/BuiltinUsers.KEY'
     method: PUT
     body: '{{ dataverse.usermgmtkey }}'
-  tags: apitestsuite
 
 - include: dataverse-apitoken.yml
-  tags: apitestsuite
 
 - name: allow authenticated users to add to root
   uri:
@@ -65,7 +57,6 @@
     method: POST
     body: '{"assignee":":authenticated-users","role":"fullContributor"}'
     body_format: json
-  tags: apitestsuite
 
 - name: is root dataverse already published
   stat:
@@ -89,10 +80,8 @@
     DV_APIKEY: '{{ dataverse.usermgmtkey }}'
     DV_API_KEY: '{{ dataverse.usermgmtkey }}'
   ignore_errors: yes
-  tags: apitestsuite
 
 - name: generate HTML reports
   shell: 'mvn surefire-report:report'
   args:
     chdir: '{{ dataverse.srcdir }}'
-  tags: apitestsuite

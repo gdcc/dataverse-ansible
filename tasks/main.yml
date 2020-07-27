@@ -6,10 +6,12 @@
     msg: '##### BEGIN ANSIBLE ROLE #####'
 
 - include: sanity-checks.yml
-  tags: prereqs
+  tags:
+  - prereqs
 
 - include: dataverse-prereqs.yml
-  tags: prereqs
+  tags: 
+  - prereqs
 
 - include: dataverse-required-variables.yml
   tags:
@@ -22,7 +24,8 @@
 
 - include: rserve.yml
   when: rserve.install == true
-  tags: rserve
+  tags:
+  - rserve
 
 - include: dataverse-fqdn.yml
   tags:
@@ -31,17 +34,21 @@
 
 - include: sshkeys.yml
   when: sshkeys.enabled == True
-  tags: sshkeys
+  tags:
+  - sshkeys
 
 - include: postfix.yml
   when: postfix.enabled == true
-  tags: postfix
+  tags:
+  - postfix
 
 - include: dataverse-apache.yml
-  tags: apache
+  tags:
+  - apache
 
 - include: postgres.yml
-  tags: postgres
+  tags:
+  - postgres
 
 - include: dataverse-branch.yml
   when: dataverse_branch != "release"
@@ -51,69 +58,87 @@
         dataverse_repo != "release"
 
 - include: dataverse-download.yml
-  tags: glassfish
+  tags:
+  - glassfish
 
 - include: dataverse-glassfish.yml
-  tags: glassfish
+  tags:
+  - glassfish
 
 - include: dataverse-get-release.yml
-  tags: release
+  tags:
+  - release
 
 - include: solr.yml
-  tags: solr
+  tags:
+  - solr
 
 - include: localstack.yml
   when: localstack.enabled == true
-  tags: localstack
+  tags:
+  - localstack
 
 - include: s3.yml
   when: s3.enabled == true
-  tags: s3
+  tags:
+  - s3
 
 - include: localstack_create.yml
   when: localstack.enabled == true
-  tags: localstack 
+  tags:
+  - localstack 
 
 - include: dataverse-install.yml
-  tags: dataverse
+  tags:
+  - dataverse
 
 - include: dataverse-storage.yml
   when: dataverse.filesdirs[0] is defined
-  tags: storage
+  tags:
+  - storage
 
 - include: dataverse-postinstall.yml
-  tags: postinstall
+  tags:
+  - postinstall
 
 - include: dataverse-gui.yml
-  tags: gui
+  tags:
+  - gui
   when: dataverse.branding.enabled
 
 - include: dataverse-shibboleth.yml
   when: shibboleth.enabled == True
-  tags: shibboleth
+  tags:
+  - shibboleth
 
 - include: sampledata.yml
   when: dataverse.sampledata.enabled == true
-  tags: sampledata
+  tags:
+  - sampledata
 
 - include: custom_sampledata.yml
   when: dataverse.custom_sampledata.enabled == true
-  tags: custom_sampledata
+  tags:
+  - custom_sampledata
 
 - include: dataverse-counter.yml
   when: dataverse.counter.enabled == true
-  tags: counter
+  tags:
+  - counter
 
 - include: dataverse-previewers.yml
   when: dataverse.previewers.enabled == true
-  tags: previewers
+  tags:
+  - previewers
 
 - include: dataverse-externaltools.yml
-  tags: externaltools
+  tags:
+  - externaltools
 
 - include: dataverse-api-testsuite.yml
   when: dataverse.api.test_suite == true
-  tags: apitestsuite
+  tags:
+  - apitestsuite
 
 - include: jacoco-generate_report.yml
   when: dataverse.jacoco.enabled == true and
@@ -121,19 +146,23 @@
 
 - include: build_guides.yml
   when: build_guides == true
-  tags: build_guides
+  tags:
+  - build_guides
 
 - include: munin.yml
   when: munin.install == true
-  tags: munin
+  tags:
+  - munin
 
 - include: prometheus.yml
   when: prometheus.install == true
-  tags: prometheus
+  tags:
+  - prometheus
 
 - include: schemaspy.yml
   when: schemaspy.enabled == true
-  tags: schemaspy
+  tags:
+  - schemaspy
 
 - name: Fin
   debug:

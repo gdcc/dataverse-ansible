@@ -44,20 +44,17 @@
 - name: install various packages
   package:
     name: bash-completion, git, jq, mlocate, net-tools, sudo, unzip, python3-psycopg2
-  tags: prereqs
 
 - name: install java-nnn-openjdk and other packages for RedHat/CentOS.
   yum:
     name: ['java-{{ java.version }}-openjdk-devel', 'python36', 'vim-enhanced']
     state: latest
   when: ansible_os_family == "RedHat"
-  tags: prereqs
 
 - name: install java-nnn-openjdk and other packages for Debian/Ubuntu.
   package:
     name: default-jdk, python3, vim
   when: ansible_os_family == "Debian"
-  tags: prereqs
 
 - name: install ImageMagick on RHEL/CentOS7 for thumbnail generation
   yum:
@@ -67,7 +64,6 @@
     - ansible_os_family == "RedHat"
     - ansible_distribution_major_version == "7"
     - dataverse.thumbnails
-  tags: prereqs
 
 - name: install GraphicsMagic on RHEL/CentOS8 for thumbnail generation
   dnf:
@@ -76,7 +72,6 @@
     - ansible_os_family == "RedHat"
     - ansible_distribution_major_version == "8"
     - dataverse.thumbnails
-  tags: prereqs
 
 - name: install GraphicsMagic on Debian/Ubuntu for thumbnail generation
   package:
@@ -84,14 +79,12 @@
   when:
     - ansible_os_family == "Debian"
     - dataverse.thumbnails
-  tags: prereqs
 
 - name: install curl on Debian/Ubuntu
   package:
     name: curl
   when:
     - ansible_os_family == "Debian"
-  tags: prereqs
 
 - name: Dataverse installer calls /usr/bin/python explicitly
   alternatives:
