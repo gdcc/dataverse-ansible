@@ -4,6 +4,17 @@
   debug:
     msg: '##### DATAVERSE PREVIEWERS #####'
 
+- name: upload dataverse-previewers.sh script
+  copy:
+    src: dataverse-previewers.sh
+    dest: '{{ ansible_user_dir }}'
+    mode: 0700
+
 - name: enable dataverse-previewers
-  script: dataverse-previewers.sh
+  shell: '{{ ansible_user_dir }}/dataverse-previewers.sh'
   tags: previewers
+
+- name: clean up dataverse-previewers.sh script
+  file:
+    path: '{{ ansible_user_dir }}/dataverse-previewers.sh'
+    state: absent
