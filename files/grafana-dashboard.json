@@ -23,7 +23,7 @@
       "bars": false,
       "dashLength": 10,
       "dashes": false,
-      "datasource": Prometheus,
+      "datasource": null,
       "fieldConfig": {
         "defaults": {
           "custom": {},
