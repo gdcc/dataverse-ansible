@@ -3,10 +3,6 @@
 # for hostname and siteUrl
 - include: dataverse-fqdn.yml
 
-#- strip siteurl for grafana
-  #set_fact:
-  #  siteUrl: "{{ siteUrl | regex_replace ('\\:',':') }}"
-
 - name: install grafana
   debug:
     msg: '##### GRAFANA #####'
@@ -91,8 +87,8 @@
     - /etc/grafana/provisioning/datasources/sample.yaml
 
 - name: place grafana datasource template
-  copy:
-    src: dataverse-datasource.yml
+  template:
+    src: dataverse-datasource.yml.j2
     dest: /etc/grafana/provisioning/datasources/dataverse-datasource.yml
     owner: root
     group: root

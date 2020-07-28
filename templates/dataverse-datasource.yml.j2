@@ -9,7 +9,7 @@ datasources:
   type: prometheus
   access: proxy
   orgId: 1
-  url: http://prometheus:9090
+  url: "{{ siteUrl }}/prometheus"
   isDefault: true
   jsonData:
      graphiteVersion: "1.1"

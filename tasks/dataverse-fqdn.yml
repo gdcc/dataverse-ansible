@@ -19,7 +19,7 @@
 
 - name: if siteUrl not passed, use fqdn.
   set_fact:
-    siteUrl: '{{ protocol }}\://{{ ansible_fqdn }}'
+    siteUrl: '{{ protocol }}://{{ ansible_fqdn }}'
   when: siteUrl |length < 1
 
 - name: are we in EC2?
@@ -44,7 +44,7 @@
 
 - name: now correct siteUrl
   set_fact:
-    siteUrl: '{{ protocol }}\://{{ public_hostname}}'
+    siteUrl: '{{ protocol }}://{{ public_hostname}}'
   when: is_aws_environment
 
 - name: preserve public_hostname either way
