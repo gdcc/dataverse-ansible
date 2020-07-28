@@ -54,7 +54,8 @@
 
 # for asadmin command
 - name: escape colons in siteurl
-  set_fact: "siteUrl_escaped={{ siteUrl | regex_replace (':','\\:') }}"
+  set_fact:
+    siteUrl_escaped: "{{ siteUrl | regex_replace (':','\\:') }}"
 
 # for errybody else
 - name: debug
