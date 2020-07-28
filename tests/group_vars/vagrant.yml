@@ -107,8 +107,8 @@ dataverse:
 #   - label: label
 #     path: /path/to/filestore   ## this is a sample entry for further file stores
   glassfish:
-    user: payara
-    group: payara
+    user: dataverse
+    group: dataverse
     domain: domain1
     logformat: ulf
     adminuser: admin
