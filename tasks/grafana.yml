@@ -115,6 +115,12 @@
     group: root
     mode: '0644'
 
+- name: set dataverse5 as default home dashboard
+  lineinfile:
+    path: /etc/grafana/grafana.ini
+    regexp: '^;default_home_dashboard_path'
+    line: 'default_home_dashboard_path = /etc/grafana/dashboards/grafana-dashboard.json'
+
 - name: reload systemd, enable grafana, start
   systemd:
     name: grafana-server
