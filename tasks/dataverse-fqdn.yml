@@ -19,7 +19,7 @@
 
 - name: if siteUrl not passed, use fqdn.
   set_fact:
-    siteUrl: '{{ protocol }}\://{{ ansible_fqdn }}'
+    siteUrl: '{{ protocol }}://{{ ansible_fqdn }}'
   when: siteUrl |length < 1
 
 - name: are we in EC2?
@@ -44,7 +44,7 @@
 
 - name: now correct siteUrl
   set_fact:
-    siteUrl: '{{ protocol }}\://{{ public_hostname}}'
+    siteUrl: '{{ protocol }}://{{ public_hostname}}'
   when: is_aws_environment
 
 - name: preserve public_hostname either way
@@ -54,7 +54,8 @@
 
 # for asadmin command
 - name: escape colons in siteurl
-  set_fact: "siteUrl_escaped={{ siteUrl | regex_replace (':','\\:') }}"
+  set_fact:
+    siteUrl_escaped: "{{ siteUrl | regex_replace (':','\\:') }}"
 
 # for errybody else
 - name: debug

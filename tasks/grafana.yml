@@ -56,39 +56,74 @@
     regexp: 'serve_from_sub_path '
     line: 'serve_from_sub_path = true'
 
+#- name: create grafana datasource
+#  grafana_datasource:
+#    access: direct
+#    name: "prometheus"
+#    grafana_url: '{{ siteUrl }}/grafana'
+#    grafana_user: '{{ grafana.grafana_user }}'
+#    grafana_password: '{{ grafana.grafana_password }}'
+#    ds_type: "prometheus"
+#    url: '{{ siteUrl }}/prometheus'
+#    database: "prometheus"
+#    is_default: "yes"
+#    state: present
+
+#- name: import grafana dashboard
+#  grafana_dashboard:
+#    grafana_url: '{{ siteUrl }}/grafana'
+#    grafana_user: '{{ grafana.grafana_user }}'
+#    grafana_password: '{{ grafana.grafana_password }}'
+#    path: /etc/grafana/grafana-dashboard.json
+#    overwrite: yes
+#    state: present
+
+- name: remove grafana sample templates
+  file:
+    path: '{{ item }}'
+    state: absent
+  with_items:
+    - /etc/grafana/provisioning/dashboards/sample.yaml
+    - /etc/grafana/provisioning/datasources/sample.yaml
+
+- name: place grafana datasource template
+  template:
+    src: dataverse-datasource.yml.j2
+    dest: /etc/grafana/provisioning/datasources/dataverse-datasource.yml
+    owner: root
+    group: root
+    mode: '0644'
+
+- name: place grafana dashboard yml
+  copy:
+    src: dataverse-dashboards.yml
+    dest: /etc/grafana/provisioning/dashboards/dataverse-dashboards.yml
+
+- name: ensure grafana dashboard dir exists
+  file:
+    path: /etc/grafana/dashboards
+    state: directory
+    owner: root
+    group: root
+    mode: '0755'
+
+- name: place grafana dashboard template
+  copy:
+    src: grafana-dashboard.json
+    dest: /etc/grafana/dashboards/grafana-dashboard.json
+    owner: root
+    group: root
+    mode: '0644'
+
+- name: set dataverse5 as default home dashboard
+  lineinfile:
+    path: /etc/grafana/grafana.ini
+    regexp: '^;default_home_dashboard_path'
+    line: 'default_home_dashboard_path = /etc/grafana/dashboards/grafana-dashboard.json'
+
 - name: reload systemd, enable grafana, start
   systemd:
     name: grafana-server
     enabled: yes
     daemon_reload: yes
     state: started
-
-- name: create grafana datasource
-  grafana_datasource:
-    access: direct
-    name: "prometheus"
-    grafana_url: '{{ siteUrl }}/grafana'
-    grafana_user: '{{ grafana.grafana_user }}'
-    grafana_password: '{{ grafana.grafana_password }}'
-    ds_type: "prometheus"
-    url: '{{ siteUrl }}/prometheus'
-    database: "prometheus"
-    is_default: "yes"
-    state: present
-
-- name: place grafana dashboard template
-  copy:
-    src: grafana-dashboard.json
-    dest: /etc/grafana/grafana-dashboard.json
-    owner: root
-    group: root
-    mode: '0644'
-
-- name: import grafana dashboard
-  grafana_dashboard:
-    grafana_url: '{{ siteUrl }}/grafana'
-    grafana_user: '{{ grafana.grafana_user }}'
-    grafana_password: '{{ grafana.grafana_password }}'
-    path: /etc/grafana/grafana-dashboard.json
-    overwrite: yes
-    state: present
