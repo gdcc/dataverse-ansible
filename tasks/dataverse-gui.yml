@@ -5,8 +5,8 @@
 
 - name: calculate destination directories
   set_fact:
-    gui_file_path: '{{ glassfish_dir }}/glassfish/domains/{{dataverse.glassfish.domain}}/applications/dataverse'
-    favicon_file_path: '{{ glassfish_dir }}/glassfish/domains/{{dataverse.glassfish.domain}}/applications/dataverse/resources/images/fav/'
+    gui_file_path: '{{ payara_dir }}/glassfish/domains/{{ dataverse.payara.domain }}/applications/dataverse'
+    favicon_file_path: '{{ payara_dir }}/glassfish/domains/{{ dataverse.payara.domain }}/applications/dataverse/resources/images/fav/'
 
 - name: Applying GUI design
   debug:

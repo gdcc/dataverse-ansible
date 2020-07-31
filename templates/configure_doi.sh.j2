@@ -5,7 +5,7 @@ DOI_USERNAME={{ dataverse.doi.username }}
 DOI_PASSWORD={{ dataverse.doi.password }}
 DEF_BASEURL="https\://mds.test.datacite.org"
 
-ASADMIN={{ glassfish_dir }}/bin/asadmin
+ASADMIN={{ payara_dir }}/bin/asadmin
 
 if [ ! -z "$DOI_BASEURL" ] && [[ ! $DOI_BASEURL == *mds.test.datacite.org* ]]; then
         $ASADMIN delete-jvm-options "\"-Ddoi.baseurlstring=$DEF_BASEURL""

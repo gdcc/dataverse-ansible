@@ -57,9 +57,9 @@ If you needed to update the host port in the Vagrantfile due to collision, you'd
   * Default config location: */etc/httpd/conf.d*
   * `$ systemctl {stop|start|restart|status} httpd.`
 * GlassFish server (Java EE application server)
-  * Default location: */user/local/glassfish4*
-  * Default config location: */usr/local/glassfish4/glassfish/domains/domain1/config/domain.xml*
-  * `$ systemctl {start|stop|restart|status} glassfish`
+  * Default location: */user/local/payara5*
+  * Default config location: */usr/local/payara5/glassfish/domains/domain1/config/domain.xml*
+  * `$ systemctl {start|stop|restart|status} payara`
 * Solr (indexing)
   * Default schema location: */usr/local/solr/example/solr/collection1/conf/schema.xml*
   * `$ systemctl {start|stop|restart|status} solr`
@@ -95,11 +95,11 @@ If you wish to clone an existing installation, you should perform the following 
   * Copy the content directory of the source instance to the content directory of this instance.
 
 * On the target instace server:
-  * `$ systemctl stop glassfish`
+  * `$ systemctl stop payara`
   * `$ dropdb -U postgres dvndb`
   * `$ createdb -U postgres dvndb`
   * `$ psql -U postgres dvndb -f \<source-db-dump-file>`
-  * `$ systemctl start glassfish`
+  * `$ systemctl start payara`
   * `$ curl http://localhost:8080/api/admin/index/clear`
   * `$ curl http://localhost:8080/api/admin/index`
 

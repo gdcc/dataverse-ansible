@@ -1,20 +1,20 @@
 # Job configuration info
-description "GlassFish4"
+description "Payara5"
 
 # Instance per domain
-instance {{ dataverse.glassfish.domain }}
+instance {{ dataverse.payara.domain }}
 
 # log to server.log
 console none
 
-# Run as glassfish service account
-setuid {{ dataverse.glassfish.user }}
-setgid {{ dataverse.glassfish.group }}
+# Run as payara service account
+setuid {{ dataverse.payara.user }}
+setgid {{ dataverse.payara.group }}
 umask 0022
-chdir {{ glassfish_dir }}
+chdir {{ payara_dir }}
 
 # start
-exec {{ glassfish_dir }}/bin/asadmin start-domain {{ dataverse.glassfish.domain }}
+exec {{ payara_dir }}/bin/asadmin start-domain {{ dataverse.payara.domain }}
 
 # stop
-pre-stop exec {{ glassfish_dir }}/bin/asadmin stop-domain {{ dataverse.glassfish.domain }}
+pre-stop exec {{ payara_dir }}/bin/asadmin stop-domain {{ dataverse.payara.domain }}
