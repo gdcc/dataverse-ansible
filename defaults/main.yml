@@ -117,7 +117,7 @@ dataverse:
     timeout: 180
     request_timeout: 1800
     root: /usr/local
-    dir: glassfish5
+    dir: payara5
     zipurl: https://github.com/payara/Payara/releases/download/payara-server-5.2020.2/payara-5.2020.2.zip
     zipchecksum: sha256:1f5f7ea30901b1b4c7bcdfa5591881a700c9b7e2022ae3894192ba97eb83cc3e
   google_analytics_key:
