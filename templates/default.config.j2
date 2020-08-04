@@ -1,11 +1,11 @@
 [glassfish]
 HOST_DNS_ADDRESS = {{ servername }}
-GLASSFISH_USER = {{ dataverse.glassfish.user }}
-GLASSFISH_DIRECTORY = {{ dataverse.glassfish.root }}/{{ dataverse.glassfish.dir }}
-GLASSFISH_ADMIN_USER = {{ dataverse.glassfish.adminuser }}
-GLASSFISH_ADMIN_PASSWORD = {{ dataverse.glassfish.adminpass }}
+GLASSFISH_USER = {{ dataverse.payara.user }}
+GLASSFISH_DIRECTORY = {{ dataverse.payara.root }}/{{ dataverse.payara.dir }}
+GLASSFISH_ADMIN_USER = {{ dataverse.payara.adminuser }}
+GLASSFISH_ADMIN_PASSWORD = {{ dataverse.payara.adminpass }}
 GLASSFISH_HEAP = {{ dataverse.memheap }}
-GLASSFISH_REQUEST_TIMEOUT = {{ dataverse.glassfish.request_timeout }}
+GLASSFISH_REQUEST_TIMEOUT = {{ dataverse.payara.request_timeout }}
 
 [database]
 POSTGRES_ONLY = false
