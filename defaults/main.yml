@@ -126,7 +126,7 @@ dataverse:
     home: /tmp/jacoco
     version: 0.8.1
   maxfileuploadsizeinbytes:
-  memheap: 2048
+  memheap: 4096
   previewers:
     enabled: true
   sampledata:
