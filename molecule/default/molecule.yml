@@ -14,8 +14,27 @@ platforms:
       - network_name: forwarded_port
         guest: 80
         host: 8080
+  - name: centos7
+    box: "bento/centos-7.8"
+    memory: 3072
+    cpus: 2
+    interfaces:
+      - network_name: forwarded_port
+        guest: 80
+        host: 8081
+# TODO: Fix error during installation on Ubuntu
+#  - name: unbuntu-16.04
+#    box: "bento/ubuntu-16.04"
+#    memory: 3072
+#    cpus: 2
+#    interfaces:
+#      - network_name: forwarded_port
+#        guest: 80
+#        host: 8082
 provisioner:
   name: ansible
+  playbooks:
+    prepare: prepare.yml
   config_options:
     defaults:
       remote_tmp: '/tmp'
@@ -51,7 +70,7 @@ provisioner:
             otherSettings:
               - setting: ExcludeEmailFromExport
                 value: "true"
-          copyright: "&nbsp;DANS"
+          copyright: "&nbsp;TEST"
           counter:
             enabled: false
             geoipdir: maxmind_geoip

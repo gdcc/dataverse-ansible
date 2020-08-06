@@ -1,8 +1,0 @@
----
-- name: Converge
-  hosts: all
-  become: yes
-  tasks:
-    - name: "Include dataverse-ansible"
-      include_role:
-        name: "dataverse-ansible"
