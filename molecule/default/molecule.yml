@@ -1,0 +1,28 @@
+---
+dependency:
+  name: galaxy
+driver:
+  name: vagrant
+  provider:
+    name: virtualbox
+platforms:
+  - name: centos8
+    box: "bento/centos-8.2"
+    memory: 3072
+    cpus: 2
+provisioner:
+  name: ansible
+  config_options:
+    defaults:
+      remote_tmp: '/tmp'
+      hash_behaviour: 'merge'
+    ssh_connection:
+      pipelining: True
+      control_path: '/tmp/ansible-ssh-%%h-%%p-%%r'
+  inventory:
+    group_vars:
+      all:
+        rserve:
+          install: False
+verifier:
+  name: ansible

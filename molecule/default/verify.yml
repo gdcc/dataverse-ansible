@@ -1,0 +1,9 @@
+---
+# This is an example playbook to execute Ansible tests.
+
+- name: Verify
+  hosts: all
+  tasks:
+  - name: 'http://localhost:8080 is accessible'
+    assert:
+      that: true
