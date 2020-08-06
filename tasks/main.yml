@@ -5,13 +5,6 @@
   debug:
     msg: '##### BEGIN ANSIBLE ROLE #####'
 
-- debug:
-    msg: '{{ db }}'
-
-- debug:
-    msg: '{{ rserve }}'
-
-
 - include: sanity-checks.yml
   tags:
   - prereqs
