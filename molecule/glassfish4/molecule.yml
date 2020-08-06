@@ -1,0 +1,157 @@
+---
+dependency:
+  name: galaxy
+driver:
+  name: vagrant
+  provider:
+    name: virtualbox
+platforms:
+  - name: centos8
+    box: "bento/centos-8.2"
+    memory: 3072
+    cpus: 2
+    interfaces:
+      - network_name: forwarded_port
+        guest: 80
+        host: 8080
+provisioner:
+  name: ansible
+  config_options:
+    defaults:
+      remote_tmp: '/tmp'
+      hash_behaviour: 'merge'
+    ssh_connection:
+      pipelining: True
+      control_path: '/tmp/ansible-ssh-%%h-%%p-%%r'
+  inventory:
+    group_vars:
+      all:
+        rserve:
+          install: false
+        dataverse_branch: release
+        dataverse_repo: https://github.com/IQSS/dataverse.git
+        dataverse:
+          adminpass: admin1
+          allow_signups: true
+          api:
+            allow_lookup: false
+            blocked_endpoints: "admin,test"
+            blocked_policy: "localhost-only"
+            location: "http://localhost:8080/api"
+            test_suite: false
+          branding:
+            enabled: false
+            directory: "{{ playbook_dir }}/files/branding"
+            favicons_directory: "{{ playbook_dir }}/files/favicons"
+            fileSettings:
+              - setting: FooterCustomizationFile
+                file: custom-footer.html
+              - setting: ApplicationTermsOfUse
+                file: apptou.html
+            otherSettings:
+              - setting: ExcludeEmailFromExport
+                value: "true"
+          copyright: "&nbsp;DANS"
+          counter:
+            enabled: false
+            geoipdir: maxmind_geoip
+            geoipfile: GeoLite2-Country.mmdb
+            hub_api_token: set_me_in_secrets
+            hub_base_url: "https://api.datacite.org"
+            machines_url: "https://raw.githubusercontent.com/CDLUC3/Make-Data-Count/master/user-agents/lists/machine.txt"
+            maxmind_geoip_country_path: "maxmind_geoip/GeoLite2-Country.mmdb"
+            output_file: "/dataverse/sushi_sample_logs"
+            output_format: json
+            platform: dash
+            robots_url: "https://raw.githubusercontent.com/CDLUC3/Make-Data-Count/master/user-agents/lists/robot.txt"
+            version: "0.1"
+            upload_to_hub: False
+            user: counter
+            year_month: "2018-05"
+          custom_metadata_blocks:
+            enabled: false
+            urls: []
+          default:
+            config:
+          demo: false
+          doi:
+            authority: "10.5072"
+            baseurl: "https://mds.test.datacite.org/"
+            mdcbaseurl: "https://api.test.datacite.org/"
+            username: "testaccount"
+            password: "notmypassword"
+            protocol: doi
+            provider: FAKE
+            shoulder: "FK2/"
+          externaltools:
+            datacurationtool:
+              enabled: false
+              method: demo
+            dataexplorer:
+              enabled: false
+            wholetale:
+              enabled: false
+          ## The first item of 'filesdirs' is the default filestore
+          ## If you change the label, be prepared to change the SQL database if there are already files here
+          ## It is better practice to add a new data store and then migrate to it later
+          ## Also, changing the default storage takes effect immediately for temp files, but
+          ## only after restart for publishing (i.e. without restart the temp files will be moved to the old default data store at publish time).
+          filesdirs:
+            - label: file
+              path: /usr/local/dvn/data
+          #   - label: label
+          #     path: /path/to/filestore   ## this is a sample entry for further file stores
+          glassfish:
+            user: glassfish
+            group: glassfish
+            domain: domain1
+            logformat: ulf
+            adminuser: admin
+            adminpass: notPr0d
+            siteurl:
+            timeout: 180
+            request_timeout: 1800
+            root: /usr/local
+            dir: glassfish4
+            zipurl: http://download.oracle.com/glassfish/4.1/release/glassfish-4.1.zip
+            zipchecksum: sha256:3edc5fc72b8be241a53eae83c22f274479d70e15bdfba7ba2302da5260f23e9d
+          google_analytics_key:
+          jacoco:
+            enabled: false
+            home: /tmp/jacoco
+            version: 0.8.1
+          maxfileuploadsizeinbytes:
+          memheap: 2048
+          previewers:
+            enabled: true
+          sampledata:
+            enabled: false
+            dir: /tmp/sampledata
+            repo: https://github.com/IQSS/dataverse-sample-data.git
+            branch: master
+            venv: /tmp/sampledata/venv
+          custom_sampledata:
+            enabled: false
+            custom_sampledir: "{{ playbook_dir }}/custom_sampledata"
+            custom_sampledatasets: "{{ playbook_dir }}/custom_sampledata/datasets"
+            custom_sampledataverses: "{{ playbook_dir }}/custom_sampledata/dataverses"
+            custom_sampleusers: "{{ playbook_dir }}/custom_sampledata/users"
+            custom_samplefiles: "{{ playbook_dir }}/custom_sampledata/files"
+          service_email: noreply@dataverse.yourinstitution.edu
+          smtp: localhost # or the FQDN of your organization's SMTP relay
+          solr:
+            group: solr
+            root: /usr/local/solr
+            user: solr
+            version: 7.7.2
+            checksum: sha256:eb8ee4038f25364328355de3338e46961093e39166c9bcc28b5915ae491320df
+            listen: 127.0.0.1
+          srcdir: /tmp/dataverse
+          thumbnails: true
+          unittests:
+            enabled: false
+            argument: '-DcompilerArgument=-Xlint:unchecked test -P all-unit-tests'
+          usermgmtkey: burrito
+          version: '4.20'
+verifier:
+  name: ansible
