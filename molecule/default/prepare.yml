@@ -1,0 +1,10 @@
+---
+- name: prepare
+  hosts: all
+  become: yes
+  tasks:
+    - name: enable SELinux
+      selinux:
+        policy: targeted
+        state: enforcing
+      when: ansible_os_family == "RedHat"

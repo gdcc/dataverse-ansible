@@ -1,0 +1,13 @@
+---
+- name: Verify
+  hosts: all
+  tasks:
+  - name: try to access Dataverse homepage
+    uri:
+      url: 'http://localhost/dataverse.xhtml'
+    register: get_dataverse_homepage_result
+    ignore_errors: yes
+
+  - name: 'dataverse is up'
+    assert:
+      that: '{{ get_dataverse_homepage_result.status == 200  }}'

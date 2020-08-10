@@ -1,0 +1,7 @@
+---
+- name: converge
+  hosts: all
+  become: yes
+  roles:
+    - dataverse-ansible
+
