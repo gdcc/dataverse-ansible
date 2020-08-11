@@ -88,8 +88,9 @@ provisioner:
             user: counter
             year_month: "2018-05"
           custom_metadata_blocks:
-            enabled: false
-            urls: []
+            enabled: true
+            urls:
+              - https://github.com/IQSS/dataverse/files/3744336/codemeta.tsv.txt
           default:
             config:
           demo: false
