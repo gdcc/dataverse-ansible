@@ -53,7 +53,7 @@
     method: POST
     headers:
       Content-type: 'text/tab-separated-values'
-    src: '/tmp/dataverse/custom_metadata_blocks/{{ item }}'
+    src: '{{ item.path }}'
     remote_src: yes
   loop: '{{ custom_metadata_block_list.files }}'
   when: dataverse.custom_metadata_blocks.enabled == True
