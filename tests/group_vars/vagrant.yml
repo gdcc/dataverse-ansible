@@ -82,6 +82,7 @@ dataverse:
   doi:
     authority: "10.5072"
     baseurl: "https://mds.test.datacite.org/"
+    dataciterestapiurl: "https://api.test.datacite.org"
     mdcbaseurl: "https://api.test.datacite.org/"
     username: "test.account"
     password: "not.my.password"

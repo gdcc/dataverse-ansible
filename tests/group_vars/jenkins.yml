@@ -84,6 +84,7 @@ dataverse:
     provider: FAKE
     shoulder: "FK2/"
     mdcbaseurl: "https://api.test.datacite.org/"
+    dataciterestapiurl: "https://api.test.datacite.org"
   externaltools:
     datacurationtool:
       enabled: true
