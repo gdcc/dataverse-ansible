@@ -18,7 +18,3 @@
     cacheable: true
   with_items:
   - '{{ queryresult_list }}'
-
-- name: print API token
-  debug:
-    msg: "initial API token is {{ api_token }}"
