@@ -103,6 +103,12 @@
   when: dataverse.filesdirs[0] is defined and
         dataverse.glassfish.zipurl is not match(".*glassfish-4.1.zip")
 
+- name: patch as-setup.sh so it doesn't hardcode siteUrl
+  lineinfile:
+    path: /tmp/dvinstall/as-setup.sh
+    regexp: '(.*)-Ddataverse.siteUrl(.*)'
+    line: '  ./asadmin $ASADMIN_OPTS create-jvm-options "\-Ddataverse.siteUrl={{ siteUrl }}"'
+
 - name: fire off installer
   shell: '/usr/bin/python /tmp/dvinstall/install.py -f --config_file=default.config --noninteractive > /tmp/dvinstall/install.out 2>&1'
   become: yes
