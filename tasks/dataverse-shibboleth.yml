@@ -82,3 +82,41 @@
     - shib2
   when: ansible_os_family == "Debian"    ## CHECKME -- does this need to be Debian-specific?
   notify: enable and restart apache
+
+# /etc/httpd/conf.d/shib.conf also loads the module, but is not guaranteed to do so before http.proxy.conf checks the mod_shib variable
+- name: load shib module on RedHat
+  copy:
+    src: "00-shib.conf"
+    dest: "/etc/httpd/conf.modules.d/"
+  when: ansible_os_family == "RedHat"
+  notify: enable and restart apache
+
+- set_fact:
+    selinux_enabled: "{{ ansible_selinux is defined and ansible_selinux != False and ansible_selinux.status == 'enabled' }}"
+
+- name: upload mod_shib-to-shibd.te and installer
+  copy:
+    src: '{{ item.file }}'
+    dest: '/tmp'
+    mode: '{{ item.mode }}'
+  with_items:
+    - { file: mod_shib-to-shibd.te, mode: '0400' }
+    - { file: install-mod_shib-to-shibd.sh, mode: '0700' }
+  when: selinux_enabled
+
+- name: install the policy to allow mod_shib to talk to shibd
+  command:
+    cmd: '/tmp/install-mod_shib-to-shibd.sh'
+    chdir: '/tmp'
+  when: selinux_enabled
+
+- name: remove policy files after install
+  file:
+    path: '/tmp/{{ item }}'
+    state: absent
+  with_items:
+    - install-mod_shib-to-shibd.sh
+    - mod_shib-to-shibd.te
+    - mod_shib-to-shibd.pp
+    - mod_shib-to-shibd.mod
+  when: selinux_enabled
