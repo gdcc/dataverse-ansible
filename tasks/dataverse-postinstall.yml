@@ -71,9 +71,11 @@
 #    PGPASSWORD: "{{ db.postgres.pass }}"
 
 # integration tests require these
+# createsequence.sql went AWOL. wedge in local copy.
 - name: support sequential identifiers fetch current SQL script
-  get_url:
-    url: http://guides.dataverse.org/en/{{ dataverse.version if dataverse_branch == 'release' else 'latest' }}/_downloads/createsequence.sql
+  copy:
+    #url: http://guides.dataverse.org/en/{{ dataverse.version if dataverse_branch == 'release' else 'latest' }}/_downloads/createsequence.sql
+    src: createsequence.sql
     dest: /tmp/createsequence.sql
     mode: '0644'
 
