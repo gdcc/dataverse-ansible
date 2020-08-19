@@ -53,7 +53,8 @@
     method: POST
     headers:
       Content-type: 'text/tab-separated-values'
-    body: "{{ lookup('file', item.path) }}"
+    src: '{{ item.path }}'
+    remote_src: yes
   loop: '{{ custom_metadata_block_list.files }}'
   when: dataverse.custom_metadata_blocks.enabled == True
 
@@ -70,9 +71,11 @@
 #    PGPASSWORD: "{{ db.postgres.pass }}"
 
 # integration tests require these
+# createsequence.sql went AWOL. wedge in local copy.
 - name: support sequential identifiers fetch current SQL script
-  get_url:
-    url: http://guides.dataverse.org/en/latest/_downloads/createsequence.sql
+  copy:
+    #url: http://guides.dataverse.org/en/{{ dataverse.version if dataverse_branch == 'release' else 'latest' }}/_downloads/createsequence.sql
+    src: createsequence.sql
     dest: /tmp/createsequence.sql
     mode: '0644'
 

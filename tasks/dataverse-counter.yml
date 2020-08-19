@@ -23,18 +23,19 @@
     remote_src: yes
     owner: "{{ dataverse.counter.user }}"
 
-- name: geo IP target dir must exist
-  file:
-    path: "/usr/local/counter-processor-{{ dataverse.counter.version }}/maxmind_geoip"
-    owner: "{{ dataverse.counter.user }}"
-    state:  directory
-    mode: 0755
+# geoIP is gone away
+#- name: geo IP target dir must exist
+#  file:
+#    path: "/usr/local/counter-processor-{{ dataverse.counter.version }}/maxmind_geoip"
+#    owner: "{{ dataverse.counter.user }}"
+#    state:  directory
+#    mode: 0755
 
-- name: download geo IP database
-  unarchive:
-    src: https://geolite.maxmind.com/download/geoip/database/GeoLite2-Country.tar.gz
-    dest: "/usr/local/counter-processor-{{ dataverse.counter.version }}/maxmind_geoip"
-    remote_src: yes
+#- name: download geo IP database
+#  unarchive:
+#    src: https://geolite.maxmind.com/download/geoip/database/GeoLite2-Country.tar.gz
+#    dest: "/usr/local/counter-processor-{{ dataverse.counter.version }}/maxmind_geoip"
+#    remote_src: yes
 
 - name: pip install requirements
   shell: "/usr/bin/python3.6 -m pip install -r /usr/local/counter-processor-{{ dataverse.counter.version }}/requirements.txt"

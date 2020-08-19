@@ -17,6 +17,10 @@
   set_fact:
     siteUrl: '{{ dataverse.payara.siteurl }}'
 
+- name: did it find siteUrl
+  debug:
+    msg: 'using siteUrl: {{ siteUrl }}'
+
 - name: if siteUrl not passed, use fqdn.
   set_fact:
     siteUrl: '{{ protocol }}://{{ ansible_fqdn }}'

@@ -1,0 +1,23 @@
+---
+- name: Verify
+  hosts: all
+  tasks:
+  - name: try to access Dataverse homepage
+    uri:
+      url: 'http://localhost/dataverse.xhtml'
+    register: get_dataverse_homepage_result
+    ignore_errors: yes
+
+  - name: 'dataverse is up'
+    assert:
+      that: '{{ get_dataverse_homepage_result.status == 200  }}'
+
+  - name: try to access the Shibboleth metadata
+    uri:
+      url: 'http://localhost/Shibboleth.sso/Metadata'
+    register: get_shib_metadata_result
+    ignore_errors: yes
+
+  - name: 'shib is running'
+    assert:
+      that: '{{ get_shib_metadata_result.status == 200  }}'

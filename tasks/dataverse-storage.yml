@@ -30,6 +30,7 @@
   fail:
     msg: "Storage type for default must be 'file' if dataverse.filesdirs is not empty."
   when:
+   - s3.enabled == false
    - default_dataverse_filestores_type.skipped is not defined
    - default_dataverse_filestores_type.stdout != ''
    - default_dataverse_filestores_type.stdout != 'file'

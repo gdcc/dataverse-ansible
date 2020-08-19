@@ -58,8 +58,8 @@ dataverse:
   copyright: "Your Institution"
   counter:
     enabled: false
-    geoipdir: maxmind_geoip
-    geoipfile: GeoLite2-Country.mmdb
+    #geoipdir: maxmind_geoip
+    #geoipfile: GeoLite2-Country.mmdb
     hub_api_token: set_me_in_secrets
     hub_base_url: "https://api.datacite.org"
     machines_url: "https://raw.githubusercontent.com/CDLUC3/Make-Data-Count/master/user-agents/lists/machine.txt"
@@ -68,7 +68,7 @@ dataverse:
     output_format: json
     platform: dash
     robots_url: "https://raw.githubusercontent.com/CDLUC3/Make-Data-Count/master/user-agents/lists/robot.txt"
-    version: "0.1"
+    version: "0.1.02"
     upload_to_hub: False
     user: counter
     year_month: "2018-05"
@@ -82,6 +82,7 @@ dataverse:
   doi:
     authority: "10.5072"
     baseurl: "https://mds.test.datacite.org/"
+    dataciterestapiurl: "https://api.test.datacite.org"
     mdcbaseurl: "https://api.test.datacite.org/"
     username: "testaccount"
     password: "notmypassword"

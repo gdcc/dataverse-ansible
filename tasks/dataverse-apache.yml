@@ -73,6 +73,10 @@
   when: ansible_os_family == "Debian" ## TODO where is this in RedHat? ## it would be nicer to use than the Listen statement at the start of the virtualhost
   notify: enable and restart apache
 
+- include: dataverse-apache-ssl.yml
+  when:
+    - letsencrypt.enabled == false
+
 - name: install unified http proxy config
   template:
     src: http.proxy.conf.j2
@@ -87,10 +91,6 @@
     - ansible_os_family == "RedHat"
     - apache.ssl.enabled
     - letsencrypt.enabled
-
-- include: dataverse-apache-ssl.yml
-  when:
-    - letsencrypt.enabled == false
 
 - name: install proxy error boilerplate
   copy: src=503.html dest="{{ apache_config_dir }}" owner=root group=root mode=0644
