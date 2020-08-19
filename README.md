@@ -10,6 +10,8 @@ Running the following commands as root should install the latest released versio
 	$ git clone https://github.com/GlobalDataverseCommunityConsortium/dataverse-ansible.git dataverse
 	$ ansible-playbook --connection=local -v -i dataverse/inventory dataverse/dataverse.pb -e dataverse/defaults/main.yml
 
+This is the 4.20 branch, so defaults/main.yml specifies a dataverse_branch of release (the production warfile) and a version of 4.20. Modify these settings if you like.
+
 ## Configuration
 
 Installation, customization, administration, and API documentation can be found in the [Dataverse 4 Guides](http://guides.dataverse.org/en/latest/).
