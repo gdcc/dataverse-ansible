@@ -60,7 +60,7 @@
 
 - name: get shibAuthProvider.json to host
   get_url:
-    url: http://guides.dataverse.org/en/latest/_static/installation/files/etc/shibboleth/shibAuthProvider.json
+    url: http://guides.dataverse.org/en/{{ dataverse.version if dataverse_branch == 'release' else 'latest' }}/_static/installation/files/etc/shibboleth/shibAuthProvider.json
     dest: /tmp/shibAuthProvider.json
   register: shibAuthProvider_json_download
 

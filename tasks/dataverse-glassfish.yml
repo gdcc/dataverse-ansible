@@ -62,7 +62,7 @@
 
 - name: get patched grizzly jar for glassfish-4.1
   get_url:
-    url: http://guides.dataverse.org/en/latest/_static/installation/files/issues/2180/grizzly-patch/glassfish-grizzly-extra-all.jar
+    url: http://guides.dataverse.org/en/{{ dataverse.version if dataverse_branch == 'release' else 'latest' }}/_static/installation/files/issues/2180/grizzly-patch/glassfish-grizzly-extra-all.jar
     dest: '{{ glassfish_dir }}/glassfish/modules'
     owner: root
     group: root
