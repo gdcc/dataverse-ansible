@@ -15,7 +15,7 @@
 
 - include: dataverse-required-variables.yml
   tags:
-   - glassfish
+   - payara
    - dataverse
    - storage
    - postinstall
@@ -59,11 +59,11 @@
 
 - include: dataverse-download.yml
   tags:
-  - glassfish
+  - payara
 
-- include: dataverse-glassfish.yml
+- include: payara.yml
   tags:
-  - glassfish
+  - payara
 
 - include: dataverse-get-release.yml
   tags:

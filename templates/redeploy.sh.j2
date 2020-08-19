@@ -1,6 +1,6 @@
 #!/bin/bash
 
-ASADMIN={{ dataverse.glassfish.root }}/{{ dataverse.glassfish.dir }}/bin/asadmin
+ASADMIN={{ dataverse.payara.root }}/{{ dataverse.payara.dir }}/bin/asadmin
 
 # update, build
 cd {{ dataverse.srcdir }}
@@ -8,16 +8,16 @@ cd {{ dataverse.srcdir }}
 /usr/bin/sudo /usr/bin/mvn package
 
 # undeploy
-CURRENT=`/usr/bin/sudo -u {{ dataverse.glassfish.user }} $ASADMIN list-applications -t | awk '{print $1}'`
-/usr/bin/sudo -u {{ dataverse.glassfish.user }} $ASADMIN undeploy $CURRENT
+CURRENT=`/usr/bin/sudo -u {{ dataverse.payara.user }} $ASADMIN list-applications -t | awk '{print $1}'`
+/usr/bin/sudo -u {{ dataverse.payara.user }} $ASADMIN undeploy $CURRENT
 /usr/bin/sleep 3
 
 # deploy
 /usr/bin/sudo /usr/bin/chmod 644 target/dataverse-*.war
-/usr/bin/sudo -u {{ dataverse.glassfish.user }} $ASADMIN deploy target/dataverse-*.war
+/usr/bin/sudo -u {{ dataverse.payara.user }} $ASADMIN deploy target/dataverse-*.war
 /usr/bin/sleep 3
 
 # restart
-/usr/bin/sudo -u {{ dataverse.glassfish.user }} $ASADMIN stop-domain
+/usr/bin/sudo -u {{ dataverse.payara.user }} $ASADMIN stop-domain
 /usr/bin/sleep 3
-/usr/bin/sudo -u {{ dataverse.glassfish.user }} $ASADMIN start-domain
+/usr/bin/sudo -u {{ dataverse.payara.user }} $ASADMIN start-domain

@@ -5,18 +5,18 @@
     msg: '##### GENERATE JACOCO REPORT #####'
 
 # write out jacoco_exec
-- include: restart_glassfish.yml
+- include: restart_payara.yml
 
 - name: ensure jacoco can write out report
   file:
     path: '{{ dataverse.srcdir }}/target/coverage-it'
     state: directory
-    owner: '{{ dataverse.glassfish.user }}'
-    group: '{{ dataverse.glassfish.group }}'
+    owner: '{{ dataverse.payara.user }}'
+    group: '{{ dataverse.payara.group }}'
     mode: '0755'
 
 - name: merge jacoco exec files
-  shell: 'java -jar {{ dataverse.jacoco.home }}/lib/jacococli.jar merge {{ glassfish_dir }}/glassfish/domains/{{ dataverse.glassfish.domain }}/config/jacoco.exec {{ dataverse.srcdir }}/target/jacoco.exec --destfile {{ dataverse.srcdir }}/target/jacoco_merged.exec'
+  shell: 'java -jar {{ dataverse.jacoco.home }}/lib/jacococli.jar merge {{ payara_dir }}/glassfish/domains/{{ dataverse.payara.domain }}/config/jacoco.exec {{ dataverse.srcdir }}/target/jacoco.exec --destfile {{ dataverse.srcdir }}/target/jacoco_merged.exec'
   args:
     chdir: '{{ dataverse.jacoco.home }}'
 

@@ -35,6 +35,6 @@
 - name: reload systemd
   systemd: daemon_reload=true
 
-- name: enable and restart glassfish
-  service: name=glassfish enabled=yes state=restarted
+- name: enable and restart payara
+  service: name=payara enabled=yes state=restarted
 
