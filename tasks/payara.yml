@@ -1,0 +1,150 @@
+---
+# dataverse/tasks/payara.yml
+
+- name: install payara
+  debug:
+    msg: '##### PAYARA #####'
+
+- name: payara_dir must exist
+  file: path={{ payara_dir }} state=directory
+        owner=root group=root mode=0755
+
+- name: bsdtar can unzip in smarter ways
+  yum:
+    name: bsdtar
+    state: latest
+
+- name: download payara zip
+  get_url:
+    url: '{{ dataverse.payara.zipurl }}'
+    checksum: '{{ dataverse.payara.zipchecksum }}'
+    dest: /tmp/payara.zip
+  register: payara_zip_download
+
+- name: unzip to payara root without name/version tld
+  shell: 'bsdtar --strip-components=1 -C {{ payara_dir }} -xf /tmp/payara.zip'
+  when: payara_zip_download.changed
+  notify: enable and restart payara
+
+- name: create payara service group
+  group: name={{ dataverse.payara.group }} state=present
+
+- name: create payara service account
+  user: name={{ dataverse.payara.user }} group={{ dataverse.payara.group }}
+
+- name: payara service account should own {{ dataverse.payara.domain }}
+  file: path={{ payara_dir }}/glassfish/domains/{{ dataverse.payara.domain }} owner={{ dataverse.payara.user }}
+        group={{ dataverse.payara.group }} state=directory recurse=yes
+
+- name: remove old weld jar included with glassfish-4.1
+  file:
+    name: '{{ payara_dir }}/glassfish/modules/weld-osgi-bundle.jar'
+    state: absent
+  when: dataverse.payara.zipurl is match(".*glassfish-4.1.zip")
+  notify: enable and restart payara
+
+- name: get patched weld jar for glassfish-4.1
+  get_url:
+    url: 'https://search.maven.org/remotecontent?filepath=org/jboss/weld/weld-osgi-bundle/2.2.10.Final/weld-osgi-bundle-2.2.10.Final-glassfish4.jar'
+    dest: '{{ payara_dir }}/glassfish/modules'
+    owner: root
+    group: root
+    mode: 0644
+  when: dataverse.payara.zipurl is match(".*glassfish-4.1.zip")
+  notify: enable and restart payara
+
+- name: remove old grizzly jar included with glassfish-4.1
+  file:
+    name: '{{ payara_dir }}/glassfish/modules/glassfish-grizzly-extra-all.jar'
+    state: absent
+  when: dataverse.payara.zipurl is match(".*glassfish-4.1.zip")
+  notify: enable and restart payara
+
+- name: get patched grizzly jar for glassfish-4.1
+  get_url:
+    url: http://guides.dataverse.org/en/latest/_static/installation/files/issues/2180/grizzly-patch/glassfish-grizzly-extra-all.jar
+    dest: '{{ payara_dir }}/glassfish/modules'
+    owner: root
+    group: root
+    mode: 0644
+  when: dataverse.payara.zipurl is match(".*glassfish-4.1.zip")
+  notify: enable and restart payara
+
+# python installer fails to place jdbc driver for whatever reason
+# and we want this configurable for testing updated drivers anyway
+- name: set jdbcurl
+  set_fact:
+   jdbc_url='{{ db.postgres.jdbcurl }}'
+
+- name: install custom jdbc driver
+  get_url:
+    url: '{{ db.postgres.jdbcurl }}'
+    dest: '{{ payara_dir }}/glassfish/lib/'
+  when: jdbc_url|default(None)
+
+- name: allow installer write access for release jdbc driver
+  file:
+    path: '{{ payara_dir }}/glassfish/lib'
+    state: directory
+    owner: '{{ dataverse.payara.user }}'
+  when: not jdbc_url|default(None)
+
+- name: install release jdbc driver
+  copy:
+    src: "{{ item }}"
+    dest: "{{ payara_dir }}/glassfish/lib/"
+    remote_src: true
+  when: not jdbc_url|default(None)
+  notify: enable and restart payara
+  with_fileglob: /tmp/dvinstall/pgdriver/postgresql-*.jar
+
+- name: increase resource limits for payara
+  blockinfile:
+    path: /etc/security/limits.conf
+    block: |
+      {{ item.user }} {{ item.type }} {{ item.descriptor }} {{ item.value }}
+    marker: '# {mark} ANSIBLE MANAGED BLOCK {{ item.user }} {{ item.type }} {{ item.descriptor }}'
+  with_items:
+    - { user: "{{ dataverse.payara.user }}", type: soft, descriptor: nproc, value: 65000 }
+    - { user: "{{ dataverse.payara.user }}", type: hard, descriptor: nproc, value: 65000 }
+    - { user: "{{ dataverse.payara.user }}", type: soft, descriptor: nofile, value: 65000 }
+    - { user: "{{ dataverse.payara.user }}", type: hard, descriptor: nofile, value: 65000 }
+  notify: enable and restart payara
+
+- name: install payara systemd conf file for RedHat / CentOS7
+  template: src=payara.service.j2 dest=/usr/lib/systemd/system/payara.service
+        owner=root group=root mode=0644
+  when: ansible_os_family == "RedHat"
+  notify: reload systemd
+
+- name: install payara systemd conf file for Debian
+  template: src=payara.service.j2 dest=/etc/systemd/system/payara.service
+        owner=root group=root mode=0644
+  when: ansible_os_family == "Debian"
+  notify: reload systemd
+
+- name: agent must be on payara classpath
+  copy:
+    src: '{{ dataverse.jacoco.home }}/lib/jacocoagent.jar'
+    dest: '{{ dataverse.payara.root }}/{{ dataverse.payara.dir }}/glassfish/lib/jacocoagent.jar'
+  when: dataverse.jacoco.enabled == true
+  notify: enable and restart payara
+
+- name: configure jacoco agent
+  lineinfile:
+    path: '{{ payara_dir }}/glassfish/domains/{{ dataverse.payara.domain }}/config/domain.xml'
+    line: '        <jvm-options>-Djavaagent:{{ dataverse.payara.root }}/{{ dataverse.payara.dir }}/glassfish/lib/jacocoagent.jar'
+    insertafter: 'dataverse.timerServer'
+  when: dataverse.jacoco.enabled == true
+  notify: enable and restart payara
+
+- name: install payara upstart script for older Debian/Ubuntu
+  template: src=payara.conf.j2 dest=/etc/init
+        owner=root group=root mode=0644
+  when:
+   - ansible_os_family == "Debian"
+   - ansible_distribution_major_version < 9
+  notify: enable and restart payara
+
+- name: flush hadlers to start payara and possibly reload systemd
+  meta: flush_handlers

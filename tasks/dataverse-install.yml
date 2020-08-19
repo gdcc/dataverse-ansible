@@ -27,7 +27,7 @@
     - installAppServer.py
     - installUtils.py
     - as-setup.sh
-  when: dataverse.glassfish.zipurl is not match(".*glassfish-4.1.zip")
+  when: dataverse.payara.zipurl is not match(".*glassfish-4.1.zip")
 
 - name: grab api setup scripts as well
   get_url:
@@ -39,7 +39,7 @@
     - setup-datasetfields.sh
     - setup-builtin-roles.sh
     - setup-identity-providers.sh
-  when: dataverse.glassfish.zipurl is not match(".*glassfish-4.1.zip")
+  when: dataverse.payara.zipurl is not match(".*glassfish-4.1.zip")
 
 - name: set dataverse adminpass in setup-all
   lineinfile:
@@ -56,13 +56,13 @@
     - { regexp: 'rserve_password_alias', line: '  ./asadmin $ASADMIN_OPTS create-jvm-options "\-Ddataverse.rserve.password=${RSERVE_PASS}"' }
     - { regexp: 'doi_password_alias', line: '  ./asadmin $ASADMIN_OPTS create-jvm-options "\-Ddoi.password=${DOI_PASSWORD}"' }
     - { regexp: 'db_password_alias', line: '  ./asadmin $ASADMIN_OPTS set "resources.jdbc-connection-pool.dvnDbPool.property.password=${DB_PASS}"' }
-  when: dataverse.glassfish.zipurl is not match(".*glassfish-4.1.zip")
+  when: dataverse.payara.zipurl is not match(".*glassfish-4.1.zip")
 
 - name: ensure as-setup.sh is executable
   file:
     path: /tmp/dvinstall/as-setup.sh
     mode: 0755
-  when: dataverse.glassfish.zipurl is not match(".*glassfish-4.1.zip")
+  when: dataverse.payara.zipurl is not match(".*glassfish-4.1.zip")
 
 - name: register default_config
   set_fact:
@@ -81,8 +81,8 @@
   copy:
     src: default.config
     dest: /tmp/dvinstall/default.config
-    owner: '{{ dataverse.glassfish.user }}'
-    group: '{{ dataverse.glassfish.group }}'
+    owner: '{{ dataverse.payara.user }}'
+    group: '{{ dataverse.payara.group }}'
     mode: 0600
   when: default_config|length > 0
 
@@ -93,7 +93,7 @@
 - name: allow installer write access
   file:
     path: /tmp/dvinstall
-    owner: '{{ dataverse.glassfish.user }}'
+    owner: '{{ dataverse.payara.user }}'
 
 - name: patch installAppServer.py so that FILES_DIR points to the correct location
   lineinfile:
@@ -101,19 +101,19 @@
     regexp: "^   os.environ..FILES_DIR.. = "
     line: "   os.environ['FILES_DIR'] = \"{{ dataverse.filesdirs[0].path }}\""
   when: dataverse.filesdirs[0] is defined and
-        dataverse.glassfish.zipurl is not match(".*glassfish-4.1.zip")
+        dataverse.payara.zipurl is not match(".*glassfish-4.1.zip")
 
 - name: patch as-setup.sh so it doesn't hardcode siteUrl
   lineinfile:
     path: /tmp/dvinstall/as-setup.sh
     regexp: '(.*)-Ddataverse.siteUrl(.*)'
     line: '  ./asadmin $ASADMIN_OPTS create-jvm-options "\-Ddataverse.siteUrl={{ siteUrl }}"'
-  when: dataverse.glassfish.zipurl is not match(".*glassfish-4.1.zip")
+  when: dataverse.payara.zipurl is not match(".*glassfish-4.1.zip")
 
 - name: fire off installer
   shell: '/usr/bin/python /tmp/dvinstall/install.py -f --config_file=default.config --noninteractive > /tmp/dvinstall/install.out 2>&1'
   become: yes
-  become_user: '{{ dataverse.glassfish.user }}'
+  become_user: '{{ dataverse.payara.user }}'
   args:
     chdir: /tmp/dvinstall
 
@@ -126,6 +126,6 @@
 
 - name: set logging format
   become: yes
-  become_user: "{{ dataverse.glassfish.user }}"
-  shell: "{{ glassfish_dir }}/bin/asadmin set-log-file-format {{ dataverse.glassfish.logformat }}"
+  become_user: "{{ dataverse.payara.user }}"
+  shell: "{{ payara_dir }}/bin/asadmin set-log-file-format {{ dataverse.payara.logformat }}"
 

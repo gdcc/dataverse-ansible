@@ -15,7 +15,7 @@
 
 - name: ansible tasks like variables, not group_vars
   set_fact:
-    siteUrl: '{{ dataverse.glassfish.siteurl }}'
+    siteUrl: '{{ dataverse.payara.siteurl }}'
 
 - name: did it find siteUrl
   debug:

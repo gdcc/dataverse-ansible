@@ -53,4 +53,4 @@
   uri:
     url: 'http://localhost:8080/api/admin/settings/:NavbarGuidesUrl'
     method: PUT
-    body: '{{ dataverse.glassfish.siteurl }}/en/{{ dataverse_branch }}/user'
+    body: '{{ dataverse.payara.siteurl }}/en/{{ dataverse_branch }}/user'

@@ -1,0 +1,11 @@
+---
+
+- name: stop payara manually
+  become: yes
+  become_user: "{{ dataverse.payara.user }}"
+  shell: "{{ payara_dir }}/bin/asadmin stop-domain {{ dataverse.payara.domain }}"
+
+- name: start payara manually
+  become: yes
+  become_user: "{{ dataverse.payara.user }}"
+  shell: "{{ payara_dir }}/bin/asadmin start-domain {{ dataverse.payara.domain }}"

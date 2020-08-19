@@ -2,6 +2,6 @@
 
 ### calculate variables required by multiple tags
 
-- name: construct glassfish_dir
+- name: construct payara_dir
   set_fact:
-    glassfish_dir: '{{ dataverse.glassfish.root }}/{{ dataverse.glassfish.dir }}'
+    payara_dir: '{{ dataverse.payara.root }}/{{ dataverse.payara.dir }}'

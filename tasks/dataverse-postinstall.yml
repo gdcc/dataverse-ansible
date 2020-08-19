@@ -2,28 +2,28 @@
 
 # dataverse/tasks/dataverse-postinstall.yml
 
-- name: postinstall glassfish configuration
+- name: postinstall payara configuration
   debug:
-    msg: '##### POST-INSTALL GLASSFISH CONFIGURATION #####'
+    msg: '##### POST-INSTALL PAYARA CONFIGURATION #####'
 
 - name: set siteurl
   become: yes
-  become_user: "{{ dataverse.glassfish.user }}"
-  shell: '{{ glassfish_dir}}/bin/asadmin create-jvm-options "-Ddataverse.siteUrl={{ siteUrl_escaped }}"'
+  become_user: "{{ dataverse.payara.user }}"
+  shell: '{{ payara_dir}}/bin/asadmin create-jvm-options "-Ddataverse.siteUrl={{ siteUrl_escaped }}"'
 
-- name: stop glassfish manually (systemd gums up the works)
+- name: stop payara manually (systemd gums up the works)
   become: yes
-  become_user: "{{ dataverse.glassfish.user }}"
-  shell: '{{ glassfish_dir }}/bin/asadmin stop-domain {{ dataverse.glassfish.domain }}'
+  become_user: "{{ dataverse.payara.user }}"
+  shell: '{{ payara_dir }}/bin/asadmin stop-domain {{ dataverse.payara.domain }}'
 
-- name: start glassfish with systemd
-  service: name=glassfish state=started
+- name: now start payara with systemd
+  service: name=payara state=started
 
-- name: wait for glassfish to become ready
+- name: wait for payara to become ready
   wait_for:
     port: 8009
     state: present
-    timeout: "{{ dataverse.glassfish.timeout }}"
+    timeout: "{{ dataverse.payara.timeout }}"
 
 # python installer does this now
 #- name: setup-all.sh kitchen sink configuration.
@@ -92,12 +92,12 @@
   
 - name: suppress grizzly ajp warnings
   become: yes
-  become_user: "{{ dataverse.glassfish.user }}"
-  shell: "{{ glassfish_dir }}/bin/asadmin set-log-levels org.glassfish.grizzly.http.server.util.RequestUtils=SEVERE"
+  become_user: "{{ dataverse.payara.user }}"
+  shell: "{{ payara_dir }}/bin/asadmin set-log-levels org.glassfish.grizzly.http.server.util.RequestUtils=SEVERE"
 
 - name: override some default settings
   become: yes
-  become_user: "{{ dataverse.glassfish.user }}"
+  become_user: "{{ dataverse.payara.user }}"
   shell: 'curl -X PUT -d "{{item.val}}" "{{ dataverse.api.location }}/admin/settings/{{item.prop}}"'
   with_items:
     - { prop: ":GoogleAnalyticsCode", val: "{{ dataverse.google_analytics_key }}", desc: "key for Google Analytics"}
