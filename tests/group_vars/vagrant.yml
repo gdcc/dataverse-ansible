@@ -2,7 +2,7 @@
 # dataverse/tests/group_vars/vagrant.yml
 
 # un-nested so we can pass them at the CLI
-dataverse_branch: develop
+dataverse_branch: release
 dataverse_repo: https://github.com/IQSS/dataverse.git
 
 apache:
@@ -158,7 +158,7 @@ dataverse:
     enabled: false
     argument: '-DcompilerArgument=-Xlint:unchecked test -P all-unit-tests'
   usermgmtkey: burrito
-  version: '4.20'
+  version: '5.0'
 
 build_guides: false
 
