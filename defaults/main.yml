@@ -115,7 +115,7 @@ dataverse:
     adminuser: admin
     adminpass: notPr0d
     siteurl:
-    timeout: 180
+    launch_timeout: 180
     request_timeout: 1800
     root: /usr/local
     dir: payara5

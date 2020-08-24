@@ -114,7 +114,7 @@ dataverse:
     logformat: ulf
     adminuser: admin
     adminpass: notPr0d
-    timeout: 180
+    launch_timeout: 180
     request_timeout: 1800
     siteurl: 
     root: /usr/local

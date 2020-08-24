@@ -23,7 +23,7 @@
   wait_for:
     port: 8009
     state: present
-    timeout: "{{ dataverse.payara.timeout }}"
+    timeout: "{{ dataverse.payara.launch_timeout }}"
 
 # python installer does this now
 #- name: setup-all.sh kitchen sink configuration.
