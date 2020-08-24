@@ -66,10 +66,12 @@
 - name: escape custom endpoint url colons
   set_fact: "custom_endpoint_escaped={{ s3.custom_endpoint_url | regex_replace (':','\\:') }}"
   when: s3.custom_endpoint_url | length > 0
+  ignore_errors: yes
 
 - name: set s3 custom endpoint url
   shell: '{{ payara_dir}}/bin/asadmin create-jvm-options "-Ddataverse.files.s3.custom-endpoint-url={{ custom_endpoint_escaped }}"'
   when: s3.custom_endpoint_url | length > 0
+  ignore_errors: yes
 
 - name: set s3 path style access
   shell: '{{ payara_dir}}/bin/asadmin create-jvm-options "-Ddataverse.files.s3.path-style-access={{ s3.path_style_access }}"'
