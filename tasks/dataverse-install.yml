@@ -124,8 +124,9 @@
 #    mode: 0600
 #  ignore_errors: yes
 
+# this will fail if not run on localhost; it's only a logging format.
 - name: set logging format
   become: yes
   become_user: "{{ dataverse.payara.user }}"
   shell: "{{ payara_dir }}/bin/asadmin set-log-file-format {{ dataverse.payara.logformat }}"
-
+  ignore_errors: yes
