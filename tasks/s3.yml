@@ -55,6 +55,28 @@
 
 # optional s3 settings
 
+- name: "place s3_cors.json template"
+  template:
+    src: s3_cors.json.j2
+    dest: '~{{ dataverse.payara.user }}/s3_cors.json'
+    owner: '{{ dataverse.payara.user }}'
+    group: '{{ dataverse.payara.group }}'
+    mode: 0644
+  when: s3.download_redirect == true or
+    s3.upload_redirect == true
+
+- name: enable CORS on S3 bucket
+  shell:
+    'aws s3api put-bucket-cors --bucket {{ s3.bucket_name }} --cors-configuration file://~{{ dataverse.payara.user }}/s3_cors.json'
+  args:
+    executable: /bin/bash
+  become: yes
+  become_user: '{{ dataverse.payara.user }}'
+  environment:
+    PATH: "{{ lookup('env', 'PATH') }}:/usr/local/bin"
+  when: s3.download_redirect == true or
+    s3.upload_redirect == true
+
 - name: set s3 direct download
   shell: '{{ payara_dir}}/bin/asadmin create-jvm-options "-Ddataverse.files.s3.download-redirect={{ s3.download_redirect }}"'
   when: s3.download_redirect == true
