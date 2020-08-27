@@ -85,15 +85,8 @@
   shell: '{{ payara_dir}}/bin/asadmin create-jvm-options "-Ddataverse.files.s3.upload-redirect={{ s3.upload_redirect }}"'
   when: s3.upload_redirect == true
 
-- name: escape custom endpoint url colons
-  set_fact: "custom_endpoint_escaped={{ s3.custom_endpoint_url | regex_replace (':','\\:') }}"
-  when: s3.custom_endpoint_url | length > 0
-  ignore_errors: yes
-
-- name: set s3 custom endpoint url
-  shell: '{{ payara_dir}}/bin/asadmin create-jvm-options "-Ddataverse.files.s3.custom-endpoint-url={{ custom_endpoint_escaped }}"'
-  when: s3.custom_endpoint_url | length > 0
-  ignore_errors: yes
+- include: s3_custom_endpoint_url.yml
+  when: s3.custum_endpoint_url is defined
 
 - name: set s3 path style access
   shell: '{{ payara_dir}}/bin/asadmin create-jvm-options "-Ddataverse.files.s3.path-style-access={{ s3.path_style_access }}"'
