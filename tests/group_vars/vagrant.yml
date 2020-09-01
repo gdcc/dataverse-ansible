@@ -78,6 +78,7 @@ dataverse:
       - https://github.com/IQSS/dataverse/files/3744336/codemeta.tsv.txt
   default:
     config:
+    storage_id: s3
   demo: false
   doi:
     authority: "10.5072"
