@@ -7,16 +7,26 @@
 - name: flushing handlers to start payara if needed
   meta: flush_handlers
 
-- name: get default dataverse storage-driver-id
+- name: get current dataverse storage-driver-id
   shell: "{{ payara_dir }}/bin/asadmin list-jvm-options | grep dataverse.files.storage-driver-id | sed 's/.*=//'"
   register: dataverse_filestores_storage_driver_id
   changed_when: false
 
-- name: calculate default storage-driver-id
+# default storage-driver-id is a group_var now
+#- name: calculate default storage-driver-id
+#  set_fact:
+#    default_storage_driver_id: "{{ ((dataverse_filestores_storage_driver_id.stdout | trim) == '') |
+#                                   ternary(dataverse.filesdirs[0].label,dataverse_filestores_storage_driver_id.stdout) }}"
+#    to_delete_config_lines: []
+
+# don't delete other storage drivers, as dataverse supports multiple now.
+#- name: set to_delete_config_lines
+#  set_fact:
+#    to_delete_config_lines: []
+
+- name: register default storage-driver-id
   set_fact:
-    default_storage_driver_id: "{{ ((dataverse_filestores_storage_driver_id.stdout | trim) == '') |
-                                   ternary(dataverse.filesdirs[0].label,dataverse_filestores_storage_driver_id.stdout) }}"
-    to_delete_config_lines: []
+    default_storage_driver_id: '{{ dataverse.default.storage_id }}'
 
 - name: get dataverse storage type for '{{ default_storage_driver_id }}'
   shell: "{{ payara_dir }}/bin/asadmin list-jvm-options | grep dataverse.files.{{ default_storage_driver_id }}.type | sed 's/.*=//'"
@@ -35,14 +45,19 @@
    - default_dataverse_filestores_type.stdout != ''
    - default_dataverse_filestores_type.stdout != 'file'
 
-- name: calculate whether to delete storage-driver-id
-  set_fact:
-    to_delete_config_lines: "{{ (default_storage_driver_id != dataverse.filesdirs[0].label) |
-                                ternary(to_delete_config_lines+[ '-Ddataverse.files.storage-driver-id=' + default_storage_driver_id ],
-                                        to_delete_config_lines ) }}"
+# don't delete storage drivers, as dataverse supports multiple now.
+#- name: calculate whether to delete storage-driver-id
+#  set_fact:
+#    to_delete_config_lines: "{{ (default_storage_driver_id != dataverse.filesdirs[0].label) |
+#                                ternary(to_delete_config_lines+[ '-Ddataverse.files.storage-driver-id=' + default_storage_driver_id ],
+#                                        to_delete_config_lines ) }}"
+
+- name: remove previous storage-driver-id if necessary
+  command: "{{ payara_dir }}/bin/asadmin delete-jvm-options \"-Ddataverse.files.storage-driver-id={{ dataverse.filesdirs[0].label }}\""
+  when: default_storage_driver_id != dataverse.filesdirs[0].label
 
 - name: set default storage-driver-id if not set or changed
-  command: "{{ payara_dir }}/bin/asadmin create-jvm-options \"-Ddataverse.files.storage-driver-id={{ dataverse.filesdirs[0].label }}\""
+  command: "{{ payara_dir }}/bin/asadmin create-jvm-options \"-Ddataverse.files.storage-driver-id={{ dataverse.default.storage_id }}\""
   when: dataverse_filestores_storage_driver_id.stdout != dataverse.filesdirs[0].label
 
 - name: get default dataverse storage directory
@@ -50,14 +65,13 @@
   register: default_dataverse_filestores_directory
   changed_when: false
 
-- name: calculate whether to delete default dataverse storage directory
-  set_fact:
-    to_delete_config_lines: "{{
-           ( (default_dataverse_filestores_directory.stdout | trim) != '' and
-             default_dataverse_filestores_directory.stdout != dataverse.filesdirs[0].path) |
-           ternary(to_delete_config_lines+[ ('-Ddataverse.files.directory=' + (default_dataverse_filestores_directory.stdout)) ],
-                   to_delete_config_lines) }}"
-
+#- name: calculate whether to delete default dataverse storage directory
+#  set_fact:
+#    to_delete_config_lines: "{{
+#           ( (default_dataverse_filestores_directory.stdout | trim) != '' and
+#             default_dataverse_filestores_directory.stdout != dataverse.filesdirs[0].path) |
+#           ternary(to_delete_config_lines+[ ('-Ddataverse.files.directory=' + (default_dataverse_filestores_directory.stdout)) ],
+#                   to_delete_config_lines) }}"
 
 - name: set default dataverse storage directory if not set or changed
   command: "{{ payara_dir }}/bin/asadmin create-jvm-options \"-Ddataverse.files.directory={{ dataverse.filesdirs[0].path }}\""
@@ -137,15 +151,16 @@
                                 [ '-Ddataverse.files.'+item+'.label='+item ] }}"
   with_items: "{{ dataverse_filestores_labels_to_delete }}"
 
-- name: calculate required changes to dataverse_filestore type entries
-  set_fact:
-    to_delete_config_lines: "{{ (dataverse_filestores_types_onserver[item]=='file' and
-                                 dataverse_defined_filestores_labels_dict[item] is not defined) |
-                                ternary(to_delete_config_lines +
-                                            [ '-Ddataverse.files.' + item + '.type=' + dataverse_filestores_types_onserver[item] ],
-                                        to_delete_config_lines )
-                             }}"
-  with_items: "{{ dataverse_filestores_typelabels_onserver }}"
+# don't delete filestores. dataverse supports multiple now.
+#- name: calculate required changes to dataverse_filestore type entries
+#  set_fact:
+#    to_delete_config_lines: "{{ (dataverse_filestores_types_onserver[item]=='file' and
+#                                 dataverse_defined_filestores_labels_dict[item] is not defined) |
+#                                ternary(to_delete_config_lines +
+#                                            [ '-Ddataverse.files.' + item + '.type=' + dataverse_filestores_types_onserver[item] ],
+#                                        to_delete_config_lines )
+#                             }}"
+#  with_items: "{{ dataverse_filestores_typelabels_onserver }}"
 
 - name: calculate required changes to dataverse_filestore type entries
   set_fact:
@@ -160,9 +175,9 @@
   vars:
     dataverse_filestores_type_to_create: []
 
-- name: delete storage config options
-  command: '{{ payara_dir }}/bin/asadmin delete-jvm-options "{{ item }}"'
-  with_items: "{{ to_delete_config_lines }}"
+#- name: delete storage config options
+#  command: '{{ payara_dir }}/bin/asadmin delete-jvm-options "{{ item }}"'
+#  with_items: "{{ to_delete_config_lines }}"
 
 #- name: delete all settings in domain.xml as may create double entries on restart
 #  lineinfile:
