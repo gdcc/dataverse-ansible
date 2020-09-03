@@ -54,11 +54,12 @@
 
 - name: remove previous storage-driver-id if necessary
   command: "{{ payara_dir }}/bin/asadmin delete-jvm-options \"-Ddataverse.files.storage-driver-id={{ dataverse.filesdirs[0].label }}\""
-  when: default_storage_driver_id != dataverse.filesdirs[0].label
+  when: default_storage_driver_id != dataverse_filestores_storage_driver_id
 
 - name: set default storage-driver-id if not set or changed
   command: "{{ payara_dir }}/bin/asadmin create-jvm-options \"-Ddataverse.files.storage-driver-id={{ dataverse.default.storage_id }}\""
-  when: dataverse_filestores_storage_driver_id.stdout != dataverse.filesdirs[0].label
+  when: default_storage_driver_id != dataverse_filestores_storage_driver_id
+  #when: dataverse_filestores_storage_driver_id.stdout != dataverse.filesdirs[0].label
 
 - name: get default dataverse storage directory
   shell: "{{ payara_dir }}/bin/asadmin list-jvm-options | grep dataverse.files.directory | sed 's/.*=//'"
