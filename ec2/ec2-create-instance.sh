@@ -15,20 +15,21 @@ VERBOSE_ARG=""
 AWS_AMI_DEFAULT='ami-01ca03df4a6012157'
 
 usage() {
-  echo "Usage: $0 -b <branch> -r <repo> -p <pem_dir> -g <group_vars> -a <dataverse-ansible branch> -i aws_image -s aws_size -t aws_tag -l local_log_path -d -v" 1>&2
+  echo "Usage: $0 -b <branch> -r <repo> -p <pem_dir> -g <group_vars> -a <dataverse-ansible branch> -i aws_image -s aws_size -t aws_tag -f aws_security group -l local_log_path -d -v" 1>&2
   echo "default branch is develop"
   echo "default repo is https://github.com/IQSS/dataverse"
   echo "default .pem location is ${HOME}"
   echo "example group_vars may be retrieved from https://raw.githubusercontent.com/GlobalDataverseCommunityConsortium/dataverse-ansible/master/defaults/main.yml"
   echo "default AWS AMI ID is $AWS_AMI_DEFAULT, find the full list at https://wiki.centos.org/Cloud/AWS"
   echo "default AWS instance size is t3a.large"
+  echo "default AWS security group is dataverse-sg"
   echo "local log path will rsync Payara, Jacoco, Maven and other logs back to the specified path"
   echo "-d will destroy ("terminate") the AWS instance once testing and reporting completes"
   echo "-v increases Ansible output verbosity"
   exit 1
 }
 
-while getopts ":a:r:b:g:p:i:s:t:l:dv" o; do
+while getopts ":a:r:b:g:p:i:s:t:f:l:dv" o; do
   case "${o}" in
   a)
     DA_BRANCH=${OPTARG}
@@ -53,6 +54,9 @@ while getopts ":a:r:b:g:p:i:s:t:l:dv" o; do
     ;;
   t)
     TAG=${OPTARG}
+    ;;
+  f)
+    AWS_SG=${OPTARG}
     ;;
   l)
     LOCAL_LOG_PATH=${OPTARG}
@@ -124,6 +128,11 @@ if [ ! -z "$TAG" ]; then
    echo "using tag $TAG"
 fi
 
+if [ -z "$AWS_SG" ]; then
+   AWS_SG="dataverse-sg"
+fi
+echo "using $AWS_SG security group"
+
 # default to dataverse-ansible/master
 if [ -z "$DA_BRANCH" ]; then
    DA_BRANCH="master"
@@ -154,15 +163,14 @@ if [ -z "$GRPVRS" ]; then
    fi
 fi
 
-SECURITY_GROUP='dataverse-sg'
-GROUP_CHECK=$(aws ec2 describe-security-groups --group-name $SECURITY_GROUP)
+GROUP_CHECK=$(aws ec2 describe-security-groups --group-name $AWS_SG)
 if [[ "$?" -ne 0 ]]; then
-  echo "Creating security group \"$SECURITY_GROUP\"."
-  aws ec2 create-security-group --group-name $SECURITY_GROUP --description "security group for Dataverse"
-  aws ec2 authorize-security-group-ingress --group-name $SECURITY_GROUP --protocol tcp --port 22 --cidr 0.0.0.0/0
-  aws ec2 authorize-security-group-ingress --group-name $SECURITY_GROUP --protocol tcp --port 80 --cidr 0.0.0.0/0
-  aws ec2 authorize-security-group-ingress --group-name $SECURITY_GROUP --protocol tcp --port 443 --cidr 0.0.0.0/0
-  aws ec2 authorize-security-group-ingress --group-name $SECURITY_GROUP --protocol tcp --port 8080 --cidr 0.0.0.0/0
+  echo "Creating security group \"$AWS_SG\"."
+  aws ec2 create-security-group --group-name $AWS_SG --description "security group for Dataverse"
+  aws ec2 authorize-security-group-ingress --group-name $AWS_SG --protocol tcp --port 22 --cidr 0.0.0.0/0
+  aws ec2 authorize-security-group-ingress --group-name $AWS_SG --protocol tcp --port 80 --cidr 0.0.0.0/0
+  aws ec2 authorize-security-group-ingress --group-name $AWS_SG --protocol tcp --port 443 --cidr 0.0.0.0/0
+  aws ec2 authorize-security-group-ingress --group-name $AWS_SG --protocol tcp --port 8080 --cidr 0.0.0.0/0
 fi
 
 RANDOM_STRING="$(uuidgen | cut -c-8)"
@@ -181,7 +189,7 @@ fi
 
 echo "Creating EC2 instance"
 # TODO: Add some error checking for "ec2 run-instances".
-INSTANCE_ID=$(aws ec2 run-instances --image-id $AMI_ID --security-groups $SECURITY_GROUP $TAGARG --count 1 --instance-type $SIZE --key-name $PEM_DIR/$KEY_NAME --query 'Instances[0].InstanceId' --block-device-mappings '[ { "DeviceName": "/dev/sda1", "Ebs": { "DeleteOnTermination": true } } ]' | tr -d \")
+INSTANCE_ID=$(aws ec2 run-instances --image-id $AMI_ID --security-groups $AWS_SG $TAGARG --count 1 --instance-type $SIZE --key-name $PEM_DIR/$KEY_NAME --query 'Instances[0].InstanceId' --block-device-mappings '[ { "DeviceName": "/dev/sda1", "Ebs": { "DeleteOnTermination": true } } ]' | tr -d \")
 echo "Instance ID: "$INSTANCE_ID
 
 DESTROY_CMD="aws ec2 terminate-instances --instance-ids $INSTANCE_ID"
