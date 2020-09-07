@@ -54,11 +54,12 @@
 
 - name: remove previous storage-driver-id if necessary
   command: "{{ payara_dir }}/bin/asadmin delete-jvm-options \"-Ddataverse.files.storage-driver-id={{ dataverse.filesdirs[0].label }}\""
-  when: default_storage_driver_id != dataverse.filesdirs[0].label
+  when: default_storage_driver_id != dataverse_filestores_storage_driver_id.stdout
 
 - name: set default storage-driver-id if not set or changed
   command: "{{ payara_dir }}/bin/asadmin create-jvm-options \"-Ddataverse.files.storage-driver-id={{ dataverse.default.storage_id }}\""
-  when: dataverse_filestores_storage_driver_id.stdout != dataverse.filesdirs[0].label
+  when: default_storage_driver_id != dataverse_filestores_storage_driver_id.stdout
+  #when: dataverse_filestores_storage_driver_id.stdout != dataverse.filesdirs[0].label
 
 - name: get default dataverse storage directory
   shell: "{{ payara_dir }}/bin/asadmin list-jvm-options | grep dataverse.files.directory | sed 's/.*=//'"
@@ -139,17 +140,18 @@
     dataverse_filestores_labels_to_delete: "{{ dataverse_filestores_labels.stdout_lines | difference(dataverse_defined_filestores_labels_list) }}"
     dataverse_filestores_labels_to_create: "{{ dataverse_defined_filestores_labels_list | difference(dataverse_filestores_labels.stdout_lines) }}"
 
-- name: calculate config lines to delete for filestores
-  set_fact:
-    to_delete_config_lines: "{{ to_delete_config_lines +
-                                [ '-Ddataverse.files.'+item.label+'.directory='+item.path ] }}"
-  with_items: "{{ dataverse_filestores_to_delete }}"
+# don't delete other configs
+#- name: calculate config lines to delete for filestores
+#  set_fact:
+#    to_delete_config_lines: "{{ to_delete_config_lines +
+#                                [ '-Ddataverse.files.'+item.label+'.directory='+item.path ] }}"
+#  with_items: "{{ dataverse_filestores_to_delete }}"
 
-- name: calculate config lines to delete for labels
-  set_fact:
-    to_delete_config_lines: "{{ to_delete_config_lines +
-                                [ '-Ddataverse.files.'+item+'.label='+item ] }}"
-  with_items: "{{ dataverse_filestores_labels_to_delete }}"
+#- name: calculate config lines to delete for labels
+#  set_fact:
+#    to_delete_config_lines: "{{ to_delete_config_lines +
+#                                [ '-Ddataverse.files.'+item+'.label='+item ] }}"
+#  with_items: "{{ dataverse_filestores_labels_to_delete }}"
 
 # don't delete filestores. dataverse supports multiple now.
 #- name: calculate required changes to dataverse_filestore type entries
