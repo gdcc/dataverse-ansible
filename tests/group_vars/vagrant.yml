@@ -36,7 +36,7 @@ dataverse:
     blocked_endpoints: "admin,test"
     blocked_policy: "localhost-only"
     location: "http://localhost:8080/api"
-    test_suite: false
+    test_suite: true
     # possible test values from https://github.com/IQSS/dataverse/blob/develop/conf/docker-aio/run-test-suite.sh#L11
     # beware DataversesIT and DatasetsIT at minimum must be run for any other tests to succeed. have fun.
     #tests: "DataversesIT,DatasetsIT,AdminIT"
@@ -78,7 +78,7 @@ dataverse:
       - https://github.com/IQSS/dataverse/files/3744336/codemeta.tsv.txt
   default:
     config:
-    storage_id: file
+    storage_id: s3
   demo: false
   doi:
     authority: "10.5072"
@@ -92,10 +92,10 @@ dataverse:
     shoulder: "FK2/"
   externaltools:
     datacurationtool:
-      enabled: false
+      enabled: true
       method: demo
     dataexplorer:
-      enabled: false
+      enabled: true
     wholetale:
       enabled: false
   ## The first item of 'filesdirs' is the default filestore
@@ -203,7 +203,7 @@ prometheus:
   user: prometheus
 
 rserve:
-  install: false
+  install: true
   host: localhost
   user: rserve
   group: rserve
