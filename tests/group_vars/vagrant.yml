@@ -36,7 +36,7 @@ dataverse:
     blocked_endpoints: "admin,test"
     blocked_policy: "localhost-only"
     location: "http://localhost:8080/api"
-    test_suite: true
+    test_suite: false
     # possible test values from https://github.com/IQSS/dataverse/blob/develop/conf/docker-aio/run-test-suite.sh#L11
     # beware DataversesIT and DatasetsIT at minimum must be run for any other tests to succeed. have fun.
     #tests: "DataversesIT,DatasetsIT,AdminIT"
@@ -78,7 +78,7 @@ dataverse:
       - https://github.com/IQSS/dataverse/files/3744336/codemeta.tsv.txt
   default:
     config:
-    storage_id: s3
+    storage_id: file
   demo: false
   doi:
     authority: "10.5072"
@@ -92,12 +92,12 @@ dataverse:
     shoulder: "FK2/"
   externaltools:
     datacurationtool:
-      enabled: true
+      enabled: false
       method: demo
     dataexplorer:
-      enabled: true
+      enabled: false
     wholetale:
-      enabled: true
+      enabled: false
   ## The first item of 'filesdirs' is the default filestore
   ## If you change the label, be prepared to change the SQL database if there are already files here
   ## It is better practice to add a new data store and then migrate to it later
@@ -117,7 +117,7 @@ dataverse:
     adminpass: notPr0d
     launch_timeout: 180
     request_timeout: 1800
-    siteurl: 
+    siteurl: http://0.0.0.0
     root: /usr/local
     dir: payara5
     zipurl: https://github.com/payara/Payara/releases/download/payara-server-5.2020.2/payara-5.2020.2.zip
@@ -131,6 +131,9 @@ dataverse:
   memheap: 1024
   previewers:
     enabled: true
+    on_same_server: true
+    zip_url: https://github.com/GlobalDataverseCommunityConsortium/dataverse-previewers/archive/1.1.zip
+    dir: /var/www/html
   sampledata:
     enabled: false
     dir: /tmp/sampledata
@@ -200,7 +203,7 @@ prometheus:
   user: prometheus
 
 rserve:
-  install: true
+  install: false
   host: localhost
   user: rserve
   group: rserve

@@ -4,11 +4,32 @@
   debug:
     msg: '##### DATAVERSE PREVIEWERS #####'
 
+- name: download and unzip dataverse previewers to apache server
+  unarchive:
+    src: '{{ dataverse.previewers.zip_url }}'
+    dest: '{{ dataverse.previewers.dir }}'
+    remote_src: yes
+    owner: root
+    group: root
+    mode: "u+x,g+x,o+x"
+  when: dataverse.previewers.on_same_server == true
+
+- name: rename dataverse previewers folder
+  shell: 'mv {{ dataverse.previewers.dir }}/dataverse-previewers-?.? {{ dataverse.previewers.dir }}/dataverse-previewers'
+  when: dataverse.previewers.on_same_server == true
+
 - name: upload dataverse-previewers.sh script
   copy:
     src: dataverse-previewers.sh
     dest: '{{ ansible_user_dir }}'
     mode: 0700
+
+- name: modify dataverse-previewers.sh script for local hosting previewers
+  replace:
+    path: '{{ ansible_user_dir }}/dataverse-previewers.sh'
+    regexp: 'https://globaldataversecommunityconsortium.github.io'
+    replace: '{{ dataverse.payara.siteurl }}'
+  when: dataverse.previewers.on_same_server == true
 
 - name: enable dataverse-previewers
   shell: '{{ ansible_user_dir }}/dataverse-previewers.sh'
