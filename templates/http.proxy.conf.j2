@@ -93,6 +93,11 @@ Listen 443 https
   ProxyPassMatch ^/schemaspy !
 {% endif %}
 
+{% if dataverse.previewers.on_same_server %}
+  # allow previewers
+  ProxyPassMatch ^/dataverse-previewers !
+{% endif %}
+
 {% if shibboleth.enabled %}
 
   <IfModule mod_shib>

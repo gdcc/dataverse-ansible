@@ -129,6 +129,9 @@ dataverse:
   memheap: 2048
   previewers:
     enabled: true
+    on_same_server: true
+    zip_url: https://github.com/GlobalDataverseCommunityConsortium/dataverse-previewers/archive/1.1.zip
+    dir: /var/www/html
   sampledata:
     enabled: true
     dir: /tmp/sampledata
