@@ -126,7 +126,7 @@ dataverse:
   maxfileuploadsizeinbytes:
   memheap: 4096
   previewers:
-    enabled: true
+    enabled: false
     on_same_server: true
     zip_url: https://github.com/GlobalDataverseCommunityConsortium/dataverse-previewers/archive/1.1.zip
     dir: /var/www/html
