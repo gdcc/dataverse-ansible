@@ -127,6 +127,8 @@ dataverse:
     version: 0.8.1
   maxfileuploadsizeinbytes:
   memheap: 2048
+  options:
+    tabularingestsizelimit: 
   previewers:
     enabled: true
     on_same_server: true
