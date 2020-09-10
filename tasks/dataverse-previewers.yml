@@ -11,11 +11,16 @@
     remote_src: yes
     owner: root
     group: root
-    mode: "u+x,g+x,o+x"
+    mode: "u=rwx,g=rx,o=rx"
+    exclude:
+      - '*examples*'
+      - '*README.md'
+      - '*LICENSE'
+      - '*gitignore'
   when: dataverse.previewers.on_same_server == true
 
 - name: rename dataverse previewers folder
-  shell: 'mv {{ dataverse.previewers.dir }}/dataverse-previewers-?.? {{ dataverse.previewers.dir }}/dataverse-previewers'
+  shell: 'mv {{ dataverse.previewers.dir }}/dataverse-previewers-* {{ dataverse.previewers.dir }}/dataverse-previewers'
   when: dataverse.previewers.on_same_server == true
 
 - name: upload dataverse-previewers.sh script
