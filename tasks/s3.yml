@@ -86,7 +86,7 @@
   when: s3.upload_redirect == true
 
 - include: s3_custom_endpoint_url.yml
-  when: s3.custum_endpoint_url is defined
+  when: s3.custom_endpoint_url is defined
 
 - name: set s3 path style access
   shell: '{{ payara_dir}}/bin/asadmin create-jvm-options "-Ddataverse.files.s3.path-style-access={{ s3.path_style_access }}"'
