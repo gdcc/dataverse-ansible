@@ -11,9 +11,17 @@
 
 - name: maven rpm requires openjdk-1.8 but maybe we want newer
   alternatives:
-    name: java
-    link: /usr/bin/java
-    path: '/usr/lib/jvm/java-{{ java.version }}-openjdk/bin/java'
+    name: '{{ item.name }}'
+    link: '{{ item.link }}'
+    path: '{{ item.path }}'
+  with_items:
+    - { name: 'java', link: '/usr/bin/java', path: '/usr/lib/jvm/java-{{ java.version }}-openjdk/bin/java'}
+    - { name: 'javac', link: '/usr/bin/javac', path: '/usr/lib/jvm/java-{{ java.version }}-openjdk/bin/javac'}
+  when: ansible_os_family == "RedHat" and
+        java.version != '1.8.0'
+
+- name: set java_home when it isnt openjdk-1.8
+  shell: 'export JAVA_HOME=/usr/lib/jvm/java-{{ java.version}}'
   when: ansible_os_family == "RedHat" and
         java.version != '1.8.0'
 
