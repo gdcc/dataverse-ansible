@@ -20,11 +20,6 @@
   when: ansible_os_family == "RedHat" and
         java.version != '1.8.0'
 
-- name: set java_home when it isnt openjdk-1.8
-  shell: 'export JAVA_HOME=/usr/lib/jvm/java-{{ java.version}}'
-  when: ansible_os_family == "RedHat" and
-        java.version != '1.8.0'
-
 - name: wedge in dataverse-bundled files before building from branch
   copy:
     src: "{{ item }}"
@@ -75,7 +70,7 @@
     create: yes
 
 - name: build warfile with default tests. tail /tmp/dataverse/mvn.out for gory details.
-  shell: "mvn -T 2C package -Dmaven.test.skip=true > mvn.out"
+  shell: "export JAVA_HOME=/usr/lib/jvm/java-{{ java.version}} && mvn -T 2C package -Dmaven.test.skip=true > mvn.out"
   args:
     chdir: "{{ dataverse.srcdir }}"
   when: dataverse.unittests.enabled == false
