@@ -221,7 +221,11 @@ sudo yum -q -y install ansible git nano
 git clone -b $DA_BRANCH https://github.com/GlobalDataverseCommunityConsortium/dataverse-ansible.git dataverse
 export ANSIBLE_ROLES_PATH=.
 ansible-playbook $VERBOSE_ARG -i dataverse/inventory dataverse/dataverse.pb --connection=local $GVARG
+touch /tmp/ansible_complete
 EOF
+
+# did AWS go AWOL?
+rsync -av -e "ssh -i $PEM_FILE" centos@$PUBLIC_DNS:/tmp/dataverse/ansible_complete /tmp/ && /bin/rm /tmp/ansible_complete
 
 if [ ! -z "$LOCAL_LOG_PATH" ]; then
    echo "copying logs to $LOCAL_LOG_PATH."
