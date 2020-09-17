@@ -224,8 +224,8 @@ ansible-playbook $VERBOSE_ARG -i dataverse/inventory dataverse/dataverse.pb --co
 touch /tmp/ansible_complete
 EOF
 
-# did AWS go AWOL?
-rsync -av -e "ssh -i $PEM_FILE" centos@$PUBLIC_DNS:/tmp/dataverse/ansible_complete /tmp/ && /bin/rm /tmp/ansible_complete
+# did AWS go AWOL? Jenkins will check for this file.
+rsync -av -e "ssh -i $PEM_FILE" centos@$PUBLIC_DNS:/tmp/dataverse/ansible_complete ./
 
 if [ ! -z "$LOCAL_LOG_PATH" ]; then
    echo "copying logs to $LOCAL_LOG_PATH."
