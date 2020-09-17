@@ -221,21 +221,24 @@ sudo yum -q -y install ansible git nano
 git clone -b $DA_BRANCH https://github.com/GlobalDataverseCommunityConsortium/dataverse-ansible.git dataverse
 export ANSIBLE_ROLES_PATH=.
 ansible-playbook $VERBOSE_ARG -i dataverse/inventory dataverse/dataverse.pb --connection=local $GVARG
+touch /tmp/ansible_complete
 EOF
+
+# did AWS go AWOL? Jenkins will check for this file.
+ssh-keyscan ${PUBLIC_DNS} >> ~/.ssh/known_hosts
+rsync -av -e "ssh -i $PEM_FILE" centos@$PUBLIC_DNS:/tmp/ansible_complete ./
 
 if [ ! -z "$LOCAL_LOG_PATH" ]; then
    echo "copying logs to $LOCAL_LOG_PATH."
-   # 1 accept SSH keys
-   ssh-keyscan ${PUBLIC_DNS} >> ~/.ssh/known_hosts
-   # 2 logdir should exist
+   # 1 logdir should exist
    mkdir -p $LOCAL_LOG_PATH
-   # 3 grab logs for local processing in jenkins
+   # 2 grab logs for local processing in jenkins
    rsync -av -e "ssh -i $PEM_FILE" --ignore-missing-args centos@$PUBLIC_DNS:/tmp/dataverse/target/site $LOCAL_LOG_PATH/
    rsync -av -e "ssh -i $PEM_FILE" --ignore-missing-args centos@$PUBLIC_DNS:/tmp/dataverse/target/surefire-reports $LOCAL_LOG_PATH/
    rsync -av -e "ssh -i $PEM_FILE" --ignore-missing-args centos@$PUBLIC_DNS:/usr/local/payara5/glassfish/domains/domain1/logs/server* $LOCAL_LOG_PATH/
-   # 4 grab mvn.out
+   # 3 grab mvn.out
    rsync -av -e "ssh -i $PEM_FILE" --ignore-missing-args centos@$PUBLIC_DNS:/tmp/dataverse/mvn.out $LOCAL_LOG_PATH/
-   # 5 jacoco
+   # 4 jacoco
    rsync -av -e "ssh -i $PEM_FILE" --ignore-missing-args centos@$PUBLIC_DNS:/tmp/dataverse/target/coverage-it $LOCAL_LOG_PATH/
    rsync -av -e "ssh -i $PEM_FILE" --ignore-missing-args centos@$PUBLIC_DNS:/tmp/dataverse/target/*.exec $LOCAL_LOG_PATH/
    rsync -av -e "ssh -i $PEM_FILE" --ignore-missing-args centos@$PUBLIC_DNS:/tmp/dataverse/target/classes $LOCAL_LOG_PATH/
