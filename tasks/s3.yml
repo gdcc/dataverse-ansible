@@ -67,7 +67,7 @@
 
 - name: enable CORS on S3 bucket
   shell:
-    'aws s3api put-bucket-cors --bucket {{ s3.bucket_name }} --cors-configuration file://~{{ dataverse.payara.user }}/s3_cors.json'
+    'aws s3api put-bucket-cors --bucket {{ s3.bucket_name }} --cors-configuration file://~{{ dataverse.payara.user }}/s3_cors.json {{ ("--endpoint-url " + s3.custom_endpoint_url) if s3.custom_endpoint_url is defined else ""}}'
   args:
     executable: /bin/bash
   become: yes
