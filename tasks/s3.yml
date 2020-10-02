@@ -55,6 +55,16 @@
 
 # optional s3 settings
 
+- name: create S3 bucket
+  shell:
+    'aws s3api create-bucket --bucket {{ s3.bucket_name }} {{ ("--endpoint-url " + s3.custom_endpoint_url) if s3.custom_endpoint_url is defined else ""}}'
+  args:
+    executable: /bin/bash
+  become_user: '{{ dataverse.payara.user }}'
+  environment:
+    PATH: "{{ lookup('env', 'PATH') }}:/usr/local/bin"
+  when: s3.create_bucket == true
+
 - name: "place s3_cors.json template"
   template:
     src: s3_cors.json.j2
