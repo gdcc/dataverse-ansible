@@ -78,7 +78,7 @@ dataverse:
       - https://github.com/IQSS/dataverse/files/3744336/codemeta.tsv.txt
   default:
     config:
-    storage_id: s3
+    storage_id: file
   demo: false
   doi:
     authority: "10.5072"
@@ -164,7 +164,7 @@ dataverse:
     enabled: false
     argument: '-DcompilerArgument=-Xlint:unchecked test -P all-unit-tests'
   usermgmtkey: burrito
-  version: '5.0'
+  version: '5.1'
 
 build_guides: false
 
