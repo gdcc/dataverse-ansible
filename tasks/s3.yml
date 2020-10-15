@@ -86,10 +86,10 @@
     PATH: "{{ lookup('env', 'PATH') }}:/usr/local/bin"
   when: s3.download_redirect == true or
     s3.upload_redirect == true
-    and not s3.custom_endpoint_url
+    and not vars|json_query(s3.custom_endpoint_url)
 
 - include: s3_custom_endpoint_url.yml
-  when: s3.custom_endpoint_url is defined
+  when: vars|json_query(s3.custom_endpoint_url)
 
 - name: set s3 direct download
   shell: '{{ payara_dir}}/bin/asadmin create-jvm-options "-Ddataverse.files.s3.download-redirect={{ s3.download_redirect }}"'
