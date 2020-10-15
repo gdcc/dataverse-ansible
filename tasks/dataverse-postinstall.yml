@@ -111,7 +111,7 @@
     - { prop: ":AllowSignUp", val: "{{ dataverse.allow_signups }}", desc: "don't allow self-signup"}
     - { prop: ":BlockedApiEndpoints", val: "admin,test", desc: "APIs that are controlled"}
     - { prop: ":BlockedApiPolicy", val: "localhost-only", desc: "control API access"}
-    - { prop: ":FileFixityChecksumAlgorithm", val: "{{ dataverse.file_fixity_checksum_algorithm }}", desc: "checksum algorithm used file fixity" }
+    - { prop: ":FileFixityChecksumAlgorithm", val: "{{ dataverse.file_fixity_checksum_algorithm }}", desc: "checksum algorithm used for file fixity" }
 
 - name: enable AllowApiTokenLookupViaApi for those so inclined
   shell: 'curl -X PUT -d true http://localhost:8080/api/admin/settings/:AllowApiTokenLookupViaApi'
