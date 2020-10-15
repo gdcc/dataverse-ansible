@@ -145,6 +145,7 @@ provisioner:
             home: /tmp/jacoco
             version: 0.8.1
           maxfileuploadsizeinbytes:
+          file_fixity_checksum_algorithm: "MD5"
           memheap: 2048
           previewers:
             enabled: true
