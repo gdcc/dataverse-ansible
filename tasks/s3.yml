@@ -75,6 +75,10 @@
   when: s3.download_redirect == true or
     s3.upload_redirect == true
 
+- name: expose custom_endpoint_url as variable
+  set_fact:
+    custom_endpoint_url: '{{ s3.custom_endpoint_url }}'
+
 - name: enable CORS on S3 bucket
   shell:
     'aws s3api put-bucket-cors --bucket {{ s3.bucket_name }} --cors-configuration file://~{{ dataverse.payara.user }}/s3_cors.json'
@@ -86,10 +90,10 @@
     PATH: "{{ lookup('env', 'PATH') }}:/usr/local/bin"
   when: s3.download_redirect == true or
     s3.upload_redirect == true
-    and not vars|json_query(s3.custom_endpoint_url)
+    and custom_endpoint_url | length > 0
 
 - include: s3_custom_endpoint_url.yml
-  when: vars|json_query(s3.custom_endpoint_url)
+  when: custom_endpoint_url | length > 0
 
 - name: set s3 direct download
   shell: '{{ payara_dir}}/bin/asadmin create-jvm-options "-Ddataverse.files.s3.download-redirect={{ s3.download_redirect }}"'
