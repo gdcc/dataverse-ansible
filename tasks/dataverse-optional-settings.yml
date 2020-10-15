@@ -1,0 +1,13 @@
+---
+
+- name: enable AllowApiTokenLookupViaApi for those so inclined
+  shell: 'curl -X PUT -d true http://localhost:8080/api/admin/settings/:AllowApiTokenLookupViaApi'
+  when: dataverse.api.allow_lookup == true
+
+- name: set MaxFileUploadSizeInBytes when provided
+  shell: 'curl -X PUT -d {{ dataverse.options.maxfileuploadsizeinbytes }} {{ dataverse.api.location }}/admin/settings/:MaxFileUploadSizeInBytes'
+  when: dataverse.options.maxfileuploadsizeinbytes
+
+- name: set TabularIngestSizeLimit when provided
+  shell: 'curl -X PUT -d {{ dataverse.options.tabularingestsizelimit }} {{ dataverse.api.location }}/admin/settings/:TabularIngestSizeLimit'
+  when: dataverse.options.tabularingestsizelimit
