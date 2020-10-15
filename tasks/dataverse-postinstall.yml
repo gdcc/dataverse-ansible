@@ -113,10 +113,4 @@
     - { prop: ":BlockedApiPolicy", val: "localhost-only", desc: "control API access"}
     - { prop: ":FileFixityChecksumAlgorithm", val: "{{ dataverse.file_fixity_checksum_algorithm }}", desc: "checksum algorithm used for file fixity" }
 
-- name: enable AllowApiTokenLookupViaApi for those so inclined
-  shell: 'curl -X PUT -d true http://localhost:8080/api/admin/settings/:AllowApiTokenLookupViaApi'
-  when: dataverse.api.allow_lookup == true
-
-- name: set TabularIngestSizeLimit when provided
-  shell: 'curl -X PUT -d {{ dataverse.options.tabularingestsizelimit }} {{ dataverse.api.location }}/admin/settings/:TabularIngestSizeLimit'
-  when: dataverse.options.tabularingestsizelimit
+- include: dataverse-optional-settings.yml

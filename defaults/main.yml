@@ -127,10 +127,10 @@ dataverse:
     enabled: false
     home: /tmp/jacoco
     version: 0.8.1
-  maxfileuploadsizeinbytes:
   file_fixity_checksum_algorithm: "MD5"
   memheap: 4096
   options:
+    maxfileuploadsizeinbytes:
     tabularingestsizelimit: 
   previewers:
     enabled: true
