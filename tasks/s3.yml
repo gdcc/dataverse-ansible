@@ -55,6 +55,10 @@
 
 # optional s3 settings
 
+- name: expose custom_endpoint_url as variable
+  set_fact:
+    custom_endpoint_url: '{{ s3.custom_endpoint_url }}'
+
 - name: create S3 bucket
   shell:
     'aws s3api create-bucket --bucket {{ s3.bucket_name }}'
@@ -64,6 +68,7 @@
   environment:
     PATH: "{{ lookup('env', 'PATH') }}:/usr/local/bin"
   when: s3.create_bucket == true
+    and custom_endpoint_url | length == 0
 
 - name: "place s3_cors.json template"
   template:
@@ -74,10 +79,6 @@
     mode: 0644
   when: s3.download_redirect == true or
     s3.upload_redirect == true
-
-- name: expose custom_endpoint_url as variable
-  set_fact:
-    custom_endpoint_url: '{{ s3.custom_endpoint_url }}'
 
 - name: enable CORS on S3 bucket
   shell:
@@ -90,7 +91,7 @@
     PATH: "{{ lookup('env', 'PATH') }}:/usr/local/bin"
   when: s3.download_redirect == true or
     s3.upload_redirect == true
-    and custom_endpoint_url | length > 0
+    and custom_endpoint_url | length == 0
 
 - include: s3_custom_endpoint_url.yml
   when: custom_endpoint_url | length > 0
