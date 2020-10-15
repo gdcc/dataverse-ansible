@@ -8,3 +8,14 @@
   shell: '{{ payara_dir}}/bin/asadmin create-jvm-options "-Ddataverse.files.s3.custom-endpoint-url={{ custom_endpoint_escaped }}"'
   when: s3.custom_endpoint_url|length > 0
 
+- name: enable CORS on S3 bucket
+  shell:
+    'aws s3api put-bucket-cors --bucket {{ s3.bucket_name }} --cors-configuration file://~{{ dataverse.payara.user }}/s3_cors.json --endpoint-url {{ s3.custom_endpoint_url }}'
+  args:
+    executable: /bin/bash
+  become: yes
+  become_user: '{{ dataverse.payara.user }}'
+  environment:
+    PATH: "{{ lookup('env', 'PATH') }}:/usr/local/bin"
+  when: s3.download_redirect == true or
+    s3.upload_redirect == true
