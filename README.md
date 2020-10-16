@@ -1,7 +1,7 @@
 # Dataverse Ansible role
 
 This [Ansible][ansible] role aims to install [Dataverse][dataverse] and its prerequisites.
-The role installs PostgreSQL, GlassFish and other prerequisites, then deploys Dataverse.
+The role installs PostgreSQL, GlassFish/Payara and other prerequisites, then deploys Dataverse.
 
 ## Quickstart
 
@@ -14,7 +14,7 @@ Recent, specific versions of Dataverse (namely, 4.20 and 5.0) may be installed u
 
 ## Configuration
 
-Installation, customization, administration, and API documentation can be found in the [Dataverse 4 Guides](http://guides.dataverse.org/en/latest/).
+Installation, customization, administration, and API documentation can be found in the [Dataverse Guides](http://guides.dataverse.org/en/latest/).
 
 The preparation lies in the group_var options (usernames/passwords, whether to install Shibboleth, etc.).  Your \<group_vars_file> may be a set of generic defaults stored in [roles/dataverse/defaults/main.yml](roles/dataverse/defaults/main.yml), but you'll likely want to modify this file or copy it and edit to suit your needs.  Then, fire away:
 
@@ -26,7 +26,7 @@ The preparation lies in the group_var options (usernames/passwords, whether to i
 | option | expansion                             | required |
 | ------ | ------------------------------------- | -------- |
 | -b     | Become                                | yes      |
-| -K     | asK for elevelated privilege password | yes      |
+| -K     | asK for elevated privilege password | yes      |
 | -e     | Extra variables file                  | no       |
 | -v     | run with Verbosity (up to three Vs)   | no       |
 
@@ -126,7 +126,7 @@ This is a community effort, written primarily by [Don Sizemore][donsizemore]. Th
 [counter-processor]: https://github.com/IQSS/counter-processor
 [dataverse]: https://dataverse.org
 [dataverse-sample-data]: https://github.com/IQSS/dataverse-sample-data
-[dataverse-previewers]: https://qualitativedatarepository.github.io/dataverse-previewers/
+[dataverse-previewers]: https://globaldataversecommunityconsortium.github.io/dataverse-previewers/
 [iqss]: http://www.iq.harvard.edu
 [vagrant]: https://www.vagrantup.com
 [virtualbox]: https://www.virtualbox.org
