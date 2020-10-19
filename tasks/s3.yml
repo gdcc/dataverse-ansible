@@ -55,15 +55,20 @@
 
 # optional s3 settings
 
+- name: expose custom_endpoint_url as variable
+  set_fact:
+    custom_endpoint_url: '{{ s3.custom_endpoint_url }}'
+
 - name: create S3 bucket
   shell:
-    'aws s3api create-bucket --bucket {{ s3.bucket_name }} {{ ("--endpoint-url " + s3.custom_endpoint_url) if s3.custom_endpoint_url is defined else ""}}'
+    'aws s3api create-bucket --bucket {{ s3.bucket_name }}'
   args:
     executable: /bin/bash
   become_user: '{{ dataverse.payara.user }}'
   environment:
     PATH: "{{ lookup('env', 'PATH') }}:/usr/local/bin"
   when: s3.create_bucket == true
+    and custom_endpoint_url | length == 0
 
 - name: "place s3_cors.json template"
   template:
@@ -77,7 +82,7 @@
 
 - name: enable CORS on S3 bucket
   shell:
-    'aws s3api put-bucket-cors --bucket {{ s3.bucket_name }} --cors-configuration file://~{{ dataverse.payara.user }}/s3_cors.json {{ ("--endpoint-url " + s3.custom_endpoint_url) if s3.custom_endpoint_url is defined else ""}}'
+    'aws s3api put-bucket-cors --bucket {{ s3.bucket_name }} --cors-configuration file://~{{ dataverse.payara.user }}/s3_cors.json'
   args:
     executable: /bin/bash
   become: yes
@@ -86,6 +91,10 @@
     PATH: "{{ lookup('env', 'PATH') }}:/usr/local/bin"
   when: s3.download_redirect == true or
     s3.upload_redirect == true
+    and custom_endpoint_url | length == 0
+
+- include: s3_custom_endpoint_url.yml
+  when: custom_endpoint_url | length > 0
 
 - name: set s3 direct download
   shell: '{{ payara_dir}}/bin/asadmin create-jvm-options "-Ddataverse.files.s3.download-redirect={{ s3.download_redirect }}"'
@@ -94,9 +103,6 @@
 - name: set s3 direct upload
   shell: '{{ payara_dir}}/bin/asadmin create-jvm-options "-Ddataverse.files.s3.upload-redirect={{ s3.upload_redirect }}"'
   when: s3.upload_redirect == true
-
-- include: s3_custom_endpoint_url.yml
-  when: s3.custom_endpoint_url is defined
 
 - name: set s3 path style access
   shell: '{{ payara_dir}}/bin/asadmin create-jvm-options "-Ddataverse.files.s3.path-style-access={{ s3.path_style_access }}"'
