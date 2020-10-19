@@ -109,9 +109,9 @@
   when: s3.path_style_access == true
 
 - name: set s3 payload signing
-  shell: '{{ payara_dir}}/bin/asadmin create-jvm-options "-Ddataverse.files.s3.payload-signing={{ s3.payload_signing }"'
+  shell: '{{ payara_dir}}/bin/asadmin create-jvm-options "-Ddataverse.files.s3.payload-signing={{ s3.payload_signing }}"'
   when: s3.payload_signing == true
 
 - name: turn chuncked encoding off
-  shell: '{{ payara_dir}}/bin/asadmin create-jvm-options "-Ddataverse.files.s3.chunked-encoding={{ s3.chunked_encoding }"'
+  shell: '{{ payara_dir}}/bin/asadmin create-jvm-options "-Ddataverse.files.s3.chunked-encoding={{ s3.chunked_encoding }}"'
   when: s3.chunked_encoding == false
