@@ -138,6 +138,12 @@
   when: dataverse.jacoco.enabled == true
   notify: enable and restart payara
 
+- name: remove world-read perms from domain1/config
+  file:
+    path: '{{ payara_dir }}/glassfish/domains/{{ dataverse.payara.domain }}/config'
+    mode: '0750'
+    state: directory
+
 - name: install payara upstart script for older Debian/Ubuntu
   template: src=payara.conf.j2 dest=/etc/init
         owner=root group=root mode=0644
