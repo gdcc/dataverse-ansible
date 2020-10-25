@@ -107,3 +107,15 @@
 - name: set s3 path style access
   shell: '{{ payara_dir}}/bin/asadmin create-jvm-options "-Ddataverse.files.s3.path-style-access={{ s3.path_style_access }}"'
   when: s3.path_style_access == true
+
+- name: set s3 payload signing
+  shell: '{{ payara_dir}}/bin/asadmin create-jvm-options "-Ddataverse.files.s3.payload-signing={{ s3.payload_signing }}"'
+  when: s3.payload_signing == true
+
+- name: turn chunked encoding off
+  shell: '{{ payara_dir}}/bin/asadmin create-jvm-options "-Ddataverse.files.s3.chunked-encoding={{ s3.chunked_encoding }}"'
+  when: s3.chunked_encoding == false
+
+- name: set custom endpoint region
+  shell: '{{ payara_dir}}/bin/asadmin create-jvm-options "-Ddataverse.files.s3.custom-endpoint-region={{ s3.custom_endpoint_region }}"'
+  when: s3.custom_endpoint_region is defined and s3.custom_endpoint_region != ''
