@@ -89,8 +89,8 @@
   become_user: '{{ dataverse.payara.user }}'
   environment:
     PATH: "{{ lookup('env', 'PATH') }}:/usr/local/bin"
-  when: s3.download_redirect == true or
-    s3.upload_redirect == true
+  when: (s3.download_redirect == true or
+    s3.upload_redirect == true)
     and custom_endpoint_url | length == 0
 
 - include: s3_custom_endpoint_url.yml
