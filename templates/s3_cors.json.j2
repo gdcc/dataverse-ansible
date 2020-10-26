@@ -1,9 +1,10 @@
 {
   "CORSRules": [
      {
-        "AllowedOrigins": ["{{ siteUrl }}"],
         "AllowedHeaders": ["*"],
-        "AllowedMethods": ["PUT", "GET"]
+        "ExposedHeaders": ["ETag"],
+        "AllowedMethods": ["PUT", "GET"],
+        "AllowedOrigins": ["*"]
      }
   ]
 }
