@@ -4,6 +4,10 @@
   shell: 'curl -X PUT -d true http://localhost:8080/api/admin/settings/:AllowApiTokenLookupViaApi'
   when: dataverse.api.allow_lookup == true
 
+- name: disable FilePIDs when set to false
+  shell: 'curl -X PUT -d {{ dataverse.options.filepids }} {{ dataverse.api.location }}/admin/settings/:FilePIDsEnabled'
+  when: dataverse.options.filepids == false
+
 - name: set MaxFileUploadSizeInBytes when provided
   shell: 'curl -X PUT -d {{ dataverse.options.maxfileuploadsizeinbytes }} {{ dataverse.api.location }}/admin/settings/:MaxFileUploadSizeInBytes'
   when: dataverse.options.maxfileuploadsizeinbytes

@@ -128,6 +128,7 @@ dataverse:
   file_fixity_checksum_algorithm: "MD5"
   memheap: 2048
   options:
+    filepids: 
     maxfileuploadsizeinbytes:
     tabularingestsizelimit: 
   previewers:
