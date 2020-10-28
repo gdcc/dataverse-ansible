@@ -159,6 +159,11 @@
   tags:
   - munin
 
+- include: pg_backups.yml
+  when: db.backups.enabled == true
+  tags:
+  - pg_backups
+
 - include: schemaspy.yml
   when: schemaspy.enabled == true
   tags:

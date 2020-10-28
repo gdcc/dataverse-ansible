@@ -1,0 +1,36 @@
+---
+
+- name: ensure root_dir exists
+  file:
+    path: '{{ db.backups.rootdir }}'
+    owner: '{{ db.backups.user }}'
+    mode: '0700'
+    state: directory
+
+- name: and backup directory
+  file:
+    path: '{{ db.backups.rootdir }}/{{ db.backups.backupdir }}'
+    owner: '{{ db.backups.user }}'
+    mode: '0700'
+    state: directory
+
+- name: place script
+  template:
+    src: pg_backup.sh.j2
+    dest: '{{ db.backups.rootdir }}/pg_backup.sh'
+    owner: '{{ db.backups.user }}'
+    mode: '0700'
+
+- name: place config
+  template:
+    src: pg_backup.config.j2
+    dest: '{{ db.backups.rootdir }}/pg_backup.config'
+    owner: '{{ db.backups.user }}'
+    mode: '0600'
+
+- name: place cron config
+  template:
+    src: pg_backup.cron.j2
+    dest: /etc/cron.d/pg_backup.cron
+    owner: root
+    mode: '0640'
