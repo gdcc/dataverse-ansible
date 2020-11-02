@@ -177,6 +177,15 @@ db:
     log_lock_waits: true
     version: 10
     port: 5432
+  backups:
+    enabled: false
+    rootdir: /opt/pg_backups
+    backupdir: backups
+    host: localhost
+    user: postgres
+    custom: 'yes'
+    globals: 'no'
+    plain: 'no'
   use_rds: false
 
 grafana:
