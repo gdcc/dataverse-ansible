@@ -130,6 +130,7 @@ dataverse:
   options:
     filepids: 
     maxfileuploadsizeinbytes:
+    provcollectionenabled:
     tabularingestsizelimit: 
   previewers:
     enabled: true

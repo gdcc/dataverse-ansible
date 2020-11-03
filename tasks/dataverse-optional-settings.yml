@@ -12,6 +12,10 @@
   shell: 'curl -X PUT -d {{ dataverse.options.maxfileuploadsizeinbytes }} {{ dataverse.api.location }}/admin/settings/:MaxFileUploadSizeInBytes'
   when: dataverse.options.maxfileuploadsizeinbytes
 
+- name: set Provenance when provided
+  shell: 'curl -X PUT -d {{ dataverse.options.provcollectionenabled }} {{ dataverse.api.location }}/admin/settings/:ProvCollectionEnabled'
+  when: dataverse.options.provcollectionenabled
+
 - name: set TabularIngestSizeLimit when provided
   shell: 'curl -X PUT -d {{ dataverse.options.tabularingestsizelimit }} {{ dataverse.api.location }}/admin/settings/:TabularIngestSizeLimit'
   when: dataverse.options.tabularingestsizelimit
