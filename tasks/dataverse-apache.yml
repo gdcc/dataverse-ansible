@@ -93,7 +93,12 @@
     - letsencrypt.enabled
 
 - name: install proxy error boilerplate
-  copy: src=503.html dest="{{ apache_config_dir }}" owner=root group=root mode=0644
+  copy:
+    src: 503.html
+    dest: "{{ apache_config_dir }}"
+    owner: root
+    group: root
+    mode: 0644
   notify: enable and restart apache
 
 - name: run handlers -- this runs the apache restart scripts
