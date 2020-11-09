@@ -92,7 +92,7 @@ dataverse:
     shoulder: "FK2/"
   externaltools:
     datacurationtool:
-      enabled: true
+      enabled: false
       method: demo
     dataexplorer:
       enabled: true
