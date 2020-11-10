@@ -15,7 +15,7 @@ VERBOSE_ARG=""
 AWS_AMI_DEFAULT='ami-01ca03df4a6012157'
 
 usage() {
-  echo "Usage: $0 -b <branch> -r <repo> -p <pem_dir> -g <group_vars> -a <dataverse-ansible branch> -i aws_image -s aws_size -t aws_tag -f aws_security group -l local_log_path -d -v" 1>&2
+  echo "Usage: $0 -b <branch> -r <repo> -p <pem_path> -g <group_vars> -a <dataverse-ansible branch> -i aws_image -s aws_size -t aws_tag -f aws_security group -l local_log_path -d -v" 1>&2
   echo "default branch is develop"
   echo "default repo is https://github.com/IQSS/dataverse"
   echo "default .pem location is ${HOME}"
@@ -44,7 +44,7 @@ while getopts ":a:r:b:g:p:i:s:t:f:l:dv" o; do
     GRPVRS=${OPTARG}
     ;;
   p)
-    PEM_DIR=${OPTARG}
+    PEM_PATH=${OPTARG}
     ;;
   i)
     AWS_IMAGE=${OPTARG}
@@ -138,11 +138,6 @@ if [ -z "$DA_BRANCH" ]; then
    DA_BRANCH="master"
 fi
 
-# ansible doesn't care about pem_dir (yet)
-if [ -z "$PEM_DIR" ]; then
-   PEM_DIR="$PEM_DEFAULT"
-fi
-
 # verbosity
 if [ ! -z "$VERBOSE" ]; then
    VERBOSE_ARG="-v"
@@ -173,23 +168,31 @@ if [[ "$?" -ne 0 ]]; then
   aws ec2 authorize-security-group-ingress --group-name $AWS_SG --protocol tcp --port 8080 --cidr 0.0.0.0/0
 fi
 
-RANDOM_STRING="$(uuidgen | cut -c-8)"
-KEY_NAME="key-$USER-$RANDOM_STRING"
+# were we passed a pem file?
+if [ ! -z "$PEM_PATH" ]; then
+  KEY_NAME=`echo $PEM_PATH | sed 's/\.pem//g'`
+  echo "using key_name: $KEY_NAME"
+elif [ -z "$PEM_PATH" ]; then
+  RANDOM_STRING="$(uuidgen | cut -c-8)"
+  KEY_NAME="key-$USER-$RANDOM_STRING"
+  echo "using key_name: $KEY_NAME"
+  PRIVATE_KEY=$(aws ec2 create-key-pair --key-name ~/$KEY_NAME --query 'KeyMaterial' --output text)
 
-PRIVATE_KEY=$(aws ec2 create-key-pair --key-name $PEM_DIR/$KEY_NAME --query 'KeyMaterial' --output text)
-if [[ $PRIVATE_KEY == '-----BEGIN RSA PRIVATE KEY-----'* ]]; then
-  PEM_FILE="$PEM_DIR/$KEY_NAME.pem"
-  printf -- "$PRIVATE_KEY" >$PEM_FILE
-  chmod 400 $PEM_FILE
-  echo "Your newly created private key file is \"$PEM_FILE\". Keep it secret. Keep it safe."
-else
-  echo "Could not create key pair. Exiting."
-  exit 1
+  if [[ $PRIVATE_KEY == '-----BEGIN RSA PRIVATE KEY-----'* ]]; then
+    PEM_FILE="${HOME}/$KEY_NAME.pem"
+    printf -- "$PRIVATE_KEY" >$PEM_FILE
+    chmod 400 $PEM_FILE
+    echo "Your newly created private key file is \"$PEM_FILE\". Keep it secret. Keep it safe."
+    KEY_NAME="${HOME}/$KEY_NAME"
+  else
+    echo "Could not create key pair. Exiting."
+    exit 1
+  fi
 fi
 
 echo "Creating EC2 instance"
 # TODO: Add some error checking for "ec2 run-instances".
-INSTANCE_ID=$(aws ec2 run-instances --image-id $AMI_ID --security-groups $AWS_SG $TAGARG --count 1 --instance-type $SIZE --key-name $PEM_DIR/$KEY_NAME --query 'Instances[0].InstanceId' --block-device-mappings '[ { "DeviceName": "/dev/sda1", "Ebs": { "DeleteOnTermination": true } } ]' | tr -d \")
+INSTANCE_ID=$(aws ec2 run-instances --image-id $AMI_ID --security-groups $AWS_SG $TAGARG --count 1 --instance-type $SIZE --key-name $KEY_NAME --query 'Instances[0].InstanceId' --block-device-mappings '[ { "DeviceName": "/dev/sda1", "Ebs": { "DeleteOnTermination": true } } ]' | tr -d \")
 echo "Instance ID: "$INSTANCE_ID
 
 DESTROY_CMD="aws ec2 terminate-instances --instance-ids $INSTANCE_ID"
