@@ -101,5 +101,11 @@
     mode: 0644
   notify: enable and restart apache
 
+- name: "both redhat and ubuntu default to /var/www/html"
+  shell: 'semanage fcontext -a -t httpd_sys_content_t "/var/www/html(/.*)?"'
+
+- name: "allow apache read-only access to /var/www/html"
+  shell: 'restorecon -R -v /var/www/html'
+
 - name: run handlers -- this runs the apache restart scripts
   meta: flush_handlers
