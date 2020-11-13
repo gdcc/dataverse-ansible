@@ -1,7 +1,7 @@
 # Dataverse Ansible role
 
 This [Ansible][ansible] role aims to install [Dataverse][dataverse] and its prerequisites.
-The role installs PostgreSQL, GlassFish/Payara and other prerequisites, then deploys Dataverse.
+The role installs Apache, PostgreSQL, GlassFish/Payara and other prerequisites, then deploys Dataverse.
 
 ## Quickstart
 
@@ -16,9 +16,55 @@ Recent, specific versions of Dataverse (namely, 4.20 and 5.0) may be installed u
 
 Installation, customization, administration, and API documentation can be found in the [Dataverse Guides](http://guides.dataverse.org/en/latest/).
 
-The preparation lies in the group_var options (usernames/passwords, whether to install Shibboleth, etc.).  Your \<group_vars_file> may be a set of generic defaults stored in [roles/dataverse/defaults/main.yml](roles/dataverse/defaults/main.yml), but you'll likely want to modify this file or copy it and edit to suit your needs.  Then, fire away:
+The preparation and configuration using `dataverse-ansible` usually involve modifying or accepting the generic defaults stored in [defaults/main.yml](defaults/main.yml). You'll likely want to modify this file or copy it and edit to suit your needs.
+
+Here follows a few key components that you should strongly consider to address before deploying Dataverse using `dataverse-ansible`:
+
+### Enabling SSL
+
+#### Let's Encrypt and Certbot
+
+In almost all cases, enabling SSL is recommended. Also, it is recommended to obtain a certificate from a CA. [Let's Encrypt](https://letsencrypt.org) provides
+free certificates that can be automatically obtained and renewed using for instance [Certbot](https://certbot.eff.org).
+
+Certbot also makes it possible to automatically update the web server so that the certificates are used and that all traffic is forced over `https`.
+
+To utilize Certbot with Let's Encrypt certificates you need to set the following parameters in `defaults/main.yml`:
+
+- `letsencrypt.enabled: true`
+- `certbot.email: myname@mydomain`
+- `apache.ssl.enabled: true`
+
+#### Other certificates
+If you need to set particular certificates, for instance if your organization already has prepared this for you we need to modify the following parameters:
+
+- `apache.ssl.enabled: true`
+
+if using X.509 certificates:
+
+- `apache.ssl.cert: /mypath/mycertificate`
+- `apache.ssl.interm: /mypath/mycertificatem`
+- `apache.ssl.key: /mypath/myprivatekey`
+
+or if using PEM certificates:
+
+- `apache.ssl.pem.cert: /mypath/mycertificate`
+- `apache.ssl.pem.interm: /mypath/mycertificatem`
+- `apache.ssl.pem.key: /mypath/myprivatekey`
+
+### Update admin password
+
+Please update `dataverse.adminpass` to a password that follows the standards you or your organization demands. The user name of the admin account is by default `dataverseAdmin`.
+
+### Setting the site url
+
+Make sure you set your site url accordingly using `dataverse.payara.siteurl`. Also, please remember that this needs to be the full url, not just domain. If you only
+enter the domain here you will have issues with for instance enabling OAuth 2.0/OpenID Connect authentication etc. Assuming you have already enabled SSL, you should then make 
+sure to use something like `dataverse.payara.siteurl: https://dataverse.example.edu` (following the example provided in the Dataverse documentation).
 
 ### Full(er) Usage:
+Here is an example of how to execute the `dataverse-ansible` role with more adjustable parameters:
+
 	$ git clone https://github.com/GlobalDataverseCommunityConsortium/dataverse-ansible.git dataverse
 	$ export ANSIBLE_ROLES_PATH=.
 	$ ansible-playbook -i <inventory file> [-u <user>] [-b] [-K] -e @<group_vars_file> [-v] dataverse.pb
@@ -26,7 +72,7 @@ The preparation lies in the group_var options (usernames/passwords, whether to i
 | option | expansion                             | required |
 | ------ | ------------------------------------- | -------- |
 | -b     | Become                                | yes      |
-| -K     | asK for elevated privilege password | yes      |
+| -K     | asK for elevated privilege password   | yes      |
 | -e     | Extra variables file                  | no       |
 | -v     | run with Verbosity (up to three Vs)   | no       |
 
@@ -114,9 +160,6 @@ A number of external tools have been written for Dataverse, and as requested or 
 Others are available but disabled by default:
 
 * [Counter Processor][counter-processor]
-
-## SSH keys, SSL certs, LetsEncrypt
-The above and many other features may be tinkered with via the [Group Vars file](defaults/main.yml).
 
 This is a community effort, written primarily by [Don Sizemore][donsizemore]. The role is under active development - pull requests, suggestions and other contributions are welcome!
 
