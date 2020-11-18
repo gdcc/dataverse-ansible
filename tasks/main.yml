@@ -5,6 +5,9 @@
   debug:
     msg: '##### BEGIN ANSIBLE ROLE #####'
 
+- name: enable SELinux
+  shell: 'setenforce 1'
+
 - include: sanity-checks.yml
   tags:
   - prereqs
