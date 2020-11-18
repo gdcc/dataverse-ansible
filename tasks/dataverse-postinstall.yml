@@ -64,12 +64,6 @@
   become_user: '{{ dataverse.solr.user }}'
   when: dataverse.custom_metadata_blocks.enabled == True
 
-# python installer does this now
-#- name: populate reference data
-#  shell: "psql -U {{ db.postgres.user }} -h {{ db.postgres.host }} -d {{ db.postgres.name }} -f /tmp/dvinstall/reference_data.sql"
-#  environment:
-#    PGPASSWORD: "{{ db.postgres.pass }}"
-
 # integration tests require these
 # createsequence.sql went AWOL. wedge in local copy.
 - name: support sequential identifiers fetch current SQL script

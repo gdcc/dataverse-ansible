@@ -45,7 +45,6 @@
     dest: "/tmp/dvinstall/"
     remote_src: yes
   with_items:
-    - "{{ dataverse.srcdir }}/scripts/database/reference_data.sql"
     - "{{ dataverse.srcdir }}/conf/jhove/jhove.conf"
     - "{{ dataverse.srcdir }}/conf/jhove/jhoveConfig.xsd"
 
