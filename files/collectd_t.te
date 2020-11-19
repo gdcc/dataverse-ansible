@@ -1,0 +1,17 @@
+
+module collectd_t 1.0;
+
+require {
+	type collectd_t;
+	type user_tmp_t;
+	class tcp_socket accept;
+	class capability kill;
+	class dir remove_name;
+}
+
+#============= collectd_t ==============
+allow collectd_t self:capability kill;
+
+#!!!! This avc can be allowed using the boolean 'nis_enabled'
+allow collectd_t self:tcp_socket accept;
+allow collectd_t user_tmp_t:dir remove_name;

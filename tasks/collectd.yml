@@ -4,6 +4,20 @@
   debug:
     msg: '##### COLLECTD #####'
 
+- name: allow collected to connect to the network
+  shell: 'setsebool -P collectd_tcp_network_connect 1'
+
+- name: place selinux collectd policy package
+  copy:
+    src: '{{ item }}'
+  dest: '/tmp/'
+  with_items:
+    - collectd_t.pp
+    - collectd_t.te
+
+- name: import selinux collectd policypackage
+  shell: 'semodule -i /tmp/collectd_t.pp'
+
 - name: install collectd
   yum:
     name: '{{ packages }}'
