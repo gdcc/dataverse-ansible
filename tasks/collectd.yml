@@ -10,7 +10,7 @@
 - name: place selinux collectd policy package
   copy:
     src: '{{ item }}'
-  dest: '/tmp/'
+    dest: '/tmp/'
   with_items:
     - collectd_t.pp
     - collectd_t.te
