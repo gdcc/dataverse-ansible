@@ -61,6 +61,9 @@ Listen 443 https
           "%t %h %{SSL_PROTOCOL}x %{SSL_CIPHER}x \"%r\" %b"
   {% endif %}
   </IfModule>
+{% else %}
+  ErrorLog logs/error_log
+  TransferLog logs/access_log
 {% endif %}
 
   <Location "/prometheus">
