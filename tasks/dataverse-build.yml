@@ -31,10 +31,7 @@
     - "{{ dataverse.srcdir }}/scripts/api/setup-builtin-roles.sh"
     - "{{ dataverse.srcdir }}/scripts/api/setup-dvs.sh"
     - "{{ dataverse.srcdir }}/scripts/api/setup-identity-providers.sh"
-    - "{{ dataverse.srcdir }}/scripts/api/setup-all.sh"
     - "{{ dataverse.srcdir }}/scripts/api/post-install-api-block.sh"
-    - "{{ dataverse.srcdir }}/scripts/installer/install"
-    - "{{ dataverse.srcdir }}/scripts/installer/as-setup.sh"
 
 - name: copy api script data directory
   shell: "/bin/cp -r {{ dataverse.srcdir }}/scripts/api/data /tmp/dvinstall/"
