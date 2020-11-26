@@ -107,7 +107,7 @@
   lineinfile:
     path: /tmp/dvinstall/as-setup.sh
     regexp: '(.*)-Ddataverse.siteUrl(.*)'
-    line: '  ./asadmin $ASADMIN_OPTS create-jvm-options "\-Ddataverse.siteUrl={{ siteUrl }}"'
+    line: '  ./asadmin $ASADMIN_OPTS create-jvm-options "\-Ddataverse.siteUrl={{ siteUrl_escaped }}"'
   when: dataverse.payara.zipurl is not match(".*glassfish-4.1.zip")
 
 - name: fire off installer
@@ -117,16 +117,23 @@
   args:
     chdir: /tmp/dvinstall
 
+- name: stop payara manually (systemd gums up the works)
+  become: yes
+  become_user: "{{ dataverse.payara.user }}"
+  shell: '{{ payara_dir }}/bin/asadmin stop-domain {{ dataverse.payara.domain }}'
+
+- name: now start payara with systemd
+  service: name=payara state=started
+
+- name: wait for payara to become ready
+  wait_for:
+    port: 8009
+    state: present
+    timeout: "{{ dataverse.payara.launch_timeout }}"
+
 # install.py doesn't currently log this output, nothing sensitive in install.out
 #- name: negate need for password aliases
 #  file:
 #    name: /tmp/as-setup.out
 #    mode: 0600
 #  ignore_errors: yes
-
-# this will fail if not run on localhost; it's only a logging format.
-- name: set logging format
-  become: yes
-  become_user: "{{ dataverse.payara.user }}"
-  shell: "{{ payara_dir }}/bin/asadmin set-log-file-format {{ dataverse.payara.logformat }}"
-  ignore_errors: yes
