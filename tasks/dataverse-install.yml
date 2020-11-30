@@ -16,30 +16,45 @@
 - name: fix perms on dataverse-war
   file: path=/tmp/dvinstall/dataverse.war mode=0644
 
-- name: grab current copies of installer source
-  get_url:
-    url: 'https://raw.githubusercontent.com/IQSS/dataverse/develop/scripts/installer/{{ item }}'
+- name: grab branch copies of installer source when using branch
+  copy:
+    src: '{{ dataverse.srcdir }}/scripts/installer/{{ item }}'
     dest: '/tmp/dvinstall/{{ item }}'
     mode: '0755'
+    remote_src: yes
   with_items:
     - install.py
     - installConfig.py
     - installAppServer.py
     - installUtils.py
     - as-setup.sh
-  when: dataverse.payara.zipurl is not match(".*glassfish-4.1.zip")
+  when: dataverse_branch != 'release'
 
-- name: grab api setup scripts as well
-  get_url:
-    url: 'https://raw.githubusercontent.com/IQSS/dataverse/develop/scripts/api/{{ item }}'
+- name: grab branch api setup scripts as well when using branch
+  copy:
+    src: '{{ dataverse.srcdir }}/scripts/api/{{ item }}'
     dest: '/tmp/dvinstall/{{ item }}'
     mode: '0755'
+    remote_src: yes
   with_items:
+    - post-install-api-block.sh
     - setup-all.sh
-    - setup-datasetfields.sh
     - setup-builtin-roles.sh
+    - setup-datasetfields.sh
+    - setup-dvs.sh
     - setup-identity-providers.sh
-  when: dataverse.payara.zipurl is not match(".*glassfish-4.1.zip")
+    - setup-users.sh
+  when: dataverse_branch != 'release'
+
+- name: copy jhove files from branch
+  copy:
+    src: "{{ item }}"
+    dest: "/tmp/dvinstall/"
+    remote_src: yes
+  with_items:
+    - "{{ dataverse.srcdir }}/conf/jhove/jhove.conf"
+    - "{{ dataverse.srcdir }}/conf/jhove/jhoveConfig.xsd"
+  when: dataverse_branch != 'release'
 
 - name: set dataverse adminpass in setup-all
   lineinfile:
@@ -121,9 +136,12 @@
   become: yes
   become_user: "{{ dataverse.payara.user }}"
   shell: '{{ payara_dir }}/bin/asadmin stop-domain {{ dataverse.payara.domain }}'
+  ignore_errors: yes
 
 - name: now start payara with systemd
-  service: name=payara state=started
+  service:
+    name: payara
+    state: started
 
 - name: wait for payara to become ready
   wait_for:

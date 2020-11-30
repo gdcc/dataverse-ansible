@@ -30,6 +30,9 @@
   shell: 'bsdtar --strip-components=1 -C {{ dataverse.srcdir }} -xf /tmp/dataverse-{{ dataverse.version }}.tar.gz'
   when: pom_xml.stat.exists == false
 
+- name: ensure we have api script data directory
+  shell: "/bin/cp -r {{ dataverse.srcdir }}/scripts/api/data /tmp/dvinstall/"
+
 - name: grab latest copy of run-test-suite.sh
   get_url:
     url: https://raw.githubusercontent.com/IQSS/dataverse/develop/conf/docker-aio/run-test-suite.sh
