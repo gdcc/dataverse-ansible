@@ -136,9 +136,12 @@
   become: yes
   become_user: "{{ dataverse.payara.user }}"
   shell: '{{ payara_dir }}/bin/asadmin stop-domain {{ dataverse.payara.domain }}'
+  ignore_errors: yes
 
 - name: now start payara with systemd
-  service: name=payara state=started
+  service:
+    name: payara
+    state: started
 
 - name: wait for payara to become ready
   wait_for:
