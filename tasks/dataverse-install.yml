@@ -37,10 +37,23 @@
     mode: '0755'
     remote_src: yes
   with_items:
+    - post-install-api-block.sh
     - setup-all.sh
-    - setup-datasetfields.sh
     - setup-builtin-roles.sh
+    - setup-datasetfields.sh
+    - setup-dvs.sh
     - setup-identity-providers.sh
+    - setup-users.sh
+  when: dataverse_branch != 'release'
+
+- name: copy jhove files from branch
+  copy:
+    src: "{{ item }}"
+    dest: "/tmp/dvinstall/"
+    remote_src: yes
+  with_items:
+    - "{{ dataverse.srcdir }}/conf/jhove/jhove.conf"
+    - "{{ dataverse.srcdir }}/conf/jhove/jhoveConfig.xsd"
   when: dataverse_branch != 'release'
 
 - name: set dataverse adminpass in setup-all
