@@ -93,6 +93,8 @@
         db.use_rds == false
   notify: enable and restart postgres
 
+# RedHat/CentOS - specific
+
 - name: log_lock_waits when told
   lineinfile:
     path: '/var/lib/pgsql/{{ db.postgres.version }}/data/postgresql.conf'
@@ -103,6 +105,17 @@
         ansible_os_family == "RedHat"
   notify: enable and restart postgres
 
+- name: enable prepared transactions
+  replace:
+    path: '/var/lib/pgsql/{{ db.postgres.version }}/data/postgresql.conf'
+    regexp: '^(.*)#max_prepared_transactions(.*)$'
+    replace: 'max_prepared_transactions = {{ db.postgres.max_prepared_transactions }}'
+  when: db.use_rds == false and
+        ansible_os_family == "RedHat"
+  notify: enable and restart postgres
+
+# Debian / Ubuntu - specific
+
 - name: log_lock_waits when told
   lineinfile:
     path: '/etc/postgresql/{{ db.postgres.version }}/main/postgresql.conf'
@@ -112,6 +125,15 @@
    - ansible_os_family == "Debian"
    - db.postgres.log_lock_waits
    - not db.use_rds
+  notify: enable and restart postgres
+
+- name: enable prepared transactions
+  replace:
+    path: '/etc/postgresql/{{ db.postgres.version }}/main/postgresql.conf'
+    regexp: '^(.*)#max_prepared_transactions(.*)$'
+    replace: 'max_prepared_transactions = {{ db.postgres.max_prepared_transactions }}'
+  when: db.use_rds == false and
+        ansible_os_family == "Debian"
   notify: enable and restart postgres
 
 - meta: flush_handlers

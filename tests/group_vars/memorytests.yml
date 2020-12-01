@@ -178,6 +178,7 @@ db:
     pass: dvnsecret
     jdbcurl: 
     log_lock_waits: true
+    max_prepared_transactions: 64
     version: 10
     port: 5432
   backups:
