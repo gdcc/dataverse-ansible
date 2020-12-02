@@ -16,30 +16,45 @@
 - name: fix perms on dataverse-war
   file: path=/tmp/dvinstall/dataverse.war mode=0644
 
-- name: grab current copies of installer source
-  get_url:
-    url: 'https://raw.githubusercontent.com/IQSS/dataverse/develop/scripts/installer/{{ item }}'
+- name: grab branch copies of installer source when using branch
+  copy:
+    src: '{{ dataverse.srcdir }}/scripts/installer/{{ item }}'
     dest: '/tmp/dvinstall/{{ item }}'
     mode: '0755'
+    remote_src: yes
   with_items:
     - install.py
     - installConfig.py
     - installAppServer.py
     - installUtils.py
     - as-setup.sh
-  when: dataverse.payara.zipurl is not match(".*glassfish-4.1.zip")
+  when: dataverse_branch != 'release'
 
-- name: grab api setup scripts as well
-  get_url:
-    url: 'https://raw.githubusercontent.com/IQSS/dataverse/develop/scripts/api/{{ item }}'
+- name: grab branch api setup scripts as well when using branch
+  copy:
+    src: '{{ dataverse.srcdir }}/scripts/api/{{ item }}'
     dest: '/tmp/dvinstall/{{ item }}'
     mode: '0755'
+    remote_src: yes
   with_items:
+    - post-install-api-block.sh
     - setup-all.sh
-    - setup-datasetfields.sh
     - setup-builtin-roles.sh
+    - setup-datasetfields.sh
+    - setup-dvs.sh
     - setup-identity-providers.sh
-  when: dataverse.payara.zipurl is not match(".*glassfish-4.1.zip")
+    - setup-users.sh
+  when: dataverse_branch != 'release'
+
+- name: copy jhove files from branch
+  copy:
+    src: "{{ item }}"
+    dest: "/tmp/dvinstall/"
+    remote_src: yes
+  with_items:
+    - "{{ dataverse.srcdir }}/conf/jhove/jhove.conf"
+    - "{{ dataverse.srcdir }}/conf/jhove/jhoveConfig.xsd"
+  when: dataverse_branch != 'release'
 
 - name: set dataverse adminpass in setup-all
   lineinfile:
@@ -48,14 +63,14 @@
     line: 'DV_SU_PASSWORD="{{ dataverse.adminpass }}"'
 
 - name: bash aliases won't expand in non-interactive shells
-  lineinfile:
+  replace:
     path: /tmp/dvinstall/as-setup.sh
     regexp: '{{ item.regexp }}'
-    line: '{{ item.line }}'
+    replace: '{{ item.replace }}'
   with_items:
-    - { regexp: 'rserve_password_alias', line: '  ./asadmin $ASADMIN_OPTS create-jvm-options "\-Ddataverse.rserve.password=${RSERVE_PASS}"' }
-    - { regexp: 'doi_password_alias', line: '  ./asadmin $ASADMIN_OPTS create-jvm-options "\-Ddoi.password=${DOI_PASSWORD}"' }
-    - { regexp: 'db_password_alias', line: '  ./asadmin $ASADMIN_OPTS set "resources.jdbc-connection-pool.dvnDbPool.property.password=${DB_PASS}"' }
+    - { regexp: '^(.*)ALIAS=rserve_password_alias(.*)$', replace: '  ./asadmin $ASADMIN_OPTS create-jvm-options "\-Ddataverse.rserve.password=${RSERVE_PASS}"' }
+    - { regexp: '^(.*)ALIAS=doi_password_alias(.*)$', replace: '  ./asadmin $ASADMIN_OPTS create-jvm-options "\-Ddoi.password=${DOI_PASSWORD}"' }
+    - { regexp: '^(.*)ALIAS=db_password_alias(.*)$', replace: '  ./asadmin $ASADMIN_OPTS set "resources.jdbc-connection-pool.dvnDbPool.property.password=${DB_PASS}"' }
   when: dataverse.payara.zipurl is not match(".*glassfish-4.1.zip")
 
 - name: ensure as-setup.sh is executable
@@ -107,7 +122,7 @@
   lineinfile:
     path: /tmp/dvinstall/as-setup.sh
     regexp: '(.*)-Ddataverse.siteUrl(.*)'
-    line: '  ./asadmin $ASADMIN_OPTS create-jvm-options "\-Ddataverse.siteUrl={{ siteUrl }}"'
+    line: '  ./asadmin $ASADMIN_OPTS create-jvm-options "\-Ddataverse.siteUrl={{ siteUrl_escaped }}"'
   when: dataverse.payara.zipurl is not match(".*glassfish-4.1.zip")
 
 - name: fire off installer
@@ -117,16 +132,26 @@
   args:
     chdir: /tmp/dvinstall
 
+- name: stop payara manually (systemd gums up the works)
+  become: yes
+  become_user: "{{ dataverse.payara.user }}"
+  shell: '{{ payara_dir }}/bin/asadmin stop-domain {{ dataverse.payara.domain }}'
+  ignore_errors: yes
+
+- name: now start payara with systemd
+  service:
+    name: payara
+    state: started
+
+- name: wait for payara to become ready
+  wait_for:
+    port: 8009
+    state: present
+    timeout: "{{ dataverse.payara.launch_timeout }}"
+
 # install.py doesn't currently log this output, nothing sensitive in install.out
 #- name: negate need for password aliases
 #  file:
 #    name: /tmp/as-setup.out
 #    mode: 0600
 #  ignore_errors: yes
-
-# this will fail if not run on localhost; it's only a logging format.
-- name: set logging format
-  become: yes
-  become_user: "{{ dataverse.payara.user }}"
-  shell: "{{ payara_dir }}/bin/asadmin set-log-file-format {{ dataverse.payara.logformat }}"
-  ignore_errors: yes

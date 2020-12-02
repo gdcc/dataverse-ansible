@@ -92,6 +92,13 @@
     mode: '0644'
   notify: enable and restart apache
 
+- name: certbot bonks on listen 443
+  lineinfile:
+    path: '{{ apache_virtualhost_dir }}/http.proxy.conf'
+    regexp: '^Listen 443 https'
+    state: absent
+  when: letsencrypt.enabled == true
+
 - include: certbot.yml
   when:
     - ansible_os_family == "RedHat"

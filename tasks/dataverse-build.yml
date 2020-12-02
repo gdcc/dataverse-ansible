@@ -20,35 +20,6 @@
   when: ansible_os_family == "RedHat" and
         java.version != '1.8.0'
 
-- name: wedge in dataverse-bundled files before building from branch
-  copy:
-    src: "{{ item }}"
-    dest: "/tmp/dvinstall/"
-    remote_src: yes
-  with_items:
-    - "{{ dataverse.srcdir }}/scripts/api/setup-datasetfields.sh"
-    - "{{ dataverse.srcdir }}/scripts/api/setup-users.sh"
-    - "{{ dataverse.srcdir }}/scripts/api/setup-builtin-roles.sh"
-    - "{{ dataverse.srcdir }}/scripts/api/setup-dvs.sh"
-    - "{{ dataverse.srcdir }}/scripts/api/setup-identity-providers.sh"
-    - "{{ dataverse.srcdir }}/scripts/api/setup-all.sh"
-    - "{{ dataverse.srcdir }}/scripts/api/post-install-api-block.sh"
-    - "{{ dataverse.srcdir }}/scripts/installer/install"
-    - "{{ dataverse.srcdir }}/scripts/installer/as-setup.sh"
-
-- name: copy api script data directory
-  shell: "/bin/cp -r {{ dataverse.srcdir }}/scripts/api/data /tmp/dvinstall/"
-
-- name: copy remaining files from branch
-  copy:
-    src: "{{ item }}"
-    dest: "/tmp/dvinstall/"
-    remote_src: yes
-  with_items:
-    - "{{ dataverse.srcdir }}/scripts/database/reference_data.sql"
-    - "{{ dataverse.srcdir }}/conf/jhove/jhove.conf"
-    - "{{ dataverse.srcdir }}/conf/jhove/jhoveConfig.xsd"
-
 - name: get branch_commit
   shell: 'cd "{{ dataverse.srcdir }}" && git log --oneline | head -1 | awk "{print $1}"'
   register: bcout

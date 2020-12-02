@@ -6,28 +6,12 @@
   debug:
     msg: '##### POST-INSTALL PAYARA CONFIGURATION #####'
 
-- name: set siteurl
+# this will fail if not run on localhost; it's only a logging format.
+- name: set logging format
   become: yes
   become_user: "{{ dataverse.payara.user }}"
-  shell: '{{ payara_dir}}/bin/asadmin create-jvm-options "-Ddataverse.siteUrl={{ siteUrl_escaped }}"'
-
-- name: stop payara manually (systemd gums up the works)
-  become: yes
-  become_user: "{{ dataverse.payara.user }}"
-  shell: '{{ payara_dir }}/bin/asadmin stop-domain {{ dataverse.payara.domain }}'
-
-- name: now start payara with systemd
-  service: name=payara state=started
-
-- name: wait for payara to become ready
-  wait_for:
-    port: 8009
-    state: present
-    timeout: "{{ dataverse.payara.launch_timeout }}"
-
-# python installer does this now
-#- name: setup-all.sh kitchen sink configuration.
-#  shell: "cd /tmp/dvinstall && ./setup-all.sh -p={{ dataverse.adminpass }} > /tmp/setup-all.out 2>&1"
+  shell: "{{ payara_dir }}/bin/asadmin set-log-file-format {{ dataverse.payara.logformat }}"
+  ignore_errors: yes
 
 - name: stage custom metadata blocks
   file:
@@ -63,12 +47,6 @@
   become: yes
   become_user: '{{ dataverse.solr.user }}'
   when: dataverse.custom_metadata_blocks.enabled == True
-
-# python installer does this now
-#- name: populate reference data
-#  shell: "psql -U {{ db.postgres.user }} -h {{ db.postgres.host }} -d {{ db.postgres.name }} -f /tmp/dvinstall/reference_data.sql"
-#  environment:
-#    PGPASSWORD: "{{ db.postgres.pass }}"
 
 # integration tests require these
 # createsequence.sql went AWOL. wedge in local copy.
@@ -114,3 +92,8 @@
     - { prop: ":FileFixityChecksumAlgorithm", val: "{{ dataverse.file_fixity_checksum_algorithm }}", desc: "checksum algorithm used for file fixity" }
 
 - include: dataverse-optional-settings.yml
+
+- name: final payara post-configuration restart
+  service:
+    name: payara
+    state: restarted

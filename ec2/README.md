@@ -1,6 +1,6 @@
 # EC2 Scripts for use with dataverse-ansible
 
-These scripts, initially written by @madunlap, use the dataverse-ansible role to stand up a functioning Dataverse instance on a single instance in EC2. One may simply provide a branch and/or GitHub repo as arguments, or one may run using the full set of features and options available from dataverse-ansible by providing a "group vars".yml file as an argument.
+These scripts, initially written by @matthew-a-dunlap, use the dataverse-ansible role to stand up a functioning Dataverse instance on a single instance in EC2. One may simply provide a branch and/or GitHub repo as arguments, or one may run using the full set of features and options available from dataverse-ansible by providing a "group vars".yml file as an argument.
 
 ### Prerequisites:
 
