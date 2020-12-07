@@ -1,27 +1,20 @@
 ---
 
 - name: install postfix
-  yum:
+  package:
     name: postfix
     state: latest
 
-- name: set public hostname
-  lineinfile:
-    path: /etc/postfix/main.cf
-    line: 'myhostname = {{ public_hostname }}'
-    insertbefore: '^#myhostname'
-
-- name: set mydomain
-  lineinfile:
-    path: /etc/postfix/main.cf
-    line: 'mydomain = {{ public_hostname }}'
-    insertbefore: '^#mydomain'
-
-- name: set origin hostname
-  lineinfile:
-    path: /etc/postfix/main.cf
-    line: 'myorigin = {{ public_hostname }}'
-    insertbefore: '^#myorigin'
+- name: place main.cf template
+  template:
+    src: main.cf.j2
+    dest: /etc/postfix/main.cf
+    owner: root
+    group: root
+    mode: '0644'
+  when:
+  - ansible_os_family == "RedHat"
+  - ansible_distribution_major_version == "8"
 
 - name: enable and start postfix
   systemd:
