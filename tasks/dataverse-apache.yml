@@ -115,7 +115,9 @@
   notify: enable and restart apache
 
 - name: "both redhat and ubuntu default to /var/www/html"
-  shell: 'semanage fcontext -a -t httpd_sys_content_t "/var/www/html(/.*)?"'
+  sefcontext:
+    target: "/var/www/html(/.*)?"
+    setype: httpd_sys_content_t
 
 - name: "allow apache read-only access to /var/www/html"
   shell: 'restorecon -R -v /var/www/html'
