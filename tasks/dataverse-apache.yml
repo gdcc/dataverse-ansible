@@ -5,6 +5,12 @@
   debug:
     msg: '##### APACHE/HTTPD #####'
 
+- name: Install dependencies for SELinux modules
+  pip:
+    - libselinux-python
+    - policycoreutils-python
+
+# TODO: replace with ansible.posix.seboolean call
 - name: allow apache to make outbound connections
   shell: '/usr/sbin/setsebool -P httpd_can_network_connect 1'
   when:
