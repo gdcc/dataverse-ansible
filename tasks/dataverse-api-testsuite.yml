@@ -82,7 +82,6 @@
     DVAPIKEY: '{{ dataverse.usermgmtkey }}'
     DV_APIKEY: '{{ dataverse.usermgmtkey }}'
     DV_API_KEY: '{{ dataverse.usermgmtkey }}'
-  ignore_errors: yes
 
 - name: generate HTML reports
   shell: 'mvn surefire-report:report'
