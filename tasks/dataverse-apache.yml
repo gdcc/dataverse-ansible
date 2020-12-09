@@ -5,24 +5,35 @@
   debug:
     msg: '##### APACHE/HTTPD #####'
 
-- name: Install dependencies for SELinux modules
-  pip:
+- name: install dependencies for SELinux modules on RedHat 8
+  yum:
     name:
-    - libselinux-python
-    - policycoreutils-python
-
-# TODO: replace with ansible.posix.seboolean call
-- name: allow apache to make outbound connections
-  shell: '/usr/sbin/setsebool -P httpd_can_network_connect 1'
+      - python3-libselinux
+      - python3-libsemanage
   when:
-  - ansible_os_family == "RedHat"
-  - ansible_distribution_major_version == "8"
+    - ansible_os_family == "RedHat"
+    - ansible_distribution_major_version == "8"
 
-- name: allow apache to read user content by default
-  shell: 'setsebool -P httpd_read_user_content 1'
+- name: install dependencies for SELinux modules on RedHat 7
+  yum:
+    name:
+      - libselinux-python
+      - libsemanage-python
   when:
-  - ansible_os_family == "RedHat"
-  - ansible_distribution_major_version == "8"
+    - ansible_os_family == "RedHat"
+    - ansible_distribution_major_version == "7"
+
+- name: set SELinux boolean
+  ansible.posix.seboolean:
+    name: "{{ item }}"
+    state: yes
+    persistent: yes
+  with_items:
+    - httpd_can_network_connect
+    - httpd_read_user_content
+  when:
+    - ansible_os_family == "RedHat"
+#    - ansible_distribution_major_version == "8"
 
 - name: httpd variables
   set_fact:
@@ -125,9 +136,13 @@
   sefcontext:
     target: "/var/www/html(/.*)?"
     setype: httpd_sys_content_t
+  when:
+    - ansible_os_family == "RedHat"
 
 - name: "allow apache read-only access to /var/www/html"
   shell: 'restorecon -R -v /var/www/html'
+  when:
+    - ansible_os_family == "RedHat"
 
 - name: run handlers -- this runs the apache restart scripts
   meta: flush_handlers
