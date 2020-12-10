@@ -6,14 +6,14 @@ driver:
   provider:
     name: virtualbox
 platforms:
-#  - name: centos8
-#    box: "bento/centos-8.2"
-#    memory: 3072
-#    cpus: 2
-#    interfaces:
-#      - network_name: forwarded_port
-#        guest: 80
-#        host: 8080
+  - name: centos8
+    box: "bento/centos-8.2"
+    memory: 3072
+    cpus: 2
+    interfaces:
+      - network_name: forwarded_port
+        guest: 80
+        host: 8080
   - name: centos7
     box: "bento/centos-7.8"
     memory: 3072
@@ -38,6 +38,7 @@ provisioner:
   config_options:
     defaults:
       remote_tmp: '/tmp'
+      # TODO: find alternative approach to 'merge', which is now deprecated
       hash_behaviour: 'merge'
     ssh_connection:
       pipelining: True
