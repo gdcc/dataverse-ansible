@@ -23,16 +23,11 @@
     - ansible_os_family == "RedHat"
     - ansible_distribution_major_version == "7"
 
-- name: set SELinux boolean
-  ansible.posix.seboolean:
-    name: "{{ item }}"
-    state: yes
-    persistent: yes
-  with_items:
-    - httpd_can_network_connect
-    - httpd_read_user_content
+- name: allow apache to read user content by default
+  shell: 'setsebool -P httpd_read_user_content 1'
   when:
     - ansible_os_family == "RedHat"
+    - ansible_distribution_major_version == "8"
 
 - name: httpd variables
   set_fact:
