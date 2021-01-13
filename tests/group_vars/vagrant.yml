@@ -164,7 +164,7 @@ dataverse:
   srcdir: /tmp/dataverse
   thumbnails: false
   unittests:
-    enabled: false
+    enabled: true
     argument: '-DcompilerArgument=-Xlint:unchecked test -P all-unit-tests'
   usermgmtkey: burrito
   version: '5.3'
@@ -199,6 +199,9 @@ grafana:
 
 java:
   version: 1.8.0
+
+maven:
+  version: default
 
 munin:
   install: false

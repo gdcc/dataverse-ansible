@@ -4,21 +4,7 @@
   debug:
     msg: '##### BUILD WARFILE #####'
 
-- name: install maven
-  yum:
-    name: maven
-    state: latest
-
-- name: maven rpm requires openjdk-1.8 but maybe we want newer
-  alternatives:
-    name: '{{ item.name }}'
-    link: '{{ item.link }}'
-    path: '{{ item.path }}'
-  with_items:
-    - { name: 'java', link: '/usr/bin/java', path: '/usr/lib/jvm/java-{{ java.version }}-openjdk/bin/java'}
-    - { name: 'javac', link: '/usr/bin/javac', path: '/usr/lib/jvm/java-{{ java.version }}-openjdk/bin/javac'}
-  when: ansible_os_family == "RedHat" and
-        java.version != '1.8.0'
+- include: maven.yml
 
 - name: get branch_commit
   shell: 'cd "{{ dataverse.srcdir }}" && git log --oneline | head -1 | awk "{print $1}"'
@@ -40,17 +26,26 @@
     line: "build.number={{ dataverse_branch }}-{{ commit }}"
     create: yes
 
-- name: build warfile with default tests. tail /tmp/dataverse/mvn.out for gory details.
+- name: build warfile without tests. tail /tmp/dataverse/mvn.out for gory details.
   shell: "export JAVA_HOME=/usr/lib/jvm/java-{{ java.version}} && mvn -T 2C package -Dmaven.test.skip=true > mvn.out"
   args:
     chdir: "{{ dataverse.srcdir }}"
-  when: dataverse.unittests.enabled == false
+  when: dataverse.unittests.enabled == false and
+        maven.version == 'default'
 
 - name: build warfile with specified tests. tail /tmp/dataverse/mvn.out for gory details.
   shell: "mvn {{ dataverse.unittests.argument }} {{ jacoco_arg }} -T 2C package > mvn.out"
   args:
     chdir: "{{ dataverse.srcdir }}"
-  when: dataverse.unittests.enabled == true
+  when: dataverse.unittests.enabled == true and
+        maven.version == 'default'
+
+- name: build warfile with specified tests using custom maven. tail /tmp/dataverse/mvn.out for gory details.
+  shell: "source /etc/profile.d/maven.sh && mvn {{ dataverse.unittests.argument }} {{ jacoco_arg }} -T 2C package > mvn.out"
+  args:
+    chdir: "{{ dataverse.srcdir }}"
+  when: dataverse.unittests.enabled == true and
+        maven.version != 'default'
 
 - name: copy warfile over release
   copy:

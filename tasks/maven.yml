@@ -1,0 +1,34 @@
+---
+
+- name: install stock maven
+  package:
+    name: maven
+    state: latest
+  when: maven.version == 'default'
+
+- name: download custom maven version
+  get_url:
+    url: 'https://www-us.apache.org/dist/maven/maven-3/{{ maven.version }}/binaries/apache-maven-{{ maven.version }}-bin.tar.gz'
+    dest: '/tmp/apache-maven-{{ maven.version }}-bin.tar.gz'
+  when: maven.version != 'default'
+
+- name: maven dest dir must exist
+  file:
+    path: /opt/maven
+    owner: root
+    group: root
+    mode: 0755
+    state: directory
+
+- name: bsdtar so we get /opt/maven
+  shell: 'bsdtar --strip-components=1 -C /opt/maven -xf /tmp/apache-maven-{{ maven.version }}-bin.tar.gz'
+  when: maven.version != 'default'
+
+- name: place maven.sh profile config
+  copy:
+    src: maven.sh
+    dest: /etc/profile.d/maven.sh
+    owner: root
+    group: root
+    mode: 0755
+  when: maven.version != 'default'
