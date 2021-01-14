@@ -71,7 +71,7 @@
       X-Dataverse-key: '{{ api_token }}'
   when: root_dv_published.stat.exists == False
 
-- name: run test suite
+- name: run test suite with default maven
   shell: '{{ dataverse.srcdir }}/run-test-suite.sh http://localhost:8080'
   args:
     chdir: '{{ dataverse.srcdir }}'
@@ -79,6 +79,17 @@
     DVAPIKEY: '{{ dataverse.usermgmtkey }}'
     DV_APIKEY: '{{ dataverse.usermgmtkey }}'
     DV_API_KEY: '{{ dataverse.usermgmtkey }}'
+  when: maven.version == 'default'
+
+- name: run test suite with custom maven
+  shell: 'source /etc/profile.d/maven.sh && {{ dataverse.srcdir }}/run-test-suite.sh http://localhost:8080'
+  args:
+    chdir: '{{ dataverse.srcdir }}'
+  environment:
+    DVAPIKEY: '{{ dataverse.usermgmtkey }}'
+    DV_APIKEY: '{{ dataverse.usermgmtkey }}'
+    DV_API_KEY: '{{ dataverse.usermgmtkey }}'
+  when: maven.version != 'default'
 
 - name: generate HTML reports
   shell: 'mvn surefire-report:report'
