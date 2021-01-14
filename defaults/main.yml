@@ -212,6 +212,9 @@ localstack:
   hostname_external: 
   web_ui: 8888
 
+maven:
+  version: default
+
 munin:
   install: false
   admin:
