@@ -19,10 +19,17 @@
     group: root
     mode: 0755
     state: directory
+  when: maven.version != 'default'
+
+- name: "check regardless of maven case so next step doesn't fail"
+  stat:
+    path: /opt/maven/bin
+  register: maven_bin
 
 - name: bsdtar so we get /opt/maven
   shell: 'bsdtar --strip-components=1 -C /opt/maven -xf /tmp/apache-maven-{{ maven.version }}-bin.tar.gz'
-  when: maven.version != 'default'
+  when: maven.version != 'default' and
+        not maven_bin.stat.exists
 
 - name: place maven.sh profile config
   copy:

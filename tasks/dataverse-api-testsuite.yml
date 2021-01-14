@@ -4,10 +4,7 @@
   debug:
     msg: '##### RUN INTEGRATION TESTS #####'
 
-- name: install maven if it isn't already
-  yum:
-    name: maven
-    state: latest
+- include: maven.yml
 
 - name: do we have a pom.xml
   stat:
