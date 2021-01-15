@@ -91,7 +91,14 @@
     DV_API_KEY: '{{ dataverse.usermgmtkey }}'
   when: maven.version != 'default'
 
-- name: generate HTML reports
+- name: generate HTML reports with default maven
   shell: 'mvn surefire-report:report'
   args:
     chdir: '{{ dataverse.srcdir }}'
+  when: maven.version == 'default'
+
+- name: generate HTML reports with custom maven
+  shell: 'source /etc/profile.d/maven.sh && mvn surefire-report:report'
+  args:
+    chdir: '{{ dataverse.srcdir }}'
+  when: maven.version != 'default'
