@@ -194,7 +194,7 @@ grafana:
   grafana_password: 'adm1n'
 
 java:
-  version: 1.8.0
+  version: 11
 
 localstack:
   enabled: false
@@ -209,7 +209,7 @@ localstack:
   web_ui: 8888
 
 maven:
-  version: default
+  version: 3.6.3
 
 munin:
   install: false

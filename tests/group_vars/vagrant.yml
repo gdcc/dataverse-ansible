@@ -198,10 +198,10 @@ grafana:
   grafana_password: 'admin'
 
 java:
-  version: 1.8.0
+  version: 11
 
 maven:
-  version: default
+  version: 3.6.3
 
 munin:
   install: false
