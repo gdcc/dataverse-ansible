@@ -36,6 +36,12 @@
     dest: '{{ dataverse.srcdir }}/run-test-suite.sh'
     mode: 0755
 
+- name: update run-test-suite.sh to find our maven.sh in profile.d
+  replace:
+    path: '{{ dataverse.srcdir }}/run-test-suite.sh'
+    regexp: 'maven/maven.sh'
+    replace: '/etc/profile.d/maven.sh'
+
 - name: run only specified tests
   lineinfile:
     path: /tmp/dataverse/run-test-suite.sh
