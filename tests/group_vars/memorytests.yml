@@ -124,7 +124,7 @@ dataverse:
   jacoco:
     enabled: false
     home: /tmp/jacoco
-    version: 0.8.1
+    version: 0.8.6
   file_fixity_checksum_algorithm: "MD5"
   memheap: 2048
   options:
