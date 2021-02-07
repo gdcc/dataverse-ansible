@@ -4,6 +4,13 @@
   get_url:
     url: https://github.com/IQSS/dataverse/releases/download/v{{ dataverse.version }}/dvinstall.zip
     dest: /tmp
+  when: dataverse_installer_url is not defined
+
+- name: download alternative dataverse installer
+  get_url:
+    url: '{{ dataverse_installer_url }}'
+    dest: /tmp
+  when: dataverse_installer_url is defined
 
 - name: unzip dataverse installer
   unarchive:
