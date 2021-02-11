@@ -2,7 +2,7 @@
 # dataverse/tests/group_vars/vagrant.yml
 
 # un-nested so we can pass them at the CLI
-dataverse_branch: develop
+dataverse_branch: release
 dataverse_repo: https://github.com/IQSS/dataverse.git
 
 apache:
@@ -36,7 +36,7 @@ dataverse:
     blocked_endpoints: "admin,test"
     blocked_policy: "localhost-only"
     location: "http://localhost:8080/api"
-    test_suite: true
+    test_suite: false
     # possible test values from https://github.com/IQSS/dataverse/blob/develop/conf/docker-aio/run-test-suite.sh#L11
     # beware DataversesIT and DatasetsIT at minimum must be run for any other tests to succeed. have fun.
     #tests: "DataversesIT,DatasetsIT,AdminIT"
@@ -137,7 +137,7 @@ dataverse:
   previewers:
     enabled: true
     on_same_server: true
-    zip_url: https://github.com/GlobalDataverseCommunityConsortium/dataverse-previewers/archive/1.1.zip
+    zip_url: https://github.com/GlobalDataverseCommunityConsortium/dataverse-previewers/archive/1.1.1.zip
     dir: /var/www/html
   sampledata:
     enabled: false
@@ -220,7 +220,7 @@ prometheus:
   user: prometheus
 
 rserve:
-  install: true
+  install: false
   host: localhost
   user: rserve
   group: rserve
