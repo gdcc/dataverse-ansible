@@ -4,6 +4,8 @@
 # un-nested so we can pass them at the CLI
 dataverse_branch: release
 dataverse_repo: https://github.com/IQSS/dataverse.git
+# To use a dvinstall.zip from a different location than IQSS:
+# dataverse_installer_url: https://example.com/path/to/dvinstall.zip
 
 apache:
   ssl:
