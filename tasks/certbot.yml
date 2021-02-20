@@ -35,3 +35,10 @@
     name: httpd
     state: started
   when: not letsencrypt_cert.stat.exists
+
+- name: automatically renew certs
+  service:
+    name: certbot-renew.timer
+    state: started
+    enabled: yes
+  when: letsencrpyt.certbot.autonew == true
