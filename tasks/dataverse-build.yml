@@ -26,12 +26,19 @@
     line: "build.number={{ dataverse_branch }}-{{ commit }}"
     create: yes
 
-- name: build warfile without tests. tail /tmp/dataverse/mvn.out for gory details.
+- name: build warfile without tests and default maven. tail /tmp/dataverse/mvn.out for gory details.
   shell: "export JAVA_HOME=/usr/lib/jvm/java-{{ java.version}} && mvn -T 2C package -Dmaven.test.skip=true > mvn.out"
   args:
     chdir: "{{ dataverse.srcdir }}"
   when: dataverse.unittests.enabled == false and
         maven.version == 'default'
+
+- name: build warfile without tests and custom maven. tail /tmp/dataverse/mvn.out for gory details.
+  shell: "source /etc/profile.d/maven.sh && mvn -T 2C package -Dmaven.test.skip=true > mvn.out"
+  args:
+    chdir: "{{ dataverse.srcdir }}"
+  when: dataverse.unittests.enabled == false and
+        maven.version != 'default'
 
 - name: build warfile with specified tests. tail /tmp/dataverse/mvn.out for gory details.
   shell: "mvn {{ dataverse.unittests.argument }} {{ jacoco_arg }} -T 2C package > mvn.out"
