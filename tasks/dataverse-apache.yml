@@ -114,6 +114,14 @@
     mode: 0644
   notify: enable and restart apache
 
+- name: this package provides semanage on CentOS 8.3-minimal
+  package:
+    name: policycoreutils-python-utils
+    state: latest
+  when:
+    - ansible_os_family == "RedHat"
+    - ansible_distribution_major_version == "8"
+
 - name: "both redhat and ubuntu default to /var/www/html"
   shell: 'semanage fcontext -a -t httpd_sys_content_t "/var/www/html(/.*)?" || semanage fcontext -m -t httpd_sys_content_t "/var/www/html(/.*)?"'
 
