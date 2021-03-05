@@ -154,7 +154,7 @@ dataverse:
     group: solr
     root: /usr/local/solr
     user: solr
-    version: 7.7.2
+    version: 8.8.1
     listen: 127.0.0.1
     checksum: sha256:eb8ee4038f25364328355de3338e46961093e39166c9bcc28b5915ae491320df
   srcdir: /tmp/dataverse
