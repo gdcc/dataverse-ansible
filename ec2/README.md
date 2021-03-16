@@ -10,7 +10,7 @@ If you intend to use the `-l` logpath argument, you will need **rsync version 3.
 
 An existing AWS **security group** to allow network access, typically ports 22, 80, 443, and/or 8080 depending on your needs. A group name of `dataverse-sg` is currently hard-coded in the script. If one uses script defaults, the security group should allow ports 22 and 80.
 
-### Usage:
+### Full Usage:
 
 `./ec2-create-instance.sh -b <branch> -r <repo> -p <pem_dir> -g <group_vars> -a <dataverse-ansible branch> -i aws_image -s aws_size -t aws_tag -l local_log_path -d`
 
@@ -23,11 +23,15 @@ An existing AWS **security group** to allow network access, typically ports 22, 
 * local log path will rsync Payara, Jacoco, Maven and other logs back to the specified path
 * `-d` will destroy (terminate) the AWS instance once testing, reporting, and log-copying completes
 
-### Examples
+### Quick Start
 
-To stand up an instance on the [develop](https://github.com/IQSS/dataverse/tree/develop) branch from [IQSS](https://github.com/IQSS/dataverse) with [no integration tests](http://guides.dataverse.org/en/latest/developers/testing.html#integration-tests):
+To stand up on instance running the latest release of Dataverse, simply run the script:
 
 `./ec2-create-instance.sh`
+
+To stand up an instance running the [develop](https://github.com/IQSS/dataverse/tree/develop) branch from [IQSS](https://github.com/IQSS/dataverse) with [no integration tests](http://guides.dataverse.org/en/latest/developers/testing.html#integration-tests):
+
+`./ec2-create-instance.sh -b develop`
 
 To stand up the `5292-small-container branch` from @poikilotherm's fork:
 
