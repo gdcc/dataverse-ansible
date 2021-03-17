@@ -25,7 +25,7 @@ An existing AWS **security group** to allow network access, typically ports 22, 
 
 ### Quick Start
 
-To stand up on instance running the latest release of Dataverse, simply run the script:
+To stand up an instance running the latest release of Dataverse, simply run the script:
 
 `./ec2-create-instance.sh`
 
