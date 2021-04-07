@@ -5,6 +5,11 @@
     url: '{{ schemaspy.jarurl }}'
     dest: /tmp/schemaspy.jar
 
+- name: download jdbc driver
+  get_url:
+    url: 'https://jdbc.postgresql.org/download/postgresql-42.2.19.jar'
+    dest: /tmp/postgresql-42.2.19.jar
+
 - name: ensure output dir exists
   file:
     path: '/var/www/html/schemaspy/{{ dataverse_branch }}'
@@ -13,17 +18,6 @@
     group: root
     mode: '0755'
 
-- name: find postgresql drivers
-  find:
-    path: /tmp/dvinstall/pgdriver/
-    patterns: '*.jar'
-    file_type: file
-  register: pgdriver_list
-
-- name: just the one, dear
-  set_fact:
-    pgdriver: '{{ pgdriver_list.files[0].path }}'
-
 - name: schemaspy says it doesn't need graphviz but it does
   package:
     name: graphviz
@@ -31,4 +25,4 @@
 
 - name: run schemaspy
   shell:
-    cmd: '/usr/bin/java -jar /tmp/schemaspy.jar -t pgsql -host {{ db.postgres.host }} -db {{ db.postgres.name }} -u {{ db.postgres.user }} -p {{ db.postgres.pass }} -s public -dp {{ pgdriver }} -o /var/www/html/schemaspy/{{ dataverse_branch }}'
+    cmd: '/usr/bin/java -jar /tmp/schemaspy.jar -t pgsql -host {{ db.postgres.host }} -db {{ db.postgres.name }} -u {{ db.postgres.user }} -p {{ db.postgres.pass }} -s public -dp /tmp/postgresql-42.2.19.jar -o /var/www/html/schemaspy/{{ dataverse_branch }}'

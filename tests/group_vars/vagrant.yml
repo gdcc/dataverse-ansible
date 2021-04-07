@@ -174,10 +174,10 @@ build_guides: false
 db:
   postgres:
     adminpass: DVn33dsth1s
-    name: dvndb
+    name: vagrantdb
     host: localhost
-    user: dvnuser
-    pass: dvnsecret
+    user: vagrantuser
+    pass: vagrantsekret
     jdbcurl:
     log_lock_waits: true
     version: 10
