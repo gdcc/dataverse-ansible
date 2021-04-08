@@ -19,7 +19,7 @@ usage() {
   echo "default branch is develop"
   echo "default repo is https://github.com/IQSS/dataverse"
   echo "default .pem location is ${HOME}"
-  echo "example group_vars may be retrieved from https://raw.githubusercontent.com/GlobalDataverseCommunityConsortium/dataverse-ansible/master/defaults/main.yml"
+  echo "example group_vars may be retrieved from https://raw.githubusercontent.com/GlobalDataverseCommunityConsortium/dataverse-ansible/develop/defaults/main.yml"
   echo "default AWS AMI ID is $AWS_AMI_DEFAULT, find the full list at https://wiki.centos.org/Cloud/AWS"
   echo "default AWS instance size is t3a.large"
   echo "default AWS security group is dataverse-sg"
@@ -133,9 +133,9 @@ if [ -z "$AWS_SG" ]; then
 fi
 echo "using $AWS_SG security group"
 
-# default to dataverse-ansible/master
+# default to dataverse-ansible/develop
 if [ -z "$DA_BRANCH" ]; then
-   DA_BRANCH="master"
+   DA_BRANCH="develop"
 fi
 
 # verbosity
