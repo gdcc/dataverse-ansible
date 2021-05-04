@@ -1,0 +1,26 @@
+---
+- name: install SELinux tools
+  ansible.builtin.yum:
+    name: '{{ packages }}'
+    state: latest
+  vars:
+    packages:
+    - setools
+    - setools-console
+    - policycoreutils-devel
+  when: ansible_os_family == 'RedHat'
+
+- name: set httpd_can_network_connect on and keep it persistent across reboots
+  seboolean:
+    name: httpd_can_network_connect
+    state: yes
+    persistent: yes
+  when: ansible_os_family == 'RedHat'
+
+- name: allow apache to read user content by default
+  seboolean:
+    name: httpd_read_user_content
+    state: yes
+    persistent: yes
+  when:
+  - ansible_os_family == "RedHat"
