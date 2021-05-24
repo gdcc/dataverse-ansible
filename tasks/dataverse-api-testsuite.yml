@@ -30,9 +30,9 @@
 - name: ensure we have api script data directory
   shell: "/bin/cp -r {{ dataverse.srcdir }}/scripts/api/data /tmp/dvinstall/"
 
-- name: grab latest copy of run-test-suite.sh
+- name: grab modified copy of run-test-suite.sh
   get_url:
-    url: 'https://raw.githubusercontent.com/IQSS/dataverse/{{ dataverse_branch }}/conf/docker-aio/run-test-suite.sh'
+    url: 'https://raw.githubusercontent.com/OdumInstitute/dataverse/{{ dataverse_branch }}/conf/docker-aio/run-test-suite.sh'
     dest: '{{ dataverse.srcdir }}/run-test-suite.sh'
     mode: 0755
 
