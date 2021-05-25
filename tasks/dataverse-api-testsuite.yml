@@ -77,12 +77,16 @@
       X-Dataverse-key: '{{ api_token }}'
   when: root_dv_published.stat.exists == False
 
-- name: get list of ITs to run
+- name: get authoritative list of ITs
   ansible.builtin.slurp:
     src: '{{ dataverse.srcdir }}/tests/integration-tests.txt'
-  register: integration_test_list
+  register: integration_test_list_b64
   when: dataverse.api.tests == 'default'
 
+- name: base64decode integration_test_list_b64
+  ansible.builtin.set_fact:
+    integration_test_list: '{{ integration_test_list_b64['content'] | b64decode }}'
+  
 - name: unless we have a user-specified list
   set_fact:
     integration_test_list: '{{ dataverse.api.tests }}'
