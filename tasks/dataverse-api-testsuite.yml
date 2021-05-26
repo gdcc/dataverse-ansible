@@ -30,25 +30,6 @@
 - name: ensure we have api script data directory
   shell: "/bin/cp -r {{ dataverse.srcdir }}/scripts/api/data /tmp/dvinstall/"
 
-#- name: grab modified copy of run-test-suite.sh
-#  get_url:
-#    url: 'https://raw.githubusercontent.com/OdumInstitute/dataverse/{{ dataverse_branch }}/conf/docker-aio/run-test-suite.sh'
-#    dest: '{{ dataverse.srcdir }}/run-test-suite.sh'
-#    mode: 0755
-#
-#- name: update run-test-suite.sh to find our maven.sh in profile.d
-#  replace:
-#    path: '{{ dataverse.srcdir }}/run-test-suite.sh'
-#    regexp: 'maven/maven.sh'
-#    replace: '/etc/profile.d/maven.sh'
-#
-#- name: run only specified tests
-#  lineinfile:
-#    path: /tmp/dataverse/run-test-suite.sh
-#    regexp: '^mvn test.*'
-#    line: 'mvn test -Dtest={{ dataverse.api.tests }} -Ddataverse.test.baseurl=$dvurl'
-#  when: dataverse.api.tests != "all"
-
 - name: set user management quesadilla
   uri:
     url: 'http://localhost:8080/api/admin/settings/BuiltinUsers.KEY'
@@ -85,7 +66,7 @@
 
 - name: base64decode integration_test_list_b64
   ansible.builtin.set_fact:
-    integration_test_list: "{{ integration_test_list_b64['content'] | b64decode }}"
+    integration_test_list: "{{ integration_test_list_b64['content'] | b64decode | trim }}"
   
 - name: unless we have a user-specified list
   set_fact:
