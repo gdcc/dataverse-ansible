@@ -84,7 +84,7 @@
   when: maven.version == 'default'
 
 - name: run test suite with custom maven
-  shell: 'source /etc/profile.d/maven.sh && test -Dtest={{ integration_test_list }} -Ddataverse.test.baseurl=http://localhost:8080'
+  shell: 'source /etc/profile.d/maven.sh && mvn test -Dtest={{ integration_test_list }} -Ddataverse.test.baseurl=http://localhost:8080'
   args:
     chdir: '{{ dataverse.srcdir }}'
   environment:
