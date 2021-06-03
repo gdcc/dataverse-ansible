@@ -67,6 +67,7 @@
 - name: base64decode integration_test_list_b64
   ansible.builtin.set_fact:
     integration_test_list: "{{ integration_test_list_b64['content'] | b64decode | trim }}"
+  when: dataverse.api.tests == 'default'
   
 - name: unless we have a user-specified list
   set_fact:
