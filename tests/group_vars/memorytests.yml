@@ -40,7 +40,7 @@ dataverse:
     # possible test values from https://github.com/IQSS/dataverse/blob/develop/conf/docker-aio/run-test-suite.sh#L11
     # beware DataversesIT and DatasetsIT at minimum must be run for any other tests to succeed. have fun.
     #tests: "DataversesIT,DatasetsIT,AdminIT"
-    tests: all
+    tests: default
   branding:
     enabled: false
     directory: "{{ playbook_dir }}/files/branding"
