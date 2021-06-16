@@ -180,7 +180,7 @@ db:
     pass: vagrantsekret
     jdbcurl:
     log_lock_waits: true
-    version: 10
+    version: 13
     port: 5432
   backups:
     enabled: false
