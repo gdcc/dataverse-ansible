@@ -5,18 +5,6 @@
   debug:
     msg: '##### APACHE/HTTPD #####'
 
-- name: allow apache to make outbound connections
-  shell: '/usr/sbin/setsebool -P httpd_can_network_connect 1'
-  when:
-  - ansible_os_family == "RedHat"
-  - ansible_distribution_major_version == "8"
-
-- name: allow apache to read user content by default
-  shell: 'setsebool -P httpd_read_user_content 1'
-  when:
-  - ansible_os_family == "RedHat"
-  - ansible_distribution_major_version == "8"
-
 - name: httpd variables
   set_fact:
     apache_config_base_dir: "{{ (ansible_os_family == 'RedHat') | ternary ('/etc/httpd', '/etc/apache2') }}"
@@ -122,11 +110,7 @@
     - ansible_os_family == "RedHat"
     - ansible_distribution_major_version == "8"
 
-- name: "both redhat and ubuntu default to /var/www/html"
-  shell: 'semanage fcontext -a -t httpd_sys_content_t "/var/www/html(/.*)?" || semanage fcontext -m -t httpd_sys_content_t "/var/www/html(/.*)?"'
-
-- name: "allow apache read-only access to /var/www/html"
-  shell: 'restorecon -R -v /var/www/html'
+- include: selinux.yml
 
 - name: run handlers -- this runs the apache restart scripts
   meta: flush_handlers
