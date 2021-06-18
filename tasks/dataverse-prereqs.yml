@@ -56,15 +56,14 @@
     name: default-jdk, python3, vim
   when: ansible_os_family == "Debian"
 
-# re-enable this once the status of
-# https://access.redhat.com/security/cve/cve-2020-29599
-# is known.
-#- name: install GraphicsMagic on RHEL/CentOS8 for thumbnail generation
-#  dnf:
-#    name: GraphicsMagick
-#  when:
-#    - ansible_os_family == "RedHat"
-#    - dataverse.thumbnails
+# it is strongly recommended to check for open CVEs before enabling this.
+- name: install GraphicsMagic on RHEL/CentOS8 for thumbnail generation
+  dnf:
+    name: GraphicsMagick
+  when:
+    - ansible_os_family == "RedHat"
+    - ansible_distribution_major_version == "8"
+    - dataverse.thumbnails
 
 - name: install GraphicsMagic on Debian/Ubuntu for thumbnail generation
   package:
