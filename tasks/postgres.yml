@@ -23,6 +23,7 @@
   rpm_key:
     state: present
     key: https://download.postgresql.org/pub/repos/yum/RPM-GPG-KEY-PGDG
+  when: ansible_os_family == "RedHat"
 
 - name: install postgres repo RPM
   yum:
