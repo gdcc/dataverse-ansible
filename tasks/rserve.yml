@@ -27,6 +27,11 @@
         ansible_distribution_major_version == "8" and
         ansible_distribution_version != "8.2"
 
+- name: Rocky needs powertools
+  shell: "dnf config-manager --enable powertools"
+  when: ansible_distribution == "Rocky" and
+        ansible_distribution_major_version == "8"
+
 - name: install base packages
   yum:
     name: "{{ packages }}"
