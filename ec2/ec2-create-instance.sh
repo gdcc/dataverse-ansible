@@ -11,8 +11,8 @@ VERBOSE_ARG=""
 # centos image list at https://wiki.centos.org/Cloud/AWS
 # centos 7
 #AWS_AMI_DEFAULT='ami-9887c6e7'
-# centos 8.2, us-east-1
-AWS_AMI_DEFAULT='ami-01ca03df4a6012157'
+# rocky linux 8.4, us-east-1
+AWS_AMI_DEFAULT='ami-0513a32c5ae3371d4'
 
 usage() {
   echo "Usage: $0 -b <branch> -r <repo> -p <pem_path> -g <group_vars> -a <dataverse-ansible branch> -i aws_image -s aws_size -t aws_tag -f aws_security group -l local_log_path -d -v" 1>&2
@@ -206,7 +206,7 @@ echo "End creating EC2 instance"
 PUBLIC_DNS=$(aws ec2 describe-instances --instance-ids $INSTANCE_ID --query "Reservations[*].Instances[*].[PublicDnsName]" --output text)
 PUBLIC_IP=$(aws ec2 describe-instances --instance-ids $INSTANCE_ID --query "Reservations[*].Instances[*].[PublicIpAddress]" --output text)
 
-USER_AT_HOST="centos@${PUBLIC_DNS}"
+USER_AT_HOST="rocky@${PUBLIC_DNS}"
 echo "New instance created with ID \"$INSTANCE_ID\". To ssh into it:"
 echo "ssh -i $PEM_FILE $USER_AT_HOST"
 
@@ -229,25 +229,25 @@ EOF
 
 # did AWS go AWOL? Jenkins will check for this file.
 ssh-keyscan ${PUBLIC_DNS} >> ~/.ssh/known_hosts
-rsync -av -e "ssh -i $PEM_FILE" centos@$PUBLIC_DNS:/tmp/ansible_complete ./
+rsync -av -e "ssh -i $PEM_FILE" rocky@$PUBLIC_DNS:/tmp/ansible_complete ./
 
 if [ ! -z "$LOCAL_LOG_PATH" ]; then
    echo "copying logs to $LOCAL_LOG_PATH."
    # 1 logdir should exist
    mkdir -p $LOCAL_LOG_PATH
    # 2 grab logs for local processing in jenkins
-   rsync -av -e "ssh -i $PEM_FILE" --ignore-missing-args centos@$PUBLIC_DNS:/tmp/dataverse/target/site $LOCAL_LOG_PATH/
-   rsync -av -e "ssh -i $PEM_FILE" --ignore-missing-args centos@$PUBLIC_DNS:/tmp/dataverse/target/surefire-reports $LOCAL_LOG_PATH/
-   rsync -av -e "ssh -i $PEM_FILE" --ignore-missing-args centos@$PUBLIC_DNS:/usr/local/payara5/glassfish/domains/domain1/logs/server* $LOCAL_LOG_PATH/
+   rsync -av -e "ssh -i $PEM_FILE" --ignore-missing-args rocky@$PUBLIC_DNS:/tmp/dataverse/target/site $LOCAL_LOG_PATH/
+   rsync -av -e "ssh -i $PEM_FILE" --ignore-missing-args rocky@$PUBLIC_DNS:/tmp/dataverse/target/surefire-reports $LOCAL_LOG_PATH/
+   rsync -av -e "ssh -i $PEM_FILE" --ignore-missing-args rocky@$PUBLIC_DNS:/usr/local/payara5/glassfish/domains/domain1/logs/server* $LOCAL_LOG_PATH/
    # 3 grab mvn.out
-   rsync -av -e "ssh -i $PEM_FILE" --ignore-missing-args centos@$PUBLIC_DNS:/tmp/dataverse/mvn.out $LOCAL_LOG_PATH/
+   rsync -av -e "ssh -i $PEM_FILE" --ignore-missing-args rocky@$PUBLIC_DNS:/tmp/dataverse/mvn.out $LOCAL_LOG_PATH/
    # 4 jacoco
-   rsync -av -e "ssh -i $PEM_FILE" --ignore-missing-args centos@$PUBLIC_DNS:/tmp/dataverse/target/coverage-it $LOCAL_LOG_PATH/
-   rsync -av -e "ssh -i $PEM_FILE" --ignore-missing-args centos@$PUBLIC_DNS:/tmp/dataverse/target/*.exec $LOCAL_LOG_PATH/
-   rsync -av -e "ssh -i $PEM_FILE" --ignore-missing-args centos@$PUBLIC_DNS:/tmp/dataverse/target/classes $LOCAL_LOG_PATH/
-   rsync -av -e "ssh -i $PEM_FILE" --ignore-missing-args centos@$PUBLIC_DNS:/tmp/dataverse/src $LOCAL_LOG_PATH/
+   rsync -av -e "ssh -i $PEM_FILE" --ignore-missing-args rocky@$PUBLIC_DNS:/tmp/dataverse/target/coverage-it $LOCAL_LOG_PATH/
+   rsync -av -e "ssh -i $PEM_FILE" --ignore-missing-args rocky@$PUBLIC_DNS:/tmp/dataverse/target/*.exec $LOCAL_LOG_PATH/
+   rsync -av -e "ssh -i $PEM_FILE" --ignore-missing-args rocky@$PUBLIC_DNS:/tmp/dataverse/target/classes $LOCAL_LOG_PATH/
+   rsync -av -e "ssh -i $PEM_FILE" --ignore-missing-args rocky@$PUBLIC_DNS:/tmp/dataverse/src $LOCAL_LOG_PATH/
    # 5 server.log*
-   rsync -av -e "ssh -i $PEM_FILE" --ignore-missing-args centos@$PUBLIC_DNS:/usr/local/payara5/glassfish/domains/domain1/logs/server.log* $LOCAL_LOG_PATH/
+   rsync -av -e "ssh -i $PEM_FILE" --ignore-missing-args rocky@$PUBLIC_DNS:/usr/local/payara5/glassfish/domains/domain1/logs/server.log* $LOCAL_LOG_PATH/
 fi
 
 # Port 8080 has been added because Ansible puts a redirect in place
