@@ -93,7 +93,7 @@ It is possible to run certain portions of the playbook to avoid running the enti
 	$ cd dataverse-ansible
 	$ vagrant up
 
-On successful completion of the Vagrant run, you should be able to log in to your test Dataverse as dataverseAdmin using the dataverse_adminpass from group_vars/vagrant.vars using the address:
+On successful completion of the Vagrant run, you should be able to log in to your test Dataverse as dataverseAdmin using the dataverse_adminpass from tests/group_vars/vagrant.yml using the address:
 
 	http://localhost
 
