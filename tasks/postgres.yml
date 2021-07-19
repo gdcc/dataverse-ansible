@@ -135,3 +135,6 @@
     password: '{{ db.postgres.pass }}'
     role_attr_flags: 'NOSUPERUSER,CREATEDB,CREATEROLE,INHERIT,LOGIN'
   when: db.use_rds == false
+
+- include: postgres_sequential_identifiers.yml
+  when: dataverse.api.test_suite == true

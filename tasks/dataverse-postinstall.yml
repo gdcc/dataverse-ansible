@@ -48,26 +48,6 @@
   become_user: '{{ dataverse.solr.user }}'
   when: dataverse.custom_metadata_blocks.enabled == True
 
-# integration tests require these
-# createsequence.sql went AWOL. wedge in local copy.
-- name: support sequential identifiers fetch current SQL script
-  copy:
-    #url: http://guides.dataverse.org/en/{{ dataverse.version if dataverse_branch == 'release' else 'latest' }}/_downloads/createsequence.sql
-    src: createsequence.sql
-    dest: /tmp/createsequence.sql
-    mode: '0644'
-
-- name: "support sequential identifiers use db.user"
-  lineinfile:
-    path: /tmp/createsequence.sql
-    regexp: '^ALTER TABLE datasetidentifier_seq OWNER TO "dvnapp"'
-    line: 'ALTER TABLE datasetidentifier_seq OWNER TO "{{ db.postgres.user }}";'
-
-- name: support sequential identifiers
-  shell: "psql -U {{ db.postgres.user }} -h {{ db.postgres.host }} -d {{ db.postgres.name }} -f /tmp/createsequence.sql"
-  environment:
-    PGPASSWORD: "{{ db.postgres.pass }}"
-  
 - name: suppress grizzly ajp warnings
   become: yes
   become_user: "{{ dataverse.payara.user }}"
