@@ -11,8 +11,8 @@ VERBOSE_ARG=""
 # centos image list at https://wiki.centos.org/Cloud/AWS
 # centos 7
 #AWS_AMI_DEFAULT='ami-9887c6e7'
-# rocky linux 8.4, us-east-1
-AWS_AMI_DEFAULT='ami-0513a32c5ae3371d4'
+# rocky linux 8.4 official, us-east-1
+AWS_AMI_DEFAULT='ami-02628ddf3745c6dda'
 
 usage() {
   echo "Usage: $0 -b <branch> -r <repo> -p <pem_path> -g <group_vars> -a <dataverse-ansible branch> -i aws_image -u aws_user -s aws_size -t aws_tag -f aws_security group -l local_log_path -d -v" 1>&2
