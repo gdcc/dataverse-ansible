@@ -241,6 +241,7 @@ s3:
   access_key: 4cc355_k3y
   secret_access_key: s3cr3t_4cc355_k3y
   bucket_name: s3-test
+  cors_already_set: false
   create_bucket: true
   # for non-amazon services.
   custom_endpoint_url: "http://localhost:4572"

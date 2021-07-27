@@ -234,6 +234,7 @@ s3:
   secret_access_key: s3cr3t_4cc355_k3y
   bucket_name: s3-test
   create_bucket: true
+  cors_already_set: false
   # for non-amazon services. for localstack, you might set
   #custom_endpoint_url: "http://localhost:4572"
   custom_endpoint_url:
