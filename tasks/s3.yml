@@ -91,7 +91,7 @@
     PATH: "{{ lookup('env', 'PATH') }}:/usr/local/bin"
   when: (s3.download_redirect == true or s3.upload_redirect == true)
     and custom_endpoint_url | length == 0
-    and s3.cors_already_set = false
+    and s3.cors_already_set == false
 
 - include: s3_custom_endpoint_url.yml
   when: custom_endpoint_url | length > 0
