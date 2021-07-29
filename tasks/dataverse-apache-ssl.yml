@@ -63,8 +63,12 @@
   notify: enable and restart apache
 
 - name: install http redirect template
-  template: src=http.redirect.conf.j2 dest="{{ apache_virtualhost_dir }}/http.redirect.conf"
-        owner=root group=root mode=0644
+  template:
+    src: http.redirect.conf.j2
+    dest: '{{ apache_virtualhost_dir }}/http.redirect.conf'
+    owner: root
+    group: root
+    mode: 0644
   when: apache.ssl.enabled
   notify: enable and restart apache
 
@@ -87,7 +91,8 @@
     name: "{{ item }}"
     ignore_configcheck: true
   with_items:
-    - ssl
+    - redirect
     - rewrite
+    - ssl
   when: ansible_os_family == "Debian"    ## CHECKME -- does this need to be Debian-specific?
   notify: enable and restart apache
