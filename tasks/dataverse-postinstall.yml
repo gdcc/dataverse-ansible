@@ -7,11 +7,12 @@
     msg: '##### POST-INSTALL PAYARA CONFIGURATION #####'
 
 # this will fail if not run on localhost; it's only a logging format.
-- name: set logging format
-  become: yes
-  become_user: "{{ dataverse.payara.user }}"
-  shell: "{{ payara_dir }}/bin/asadmin set-log-file-format {{ dataverse.payara.logformat }}"
-  ignore_errors: yes
+# uncomment this once we figure out why it truncates logging.properties under payara-5.2021.5
+#- name: set logging format
+#  become: yes
+#  become_user: "{{ dataverse.payara.user }}"
+#  shell: "{{ payara_dir }}/bin/asadmin set-log-file-format {{ dataverse.payara.logformat }}"
+#  ignore_errors: yes
 
 - name: stage custom metadata blocks
   file:
