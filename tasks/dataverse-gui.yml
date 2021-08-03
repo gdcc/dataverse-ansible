@@ -17,12 +17,16 @@
     src: '{{ item }}'
     dest: '{{ favicon_file_path }}'
     mode: '0644'
+    owner: dataverse
+    group: dataverse
   with_fileglob: '{{ dataverse.branding.favicons_directory }}/*.ico'
 
 - name: copy branding files
   copy:
     src: branding
     dest: '{{ gui_file_path }}'
+    owner: dataverse
+    group: dataverse
     mode: '0644'
 
 - name: Update branding file settings on server
