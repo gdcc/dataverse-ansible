@@ -11,7 +11,7 @@
   become: yes
   become_user: "{{ dataverse.payara.user }}"
   shell: "{{ payara_dir }}/bin/asadmin set-log-file-format {{ dataverse.payara.logformat }}"
-  ignore_errors: yes
+  #ignore_errors: yes
 
 - name: stage custom metadata blocks
   file:
@@ -73,7 +73,21 @@
 
 - include: dataverse-optional-settings.yml
 
-- name: final payara post-configuration restart
+- name: final payara post-configuration cleanup
   service:
     name: payara
-    state: restarted
+    state: stopped
+
+- name: repair logging.properties on payara-5.2021.5
+  copy:
+    src: logging.properties
+    dest: '{{ payara_dir }}/glassfish/domains/{{ dataverse.payara.domain }}/config/logging.properties'
+    owner: '{{ dataverse.payara.user }}'
+    group: '{{ dataverse.payara.group }}'
+    mode: 0644
+  when: dataverse.payara.zipurl is match(".*payara-5.2021.5.zip")
+
+- name: start payara
+  service:
+    name: payara
+    state: started
