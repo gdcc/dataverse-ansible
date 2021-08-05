@@ -6,25 +6,6 @@
 #  git: repo=git://github.com/IQSS/dataverse.git dest=/tmp/dataverse_{{ dataverse.version }} version={{ dataverse.version }}
 #       clone=yes depth=1 accept_hostkey=true
 
-- name: stop payara manually to clear caches
-  become: yes
-  become_user: "{{ dataverse.payara.user }}"
-  shell: '{{ payara_dir }}/bin/asadmin stop-domain {{ dataverse.payara.domain }}'
-  #ignore_errors: yes
-
-- name: nuke payara5 caches
-  ansible.builtin.file:
-    path: '{{ item }}'
-    state: absent
-  with_items:
-    - '{{ payara_dir }}/glassfish/domains/{{ dataverse.payara.domain }}/generated'
-    - '{{ payara_dir }}/glassfish/domains/{{ dataverse.payara.domain }}/osgi-cache'
-
-- name: start payara manually for installer's benefit
-  become: yes
-  become_user: "{{ dataverse.payara.user }}"
-  shell: '{{ payara_dir }}/bin/asadmin start-domain {{ dataverse.payara.domain }}'
-
 - name: run dataverse installer
   debug:
     msg: '##### DATAVERSE INSTALLER #####'
