@@ -17,12 +17,16 @@
     src: '{{ item }}'
     dest: '{{ favicon_file_path }}'
     mode: '0644'
+    owner: '{{ dataverse.payara.user }}'
+    group: '{{ dataverse.payara.group }}'
   with_fileglob: '{{ dataverse.branding.favicons_directory }}/*.ico'
 
 - name: copy branding files
   copy:
     src: branding
     dest: '{{ gui_file_path }}'
+    owner: '{{ dataverse.payara.user }}'
+    group: '{{ dataverse.payara.group }}'
     mode: '0644'
 
 - name: Update branding file settings on server
