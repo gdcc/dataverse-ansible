@@ -136,7 +136,7 @@
   become: yes
   become_user: "{{ dataverse.payara.user }}"
   shell: '{{ payara_dir }}/bin/asadmin stop-domain {{ dataverse.payara.domain }}'
-  #ignore_errors: yes
+  ignore_errors: yes
 
 - name: now start payara with systemd
   service:
