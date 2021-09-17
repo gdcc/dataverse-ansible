@@ -117,7 +117,13 @@ Listen 443 https
   </IfModule>
 {% endif %}
 
+{% if apache.use_ajp %}
   # pass everything else to Glassfish
-  ProxyPass / ajp://localhost:8009/
+    ProxyPass / ajp://localhost:8009/
+{% else %}
+  # pass everything else to Glassfish
+    ProxyPass / http://localhost:8080/
+{% endif %}
+
 
 </VirtualHost>
