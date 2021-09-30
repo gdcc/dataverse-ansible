@@ -37,7 +37,7 @@ Listen 443 https
     LogLevel warn
 
     SSLEngine on
-    SSLProtocol all -SSLv2
+    SSLProtocol -all +TLSv1.2 +TLSv1.3
     SSLCipherSuite HIGH:MEDIUM:!aNULL:!MD5
   {% if apache.ssl.remote_cert %}
     SSLCertificateFile {{ apache.ssl.cert }}
