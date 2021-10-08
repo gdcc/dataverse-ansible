@@ -8,7 +8,7 @@
 
 - name: download custom maven version
   get_url:
-    url: 'https://apache.osuosl.org/maven/maven-3/{{ maven.version }}/binaries/apache-maven-{{ maven.version }}-bin.tar.gz'
+    url: 'https://archive.apache.org/dist/maven/maven-3/{{ maven.version }}/binaries/apache-maven-{{ maven.version }}-bin.tar.gz'
     dest: '/tmp/apache-maven-{{ maven.version }}-bin.tar.gz'
   when: maven.version != 'default'
 

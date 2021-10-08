@@ -210,7 +210,7 @@ localstack:
   web_ui: 8888
 
 maven:
-  version: 3.8.1
+  version: 3.8.3
 
 munin:
   install: false
