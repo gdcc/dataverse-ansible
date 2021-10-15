@@ -53,7 +53,7 @@
 
 - name: install java-nnn-openjdk and other packages for Debian/Ubuntu.
   package:
-    name: acl, default-jdk, python3, vim
+    name: ['acl', 'openjdk-{{ java.version }}-jdk-headless', 'python3', 'vim']
   when: ansible_os_family == "Debian"
 
 # it is strongly recommended to check for open CVEs before enabling this.
