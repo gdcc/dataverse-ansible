@@ -9,10 +9,19 @@
   file: path={{ payara_dir }} state=directory
         owner=root group=root mode=0755
 
-- name: bsdtar can unzip in smarter ways
-  yum:
+- name: install bsdtar on RedHat
+  package:
     name: bsdtar
     state: latest
+  when:
+    - ansible_os_family == "RedHat"
+
+- name: install bsdtar on Debian
+  package:
+    name: libarchive-tools
+    state: latest
+  when:
+    - ansible_os_family == "Debian"
 
 - name: download payara zip
   get_url:
@@ -144,13 +153,14 @@
     mode: '0750'
     state: directory
 
-- name: install payara upstart script for older Debian/Ubuntu
-  template: src=payara.conf.j2 dest=/etc/init
-        owner=root group=root mode=0644
-  when:
-   - ansible_os_family == "Debian"
-   - ansible_distribution_major_version < 9
-  notify: enable and restart payara
+# commenting out in favor of Debian 11
+#- name: install payara upstart script for older Debian/Ubuntu
+#  template: src=payara.conf.j2 dest=/etc/init
+#        owner=root group=root mode=0644
+#  when:
+#   - ansible_os_family == "Debian"
+#   - ansible_distribution_major_version < 9
+#  notify: enable and restart payara
 
 - name: flush hadlers to start payara and possibly reload systemd
   meta: flush_handlers
