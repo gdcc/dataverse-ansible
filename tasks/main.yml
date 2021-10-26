@@ -169,6 +169,5 @@
   tags:
   - schemaspy
 
-- name: Fin
-  debug:
-    msg: '##### END ANSIBLE ROLE #####'
+- include: fin.yml
+  

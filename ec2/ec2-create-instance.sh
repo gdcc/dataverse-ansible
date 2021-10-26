@@ -232,7 +232,6 @@ sudo yum -q -y install ansible git nano
 git clone -b $DA_BRANCH https://github.com/GlobalDataverseCommunityConsortium/dataverse-ansible.git dataverse
 export ANSIBLE_ROLES_PATH=.
 ansible-playbook $VERBOSE_ARG -i dataverse/inventory dataverse/dataverse.pb --connection=local $GVARG
-touch /tmp/ansible_complete
 EOF
 
 # did AWS go AWOL? Jenkins will check for this file.
