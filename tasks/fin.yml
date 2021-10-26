@@ -1,0 +1,13 @@
+---
+
+- name: touch semaphore for Jenkins
+  file:
+    path: /tmp/ansible_complete
+    owner: root
+    group: root
+    mode: 0644
+    state: touch
+
+- name: Fin
+  debug:
+    msg: '##### END ANSIBLE ROLE #####'

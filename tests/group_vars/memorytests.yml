@@ -4,6 +4,7 @@
 # un-nested so we can pass them at the CLI
 dataverse_branch: release
 dataverse_repo: https://github.com/IQSS/dataverse.git
+any_errors_fatal: false
 
 apache:
   ssl:

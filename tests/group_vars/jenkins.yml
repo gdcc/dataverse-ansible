@@ -278,3 +278,4 @@ sshkeys:
 
 dataverse_branch: develop
 dataverse_repo: https://github.com/IQSS/dataverse.git
+any_errors_fatal: true
