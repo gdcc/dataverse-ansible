@@ -41,35 +41,18 @@
     - R-core-devel
   when: ansible_os_family == "RedHat"
 
-- name: add keys for R backports for Debian Buster
-  apt_key:
-    keyserver: keys.gnupg.net
-    id: E19F5F87128899B192B1A2C2AD5F960A256A04AF
-  when:
-  - ansible_distribution == "Debian"
-  - ansible_distribution_major_version == "10"
-
-- name: add backports for Debian Buster to get R 3.6
-  apt_repository: repo='deb http://cloud.r-project.org/bin/linux/debian buster-cran35/'
-  when:
-  - ansible_distribution == "Debian"
-  - ansible_distribution_major_version == "10"
-
-- name: install base packages on Debian Buster
+- name: install base packages on Debian
   apt:
     name: r-base-core, r-base-dev
-    default_release: "buster-cran35"
     state: latest
   when:
   - ansible_distribution == "Debian"
-  - ansible_distribution_major_version == "10"
 
 - name: install base packages on Debian/Ubuntu ## we hope bullseye and others will have a good version (Ubuntu 20.04 has R 3.6) -- if not, we will need further handlers for them
   package:
     name: r-base-core, r-base-dev
   when:
   - ansible_os_family == "Debian"
-  - ansible_distribution != "Debian" or ansible_distribution_major_version != "10"
 
 - name: detect number of system cores
   set_fact:
