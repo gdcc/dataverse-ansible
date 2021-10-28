@@ -53,7 +53,7 @@
 
 - name: install java-nnn-openjdk and other packages for Debian/Ubuntu.
   package:
-    name: default-jdk, python3, vim
+    name: ['acl', 'openjdk-{{ java.version }}-jdk-headless', 'python3', 'vim']
   when: ansible_os_family == "Debian"
 
 # it is strongly recommended to check for open CVEs before enabling this.
@@ -77,11 +77,3 @@
     name: curl
   when:
     - ansible_os_family == "Debian"
-
-- name: Dataverse installer calls /usr/bin/python explicitly
-  alternatives:
-    name: python
-    link: /usr/bin/python
-    path: '/usr/bin/python3'
-  when: ansible_os_family == "RedHat" and
-        ansible_distribution_major_version == "8"
