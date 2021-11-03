@@ -1,0 +1,12 @@
+---
+
+- name: log_statements for testing
+  lineinfile:
+    path: '/var/lib/pgsql/{{ db.postgres.version }}/data/postgresql.conf'
+    regexp: '^#log_statement\ '
+    line: 'log_statement = {{ db.postgres.log_statements }}'
+
+- name: reload Postgres
+  ansible.builtin.systemd:
+    name: 'postgresql-{{ db.postgres.version }}'
+    state: reloaded

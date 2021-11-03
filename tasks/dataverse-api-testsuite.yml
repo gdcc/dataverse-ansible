@@ -6,6 +6,12 @@
 
 - include: maven.yml
 
+- include: postgresql_statements.yml
+  when:
+   - ansible_os_family == "RedHat"
+   - db.postgres.log_statements != 'none'
+   - not db.use_rds
+
 - name: do we have a pom.xml
   stat:
     path: '{{ dataverse.srcdir }}/pom.xml'
@@ -105,3 +111,9 @@
   args:
     chdir: '{{ dataverse.srcdir }}'
   when: maven.version != 'default'
+
+- include: postgresql_perl_party.yml
+  when:
+   - ansible_os_family == "RedHat"
+   - db.postgres.log_statements != 'none'
+   - not db.use_rds
