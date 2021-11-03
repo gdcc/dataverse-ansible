@@ -35,5 +35,5 @@
 
 - name: fire at will
   ansible.builtin.shell:
-    cmd: '/usr/bin/perl count.pl {{ postgres_log }} > /tmp/query_count.out'
+    cmd: '/usr/bin/perl count.pl {{ postgres_log[0] }} > /tmp/query_count.out'
     chdir: '/var/lib/pgsql/{{ db.postgres.version }}/data/log/'
