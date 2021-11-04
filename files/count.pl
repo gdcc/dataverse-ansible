@@ -12,7 +12,7 @@ print "Current size: ".$pglogfilesize." bytes.\n";
 
 system "./parse.pl < $pglogfile > tail.parsed";
 
-system "cat tail.parsed | sed 's/ where.*//' | sed 's/ WHERE.*//' | sort | uniq -c | sort -nr -k 1,2 > tail.counted";
+system "cat tail.parsed | sed 's/ where.*//' | sed 's/ WHERE.*//' | sed 's/ SET .*//' | sed 's/ VALUES .*//' | sort | uniq -c | sort -nr -k 1,2 > tail.counted";
 
 print "Parsed and counted the queries. Total number:\n";
 
