@@ -164,7 +164,7 @@ dataverse:
     enabled: true
     argument: '-DcompilerArgument=-Xlint:unchecked test -P all-unit-tests'
   usermgmtkey: burrito
-  version: '5.7'
+  version: '5.8'
 
 build_guides: false
 
@@ -229,7 +229,7 @@ prometheus:
   user: prometheus
 
 rserve:
-  install: true
+  install: false
   host: localhost
   user: rserve
   group: rserve
