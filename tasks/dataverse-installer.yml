@@ -31,9 +31,12 @@
 # build-a-branch case
 - name: "copy cloned scripts/installer dir to /tmp/dvinstall"
   copy:
-    src: '{{ dataverse.srcdir }}/scripts/installer'
+    src: '{{ item }}'
     dest: /tmp/dvinstall
     remote_src: yes
+  with_items:
+    - '{{ dataverse.srcdir }}/scripts/installer'
+    - '{{ dataverse.srcdir }}/scripts/api/'
   when:
     - dataverse_branch != "release"
     - dataverse_installer_url is not defined
