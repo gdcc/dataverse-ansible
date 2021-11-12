@@ -137,7 +137,7 @@ dataverse:
   previewers:
     enabled: true
     on_same_server: true
-    zip_url: https://github.com/GlobalDataverseCommunityConsortium/dataverse-previewers/archive/1.1.1.zip
+    zip_url: https://github.com/gdcc/dataverse-previewers/releases/download/1.2/dataverse-previewers-1.2.zip
     dir: /var/www/html
   sampledata:
     enabled: true
