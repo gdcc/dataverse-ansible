@@ -7,7 +7,7 @@ curl -X POST -H 'Content-type: application/json' http://localhost:8080/api/admin
   "toolName":"textPreviewer",
   "scope":"file",
   "types":["preview"],
-  "toolUrl":"https://gdcc.github.io/dataverse-previewers/previewers/v1.1/TextPreview.html",
+  "toolUrl":"https://gdcc.github.io/dataverse-previewers/previewers/v1.2/TextPreview.html",
   "toolParameters": {
       "queryParameters":[
         {"fileid":"{fileId}"},
@@ -28,7 +28,7 @@ curl -X POST -H 'Content-type: application/json' http://localhost:8080/api/admin
   "toolName":"htmlPreviewer",
   "scope":"file",
   "types":["preview"],
-  "toolUrl":"https://gdcc.github.io/dataverse-previewers/previewers/v1.1/HtmlPreview.html",
+  "toolUrl":"https://gdcc.github.io/dataverse-previewers/previewers/v1.2/HtmlPreview.html",
   "toolParameters": {
       "queryParameters":[
         {"fileid":"{fileId}"},
@@ -49,7 +49,7 @@ curl -X POST -H 'Content-type: application/json' http://localhost:8080/api/admin
   "toolName":"audioPreviewer",
   "scope":"file",
   "types":["preview"],
-  "toolUrl":"https://gdcc.github.io/dataverse-previewers/previewers/v1.1/AudioPreview.html",
+  "toolUrl":"https://gdcc.github.io/dataverse-previewers/previewers/v1.2/AudioPreview.html",
   "toolParameters": {
       "queryParameters":[
         {"fileid":"{fileId}"},
@@ -70,7 +70,7 @@ curl -X POST -H 'Content-type: application/json' http://localhost:8080/api/admin
   "toolName":"audioPreviewer",
   "scope":"file",
   "types":["preview"],
-  "toolUrl":"https://gdcc.github.io/dataverse-previewers/previewers/v1.1/AudioPreview.html",
+  "toolUrl":"https://gdcc.github.io/dataverse-previewers/previewers/v1.2/AudioPreview.html",
   "toolParameters": {
       "queryParameters":[
         {"fileid":"{fileId}"},
@@ -91,7 +91,7 @@ curl -X POST -H 'Content-type: application/json' http://localhost:8080/api/admin
   "toolName":"audioPreviewer",
   "scope":"file",
   "types":["preview"],
-  "toolUrl":"https://gdcc.github.io/dataverse-previewers/previewers/v1.1/AudioPreview.html",
+  "toolUrl":"https://gdcc.github.io/dataverse-previewers/previewers/v1.2/AudioPreview.html",
   "toolParameters": {
       "queryParameters":[
         {"fileid":"{fileId}"},
@@ -112,7 +112,7 @@ curl -X POST -H 'Content-type: application/json' http://localhost:8080/api/admin
   "toolName":"audioPreviewer",
   "scope":"file",
   "types":["preview"],
-  "toolUrl":"https://gdcc.github.io/dataverse-previewers/previewers/v1.1/AudioPreview.html",
+  "toolUrl":"https://gdcc.github.io/dataverse-previewers/previewers/v1.2/AudioPreview.html",
   "toolParameters": {
       "queryParameters":[
         {"fileid":"{fileId}"},
@@ -133,7 +133,7 @@ curl -X POST -H 'Content-type: application/json' http://localhost:8080/api/admin
   "toolName":"imagePreviewer",
   "scope":"file",
   "types":["preview"],
-  "toolUrl":"https://gdcc.github.io/dataverse-previewers/previewers/v1.1/ImagePreview.html",
+  "toolUrl":"https://gdcc.github.io/dataverse-previewers/previewers/v1.2/ImagePreview.html",
   "toolParameters": {
       "queryParameters":[
         {"fileid":"{fileId}"},
@@ -154,7 +154,7 @@ curl -X POST -H 'Content-type: application/json' http://localhost:8080/api/admin
   "toolName":"imagePreviewer",
   "scope":"file",
   "types":["preview"],
-  "toolUrl":"https://gdcc.github.io/dataverse-previewers/previewers/v1.1/ImagePreview.html",
+  "toolUrl":"https://gdcc.github.io/dataverse-previewers/previewers/v1.2/ImagePreview.html",
   "toolParameters": {
       "queryParameters":[
         {"fileid":"{fileId}"},
@@ -175,7 +175,7 @@ curl -X POST -H 'Content-type: application/json' http://localhost:8080/api/admin
   "toolName":"imagePreviewer",
   "scope":"file",
   "types":["preview"],
-  "toolUrl":"https://gdcc.github.io/dataverse-previewers/previewers/v1.1/ImagePreview.html",
+  "toolUrl":"https://gdcc.github.io/dataverse-previewers/previewers/v1.2/ImagePreview.html",
   "toolParameters": {
       "queryParameters":[
         {"fileid":"{fileId}"},
@@ -196,7 +196,7 @@ curl -X POST -H 'Content-type: application/json' http://localhost:8080/api/admin
   "toolName":"pdfPreviewer",
   "scope":"file",
   "types":["preview"],
-  "toolUrl":"https://gdcc.github.io/dataverse-previewers/previewers/v1.1/PDFPreview.html",
+  "toolUrl":"https://gdcc.github.io/dataverse-previewers/previewers/v1.2/PDFPreview.html",
   "toolParameters": {
       "queryParameters":[
         {"fileid":"{fileId}"},
@@ -217,7 +217,7 @@ curl -X POST -H 'Content-type: application/json' http://localhost:8080/api/admin
   "toolName":"videoPreviewer",
   "scope":"file",
   "types":["preview"],
-  "toolUrl":"https://gdcc.github.io/dataverse-previewers/previewers/v1.1/VideoPreview.html",
+  "toolUrl":"https://gdcc.github.io/dataverse-previewers/previewers/v1.2/VideoPreview.html",
   "toolParameters": {
       "queryParameters":[
         {"fileid":"{fileId}"},
@@ -238,7 +238,7 @@ curl -X POST -H 'Content-type: application/json' http://localhost:8080/api/admin
   "toolName":"videoPreviewer",
   "scope":"file",
   "types":["preview"],
-  "toolUrl":"https://gdcc.github.io/dataverse-previewers/previewers/v1.1/VideoPreview.html",
+  "toolUrl":"https://gdcc.github.io/dataverse-previewers/previewers/v1.2/VideoPreview.html",
   "toolParameters": {
       "queryParameters":[
         {"fileid":"{fileId}"},
@@ -259,7 +259,7 @@ curl -X POST -H 'Content-type: application/json' http://localhost:8080/api/admin
   "toolName":"videoPreviewer",
   "scope":"file",
   "types":["preview"],
-  "toolUrl":"https://gdcc.github.io/dataverse-previewers/previewers/v1.1/VideoPreview.html",
+  "toolUrl":"https://gdcc.github.io/dataverse-previewers/previewers/v1.2/VideoPreview.html",
   "toolParameters": {
       "queryParameters":[
         {"fileid":"{fileId}"},
@@ -280,7 +280,7 @@ curl -X POST -H 'Content-type: application/json' http://localhost:8080/api/admin
   "toolName":"spreadsheetPreviewer",
   "scope":"file",
   "types":["preview"],
-  "toolUrl":"https://gdcc.github.io/dataverse-previewers/previewers/v1.1/SpreadsheetPreview.html",
+  "toolUrl":"https://gdcc.github.io/dataverse-previewers/previewers/v1.2/SpreadsheetPreview.html",
   "toolParameters": {
       "queryParameters":[
         {"fileid":"{fileId}"},
@@ -301,7 +301,7 @@ curl -X POST -H 'Content-type: application/json' http://localhost:8080/api/admin
   "toolName":"spreadsheetPreviewer",
   "scope":"file",
   "types":["preview"],
-  "toolUrl":"https://gdcc.github.io/dataverse-previewers/previewers/v1.1/SpreadsheetPreview.html",
+  "toolUrl":"https://gdcc.github.io/dataverse-previewers/previewers/v1.2/SpreadsheetPreview.html",
   "toolParameters": {
       "queryParameters":[
         {"fileid":"{fileId}"},
@@ -322,7 +322,7 @@ curl -X POST -H 'Content-type: application/json' http://localhost:8080/api/admin
   "toolName":"spreadsheetPreviewer",
   "scope":"file",
   "types":["preview"],
-  "toolUrl":"https://gdcc.github.io/dataverse-previewers/previewers/v1.1/SpreadsheetPreview.html",
+  "toolUrl":"https://gdcc.github.io/dataverse-previewers/previewers/v1.2/SpreadsheetPreview.html",
   "toolParameters": {
       "queryParameters":[
         {"fileid":"{fileId}"},
@@ -343,7 +343,7 @@ curl -X POST -H 'Content-type: application/json' http://localhost:8080/api/admin
   "toolName":"spreadsheetPreviewer",
   "scope":"file",
   "types":["preview"],
-  "toolUrl":"https://gdcc.github.io/dataverse-previewers/previewers/v1.1/SpreadsheetPreview.html",
+  "toolUrl":"https://gdcc.github.io/dataverse-previewers/previewers/v1.2/SpreadsheetPreview.html",
   "toolParameters": {
       "queryParameters":[
         {"fileid":"{fileId}"},
@@ -364,7 +364,7 @@ curl -X POST -H 'Content-type: application/json' http://localhost:8080/api/admin
   "toolName":"stataPreviewer",
   "scope":"file",
   "types":["preview"],
-  "toolUrl":"https://gdcc.github.io/dataverse-previewers/previewers/v1.1/TextPreview.html",
+  "toolUrl":"https://gdcc.github.io/dataverse-previewers/previewers/v1.2/TextPreview.html",
   "toolParameters": {
       "queryParameters":[
         {"fileid":"{fileId}"},
@@ -385,7 +385,7 @@ curl -X POST -H 'Content-type: application/json' http://localhost:8080/api/admin
   "toolName":"rPreviewer",
   "scope":"file",
   "types":["preview"],
-  "toolUrl":"https://gdcc.github.io/dataverse-previewers/previewers/v1.1/TextPreview.html",
+  "toolUrl":"https://gdcc.github.io/dataverse-previewers/previewers/v1.2/TextPreview.html",
   "toolParameters": {
       "queryParameters":[
         {"fileid":"{fileId}"},
@@ -406,7 +406,7 @@ curl -X POST -H 'Content-type: application/json' http://localhost:8080/api/admin
   "toolName":"annotationPreviewer",
   "scope":"file",
   "types":["preview"],
-  "toolUrl":"https://gdcc.github.io/dataverse-previewers/previewers/v1.1/HypothesisPreview.html",
+  "toolUrl":"https://gdcc.github.io/dataverse-previewers/previewers/v1.2/HypothesisPreview.html",
   "toolParameters": {
       "queryParameters":[
         {"fileid":"{fileId}"},

@@ -23,6 +23,11 @@
   shell: 'mv {{ dataverse.previewers.dir }}/dataverse-previewers-* {{ dataverse.previewers.dir }}/dataverse-previewers'
   when: dataverse.previewers.on_same_server == true
 
+- name: 1.2 release zip includes 1.1.1
+  file:
+    path: '{{ dataverse.previewers.dir }}/dataverse-previewers/previewers/v1.1.1'
+    state: absent
+
 - name: upload dataverse-previewers.sh script
   copy:
     src: dataverse-previewers.sh
