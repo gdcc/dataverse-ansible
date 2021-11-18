@@ -22,6 +22,10 @@ apache:
   use_ajp: true
   behind_reverse_proxy: false
   behind_ssl_reverse_proxy: false
+  block:
+    admin: false
+    destroy: false
+    sword: false
 
 letsencrypt:
   enabled: false
