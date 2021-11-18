@@ -105,6 +105,24 @@ Listen 443 https
   ProxyPassMatch ^/schemaspy !
 {% endif %}
 
+{% if apache.block.admin == true %}
+  # /api/admin shouldn't be coming through the proxy anyway
+  ProxyPassMatch ^/api/admin !
+  RedirectMatch ^/api/admin(.*) /
+{% endif %}
+
+{% if apache.block.destroy == true %}
+  # restrict destroy endpoint to localhost
+  ProxyPassMatch /api/datasets/:persistentId/destroy !
+  RedirectMatch ^/api/datasets/:persistentId/destroy(.*) /
+{% endif %}
+
+{% if apache.block.sword == true %}
+  # protect us from SWORD even now that 5.7 is released
+  ProxyPassMatch ^/dvn/api/data-deposit !
+  RedirectMatch ^/dvn/api/data-deposit(.*) /
+{% endif %}
+
 {% if dataverse.previewers.on_same_server %}
   # allow previewers
   ProxyPassMatch ^/dataverse-previewers !
