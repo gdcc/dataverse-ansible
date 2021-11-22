@@ -2,7 +2,7 @@
 # dataverse/tests/group_vars/vagrant.yml
 
 # un-nested so we can pass them at the CLI
-dataverse_branch: release
+dataverse_branch: develop
 dataverse_repo: https://github.com/IQSS/dataverse.git
 any_errors_fatal: true
 
@@ -207,7 +207,7 @@ java:
   version: 11
 
 maven:
-  version: 3.8.3
+  version: 3.8.4
 
 munin:
   install: false
