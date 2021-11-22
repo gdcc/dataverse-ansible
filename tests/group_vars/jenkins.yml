@@ -17,6 +17,10 @@ apache:
   use_ajp: true
   behind_reverse_proxy: false
   behind_ssl_reverse_proxy: false
+  block:
+    admin: false
+    destroy: false
+    sword: false
 
 letsencrypt:
   enabled: false
@@ -134,7 +138,7 @@ dataverse:
   previewers:
     enabled: false
     on_same_server: true
-    zip_url: https://github.com/GlobalDataverseCommunityConsortium/dataverse-previewers/archive/1.1.1.zip
+    zip_url: https://github.com/gdcc/dataverse-previewers/releases/download/1.2/dataverse-previewers-1.2.zip
     dir: /var/www/html
   sampledata:
     enabled: false
@@ -210,7 +214,7 @@ localstack:
   web_ui: 8888
 
 maven:
-  version: 3.8.3
+  version: 3.8.4
 
 munin:
   install: false
