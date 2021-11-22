@@ -1,0 +1,42 @@
+---
+
+- name: download dataverse installer
+  debug:
+    msg: '##### DOWNLOAD {{ dataverse.version }} DVINSTALL #####'
+
+# vanilla release case
+- name: download dataverse installer
+  get_url:
+    url: https://github.com/IQSS/dataverse/releases/download/v{{ dataverse.version }}/dvinstall.zip
+    dest: /tmp/dvinstall.zip
+  when:
+    - dataverse_branch == "release"
+    - dataverse_installer_url is not defined
+
+# custom installer case
+- name: download alternative dataverse installer
+  get_url:
+    url: '{{ dataverse_installer_url }}'
+    dest: /tmp/dvinstall.zip
+  when: dataverse_installer_url is defined
+
+- name: unzip dataverse installer
+  unarchive:
+    src: /tmp/dvinstall.zip
+    remote_src: true
+    dest: /tmp
+  when: (dataverse_branch == "release")
+    or (dataverse_installer_url is defined)
+
+# build-a-branch case
+- name: "copy cloned scripts/installer dir to /tmp/dvinstall"
+  copy:
+    src: '{{ item }}'
+    dest: /tmp/dvinstall
+    remote_src: yes
+  with_items:
+    - '{{ dataverse.srcdir }}/scripts/installer'
+    - '{{ dataverse.srcdir }}/scripts/api/'
+  when:
+    - dataverse_branch != "release"
+    - dataverse_installer_url is not defined

@@ -57,17 +57,13 @@
   when: dataverse.jacoco.enabled == true and
         dataverse_repo != "release"
 
-- include: dataverse-download.yml
+- include: dataverse-installer.yml
   tags:
   - payara
 
 - include: payara.yml
   tags:
   - payara
-
-- include: dataverse-get-release.yml
-  tags:
-  - release
 
 - include: solr.yml
   tags:
