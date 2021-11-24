@@ -7,7 +7,7 @@
     packages:
     - setools
     - setools-console
-    - policycoreutils-devel
+    - policycoreutils
   when: ansible_os_family == 'RedHat'
 
 - name: set httpd_can_network_connect on and keep it persistent across reboots
