@@ -5,7 +5,7 @@
     name: perl
     state: latest
 
-# use our modified count.pl for now
+# use Leonid's branch until merged into develop
 - name: "place Leonid's PERL scripts"
   ansible.builtin.get_url:
     url: '{{ item }}'
@@ -13,14 +13,7 @@
     mode: '0755'
   loop:
     - https://raw.githubusercontent.com/IQSS/dataverse/query-counting-script/scripts/database/querycount/parse.pl
-
-- name: use our modified count.pl for now
-  copy:
-    src: count.pl
-    dest: '/var/lib/pgsql/{{ db.postgres.version }}/data/log/count.pl'
-    owner: root
-    group: root
-    mode: 0755
+    - https://raw.githubusercontent.com/IQSS/dataverse/query-counting-script/scripts/database/querycount/count.pl
 
 - name: get name of Postgres logfile
   ansible.builtin.find:
@@ -35,5 +28,5 @@
 
 - name: fire at will
   ansible.builtin.shell:
-    cmd: '/usr/bin/perl count.pl {{ postgres_log[0] }} > /tmp/query_count.out'
+    cmd: '/usr/bin/perl count.pl --non-interactive {{ postgres_log[0] }} > /tmp/query_count.out'
     chdir: '/var/lib/pgsql/{{ db.postgres.version }}/data/log/'
