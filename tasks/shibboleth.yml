@@ -9,13 +9,17 @@
   set_fact:
     shibboleth_user: "{{ (ansible_os_family == 'RedHat') | ternary ('shibd', '_shibd') }}"
 
-- name: install shibboleth repo for RedHat/CentOS7
-  get_url: url={{ shibboleth.repo }} dest=/etc/yum.repos.d
-        owner=root group=root mode=0644
-  when: ansible_os_family == "RedHat"
+- name: install shibboleth repo for Rocky 8
+  ansible.builtin.copy:
+    src: 'shibboleth.rocky8.repo'
+    dest: /etc/yum.repos.d/shibboleth.repo
+    owner: root
+    group: root
+    mode: 0644
+  when: ansible_distribution == "Rocky"
 
-- name: install Shibboleth RPMs for RedHat/CentOS7
-  yum:
+- name: install Shibboleth RPMs for RedHat/Rocky
+  ansible.builtin.package:
     name: shibboleth
     state: latest
   when: ansible_os_family == "RedHat"
