@@ -181,6 +181,7 @@ db:
     pass: dvnsecret
     jdbcurl:
     log_lock_waits: true
+    log_statements: all
     version: 13
     port: 5432
   backups:

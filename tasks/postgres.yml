@@ -56,7 +56,6 @@
   when: ansible_os_family == "Debian" and
         db.use_rds == false
 
-
 - name: install postgres client on RedHat / CentOS for RDS
   yum:
     name: 'postgresql{{ dataverse_pg_version_short }}'

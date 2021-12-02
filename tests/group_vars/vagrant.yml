@@ -186,6 +186,7 @@ db:
     pass: vagrantsekret
     jdbcurl:
     log_lock_waits: true
+    log_statements: none
     version: 13
     port: 5432
   backups:

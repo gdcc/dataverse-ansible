@@ -1,0 +1,32 @@
+---
+
+- name: "Leonid's Postgres PERL Party requires PERL"
+  ansible.builtin.package:
+    name: perl
+    state: latest
+
+# use Leonid's branch until merged into develop
+- name: "place Leonid's PERL scripts"
+  ansible.builtin.get_url:
+    url: '{{ item }}'
+    dest: '/var/lib/pgsql/{{ db.postgres.version }}/data/log/'
+    mode: '0755'
+  loop:
+    - https://raw.githubusercontent.com/IQSS/dataverse/develop/scripts/database/querycount/parse.pl
+    - https://raw.githubusercontent.com/IQSS/dataverse/develop/scripts/database/querycount/count.pl
+
+- name: get name of Postgres logfile
+  ansible.builtin.find:
+    paths: '/var/lib/pgsql/{{ db.postgres.version }}/data/log/'
+    file_type: file
+    patterns: '*.log'
+  register: postgres_logs
+
+- name: there should be only one
+  set_fact:
+    postgres_log: "{{ postgres_logs.files | map(attribute='path') | list }}"
+
+- name: fire at will
+  ansible.builtin.shell:
+    cmd: '/usr/bin/perl count.pl --non-interactive {{ postgres_log[0] }} > /tmp/query_count.out'
+    chdir: '/var/lib/pgsql/{{ db.postgres.version }}/data/log/'
