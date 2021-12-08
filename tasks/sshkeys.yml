@@ -18,7 +18,7 @@
 - set_fact:
     is_aws_environment: "{{ aws_uri_check.status == 200 }}"
 
-- name: if we're in EC2, default to centos user
+- name: if we're in EC2, default to instance user
   set_fact: sshkeys_user='{{ sshkeys.user }}'
   when: is_aws_environment and
         sshkeys_user | length < 1
