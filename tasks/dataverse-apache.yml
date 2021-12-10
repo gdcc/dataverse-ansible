@@ -9,7 +9,7 @@
   set_fact:
     apache_config_base_dir: "{{ (ansible_os_family == 'RedHat') | ternary ('/etc/httpd', '/etc/apache2') }}"
 
-- name: httpd variables for RedHat/CentOS
+- name: httpd variables for RedHat/Rocky
   set_fact:
     apache_virtualhost_dir: "{{ apache_config_base_dir }}/conf.d"
     apache_config_dir: "{{ apache_config_base_dir }}/conf.d"
@@ -21,7 +21,7 @@
     apache_config_dir: "{{ apache_config_base_dir }}/conf-enabled"
   when: ansible_os_family == "Debian"
 
-- name: install Apache for RedHat/CentOS
+- name: install Apache for RedHat/Rocky
   yum: 
     name: ['httpd', 'mod_ssl']
     state: latest
@@ -102,7 +102,7 @@
     mode: 0644
   notify: enable and restart apache
 
-- name: this package provides semanage on CentOS 8.3-minimal
+- name: this package provides semanage on RHEL / Rocky 8
   package:
     name: policycoreutils-python-utils
     state: latest

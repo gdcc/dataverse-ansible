@@ -1,6 +1,6 @@
 ---
 
-- name: enable and restart httpd on RedHat/CentOS
+- name: enable and restart httpd on RedHat/Rocky
   service: name=httpd enabled=yes state=restarted
   when:
    - ansible_os_family == "RedHat"
@@ -14,7 +14,7 @@
 - name: enable and restart shibd
   service: name=shibd enabled=yes state=restarted
 
-- name: enable and start postgres on RHEL/CentOS
+- name: enable and start postgres on RHEL/Rocky
   service:
     name: 'postgresql-{{ db.postgres.version }}'
     state: restarted

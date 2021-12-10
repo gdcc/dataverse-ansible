@@ -8,11 +8,8 @@ BRANCH_DEFAULT="develop"
 PEM_DEFAULT=${HOME}
 VERBOSE_ARG=""
 
-# centos image list at https://wiki.centos.org/Cloud/AWS
-# centos 7
-#AWS_AMI_DEFAULT='ami-9887c6e7'
-# rocky linux 8.4 official, us-east-1
-AWS_AMI_DEFAULT='ami-02628ddf3745c6dda'
+# rocky linux 8.5 official, us-east-1
+AWS_AMI_DEFAULT='ami-043ceee68871e0bb5'
 
 usage() {
   echo "Usage: $0 -b <branch> -r <repo> -p <pem_path> -g <group_vars> -a <dataverse-ansible branch> -i aws_image -u aws_user -s aws_size -t aws_tag -f aws_security group -l local_log_path -d -v" 1>&2
@@ -20,7 +17,7 @@ usage() {
   echo "default repo is https://github.com/IQSS/dataverse"
   echo "default .pem location is ${HOME}"
   echo "example group_vars may be retrieved from https://raw.githubusercontent.com/GlobalDataverseCommunityConsortium/dataverse-ansible/develop/defaults/main.yml"
-  echo "default AWS AMI ID is $AWS_AMI_DEFAULT, find the full list at https://wiki.centos.org/Cloud/AWS"
+  echo "default AWS AMI ID is $AWS_AMI_DEFAULT, find the full list at https://rockylinux.org/ami/"
   echo "default AWS user is rocky"
   echo "default AWS instance size is t3a.large"
   echo "default AWS security group is dataverse-sg"

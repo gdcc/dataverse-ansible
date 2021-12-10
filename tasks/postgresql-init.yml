@@ -20,7 +20,7 @@
   register: postgres_initdb
   when: db.use_rds == false
 
-- name: init postgres on RHEL/CentOS
+- name: init postgres on RHEL/Rocky
   shell: '{{ postgres_init }}'
   when: postgres_initdb.stat.exists == false and
         db.use_rds == false and
