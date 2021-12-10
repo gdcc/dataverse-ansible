@@ -50,6 +50,12 @@
   shell: "/bin/cp -r /tmp/solr-{{ dataverse.solr.version }}/* {{ dataverse.solr.root }}"
   when: solr_installer_download.changed
 
+- name: patch CVE-2021-44228
+  ansible.builtin.lineinfile:
+    path: '{{ dataverse.solr.root}}/bin/solr.in.sh'
+    line: 'SOLR_OPTS="$SOLR_OPTS -Dlog4j2.formatMsgNoLookups=true"'
+    state: present
+
 - name: solr doesn't create its log directory until runtime
   file: path="{{ dataverse.solr.root }}/server/logs" state=directory
         owner="{{ dataverse.solr.user }}" group="{{ dataverse.solr.group }}" mode=0755
