@@ -47,7 +47,7 @@
 
 - name: install java-nnn-openjdk and other packages for RedHat/Rocky
   yum:
-    name: ['java-{{ java.version }}-openjdk-devel', 'python36', 'vim-enhanced']
+    name: ['java-{{ java.version }}-openjdk-devel', 'python36', 'vim-enhanced', 'zip']
     state: latest
   when: ansible_os_family == "RedHat"
 
