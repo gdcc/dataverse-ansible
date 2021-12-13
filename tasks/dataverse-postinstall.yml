@@ -55,6 +55,11 @@
     mode: 0644
   when: dataverse.payara.zipurl is match(".*payara-5.2021.5.zip")
 
+- name: remove JNDI lookups from log4j-1.2
+  become: yes
+  become_user: '{{ dataverse.payara.user }}'
+  shell: 'zip -d {{ payara_dir }}/glassfish/domains/{{ dataverse.payara.domain }}/applications/dataverse/WEB-INF/lib/log4j-1.2.14.jar org/apache/log4j/net/JMSAppender.class'
+
 - name: start payara
   service:
     name: payara
