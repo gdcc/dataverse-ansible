@@ -10,8 +10,8 @@
   when: ansible_os_family == "RedHat"
 
 - name: install Solr pre-reqs for RedHat/Rocky
-  yum:
-    name: ['java-{{ java.version }}-openjdk-devel', 'lsof']
+  ansible.builtin.package:
+    name: ['java-{{ java.version }}-openjdk-devel', 'lsof', 'zip']
     state: latest
   when: ansible_os_family == "RedHat"
 
@@ -55,6 +55,12 @@
     path: '{{ dataverse.solr.root}}/bin/solr.in.sh'
     line: 'SOLR_OPTS="$SOLR_OPTS -Dlog4j2.formatMsgNoLookups=true"'
     state: present
+
+- name: really patch CVE-2021-44228
+  ansible.builtin.shell:
+    cmd: 'zip -d {{ dataverse.solr.root }}/server/lib/ext/log4j-core-*.jar org/apache/logging/log4j/core/lookup/JndiLookup.class'
+  become: yes
+  become_user: root
 
 - name: solr doesn't create its log directory until runtime
   file: path="{{ dataverse.solr.root }}/server/logs" state=directory
