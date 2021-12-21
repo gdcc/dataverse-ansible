@@ -161,7 +161,7 @@ dataverse:
     user: solr
     version: 8.11.1
     listen: 127.0.0.1
-    checksum: sha256:00b573afd3ae0a3dd4ff79668ee3c4193a1fc681aeb031da9a7385fbc01c1f1d
+    checksum: sha256:9ec540cbd8e45f3d15a6b615a22939f5e6242ca81099951a47d3c082c79866a9
   srcdir: /tmp/dataverse
   thumbnails: false
   unittests:
