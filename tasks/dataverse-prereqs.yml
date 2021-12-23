@@ -41,9 +41,10 @@
     state: latest
   when: ansible_os_family == "RedHat"
 
-- name: install various packages
-  package:
-    name: bash-completion, git, jq, mlocate, net-tools, sudo, unzip, python3-psycopg2
+- name: install some necessary packages
+  ansible.builtin.package:
+    name: ['bash-completion', 'git', 'jq', 'mlocate', 'net-tools', 'sudo', 'unzip', 'python3-psycopg2', 'zip']
+    state: latest
 
 - name: install java-nnn-openjdk and other packages for RedHat/Rocky
   yum:
