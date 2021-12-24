@@ -50,17 +50,18 @@
   shell: "/bin/cp -r /tmp/solr-{{ dataverse.solr.version }}/* {{ dataverse.solr.root }}"
   when: solr_installer_download.changed
 
-- name: patch CVE-2021-44228
+- name: mitigate CVE-2021-44228
   ansible.builtin.lineinfile:
     path: '{{ dataverse.solr.root}}/bin/solr.in.sh'
     line: 'SOLR_OPTS="$SOLR_OPTS -Dlog4j2.formatMsgNoLookups=true"'
     state: present
 
-- name: really patch CVE-2021-44228
+- name: remove JndiLookup.class from log4j-core.jar
   ansible.builtin.shell:
-    cmd: 'zip -d {{ dataverse.solr.root }}/server/lib/ext/log4j-core-*.jar org/apache/logging/log4j/core/lookup/JndiLookup.class'
+    cmd: 'zip -q -d {{ dataverse.solr.root }}/server/lib/ext/log4j-core-*.jar org/apache/logging/log4j/core/lookup/JndiLookup.class'
   become: yes
   become_user: root
+  ignore_errors: yes
 
 - name: solr doesn't create its log directory until runtime
   file: path="{{ dataverse.solr.root }}/server/logs" state=directory
@@ -71,11 +72,17 @@
   when: solr_installer_download.changed
 
 - name: chown some subdirectories to solr service account
-  file: path="{{ item }}" state=directory recurse=yes
-        owner="{{ dataverse.solr.user }}" group="{{ dataverse.solr.group }}"
+  ansible.builtin.file:
+    path: "{{ item }}"
+    state: directory
+    recurse: yes
+    owner: "{{ dataverse.solr.user }}"
+    group: "{{ dataverse.solr.group }}"
   with_items:
-    - "{{ dataverse.solr.root }}/server/solr/collection1"
     - "{{ dataverse.solr.root }}/bin"
+    - "{{ dataverse.solr.root }}/server/solr/collection1"
+    - "{{ dataverse.solr.root }}/server/solr/filestore"
+    - "{{ dataverse.solr.root }}/server/solr/userfiles"
 
 - name: clean up solr distro files
   file: path="/tmp/solr-{{ dataverse.solr.version }}" state=absent
