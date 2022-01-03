@@ -53,13 +53,6 @@ Listen 443 https
     SSLCertificateChainFile /etc/pki/tls/certs/{{ apache_ssl_interm }}
   {% endif %}
 
-    <Files ~ "\.(cgi|shtml|phtml|php3?)$">
-      SSLOptions +StdEnvVars
-    </Files>
-    <Directory "/var/www/cgi-bin">
-      SSLOptions +StdEnvVars
-    </Directory>
-
   {% if ansible_os_family == "RedHat" %}
     CustomLog logs/ssl_request_log \
           "%t %h %{SSL_PROTOCOL}x %{SSL_CIPHER}x \"%r\" %b"
