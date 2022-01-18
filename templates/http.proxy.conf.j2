@@ -1,7 +1,7 @@
 {% if apache.ssl.enabled %}
 <IfModule ssl_module>
   {% if ansible_os_family == "RedHat" %}
-Listen 443 https
+Listen {{ apache.ssl.port }} https
   {% endif %}
 
   {% if ansible_os_family == "RedHat" %}
