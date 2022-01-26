@@ -43,7 +43,7 @@
 
 - name: install some necessary packages
   ansible.builtin.package:
-    name: ['bash-completion', 'git', 'jq', 'mlocate', 'net-tools', 'sudo', 'unzip', 'python3-psycopg2', 'zip']
+    name: ['bash-completion', 'git', 'jq', 'mlocate', 'net-tools', 'sudo', 'unzip', 'python3-psycopg2', 'zip', 'tar']
     state: latest
 
 - name: install java-nnn-openjdk and other packages for RedHat/Rocky
