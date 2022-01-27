@@ -35,8 +35,8 @@
     - { prop: ":Shoulder", val: "{{ dataverse.doi.shoulder }}", desc: "DOI shoulder."}
     - { prop: ":ShibEnabled", val: "{{ shibboleth.enabled }}", desc: "enable/disable shibboleth" }
     - { prop: ":AllowSignUp", val: "{{ dataverse.allow_signups }}", desc: "don't allow self-signup"}
-    - { prop: ":BlockedApiEndpoints", val: "admin,test", desc: "APIs that are controlled"}
-    - { prop: ":BlockedApiPolicy", val: "localhost-only", desc: "control API access"}
+    - { prop: ":BlockedApiEndpoints", val: "{{ dataverse.api.blocked_endpoints }}", desc: "APIs that are controlled"}
+    - { prop: ":BlockedApiPolicy", val: "{{ dataverse.api.blocked_policy }}", desc: "control API access"}
     - { prop: ":FileFixityChecksumAlgorithm", val: "{{ dataverse.file_fixity_checksum_algorithm }}", desc: "checksum algorithm used for file fixity" }
 
 - include: dataverse-optional-settings.yml
