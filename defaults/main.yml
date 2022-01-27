@@ -30,7 +30,7 @@ apache:
     admin: true
     destroy: true
     sword: false
-    builtinUsers: true
+    builtin_users: true
 
 letsencrypt:
   enabled: false

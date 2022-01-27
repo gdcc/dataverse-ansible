@@ -116,7 +116,7 @@ Listen 443 https
   RedirectMatch ^/dvn/api/data-deposit(.*) /
 {% endif %}
 
-{% if apache.block.builtinUsers == true %}
+{% if apache.block.builtin_users == true %}
   ProxyPassMatch ^/api/builtin-users !
   RedirectMatch ^/api/builtin-users(.*) /
 {% endif %}
