@@ -28,9 +28,9 @@ apache:
   behind_ssl_reverse_proxy: false
   block:
     admin: true
+    builtin_users: true
     destroy: true
     sword: false
-    builtin_users: true
 
 letsencrypt:
   enabled: false

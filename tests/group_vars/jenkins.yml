@@ -18,8 +18,9 @@ apache:
   behind_reverse_proxy: false
   behind_ssl_reverse_proxy: false
   block:
-    admin: false
-    destroy: false
+    admin: true
+    builtin_users: true
+    destroy: true
     sword: false
 
 letsencrypt:
@@ -281,6 +282,6 @@ sshkeys:
 
 # un-nesting the below so's we can pass them at the CLI
 
-dataverse_branch: develop
-dataverse_repo: https://github.com/IQSS/dataverse.git
+dataverse_branch: 52_tika_1_dot_28
+dataverse_repo: https://github.com/OdumInstitute/dataverse.git
 any_errors_fatal: true
