@@ -2,6 +2,7 @@
 # dataverse/tests/group_vars/jenkins.yml
 
 apache:
+  enabled: true
   ssl:
     enabled: false
     remote_cert: false

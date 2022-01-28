@@ -1,7 +1,7 @@
 {% if apache.ssl.enabled %}
 <IfModule ssl_module>
   {% if ansible_os_family == "RedHat" %}
-Listen 443 https
+Listen {{ apache.ssl.port }} https
   {% endif %}
 
   {% if ansible_os_family == "RedHat" %}
@@ -68,6 +68,7 @@ Listen 443 https
   {% endif %}
 {% endif %}
 
+{% if prometheus.install == true %}
   <Location "/prometheus">
     ProxyPass "http://localhost:9090/prometheus"
     ProxyPassReverse "http://localhost:9090/prometheus"
@@ -77,6 +78,7 @@ Listen 443 https
     ProxyPass "http://localhost:3000"
     ProxyPassReverse "http://localhost:3000"
   </Location>
+{% endif %}
 
   # custom error document when Glassfish isn't responding
   ErrorDocument 503 /503.html

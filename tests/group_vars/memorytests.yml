@@ -7,6 +7,7 @@ dataverse_repo: https://github.com/IQSS/dataverse.git
 any_errors_fatal: false
 
 apache:
+  enabled: true
   ssl:
     enabled: false
     remote_cert: false
