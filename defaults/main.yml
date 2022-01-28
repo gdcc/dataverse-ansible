@@ -44,7 +44,7 @@ dataverse:
   allow_signups: true
   api:
     allow_lookup: false
-    blocked_endpoints: "admin,builtin-users"
+    blocked_endpoints: "admin,builtin-users,test"
     blocked_policy: "localhost-only"
     location: "http://localhost:8080/api"
     test_suite: false
