@@ -30,6 +30,7 @@ apache:
     admin: true
     destroy: true
     sword: false
+    builtin_users: true
 
 letsencrypt:
   enabled: false
@@ -43,7 +44,7 @@ dataverse:
   allow_signups: true
   api:
     allow_lookup: false
-    blocked_endpoints: "admin,test"
+    blocked_endpoints: "admin,builtin-users,test"
     blocked_policy: "localhost-only"
     location: "http://localhost:8080/api"
     test_suite: false
