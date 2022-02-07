@@ -18,7 +18,17 @@
     mode: 0644
   when: ansible_distribution == "Rocky"
 
-- name: install Shibboleth RPMs for RedHat/Rocky
+- name: install shibboleth repo for RHEL/CentOS 8
+  ansible.builtin.copy:
+    src: 'shibboleth.centos8.repo'
+    dest: /etc/yum.repos.d/shibboleth.repo
+    owner: root
+    group: root
+    mode: 0644
+  when: (ansible_distribution == "RedHat" and ansible_distribution_major_version == "8")
+     or (ansible_distribution == "CentOS" and ansible_distribution_major_version == "8")
+
+- name: install Shibboleth RPMs for RHEL and derivatives
   ansible.builtin.package:
     name: shibboleth
     state: latest
