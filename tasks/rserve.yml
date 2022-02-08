@@ -16,17 +16,6 @@
   when: ansible_distribution == "RedHat" and
         ansible_distribution_major_version == "8"
 
-- name: CentOS 8.2 in EC2 needs PowerTools
-  shell: "dnf config-manager --enable PowerTools"
-  when: ansible_distribution == "CentOS" and
-        ansible_distribution_version == "8.2"
-
-- name: CentOS 8.3 and Stream need powertools
-  shell: "dnf config-manager --enable powertools"
-  when: ansible_distribution == "CentOS" and
-        ansible_distribution_major_version == "8" and
-        ansible_distribution_version != "8.2"
-
 - name: Rocky needs powertools
   shell: "dnf config-manager --enable powertools"
   when: ansible_distribution == "Rocky" and

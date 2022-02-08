@@ -5,13 +5,13 @@
   debug:
     msg: '##### SOLR #####'
 
-- name: ensure EPEL repository for RedHat/CentOS 7
+- name: ensure EPEL repository for RedHat/Rocky
   yum: name=epel-release state=latest
   when: ansible_os_family == "RedHat"
 
-- name: install Solr pre-reqs for RedHat/CentOS 7
-  yum:
-    name: ['java-{{ java.version }}-openjdk-devel', 'lsof']
+- name: install Solr pre-reqs for RedHat/Rocky
+  ansible.builtin.package:
+    name: ['java-{{ java.version }}-openjdk-devel', 'lsof', 'zip']
     state: latest
   when: ansible_os_family == "RedHat"
 
@@ -50,6 +50,19 @@
   shell: "/bin/cp -r /tmp/solr-{{ dataverse.solr.version }}/* {{ dataverse.solr.root }}"
   when: solr_installer_download.changed
 
+- name: mitigate CVE-2021-44228
+  ansible.builtin.lineinfile:
+    path: '{{ dataverse.solr.root}}/bin/solr.in.sh'
+    line: 'SOLR_OPTS="$SOLR_OPTS -Dlog4j2.formatMsgNoLookups=true"'
+    state: present
+
+- name: remove JndiLookup.class from log4j-core.jar
+  ansible.builtin.shell:
+    cmd: 'zip -q -d {{ dataverse.solr.root }}/server/lib/ext/log4j-core-*.jar org/apache/logging/log4j/core/lookup/JndiLookup.class'
+  become: yes
+  become_user: root
+  ignore_errors: yes
+
 - name: solr doesn't create its log directory until runtime
   file: path="{{ dataverse.solr.root }}/server/logs" state=directory
         owner="{{ dataverse.solr.user }}" group="{{ dataverse.solr.group }}" mode=0755
@@ -59,11 +72,17 @@
   when: solr_installer_download.changed
 
 - name: chown some subdirectories to solr service account
-  file: path="{{ item }}" state=directory recurse=yes
-        owner="{{ dataverse.solr.user }}" group="{{ dataverse.solr.group }}"
+  ansible.builtin.file:
+    path: "{{ item }}"
+    state: directory
+    recurse: yes
+    owner: "{{ dataverse.solr.user }}"
+    group: "{{ dataverse.solr.group }}"
   with_items:
-    - "{{ dataverse.solr.root }}/server/solr/collection1"
     - "{{ dataverse.solr.root }}/bin"
+    - "{{ dataverse.solr.root }}/server/solr/collection1"
+    - "{{ dataverse.solr.root }}/server/solr/filestore"
+    - "{{ dataverse.solr.root }}/server/solr/userfiles"
 
 - name: clean up solr distro files
   file: path="/tmp/solr-{{ dataverse.solr.version }}" state=absent
@@ -161,7 +180,7 @@
   copy: src=solr.conf dest=/etc/init owner=root group=root mode=0644
   when: ansible_os_family == "Debian"
 
-- name: install solr systemd conf file for RedHat/CentOS
+- name: install solr systemd conf file for RedHat/Rocky
   template: src=solr.service.j2 dest=/usr/lib/systemd/system/solr.service
         owner=root group=root mode=0644
   when: ansible_os_family == "RedHat"

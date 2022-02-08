@@ -35,8 +35,8 @@
     - { prop: ":Shoulder", val: "{{ dataverse.doi.shoulder }}", desc: "DOI shoulder."}
     - { prop: ":ShibEnabled", val: "{{ shibboleth.enabled }}", desc: "enable/disable shibboleth" }
     - { prop: ":AllowSignUp", val: "{{ dataverse.allow_signups }}", desc: "don't allow self-signup"}
-    - { prop: ":BlockedApiEndpoints", val: "admin,test", desc: "APIs that are controlled"}
-    - { prop: ":BlockedApiPolicy", val: "localhost-only", desc: "control API access"}
+    - { prop: ":BlockedApiEndpoints", val: "{{ dataverse.api.blocked_endpoints }}", desc: "APIs that are controlled"}
+    - { prop: ":BlockedApiPolicy", val: "{{ dataverse.api.blocked_policy }}", desc: "control API access"}
     - { prop: ":FileFixityChecksumAlgorithm", val: "{{ dataverse.file_fixity_checksum_algorithm }}", desc: "checksum algorithm used for file fixity" }
 
 - include: dataverse-optional-settings.yml
@@ -54,6 +54,23 @@
     group: '{{ dataverse.payara.group }}'
     mode: 0644
   when: dataverse.payara.zipurl is match(".*payara-5.2021.5.zip")
+
+- name: find bundled log4j-v1 beneath applications
+  ansible.builtin.find:
+    paths: '{{ payara_dir }}/glassfish/domains/{{ dataverse.payara.domain }}/applications/'
+    patterns: 'log4j-1.2*'
+    file_type: file
+    recurse: yes
+    use_regex: yes
+  register: log4jv1_list
+
+- name: remove JMSAppender from bundled log4j
+  ansible.builtin.shell:
+    cmd: 'zip -q -d {{ item }} org/apache/log4j/net/JMSAppender.class'
+  become: yes
+  become_user: '{{ dataverse.payara.user }}'
+  with_items:
+  - "{{ log4jv1_list.files | map(attribute='path') | list }}"
 
 - name: start payara
   service:

@@ -76,7 +76,7 @@ Here is an example of how to execute the `dataverse-ansible` role with more adju
 | -e     | Extra variables file                  | no       |
 | -v     | run with Verbosity (up to three Vs)   | no       |
 
-The role currently supports CentOS 7 and 8 with all services running on the same machine, but intends to become OS-agnostic and support multiple nodes for scalability.
+The role currently supports RHEL/CentOS 7, RHEL/Rocky 8 and Debian 11 with all services running on the same machine, but intends to become OS-agnostic and support multiple nodes for scalability.
 
 If you're interested in testing Dataverse locally using [Vagrant][vagrant], you'll want to clone this repository and edit the local port redirects if the http/https ports on your local machine are already in use. Note that the current Vagrant VM template requires [VirtualBox][virtualbox] 5.0+ and will automatically launch the above command within your Vagrant VM.
 
@@ -114,7 +114,7 @@ If you needed to update the host port in the Vagrantfile due to collision, you'd
 * Postgres (database)
   * Default data/config location: */var/lib/pgsql/9.6/data/*
   * `$ systemctl {start|stop|restart|status} postgresql-9.6`
-  * **Note:** as of this writing, RHEL/CentOS8 are compiled- and will only work with PostgresQL 10+
+  * **Note:** as of this writing, RHEL/Rocky8 are compiled- and will only work with PostgresQL 10+
 * Shibboleth
   * Provides an additional authentication provider.
   * Default config location: */etc/shibboleth/shibboleth2.xml*

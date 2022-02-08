@@ -9,7 +9,7 @@
   shell: 'yum clean all'
   when: ansible_os_family == "RedHat"
 
-- name: let's use the closest centos mirror
+- name: let's use the closest mirror
   file:
     path: /var/cache/yum/x86_64/7/timedhosts.txt
     state: absent
@@ -35,17 +35,18 @@
     update_cache: yes
   when: ansible_os_family == "Debian"
 
-- name: ensure EPEL repository for RedHat7/CentOS7
+- name: ensure EPEL repository for RedHat/Rocky
   yum:
     name: epel-release
     state: latest
   when: ansible_os_family == "RedHat"
 
-- name: install various packages
-  package:
-    name: bash-completion, git, jq, mlocate, net-tools, sudo, unzip, python3-psycopg2
+- name: install some necessary packages
+  ansible.builtin.package:
+    name: ['bash-completion', 'git', 'jq', 'mlocate', 'net-tools', 'sudo', 'unzip', 'python3-psycopg2', 'zip', 'tar']
+    state: latest
 
-- name: install java-nnn-openjdk and other packages for RedHat/CentOS.
+- name: install java-nnn-openjdk and other packages for RedHat/Rocky
   yum:
     name: ['java-{{ java.version }}-openjdk-devel', 'python36', 'vim-enhanced']
     state: latest
@@ -57,7 +58,7 @@
   when: ansible_os_family == "Debian"
 
 # it is strongly recommended to check for open CVEs before enabling this.
-- name: install GraphicsMagic on RHEL/CentOS8 for thumbnail generation
+- name: install GraphicsMagic on RHEL/Rocky for thumbnail generation
   dnf:
     name: GraphicsMagick
   when:

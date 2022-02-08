@@ -43,6 +43,7 @@
   - postfix
 
 - include: dataverse-apache.yml
+  when: apache.enabled == True
   tags:
   - apache
 

@@ -120,7 +120,7 @@
     - { user: "{{ dataverse.payara.user }}", type: hard, descriptor: nofile, value: 65000 }
   notify: enable and restart payara
 
-- name: install payara systemd conf file for RedHat / CentOS7
+- name: install payara systemd conf file for RHEL/Rocky
   template: src=payara.service.j2 dest=/usr/lib/systemd/system/payara.service
         owner=root group=root mode=0644
   when: ansible_os_family == "RedHat"

@@ -11,6 +11,7 @@ dataverse_repo: https://github.com/IQSS/dataverse.git
 any_errors_fatal: false
 
 apache:
+  enabled: true
   ssl:
     enabled: false
     remote_cert: false
@@ -28,6 +29,7 @@ apache:
   behind_ssl_reverse_proxy: false
   block:
     admin: true
+    builtin_users: true
     destroy: true
     sword: false
 
@@ -43,7 +45,7 @@ dataverse:
   allow_signups: true
   api:
     allow_lookup: false
-    blocked_endpoints: "admin,test"
+    blocked_endpoints: "admin,builtin-users,test"
     blocked_policy: "localhost-only"
     location: "http://localhost:8080/api"
     test_suite: false
@@ -177,7 +179,7 @@ dataverse:
     enabled: false
     argument: '-DcompilerArgument=-Xlint:unchecked test -P all-unit-tests'
   usermgmtkey: burrito
-  version: '5.8'
+  version: '5.9'
 
 build_guides: false
 

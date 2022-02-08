@@ -33,7 +33,7 @@
     state: present
   when: ansible_os_family == "RedHat"
 
-- name: "rhel/centos8: disable postgresql proper in the OS"
+- name: "RHEL/Rocky8: disable PostgreSQL proper in the OS"
   shell: 'dnf -qy module disable postgresql'
   when: ansible_os_family == "RedHat" and
         ansible_distribution_major_version == "8"
@@ -42,7 +42,7 @@
   set_fact:
     dataverse_pg_version_short: "{{ db.postgres.version | regex_replace('\\.','') }}"
 
-- name: install postgres server on RedHat / CentOS
+- name: install postgres server on RedHat / Rocky
   yum:
    name: 'postgresql{{ dataverse_pg_version_short }}-server'
    state: latest
@@ -56,7 +56,7 @@
   when: ansible_os_family == "Debian" and
         db.use_rds == false
 
-- name: install postgres client on RedHat / CentOS for RDS
+- name: install postgres client on RedHat / Rocky for RDS
   yum:
     name: 'postgresql{{ dataverse_pg_version_short }}'
     state: latest
@@ -73,7 +73,7 @@
 - include: postgresql-init.yml
   when: db.use_rds == false
 
-- name: install pg_hba.conf on RHEL/CentOS
+- name: install pg_hba.conf on RHEL/Rocky
   copy:
     src: pg_hba.conf
     dest: '/var/lib/pgsql/{{ db.postgres.version }}/data'
