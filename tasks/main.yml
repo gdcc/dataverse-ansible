@@ -103,7 +103,7 @@
   - gui
   when: dataverse.branding.enabled
 
-- include: dataverse-shibboleth.yml
+- include: shibboleth.yml
   when: shibboleth.enabled == True
   tags:
   - shibboleth
