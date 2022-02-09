@@ -67,6 +67,16 @@ dataverse:
     otherSettings:
      - setting: FooterCopyright
        value: Your institute name here
+  language:
+    enabled: false # setting this to true allows the language task to run
+    languages:
+     - locale: en
+       title: English
+     - locale: de-DE
+       title: Deutsch
+    language_packs:
+      source: https://github.com/GlobalDataverseCommunityConsortium/dataverse-language-packs.git
+      version: develop
   copyright: "Your Institution"
   counter:
     enabled: false

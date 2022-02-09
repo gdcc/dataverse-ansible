@@ -15,12 +15,7 @@
 
 - include: dataverse-required-variables.yml
   tags:
-   - payara
-   - dataverse
-   - storage
-   - postinstall
-   - s3
-   - gui
+   - always
 
 - include: rserve.yml
   when: rserve.install == true
@@ -127,6 +122,11 @@
   when: dataverse.previewers.enabled == true
   tags:
   - previewers
+
+- include: dataverse-languages.yml
+  when: dataverse.language.enabled == true
+  tags:
+  - languages
 
 - include: dataverse-externaltools.yml
   tags:

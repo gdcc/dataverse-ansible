@@ -1,0 +1,83 @@
+---
+
+- name: install and configure dataverse languages
+  debug:
+    msg: '##### DATAVERSE LANGUAGES #####'
+
+- name: get dataverse language file path
+  shell: "{{ payara_dir }}/bin/asadmin list-jvm-options | grep dataverse.lang.directory | sed 's/.*=//'"
+  register: dataverse_lang_directory
+  changed_when: false
+
+- name: create dataverse language file path if not set
+  file:
+    path: /opt/dv/lang
+    state: directory
+    owner: '{{ dataverse.payara.user }}'
+  when: (dataverse_lang_directory.stdout | trim) == ''
+
+- name: set dataverse language file path if not set
+  shell: "{{ payara_dir }}/bin/asadmin create-jvm-options -Ddataverse.lang.directory=/opt/dv/lang"
+  when: (dataverse_lang_directory.stdout | trim) == ''
+
+- name: restart payara after setting language directory
+  service: name=payara state=restarted
+  when: (dataverse_lang_directory.stdout | trim) == ''
+
+- name: clone dataverse language packs
+  local_action:
+    module: git
+    repo: "{{ dataverse.language.language_packs.source }}"
+    dest: "/tmp/dataverse_language_packs"
+    version: "{{ dataverse.language.language_packs.version }}"
+  run_once: true
+
+- name: prepare language file temporary directory
+  local_action: shell cd /tmp/dataverse_language_packs ; rm -rf tmp.bak ; [ -d tmp ] && mv tmp tmp.bak && rm tmp.bak/*.zip ; mkdir tmp
+  changed_when: false
+
+- name: copy language files to temporary directory
+  local_action: shell cd /tmp/dataverse_language_packs ; cp -R {{ item.locale }}*/*.properties tmp/
+  changed_when: false
+  with_items: "{{ dataverse.language.languages }}"
+
+- name: check if there was a change in the temporary directory
+  local_action: shell cd /tmp/dataverse_language_packs ; diff -r tmp tmp.bak
+  register: diff
+  changed_when: diff.rc != 0
+  failed_when: diff.rc > 2
+
+- name: create language pack
+  local_action: shell cd /tmp/dataverse_language_packs/tmp ; zip languages.zip *.properties
+  when: diff.changed
+
+- name: upload language pack
+  uri:
+    url: http://localhost:8080/api/admin/datasetfield/loadpropertyfiles
+    method: POST
+    headers:
+      Content-type: "application/zip"
+      Accept: application/json
+    src: /tmp/dataverse_language_packs/tmp/languages.zip
+    status_code: 200
+    body_format: raw
+  when: diff.changed
+
+- name: configure available languages
+  uri:
+    url: http://localhost:8080/api/admin/settings/:Languages
+    method: PUT
+    body: '{{ dataverse.language.languages }}'
+    body_format: json
+    status_code: 200
+  when: diff.changed
+
+- name: configure available languages
+  uri:
+    url: http://localhost:8080/api/admin/settings/:MetadataLanguages
+    method: PUT
+    body: '{{ dataverse.language.languages }}'
+    body_format: json
+    status_code: 200
+  when: diff.changed
+
