@@ -282,6 +282,6 @@ sshkeys:
 
 # un-nesting the below so's we can pass them at the CLI
 
-dataverse_branch: 52_tika_1_dot_28
-dataverse_repo: https://github.com/OdumInstitute/dataverse.git
+dataverse_branch: develop
+dataverse_repo: https://github.com/IQSS/dataverse.git
 any_errors_fatal: true
