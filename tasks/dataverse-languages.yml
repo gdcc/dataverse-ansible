@@ -20,10 +20,6 @@
   shell: "{{ payara_dir }}/bin/asadmin create-jvm-options -Ddataverse.lang.directory=/opt/dv/lang"
   when: (dataverse_lang_directory.stdout | trim) == ''
 
-- name: restart payara after setting language directory
-  service: name=payara state=restarted
-  when: (dataverse_lang_directory.stdout | trim) == ''
-
 - name: clone dataverse language packs
   local_action:
     module: git
@@ -31,6 +27,17 @@
     dest: "/tmp/dataverse_language_packs"
     version: "{{ dataverse.language.language_packs.version }}"
   run_once: true
+
+- name: copy default bundle to the language directory if it was just created
+  copy:
+    src: /tmp/dataverse_language_packs/en_US/Bundle.properties
+    dest: /opt/dv/lang
+    owner: '{{ dataverse.payara.user }}'
+  when: (dataverse_lang_directory.stdout | trim) == ''
+
+- name: restart payara after setting language directory
+  service: name=payara state=restarted
+  when: (dataverse_lang_directory.stdout | trim) == ''
 
 - name: prepare language file temporary directory
   local_action: shell cd /tmp/dataverse_language_packs ; rm -rf tmp.bak ; [ -d tmp ] && mv tmp tmp.bak && rm tmp.bak/*.zip ; mkdir tmp
