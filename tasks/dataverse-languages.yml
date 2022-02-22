@@ -11,13 +11,13 @@
 
 - name: create dataverse language file path if not set
   file:
-    path: /opt/dv/lang
+    path: "{{ dataverse.language.lang_directory }}"
     state: directory
     owner: '{{ dataverse.payara.user }}'
   when: (dataverse_lang_directory.stdout | trim) == ''
 
 - name: set dataverse language file path if not set
-  shell: "{{ payara_dir }}/bin/asadmin create-jvm-options -Ddataverse.lang.directory=/opt/dv/lang"
+  shell: "{{ payara_dir }}/bin/asadmin create-jvm-options -Ddataverse.lang.directory={{ dataverse.language.lang_directory }}"
   when: (dataverse_lang_directory.stdout | trim) == ''
 
 - name: clone dataverse language packs
@@ -31,7 +31,7 @@
 - name: copy default bundle to the language directory if it was just created
   copy:
     src: /tmp/dataverse_language_packs/en_US/Bundle.properties
-    dest: /opt/dv/lang
+    dest: "{{ dataverse.language.lang_directory }}"
     owner: '{{ dataverse.payara.user }}'
   when: (dataverse_lang_directory.stdout | trim) == ''
 
@@ -60,7 +60,7 @@
 
 - name: upload language pack
   uri:
-    url: http://localhost:8080/api/admin/datasetfield/loadpropertyfiles
+    url: {{ dataverse.api.location }}/admin/datasetfield/loadpropertyfiles
     method: POST
     headers:
       Content-type: "application/zip"
@@ -72,7 +72,7 @@
 
 - name: configure available languages
   uri:
-    url: http://localhost:8080/api/admin/settings/:Languages
+    url: {{ dataverse.api.location }}/admin/settings/:Languages
     method: PUT
     body: '{{ dataverse.language.languages }}'
     body_format: json
@@ -81,7 +81,7 @@
 
 - name: configure available languages
   uri:
-    url: http://localhost:8080/api/admin/settings/:MetadataLanguages
+    url: {{ dataverse.api.location }}/admin/settings/:MetadataLanguages
     method: PUT
     body: '{{ dataverse.language.languages }}'
     body_format: json
