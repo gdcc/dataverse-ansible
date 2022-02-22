@@ -102,6 +102,13 @@ dataverse:
     protocol: doi
     provider: FAKE
     shoulder: "FK2/"
+  ## Handlenet variables are only used if dataverse.doi.protocol is set to 'hdl'
+  handlenet:
+    independenthandleservice: 'false'
+#   handleauthhandle:
+    admcredfile: /opt/dv/admpriv.bin
+#   admprivphrase:
+#   index: 300
   externaltools:
     datacurationtool:
       enabled: false

@@ -1,0 +1,55 @@
+
+- name: set IndependentHandleService
+  uri:
+    url: "{{ dataverse.api.location }}/admin/settings/:IndependentHandleService"
+    method: PUT
+    body: "{{ dataverse.handlenet.independenthandleservice }}"
+    body_format: raw
+
+- name: set HandleAuthHandle
+  uri:
+    url: "{{ dataverse.api.location }}/admin/settings/:HandleAuthHandle"
+    method: PUT
+    body: "{{ dataverse.handlenet.handleauthhandle }}"
+    body_format: raw
+  when:
+   - dataverse.handlenet.handleauthhandle is defined
+
+- name: copy dataverse.handlenet.admcredfile
+  copy:
+    src: files/handlenet/admcredfile
+    dest: "{{ dataverse.handlenet.admcredfile }}"
+
+- name: get dataverse.handlenet.admcredfile value
+  shell: "{{ payara_dir }}/bin/asadmin list-jvm-options | grep dataverse.handlenet.admcredfile="
+  register: admcredfile_value
+  failed_when: false
+
+- name: set dataverse.handlenet.admcredfile if changed
+  shell: "{{ payara_dir }}/bin/asadmin delete-jvm-options '{{ admcredfile_value.stdout | trim }}' ;
+          {{ payara_dir }}/bin/asadmin create-jvm-options '-Ddataverse.handlenet.admcredfile={{ dataverse.handlenet.admcredfile }}'"
+  when: ( admcredfile_value.stdout | trim ) != '-Ddataverse.handlenet.admcredfile='+dataverse.handlenet.admcredfile
+
+- name: get dataverse.handlenet.admprivphrase value
+  shell: "{{ payara_dir }}/bin/asadmin list-jvm-options | grep dataverse.handlenet.admprivphrase="
+  register: admprivphrase_value
+  failed_when: false
+
+- name: set dataverse.handlenet.admprivphrase if set and changed
+  shell: "{{ payara_dir }}/bin/asadmin delete-jvm-options '{{ admprivphrase_value.stdout | trim }}' ;
+          {{ payara_dir }}/bin/asadmin create-jvm-options '-Ddataverse.handlenet.admprivphrase={{ dataverse.handlenet.admprivphrase }}'"
+  when:
+   - dataverse.handlenet.admprivphrase is defined
+   - ( admprivphrase_value.stdout | trim ) != '-Ddataverse.handlenet.admprivphrase='+dataverse.handlenet.admprivphrase
+
+- name: get dataverse.handlenet.index value
+  shell: "{{ payara_dir }}/bin/asadmin list-jvm-options | grep dataverse.handlenet.index="
+  register: index_value
+  failed_when: false
+
+- name: set dataverse.handlenet.index if set and changed
+  shell: "{{ payara_dir }}/bin/asadmin create-jvm-options '{{ index_value.stdout | trim }}' ;
+          {{ payara_dir }}/bin/asadmin create-jvm-options '-Ddataverse.handlenet.index={{ dataverse.handlenet.index }}'"
+  when:
+   - dataverse.handlenet.index is defined
+   - ( index_value.stdout | trim ) != '-Ddataverse.handlenet.index='+dataverse.handlenet.index
