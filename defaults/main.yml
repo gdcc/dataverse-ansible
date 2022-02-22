@@ -185,6 +185,7 @@ build_guides: false
 
 db:
   postgres:
+    enabled: true
     adminpass: DVn33dsth1s
     name: dvndb
     host: localhost
