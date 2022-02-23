@@ -60,7 +60,7 @@
 
 - name: upload language pack
   uri:
-    url: {{ dataverse.api.location }}/admin/datasetfield/loadpropertyfiles
+    url: "{{ dataverse.api.location }}/admin/datasetfield/loadpropertyfiles"
     method: POST
     headers:
       Content-type: "application/zip"
@@ -72,7 +72,7 @@
 
 - name: configure available languages
   uri:
-    url: {{ dataverse.api.location }}/admin/settings/:Languages
+    url: "{{ dataverse.api.location }}/admin/settings/:Languages"
     method: PUT
     body: '{{ dataverse.language.languages }}'
     body_format: json
@@ -81,7 +81,7 @@
 
 - name: configure available languages
   uri:
-    url: {{ dataverse.api.location }}/admin/settings/:MetadataLanguages
+    url: "{{ dataverse.api.location }}/admin/settings/:MetadataLanguages"
     method: PUT
     body: '{{ dataverse.language.languages }}'
     body_format: json
