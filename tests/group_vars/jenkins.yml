@@ -131,6 +131,17 @@ dataverse:
     home: /tmp/jacoco
     version: 0.8.6
   file_fixity_checksum_algorithm: "MD5"
+  language:
+    enabled: true
+    languages:
+     - locale: en
+       title: English
+     - locale: de-DE
+       title: Deutsch
+    language_packs:
+      source: https://github.com/GlobalDataverseCommunityConsortium/dataverse-language-packs.git
+      version: develop
+    lang_directory: /opt/dv/lang
   memheap: 4096
   options:
     filepids: 
@@ -161,7 +172,7 @@ dataverse:
     group: solr
     root: /usr/local/solr
     user: solr
-    version: 8.8.1
+    version: 8.11.1
     listen: 127.0.0.1
     checksum: sha256:00b573afd3ae0a3dd4ff79668ee3c4193a1fc681aeb031da9a7385fbc01c1f1d
   srcdir: /tmp/dataverse
@@ -282,6 +293,6 @@ sshkeys:
 
 # un-nesting the below so's we can pass them at the CLI
 
-dataverse_branch: 52_tika_1_dot_28
-dataverse_repo: https://github.com/OdumInstitute/dataverse.git
+dataverse_branch: develop
+dataverse_repo: https://github.com/IQSS/dataverse.git
 any_errors_fatal: true
