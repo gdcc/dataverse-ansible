@@ -17,7 +17,7 @@
 
 - name: copy dataverse.handlenet.admcredfile
   copy:
-    src: files/handlenet/admcredfile
+    src: "{{ dataverse.handlenet.admcredfile_source }}"
     dest: "{{ dataverse.handlenet.admcredfile }}"
 
 - name: get dataverse.handlenet.admcredfile value
