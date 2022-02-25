@@ -66,7 +66,7 @@
 
 - name: remove JMSAppender from bundled log4j
   ansible.builtin.shell:
-    cmd: 'zip -q -d {{ item }} org/apache/log4j/net/JMSAppender.class'
+    cmd: 'unzip -t {{ item }} org/apache/log4j/net/JMSAppender.class ; [ $? -eq 11 ] && true || zip -q -d {{ item }} org/apache/log4j/net/JMSAppender.class'
   become: yes
   become_user: '{{ dataverse.payara.user }}'
   with_items:
