@@ -106,7 +106,7 @@ dataverse:
   handlenet:
     independenthandleservice: 'false'
 #   handleauthhandle:
-    admcredfile: /opt/dv/admpriv.bin
+#   admcredfile: /opt/dv/admpriv.bin
     admcredfile_source: files/handlenet/admcredfile
 #   admprivphrase:
 #   index: 300
