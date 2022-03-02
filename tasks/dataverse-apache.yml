@@ -34,6 +34,15 @@
   when: ansible_os_family == "Debian"
   notify: enable and restart apache
 
+- name: install unified http proxy config
+  template:
+    src: http.proxy.conf.j2
+    dest: "{{ apache_virtualhost_dir }}/http.proxy.conf"
+    owner: root
+    group: root
+    mode: '0644'
+  notify: enable and restart apache
+
 - name: enable apache mods on Debian
   apache2_module:
     state: present
@@ -71,14 +80,6 @@
   when:
     - letsencrypt.enabled == false
 
-- name: install unified http proxy config
-  template:
-    src: http.proxy.conf.j2
-    dest: "{{ apache_virtualhost_dir }}/http.proxy.conf"
-    owner: root
-    group: root
-    mode: '0644'
-  notify: enable and restart apache
 
 - name: certbot bonks on listen 443
   lineinfile:

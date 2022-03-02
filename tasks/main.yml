@@ -43,6 +43,7 @@
   - apache
 
 - include: postgres.yml
+  when: db.postgres.enabled == True
   tags:
   - postgres
 

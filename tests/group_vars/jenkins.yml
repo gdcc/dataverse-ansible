@@ -129,7 +129,7 @@ dataverse:
   jacoco:
     enabled: true
     home: /tmp/jacoco
-    version: 0.8.6
+    version: 0.8.7
   file_fixity_checksum_algorithm: "MD5"
   language:
     enabled: true
@@ -187,6 +187,7 @@ build_guides: false
 
 db:
   postgres:
+    enabled: true
     adminpass: DVn33dsth1s
     name: dvndb
     host: localhost

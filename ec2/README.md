@@ -17,7 +17,7 @@ An existing AWS **security group** to allow network access, typically ports 22, 
 * the default branch is `develop`
 * the default repo is `https://github.com/IQSS/dataverse`
 * the default .pem location is the user home directory
-* example group_vars may be retrieved from [https://raw.githubusercontent.com/GlobalDataverseCommunityConsortium/dataverse-ansible/master/defaults/main.yml](https://raw.githubusercontent.com/GlobalDataverseCommunityConsortium/dataverse-ansible/master/defaults/main.yml)
+* example group_vars may be retrieved from [https://raw.githubusercontent.com/GlobalDataverseCommunityConsortium/dataverse-ansible/develop/defaults/main.yml](https://raw.githubusercontent.com/GlobalDataverseCommunityConsortium/dataverse-ansible/develop/defaults/main.yml)
 * the default AWS AMI ID is ami-043ceee68871e0bb5 *(Rocky 8 in us-east-1)* ; full list at https://rockylinux.org/ami/
 * the default AWS size is t2.xlarge to avoid OoM killer during integration tests (otherwise, t2.large or even t2.medium may be fine)
 * local log path will rsync Payara, Jacoco, Maven and other logs back to the specified path
@@ -37,7 +37,7 @@ To stand up the `5292-small-container branch` from @poikilotherm's fork:
 
 `./ec2-create.instance.sh -b 5292-small-container -r https://github.com/poikilotherm/dataverse.git`
 
-To stand up an instance from current develop with unit and integration tests enabled, as run on [https://jenkins.dataverse.org/](https://jenkins.dataverse.org/) grab a current copy of [jenkins.yml](https://raw.githubusercontent.com/GlobalDataverseCommunityConsortium/dataverse-ansible/master/tests/group_vars/jenkins.yml) and issue:
+To stand up an instance from current develop with unit and integration tests enabled, as run on [https://jenkins.dataverse.org/](https://jenkins.dataverse.org/) grab a current copy of [jenkins.yml](https://raw.githubusercontent.com/GlobalDataverseCommunityConsortium/dataverse-ansible/develop/tests/group_vars/jenkins.yml) and issue:
 
 `./ec2-create-instance.sh -g jenkins.yml -l logs`
 
