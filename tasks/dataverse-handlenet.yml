@@ -15,6 +15,20 @@
   when:
    - dataverse.handlenet.handleauthhandle is defined
 
+- name: set Authority
+  uri:
+    url: "{{ dataverse.api.location }}/admin/settings/:Authority"
+    method: PUT
+    body: "{{ dataverse.doi.authority }}"
+    body_format: raw
+
+- name: set Shoulder
+  uri:
+    url: "{{ dataverse.api.location }}/admin/settings/:Shoulder"
+    method: PUT
+    body: "{{ dataverse.doi.shoulder }}"
+    body_format: raw
+
 - name: copy dataverse.handlenet.admcredfile
   copy:
     src: "{{ dataverse.handlenet.admcredfile_source }}"
@@ -26,6 +40,7 @@
   shell: "{{ payara_dir }}/bin/asadmin list-jvm-options | grep dataverse.handlenet.admcredfile="
   register: admcredfile_value
   failed_when: false
+  changed_when: false
 
 - name: delete dataverse.handlenet.admcredfile if changed
   shell: "{{ payara_dir }}/bin/asadmin delete-jvm-options '{{ admcredfile_value.stdout | trim }}'"
@@ -41,6 +56,7 @@
   shell: "{{ payara_dir }}/bin/asadmin list-jvm-options | grep dataverse.handlenet.admprivphrase="
   register: admprivphrase_value
   failed_when: false
+  changed_when: false
 
 - name: set dataverse.handlenet.admprivphrase if set and changed
   shell: "{{ payara_dir }}/bin/asadmin delete-jvm-options '{{ admprivphrase_value.stdout | trim }}' ;
@@ -53,6 +69,7 @@
   shell: "{{ payara_dir }}/bin/asadmin list-jvm-options | grep dataverse.handlenet.index="
   register: index_value
   failed_when: false
+  changed_when: false
 
 - name: set dataverse.handlenet.index if set and changed
   shell: "{{ payara_dir }}/bin/asadmin create-jvm-options '{{ index_value.stdout | trim }}' ;
