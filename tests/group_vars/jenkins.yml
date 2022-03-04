@@ -131,6 +131,17 @@ dataverse:
     home: /tmp/jacoco
     version: 0.8.7
   file_fixity_checksum_algorithm: "MD5"
+  language:
+    enabled: true
+    languages:
+     - locale: en
+       title: English
+     - locale: de-DE
+       title: Deutsch
+    language_packs:
+      source: https://github.com/GlobalDataverseCommunityConsortium/dataverse-language-packs.git
+      version: develop
+    lang_directory: /opt/dv/lang
   memheap: 4096
   options:
     filepids: 
