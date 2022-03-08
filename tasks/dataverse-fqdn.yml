@@ -53,7 +53,7 @@
 - name: if we're in EC2 and no public_fqdn, get public hostname
   ansible.builtin.uri:
     url: http://169.254.169.254/latest/meta-data/public-hostname
-    method: GET
+    return_content: yes
   register: ec2_hostname_output
   when: is_aws_environment
         and custom_fqdn is undefined
