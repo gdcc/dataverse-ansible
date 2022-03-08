@@ -2,12 +2,13 @@
 # dataverse/tests/group_vars/vagrant.yml
 
 # un-nested so we can pass them at the CLI
-dataverse_branch: develop
+dataverse_branch: release
 dataverse_repo: https://github.com/IQSS/dataverse.git
 any_errors_fatal: true
 
 apache:
   enabled: true
+  public_fqdn: bloop.com
   ssl:
     enabled: false
     remote_cert: false

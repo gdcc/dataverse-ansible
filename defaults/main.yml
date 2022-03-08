@@ -12,6 +12,7 @@ any_errors_fatal: false
 
 apache:
   enabled: true
+  public_fqdn: 
   ssl:
     enabled: false
     remote_cert: false
