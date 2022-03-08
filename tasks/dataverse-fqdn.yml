@@ -36,12 +36,12 @@
   when: custom_fqdn is undefined
 
 - name: if siteUrl not passed, let's make one.
-  set_fact:
+  ansible.builtin.set_fact:
     siteUrl: '{{ protocol }}://{{ public_fqdn }}'
   when: siteUrl|length == 0
 
 - name: if we're in EC2, ansible_fqdn is no good.
-  uri:
+  ansible.builtin.uri:
     url: http://169.254.169.254/latest/meta-data/
     timeout: 2
   register: aws_uri_check
@@ -51,20 +51,21 @@
     is_aws_environment: "{{ aws_uri_check.status == 200 }}"
 
 - name: if we're in EC2 and no public_fqdn, get public hostname
-  shell: 'curl http://169.254.169.254/latest/meta-data/public-hostname'
-  register: ec2_output
+  ansible.builtin.uri:
+    url: http://169.254.169.254/latest/meta-data/public-hostname
+  register: ec2_hostname_output
   when: is_aws_environment
         and custom_fqdn is undefined
 
-- name: some instances have no public-hostname
-  set_fact:
-    is_public_hostname: '{{ ec2_output.status == 200 }}'
+- name: some instances have no public hostname
+  ansible.builtin.set_fact:
+    is_public_hostname: "{{ ec2_hostname_output.status == 200 }}"
   when: is_aws_environment
         and custom_fqdn is undefined
 
 - name: if we're in EC2 and no public_fqdn, set public hostname
-  set_fact:
-    public_hostname: "{{ ec2_output.stdout }}"
+  ansible.builtin.set_fact:
+    public_hostname: "{{ ec2_hostname_output.content }}"
   when: is_aws_environment
         and is_public_hostname
         and custom_fqdn is undefined
