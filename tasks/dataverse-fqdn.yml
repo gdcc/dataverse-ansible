@@ -58,9 +58,6 @@
   when: is_aws_environment
         and custom_fqdn is undefined
 
-- debug:
-    var: ec2_hostname_output
-
 - name: some instances have no public hostname
   ansible.builtin.set_fact:
     is_public_hostname: "{{ ec2_hostname_output.status == 200 }}"
@@ -94,3 +91,7 @@
 - name: strip siteurl for servername directives
   set_fact:
     servername: "{{ siteUrl | regex_replace('[A-z]*://', '') }}"
+
+- name: debug
+  debug:
+    msg: 'servername is {{ servername }}'
