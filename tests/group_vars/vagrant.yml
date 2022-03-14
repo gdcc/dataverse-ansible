@@ -222,7 +222,7 @@ java:
   version: 11
 
 maven:
-  version: 3.8.4
+  version: 3.8.5
 
 munin:
   install: false
