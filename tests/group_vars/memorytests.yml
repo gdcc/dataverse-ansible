@@ -126,8 +126,8 @@ dataverse:
     request_timeout: 1800
     root: /usr/local
     dir: payara5
-    zipurl: https://s3-eu-west-1.amazonaws.com/payara.fish/Payara+Downloads/5.2021.5/payara-5.2021.5.zip
-    zipchecksum: sha256:52fbc7272823739030475d8df97d05a526677ed7bbe73e2933264a93ee7c7806
+    zipurl: https://s3-eu-west-1.amazonaws.com/payara.fish/Payara+Downloads/5.2021.6/payara-5.2021.6.zip
+    zipchecksum: sha256:635af1750cf291b800e98067bd80dfefd80608ee6709215671d11f115e94ff96
   google_analytics_key:
   jacoco:
     enabled: false
