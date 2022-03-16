@@ -24,8 +24,9 @@
 
 - name: init postgres on RHEL/Rocky
   shell: '{{ postgres_init }}'
-  when: postgres_initdb.stat.exists == false and
-        db.use_rds == false and
-        ansible_os_family == "RedHat"
+  when: 
+   - db.use_rds == false
+   - ansible_os_family == "RedHat"
+   - postgres_initdb.stat.exists == false
   notify: enable and restart postgres
 
