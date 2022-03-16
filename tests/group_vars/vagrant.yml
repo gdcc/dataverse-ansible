@@ -106,6 +106,7 @@ dataverse:
       enabled: true
     wholetale:
       enabled: true
+  file_fixity_checksum_algorithm: "MD5"
   ## The first item of 'filesdirs' is the default filestore
   ## If you change the label, be prepared to change the SQL database if there are already files here
   ## It is better practice to add a new data store and then migrate to it later
@@ -128,14 +129,24 @@ dataverse:
     siteurl: http://0.0.0.0
     root: /usr/local
     dir: payara5
-    zipurl: https://s3-eu-west-1.amazonaws.com/payara.fish/Payara+Downloads/5.2021.5/payara-5.2021.5.zip
-    zipchecksum: sha256:52fbc7272823739030475d8df97d05a526677ed7bbe73e2933264a93ee7c7806
+    zipurl: https://s3-eu-west-1.amazonaws.com/payara.fish/Payara+Downloads/5.2021.6/payara-5.2021.6.zip
+    zipchecksum: sha256:635af1750cf291b800e98067bd80dfefd80608ee6709215671d11f115e94ff96
   google_analytics_key:
   jacoco:
     enabled: false
     home: /tmp/jacoco
-    version: 0.8.7
-  file_fixity_checksum_algorithm: "MD5"
+    version: 0.8.6
+  language:
+    enabled: true
+    languages:
+     - locale: en
+       title: English
+     - locale: de-DE
+       title: Deutsch
+    language_packs:
+      source: https://github.com/GlobalDataverseCommunityConsortium/dataverse-language-packs.git
+      version: develop
+    lang_directory: /opt/dv/lang
   memheap: 1024
   options:
     filepids: 
@@ -166,9 +177,9 @@ dataverse:
     group: solr
     root: /usr/local/solr
     user: solr
-    version: 8.8.1
+    version: 8.11.1
     listen: 127.0.0.1
-    checksum: sha256:00b573afd3ae0a3dd4ff79668ee3c4193a1fc681aeb031da9a7385fbc01c1f1d
+    checksum: sha256:9ec540cbd8e45f3d15a6b615a22939f5e6242ca81099951a47d3c082c79866a9
   srcdir: /tmp/dataverse
   thumbnails: false
   unittests:
@@ -211,7 +222,7 @@ java:
   version: 11
 
 maven:
-  version: 3.8.4
+  version: 3.8.5
 
 munin:
   install: false
