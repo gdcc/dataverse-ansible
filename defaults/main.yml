@@ -103,17 +103,18 @@ dataverse:
     config:
     storage_id: file
   demo: false
-  doi:
+  pid:
     authority: "10.5072"
+    protocol: doi
+    shoulder: "FK2/"
+  doi:
     baseurl: "https://mds.test.datacite.org/"
     dataciterestapiurl: "https://api.test.datacite.org"
     mdcbaseurl: "https://api.test.datacite.org/"
+    provider: FAKE
     username: "testaccount"
     password: "notmypassword"
-    protocol: doi
-    provider: FAKE
-    shoulder: "FK2/"
-  ## Handlenet variables are only used if dataverse.doi.protocol is set to 'hdl'
+  ## Handlenet variables are only used if dataverse.pid.protocol is set to 'hdl'
   handlenet:
     independenthandleservice: 'false'
 #   handleauthhandle: YOUR:HANDLE/USERNAME

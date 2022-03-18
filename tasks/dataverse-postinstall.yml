@@ -29,10 +29,10 @@
     - { prop: ":GoogleAnalyticsCode", val: "{{ dataverse.google_analytics_key }}", desc: "key for Google Analytics"}
     - { prop: ":FooterCopyright" , val: "{{ dataverse.copyright }}", desc: "addition to the default copyright statement"}
     - { prop: ":SystemEmail", val: "{{ dataverse.service_email }}", desc: "instance email address"}
-    - { prop: ":Protocol", val: "{{ dataverse.doi.protocol }}", desc: "global identifier protocol"}
+    - { prop: ":Protocol", val: "{{ dataverse.pid.protocol }}", desc: "global identifier protocol"}
     - { prop: ":DoiProvider", val: "{{ dataverse.doi.provider }}", desc: "DOI service provider (EZID or DataCite)"}
-    - { prop: ":Authority", val: "{{ dataverse.doi.authority }}", desc: "DOI prefix"}
-    - { prop: ":Shoulder", val: "{{ dataverse.doi.shoulder }}", desc: "DOI shoulder."}
+    - { prop: ":Authority", val: "{{ dataverse.pid.authority }}", desc: "DOI/handle prefix"}
+    - { prop: ":Shoulder", val: "{{ dataverse.pid.shoulder }}", desc: "DOI/handle shoulder."}
     - { prop: ":ShibEnabled", val: "{{ shibboleth.enabled }}", desc: "enable/disable shibboleth" }
     - { prop: ":AllowSignUp", val: "{{ dataverse.allow_signups }}", desc: "don't allow self-signup"}
     - { prop: ":BlockedApiEndpoints", val: "{{ dataverse.api.blocked_endpoints }}", desc: "APIs that are controlled"}
@@ -42,7 +42,7 @@
 - include: dataverse-optional-settings.yml
 
 - include: dataverse-handlenet.yml
-  when: dataverse.doi.protocol == 'hdl'
+  when: dataverse.pid.protocol == 'hdl'
 
 - name: final payara post-configuration cleanup
   service:

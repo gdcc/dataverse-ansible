@@ -15,20 +15,6 @@
   when:
    - dataverse.handlenet.handleauthhandle is defined
 
-- name: set Authority
-  uri:
-    url: "{{ dataverse.api.location }}/admin/settings/:Authority"
-    method: PUT
-    body: "{{ dataverse.doi.authority }}"
-    body_format: raw
-
-- name: set Shoulder
-  uri:
-    url: "{{ dataverse.api.location }}/admin/settings/:Shoulder"
-    method: PUT
-    body: "{{ dataverse.doi.shoulder }}"
-    body_format: raw
-
 - name: copy dataverse.handlenet.admcredfile
   copy:
     src: "{{ dataverse.handlenet.admcredfile_source }}"
