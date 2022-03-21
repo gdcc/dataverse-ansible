@@ -35,7 +35,7 @@
     public_fqdn: '{{ ansible_fqdn }}'
   when: custom_fqdn is undefined
 
-- name: if siteUrl not passed, let's make one.
+- name: if siteUrl not passed, let's construct one.
   ansible.builtin.set_fact:
     siteUrl: '{{ protocol }}://{{ public_fqdn }}'
   when: siteUrl|length == 0
@@ -58,7 +58,7 @@
   when: is_aws_environment
         and custom_fqdn is undefined
 
-- name: some instances have no public hostname
+- name: but some instances have no public hostname
   ansible.builtin.set_fact:
     is_public_hostname: "{{ ec2_hostname_output.status == 200 }}"
   when: is_aws_environment
@@ -95,3 +95,6 @@
 - name: debug
   debug:
     msg: 'servername is {{ servername }}'
+
+- name: bail
+  meta: end_play

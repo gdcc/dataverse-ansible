@@ -8,7 +8,7 @@ any_errors_fatal: true
 
 apache:
   enabled: true
-  public_fqdn: bloop.com
+  public_fqdn: 
   ssl:
     enabled: false
     remote_cert: false
