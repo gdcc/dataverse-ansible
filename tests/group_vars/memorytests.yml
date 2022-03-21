@@ -87,6 +87,10 @@ dataverse:
   default:
     config:
   demo: false
+  pid:
+    authority: "10.5072"
+    protocol: doi
+    shoulder: "FK2/"
   doi:
     authority: "10.5072"
     baseurl: "https://mds.test.datacite.org/"
