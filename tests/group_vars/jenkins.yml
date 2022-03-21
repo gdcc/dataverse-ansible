@@ -97,6 +97,14 @@ dataverse:
     shoulder: "FK2/"
     mdcbaseurl: "https://api.test.datacite.org/"
     dataciterestapiurl: "https://api.test.datacite.org"
+  ## Handlenet variables are only used if dataverse.doi.protocol is set to 'hdl'
+  handlenet:
+    independenthandleservice: 'false'
+#   handleauthhandle: YOUR:HANDLE/USERNAME
+    admcredfile: /opt/dv/admpriv.bin
+    admcredfile_source: files/handlenet/admcredfile
+#   admprivphrase:
+#   index: 300
   externaltools:
     datacurationtool:
       enabled: true
