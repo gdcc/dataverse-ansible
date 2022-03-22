@@ -3,6 +3,7 @@
 
 apache:
   enabled: true
+  public_fqdn: 
   ssl:
     enabled: false
     remote_cert: false
