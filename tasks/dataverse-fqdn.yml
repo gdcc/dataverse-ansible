@@ -1,24 +1,25 @@
 ---
 
 - name: get FQDN
-  debug:
+  ansible.builtin.debug:
     msg: '##### DETERMINE FQDN #####'
 
 - name: default to http
-  set_fact:
+  ansible.builtin.set_fact:
     protocol: http
 
 - name: unless ssl is enabled
-  set_fact:
+  ansible.builtin.set_fact:
     protocol: https
-  when: apache.ssl.enabled == True or apache.behind_ssl_reverse_proxy
+  when: apache.ssl.enabled == True
+        or apache.behind_ssl_reverse_proxy
 
 - name: ansible tasks like variables, not group_vars
-  set_fact:
+  ansible.builtin.set_fact:
     siteUrl: '{{ dataverse.payara.siteurl }}'
 
 - name: did it find siteUrl
-  debug:
+  ansible.builtin.debug:
     msg: 'using siteUrl: {{ siteUrl }}'
 
 - name: if public_fqdn is passed, use that.
@@ -58,7 +59,7 @@
   when: is_aws_environment
         and custom_fqdn is undefined
 
-- name: but some instances have no public hostname
+- name: but some EC2 instances have no public hostname
   ansible.builtin.set_fact:
     is_public_hostname: "{{ ec2_hostname_output.status == 200 }}"
   when: is_aws_environment
@@ -72,15 +73,15 @@
         and custom_fqdn is undefined
 
 - name: correct siteUrl for EC2
-  set_fact:
-    siteUrl: '{{ protocol }}://{{ public_hostname}}'
+  ansible.builtin.set_fact:
+    siteUrl: '{{ protocol }}://{{ public_hostname }}'
   when: is_aws_environment
         and is_public_hostname
         and custom_fqdn is undefined
 
 # for asadmin command
 - name: escape colons in siteurl
-  set_fact:
+  ansible.builtin.set_fact:
     siteUrl_escaped: "{{ siteUrl | regex_replace (':','\\:') }}"
 
 # for errybody else
@@ -89,12 +90,9 @@
     msg: 'siteUrl is {{ siteUrl }}'
 
 - name: strip siteurl for servername directives
-  set_fact:
+  ansible.builtin.set_fact:
     servername: "{{ siteUrl | regex_replace('[A-z]*://', '') }}"
 
 - name: debug
   debug:
     msg: 'servername is {{ servername }}'
-
-- name: bail
-  meta: end_play
