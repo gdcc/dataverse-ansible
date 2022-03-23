@@ -16,7 +16,7 @@
 - name: set custom temporary directory, if provided
   become: yes
   become_user: "{{ dataverse.payara.user }}"
-  shell: "{{ payara_dir }}/bin/asadmin create-jvm-options {{ dataverse.payara.tempdir }}"
+  shell: "{{ payara_dir }}/bin/asadmin create-jvm-options -Djava.io.tmpdir={{ dataverse.payara.tempdir }}"
   when: dataverse.payara.tempdir is defined
 
 - include: custom_metadata_blocks.yml
