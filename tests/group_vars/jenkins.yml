@@ -91,7 +91,6 @@ dataverse:
     baseurl: "https://mds.test.datacite.org/"
     username: "test.account"
     password: "not.my.password"
-    shoulder: "FK2/"
     mdcbaseurl: "https://api.test.datacite.org/"
     dataciterestapiurl: "https://api.test.datacite.org"
   ## Handlenet variables are only used if dataverse.pid.protocol is set to 'hdl'
