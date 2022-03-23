@@ -1,0 +1,45 @@
+---
+
+- name: install and configure dataverse languages
+  debug:
+    msg: '##### DATAVERSE LICENSES #####'
+
+#### you need community.postgresql from ansible galaxy for this
+- name: get api key for dataverseAdmin from the database
+  community.postgresql.postgresql_query:
+    db: "{{ db.postgres.name }}"
+    login_user: "{{ db.postgres.user }}"
+    login_password: "{{ db.postgres.pass }}"
+    login_host: "{{ db.postgres.host }}"
+    query: SELECT tokenstring FROM apitoken a JOIN authenticateduser u ON a.authenticateduser_id=u.id WHERE useridentifier='{{ dataverse.licenses.user }}'
+  changed_when: false
+  register: token_result
+  failed_when: token_result.rowcount != 1
+
+- name: calculate api_token
+  set_fact:
+    api_token: '{{ token_result.query_result[0].tokenstring }}'
+
+#- name: get installed licenses -- this is needed for true idempotence, but not used currently
+#  uri:
+#    url: "{{ dataverse.api.location }}/licenses"
+#    method: GET
+#    status_code: 200
+#  register: current_licenses
+
+#- debug:
+#    msg: '{{ current_licenses }}'
+
+- name: configure available licenses
+  uri:
+    url: "{{ dataverse.api.location }}/licenses"
+    method: POST
+    headers:
+      X-Dataverse-key: '{{ api_token }}'
+    body: '{{ item }}'
+    body_format: json
+    status_code: 201,409
+  register: license_update
+  changed_when: license_update.status != 409
+  with_items: '{{ dataverse.licenses.licenses }}'
+
