@@ -13,6 +13,12 @@
   shell: "{{ payara_dir }}/bin/asadmin set-log-file-format {{ dataverse.payara.logformat }}"
   #ignore_errors: yes
 
+- name: set custom temporary directory, if provided
+  become: yes
+  become_user: "{{ dataverse.payara.user }}"
+  shell: "{{ payara_dir }}/bin/asadmin create-jvm-options {{ dataverse.payara.tempdir }}"
+  when: dataverse.payara.tempdir is defined
+
 - include: custom_metadata_blocks.yml
   when: dataverse.custom_metadata_blocks.enabled == True
 
