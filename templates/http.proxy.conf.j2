@@ -84,11 +84,6 @@ Listen {{ apache.ssl.port }} https
   ErrorDocument 503 /503.html
   ProxyPassMatch ^/503.html$ !
 
-  # don't pass paths used by rApache and TwoRavens to Glassfish
-  ProxyPassMatch ^/RApacheInfo$ !
-  ProxyPassMatch ^/custom !
-  ProxyPassMatch ^/dataexplore !
-
   # allow munin
   ProxyPassMatch ^/munin !
 
