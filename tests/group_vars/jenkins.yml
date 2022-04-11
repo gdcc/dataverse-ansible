@@ -133,7 +133,7 @@ dataverse:
     version: 0.8.7
   file_fixity_checksum_algorithm: "MD5"
   language:
-    enabled: true
+    enabled: false
     languages:
      - locale: en
        title: English
