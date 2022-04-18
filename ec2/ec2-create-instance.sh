@@ -12,7 +12,7 @@ VERBOSE_ARG=""
 AWS_AMI_DEFAULT='ami-043ceee68871e0bb5'
 
 usage() {
-  echo "Usage: $0 -b <branch> -r <repo> -p <pem_path> -g <group_vars> -a <dataverse-ansible branch> -i aws_image -u aws_user -s aws_size -t aws_tag -f aws_security group -l local_log_path -d -v" 1>&2
+  echo "Usage: $0 -b <branch> -r <repo> -p <pem_path> -g <group_vars> -a <dataverse-ansible branch> -i aws_image -u aws_user -s aws_size -t aws_tag -f aws_security group -e aws_profile -l local_log_path -d -v" 1>&2
   echo "default branch is develop"
   echo "default repo is https://github.com/IQSS/dataverse"
   echo "default .pem location is ${HOME}"
@@ -27,7 +27,7 @@ usage() {
   exit 1
 }
 
-while getopts ":a:r:b:g:p:i:s:t:f:l:dv" o; do
+while getopts ":a:r:b:g:p:i:s:t:f:e:l:dv" o; do
   case "${o}" in
   a)
     DA_BRANCH=${OPTARG}
@@ -61,6 +61,9 @@ while getopts ":a:r:b:g:p:i:s:t:f:l:dv" o; do
     ;;
   l)
     LOCAL_LOG_PATH=${OPTARG}
+    ;;
+  e)
+    AWS_PROFILE=${OPTARG}
     ;;
   d)
     DESTROY=true
@@ -143,6 +146,12 @@ if [ -z "$DA_BRANCH" ]; then
    DA_BRANCH="develop"
 fi
 
+# default to "default" AWS profile
+if [ ! -z "$AWS_PROFILE" ]; then
+   PROFILE="--profile=$AWS_PROFILE"
+   echo "using profile $PROFILE"
+fi
+
 # verbosity
 if [ ! -z "$VERBOSE" ]; then
    VERBOSE_ARG="-v"
@@ -163,14 +172,14 @@ if [ -z "$GRPVRS" ]; then
    fi
 fi
 
-GROUP_CHECK=$(aws ec2 describe-security-groups --group-name $AWS_SG)
+GROUP_CHECK=$(aws $PROFILE ec2 describe-security-groups --group-name $AWS_SG)
 if [[ "$?" -ne 0 ]]; then
   echo "Creating security group \"$AWS_SG\"."
-  aws ec2 create-security-group --group-name $AWS_SG --description "security group for Dataverse"
-  aws ec2 authorize-security-group-ingress --group-name $AWS_SG --protocol tcp --port 22 --cidr 0.0.0.0/0
-  aws ec2 authorize-security-group-ingress --group-name $AWS_SG --protocol tcp --port 80 --cidr 0.0.0.0/0
-  aws ec2 authorize-security-group-ingress --group-name $AWS_SG --protocol tcp --port 443 --cidr 0.0.0.0/0
-  aws ec2 authorize-security-group-ingress --group-name $AWS_SG --protocol tcp --port 8080 --cidr 0.0.0.0/0
+  aws $PROFILE ec2 create-security-group --group-name $AWS_SG --description "security group for Dataverse"
+  aws $PROFILE ec2 authorize-security-group-ingress --group-name $AWS_SG --protocol tcp --port 22 --cidr 0.0.0.0/0
+  aws $PROFILE ec2 authorize-security-group-ingress --group-name $AWS_SG --protocol tcp --port 80 --cidr 0.0.0.0/0
+  aws $PROFILE ec2 authorize-security-group-ingress --group-name $AWS_SG --protocol tcp --port 443 --cidr 0.0.0.0/0
+  aws $PROFILE ec2 authorize-security-group-ingress --group-name $AWS_SG --protocol tcp --port 8080 --cidr 0.0.0.0/0
 fi
 
 # were we passed a pem file?
@@ -181,7 +190,7 @@ elif [ -z "$PEM_PATH" ]; then
   RANDOM_STRING="$(uuidgen | cut -c-8)"
   KEY_NAME="key-$USER-$RANDOM_STRING"
   echo "using key_name: $KEY_NAME"
-  PRIVATE_KEY=$(aws ec2 create-key-pair --key-name ~/$KEY_NAME --query 'KeyMaterial' --output text)
+  PRIVATE_KEY=$(aws $PROFILE ec2 create-key-pair --key-name ~/$KEY_NAME --query 'KeyMaterial' --output text)
 
   if [[ $PRIVATE_KEY == '-----BEGIN RSA PRIVATE KEY-----'* ]]; then
     PEM_FILE="${HOME}/$KEY_NAME.pem"
@@ -197,10 +206,10 @@ fi
 
 echo "Creating EC2 instance"
 # TODO: Add some error checking for "ec2 run-instances".
-INSTANCE_ID=$(aws ec2 run-instances --image-id $AMI_ID --security-groups $AWS_SG $TAGARG --count 1 --instance-type $SIZE --key-name $KEY_NAME --query 'Instances[0].InstanceId' --block-device-mappings '[ { "DeviceName": "/dev/sda1", "Ebs": { "DeleteOnTermination": true } } ]' | tr -d \")
+INSTANCE_ID=$(aws $PROFILE ec2 run-instances --image-id $AMI_ID --security-groups $AWS_SG $TAGARG --count 1 --instance-type $SIZE --key-name $KEY_NAME --query 'Instances[0].InstanceId' --block-device-mappings '[ { "DeviceName": "/dev/sda1", "Ebs": { "DeleteOnTermination": true } } ]' | tr -d \")
 echo "Instance ID: "$INSTANCE_ID
 
-DESTROY_CMD="aws ec2 terminate-instances --instance-ids $INSTANCE_ID"
+DESTROY_CMD="aws $PROFILE ec2 terminate-instances --instance-ids $INSTANCE_ID"
 echo "When you are done, please terminate your instance with:"
 echo "$DESTROY_CMD"
 echo "giving instance 90 seconds to wake up..."
@@ -208,8 +217,8 @@ echo "giving instance 90 seconds to wake up..."
 sleep 90
 echo "End creating EC2 instance"
 
-PUBLIC_DNS=$(aws ec2 describe-instances --instance-ids $INSTANCE_ID --query "Reservations[*].Instances[*].[PublicDnsName]" --output text)
-PUBLIC_IP=$(aws ec2 describe-instances --instance-ids $INSTANCE_ID --query "Reservations[*].Instances[*].[PublicIpAddress]" --output text)
+PUBLIC_DNS=$(aws $PROFILE ec2 describe-instances --instance-ids $INSTANCE_ID --query "Reservations[*].Instances[*].[PublicDnsName]" --output text)
+PUBLIC_IP=$(aws $PROFILE ec2 describe-instances --instance-ids $INSTANCE_ID --query "Reservations[*].Instances[*].[PublicIpAddress]" --output text)
 
 USER_AT_HOST="$AWS_USER@${PUBLIC_DNS}"
 echo "New instance created with ID \"$INSTANCE_ID\". To ssh into it:"
