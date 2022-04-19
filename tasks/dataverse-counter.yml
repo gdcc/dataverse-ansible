@@ -4,13 +4,10 @@
   debug:
     msg: '##### MAKE DATA COUNT #####'
 
-- name: install python36
+- name: ensure python3-pip. prereqs already installs python-3.9 on rhel/rocky
   yum:
-    name: python36
+    name: python39-pip
     state: latest
-
-- name: install pip
-  shell: python3.6 -m ensurepip
 
 - name: ensure counter user exists
   user:
@@ -23,22 +20,8 @@
     remote_src: yes
     owner: "{{ dataverse.counter.user }}"
 
-# geoIP is gone away
-#- name: geo IP target dir must exist
-#  file:
-#    path: "/usr/local/counter-processor-{{ dataverse.counter.version }}/maxmind_geoip"
-#    owner: "{{ dataverse.counter.user }}"
-#    state:  directory
-#    mode: 0755
-
-#- name: download geo IP database
-#  unarchive:
-#    src: https://geolite.maxmind.com/download/geoip/database/GeoLite2-Country.tar.gz
-#    dest: "/usr/local/counter-processor-{{ dataverse.counter.version }}/maxmind_geoip"
-#    remote_src: yes
-
 - name: pip install requirements
-  shell: "/usr/bin/python3.6 -m pip install -r /usr/local/counter-processor-{{ dataverse.counter.version }}/requirements.txt"
+  shell: "/usr/bin/python3.9 -m pip install -r /usr/local/counter-processor-{{ dataverse.counter.version }}/requirements.txt"
   become: yes
 
 - name: create sample log dir
@@ -57,10 +40,12 @@
   template:
     src: counter-processor-config.yml.j2
     dest: "/usr/local/counter-processor-{{ dataverse.counter.version }}/counter-processor-config.yml"
+    owner: "{{ dataverse.counter.user }}"
+    mode: 0644
 
 - name: launch counter
   shell:
-    cmd: 'cd /usr/local/counter-processor-{{ dataverse.counter.version }} || python36 main.py'
+    cmd: 'cd /usr/local/counter-processor-{{ dataverse.counter.version }} || python3.9 main.py'
   vars:
     CONFIG_FILE: "/usr/local/counter-processor-{{ dataverse.counter.version }}/counter-processor-config.yml"
   become: yes

@@ -10,10 +10,9 @@
 # grab apitoken so sampledata can run standalone
 - include: dataverse-apitoken.yml
 
-- name: ensure python3.4+. dataverse-counter wants 3.6, so let's go with that.
+- name: ensure python3.pip. prereqs already installs python-3.9 on rhel/rocky
   yum:
     name:
-    - python36
     - python3-pip
     state: latest
 
