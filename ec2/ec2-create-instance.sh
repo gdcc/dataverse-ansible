@@ -78,7 +78,9 @@ done
 if [ ! -z "$GRPVRS" ]; then
    GVFILE=$(basename "$GRPVRS")
    GVARG="-e @$GVFILE"
+   BRANCH=`grep dataverse_branch $GRPVRS |awk '{print $2}'`
    echo "using $GRPVRS for extra vars"
+   echo "deploying $BRANCH from $GRPVRS"
 fi
 
 # test for specified GitHub repo
