@@ -47,7 +47,7 @@
 
 - name: is hostname_external set
   set_fact:
-    hostname_external: '{{ public_hostname }}'
+    hostname_external: '{{ public_fqdn }}'
   when: localstack.hostname_external is undefined
 
 - name: place docker-compose.yml template

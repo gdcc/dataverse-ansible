@@ -1,33 +1,48 @@
 ---
 
-- name: get fqdn
-  debug:
-    msg: '##### GET FQDN #####'
+- name: get FQDN
+  ansible.builtin.debug:
+    msg: '##### DETERMINE FQDN #####'
 
 - name: default to http
-  set_fact:
+  ansible.builtin.set_fact:
     protocol: http
 
 - name: unless ssl is enabled
-  set_fact:
+  ansible.builtin.set_fact:
     protocol: https
-  when: apache.ssl.enabled == True or apache.behind_ssl_reverse_proxy
+  when: apache.ssl.enabled == True
+        or apache.behind_ssl_reverse_proxy
 
 - name: ansible tasks like variables, not group_vars
-  set_fact:
+  ansible.builtin.set_fact:
     siteUrl: '{{ dataverse.payara.siteurl }}'
 
 - name: did it find siteUrl
-  debug:
+  ansible.builtin.debug:
     msg: 'using siteUrl: {{ siteUrl }}'
 
-- name: if siteUrl not passed, use fqdn.
-  set_fact:
-    siteUrl: '{{ protocol }}://{{ ansible_fqdn }}'
-  when: siteUrl |length < 1
+- name: if public_fqdn is passed, use that.
+  ansible.builtin.set_fact:
+    public_fqdn: '{{ apache.public_fqdn }}'
 
-- name: are we in EC2?
-  uri:
+- name: and stick with it.
+  ansible.builtin.set_fact:
+    custom_fqdn: True
+  when: public_fqdn|length > 1
+
+- name: if no public_fqdn, use ansible fqdn
+  ansible.builtin.set_fact:
+    public_fqdn: '{{ ansible_fqdn }}'
+  when: custom_fqdn is undefined
+
+- name: if siteUrl not passed, let's construct one.
+  ansible.builtin.set_fact:
+    siteUrl: '{{ protocol }}://{{ public_fqdn }}'
+  when: siteUrl|length == 0
+
+- name: if we're in EC2, ansible_fqdn is no good.
+  ansible.builtin.uri:
     url: http://169.254.169.254/latest/meta-data/
     timeout: 2
   register: aws_uri_check
@@ -36,29 +51,37 @@
 - set_fact:
     is_aws_environment: "{{ aws_uri_check.status == 200 }}"
 
-- name: if we're in EC2, get public hostname
-  shell: 'curl http://169.254.169.254/latest/meta-data/public-hostname'
-  register: ec2_output
+- name: if we're in EC2 and no public_fqdn, get public hostname
+  ansible.builtin.uri:
+    url: http://169.254.169.254/latest/meta-data/public-hostname
+    return_content: yes
+  register: ec2_hostname_output
   when: is_aws_environment
+        and custom_fqdn is undefined
 
-- name: if we're in EC2, set public hostname
-  set_fact:
-    public_hostname: "{{ ec2_output.stdout }}"
+- name: but some EC2 instances have no public hostname
+  ansible.builtin.set_fact:
+    is_public_hostname: "{{ ec2_hostname_output.status == 200 }}"
   when: is_aws_environment
+        and custom_fqdn is undefined
 
-- name: now correct siteUrl
-  set_fact:
-    siteUrl: '{{ protocol }}://{{ public_hostname}}'
+- name: if we're in EC2 and no public_fqdn, set public hostname
+  ansible.builtin.set_fact:
+    public_hostname: "{{ ec2_hostname_output.content }}"
   when: is_aws_environment
+        and custom_fqdn is undefined
+        and is_public_hostname
 
-- name: preserve public_hostname either way
-  set_fact:
-     public_hostname: '{{ ansible_fqdn }}'
-  when: not is_aws_environment
+- name: correct siteUrl for EC2
+  ansible.builtin.set_fact:
+    siteUrl: '{{ protocol }}://{{ public_hostname }}'
+  when: is_aws_environment
+        and custom_fqdn is undefined
+        and is_public_hostname
 
 # for asadmin command
 - name: escape colons in siteurl
-  set_fact:
+  ansible.builtin.set_fact:
     siteUrl_escaped: "{{ siteUrl | regex_replace (':','\\:') }}"
 
 # for errybody else
@@ -67,5 +90,9 @@
     msg: 'siteUrl is {{ siteUrl }}'
 
 - name: strip siteurl for servername directives
-  set_fact:
+  ansible.builtin.set_fact:
     servername: "{{ siteUrl | regex_replace('[A-z]*://', '') }}"
+
+- name: debug
+  debug:
+    msg: 'servername is {{ servername }}'

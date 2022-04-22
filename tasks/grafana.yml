@@ -48,7 +48,7 @@
   lineinfile:
     path: /etc/grafana/grafana.ini
     regexp: '^;root_url'
-    line: 'root_url = http://{{ public_hostname }}/grafana'
+    line: 'root_url = http://{{ public_fqdn }}/grafana'
 
 - name: serve grafana from subdir
   lineinfile:
