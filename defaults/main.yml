@@ -208,6 +208,14 @@ db:
     log_statements: none
     version: 13
     port: 5432
+    replication:
+      enabled: false
+      # all servers must be defined so firewalls may be opened accordingly
+      servers: 
+        - 192.168.0.1
+        - 192.168.0.2
+      user: rep
+#      pass: WRITE SOME GOOD PASSWORD
   backups:
     enabled: false
     rootdir: /opt/pg_backups

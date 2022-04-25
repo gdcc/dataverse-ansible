@@ -94,6 +94,7 @@
   notify: enable and restart postgres
 
 - include: postgres_replication.yml
+  when: db.postgres.replication.enabled
 
 - name: log_lock_waits when told
   lineinfile:

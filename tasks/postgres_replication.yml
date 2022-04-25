@@ -17,14 +17,19 @@
    - regexp: 'listen_addresses = '
      line: "listen_addresses = '*'		# what IP address(es) to listen on; "
   when:
-   - postgres_using_servers is defined
    - db.use_rds == false
   notify: enable and restart postgres
 
 - name: allow in firewall for specific servers to access postgres
   ufw: rule=allow port=5432 proto=tcp src={{ item }}
-  with_items: "{{ postgres_using_servers }}"
+  with_items: "{{ db.postgres.replication.servers }}"
   when:
-   - postgres_using_servers is defined
    - firewall is defined
    - firewall=='ufw'
+
+- name: create replication postgres user, set permissions
+  postgresql_user:
+    db: '{{ db.postgres.name }}'
+    name: 'rep'
+    password: '{{ db.postgres.replication.pass }}'
+    role_attr_flags: 'REPLICATION'

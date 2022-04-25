@@ -5,9 +5,9 @@ host    all             all             127.0.0.1/32            password
 # IPv6 local connections:
 host    all             all             ::1/128                 password
 
-# replication and debug access from other servers
-{% if postgres_using_servers is defined %}
-{% for item in postgres_using_servers %}
+# replication and dataverse access from other servers
+{% if db.postgres.replication.enabled is defined %}
+{% for item in db.postgres.replication.servers %}
 {% if item | regex_search(".*/.*") %}
 host    all             all        {{ item }}      md5
 host    replication     rep        {{ item }}      md5
