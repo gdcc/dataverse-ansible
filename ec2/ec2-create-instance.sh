@@ -236,6 +236,8 @@ fi
 # TODO: Add some error checking for this ssh command.
 ssh -T -i $PEM_FILE -o 'StrictHostKeyChecking no' -o 'UserKnownHostsFile=/dev/null' -o 'ConnectTimeout=300' $USER_AT_HOST <<EOF
 sudo yum -q -y install epel-release
+# fix ansible installation until Rocky releases 8.6
+sudo yum -q -y install https://dl.fedoraproject.org/pub/archive/epel/8.5.2022-05-10/Everything/x86_64/Packages/s/sshpass-1.06-9.el8.x86_64.rpm
 sudo yum -q -y install ansible git nano
 git clone -b $DA_BRANCH https://github.com/GlobalDataverseCommunityConsortium/dataverse-ansible.git dataverse
 export ANSIBLE_ROLES_PATH=.
