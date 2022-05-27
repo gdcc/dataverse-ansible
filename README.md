@@ -8,7 +8,7 @@ The role installs Apache, PostgreSQL, GlassFish/Payara and other prerequisites, 
 Running the following commands as root should install the latest released version of Dataverse.
 
 	$ git clone https://github.com/GlobalDataverseCommunityConsortium/dataverse-ansible.git dataverse
-	$ ansible-playbook --connection=local -v -i dataverse/inventory dataverse/dataverse.pb -e dataverse/defaults/main.yml
+	$ ansible-playbook --connection=local -v -i dataverse/inventory dataverse/dataverse.pb -e "@dataverse/defaults/main.yml"
 
 Recent, specific versions of Dataverse (namely, 4.20 and 5.0) may be installed using branches tagged with that version.
 
@@ -67,7 +67,7 @@ Here is an example of how to execute the `dataverse-ansible` role with more adju
 
 	$ git clone https://github.com/GlobalDataverseCommunityConsortium/dataverse-ansible.git dataverse
 	$ export ANSIBLE_ROLES_PATH=.
-	$ ansible-playbook -i <inventory file> [-u <user>] [-b] [-K] -e @<group_vars_file> [-v] dataverse.pb
+	$ ansible-playbook -i <inventory file> [-u <user>] [-b] [-K] -e "@dataverse/defaults/main.yml" [-v] dataverse/dataverse.pb
 
 | option | expansion                             | required |
 | ------ | ------------------------------------- | -------- |
