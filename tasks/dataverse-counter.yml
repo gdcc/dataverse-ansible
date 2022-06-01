@@ -4,9 +4,9 @@
   debug:
     msg: '##### MAKE DATA COUNT #####'
 
-- name: ensure python3-pip. prereqs already installs python-3.9 on rhel/rocky
+- name: ensure python3-pip. Ansible on RHEL/Rocky now requires 3.8
   yum:
-    name: python39-pip
+    name: python38-pip
     state: latest
 
 - name: ensure counter user exists
@@ -21,7 +21,7 @@
     owner: "{{ dataverse.counter.user }}"
 
 - name: pip install requirements
-  shell: "/usr/bin/python3.9 -m pip install -r /usr/local/counter-processor-{{ dataverse.counter.version }}/requirements.txt"
+  shell: "/usr/bin/python3.8 -m pip install -r /usr/local/counter-processor-{{ dataverse.counter.version }}/requirements.txt"
   become: yes
 
 - name: create sample log dir
