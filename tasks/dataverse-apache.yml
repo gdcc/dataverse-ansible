@@ -119,9 +119,7 @@
     - ansible_os_family == "RedHat"
     - ansible_distribution_major_version == "8"
 
-# disabling until Red Hat fixes https://bugzilla.redhat.com/show_bug.cgi?id=1932650
-# dls 20220601
-#- include: selinux.yml
+- include: selinux.yml
 
 - name: run handlers -- this runs the apache restart scripts
   meta: flush_handlers
