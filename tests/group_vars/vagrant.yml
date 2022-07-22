@@ -2,7 +2,7 @@
 # dataverse/tests/group_vars/vagrant.yml
 
 # un-nested so we can pass them at the CLI
-dataverse_branch: release
+dataverse_branch: develop
 dataverse_repo: https://github.com/IQSS/dataverse.git
 any_errors_fatal: true
 
@@ -45,7 +45,7 @@ dataverse:
     blocked_endpoints: "admin,test"
     blocked_policy: "localhost-only"
     location: "http://localhost:8080/api"
-    test_suite: true
+    test_suite: false
     # possible test values from https://github.com/IQSS/dataverse/blob/develop/conf/docker-aio/run-test-suite.sh#L11
     # beware DataversesIT and DatasetsIT at minimum must be run for any other tests to succeed. have fun.
     #tests: "DataversesIT,DatasetsIT,AdminIT"
