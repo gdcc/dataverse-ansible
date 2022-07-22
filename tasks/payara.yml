@@ -153,5 +153,5 @@
     mode: '0750'
     state: directory
 
-- name: flush hadlers to start payara and possibly reload systemd
+- name: flush handlers to start payara and possibly reload systemd
   meta: flush_handlers

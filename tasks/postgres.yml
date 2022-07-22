@@ -35,7 +35,7 @@
     state: present
   when: ansible_os_family == "RedHat"
 
-- name: "RHEL/Rocky8: disable PostgreSQL proper in the OS"
+- name: "RHEL/Rocky 8: disable PostgreSQL OS module"
   shell: 'dnf -qy module disable postgresql'
   when: ansible_os_family == "RedHat" and
         ansible_distribution_major_version == "8"

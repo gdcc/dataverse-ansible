@@ -4,7 +4,7 @@
 VAGRANTFILE_API_VERSION = "2"
 
 Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
-  config.vm.box = "bento/rockylinux-8"
+  config.vm.box = "bento/rockylinux-9"
 
   config.vm.synced_folder ".", "/vagrant"
   config.vm.synced_folder ".", "/etc/ansible/roles/dataverse"
@@ -36,6 +36,6 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 
   config.vm.provider "virtualbox" do |vbox|
     vbox.cpus = 4
-    vbox.memory = 4096
+    vbox.memory = 8192
   end
 end

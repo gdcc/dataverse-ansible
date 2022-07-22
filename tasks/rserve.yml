@@ -10,16 +10,21 @@
     state: latest
   when: ansible_os_family == "RedHat"
 
-- name: RHEL8 needs codeready-builder
+- name: RHEL8/9 need codeready-builder
   rhsm_repository:
     name: codeready-builder-for-rhel-8-x86_64-rpms
-  when: ansible_distribution == "RedHat" and
-        ansible_distribution_major_version == "8"
+  when: (ansible_distribution == "RedHat" and ansible_distribution_major_version == "8") or
+        (ansible_distribution == "RedHat" and ansible_distribution_major_version == "9")
 
-- name: Rocky needs powertools
+- name: Rocky 8 needs powertools
   shell: "dnf config-manager --enable powertools"
   when: ansible_distribution == "Rocky" and
         ansible_distribution_major_version == "8"
+
+- name: Rocky 9 calls it codeready-builder
+  shell: "dnf config-manager --enable crb"
+  when: ansible_distribution == "Rocky" and
+        ansible_distribution_major_version == "9"
 
 - name: install base packages
   yum:
