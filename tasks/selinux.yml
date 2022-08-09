@@ -10,17 +10,37 @@
     - policycoreutils
   when: ansible_os_family == 'RedHat'
 
-- name: set httpd_can_network_connect on and keep it persistent across reboots
-  seboolean:
-    name: httpd_can_network_connect
-    state: yes
-    persistent: yes
-  when: ansible_os_family == 'RedHat'
+# Ansible seboolean module is broken on RHEL/Rocky 8.6. dls 20220602
+#- name: set httpd_can_network_connect on and keep it persistent across reboots
+#  seboolean:
+#    name: httpd_can_network_connect
+#    state: yes
+#    persistent: yes
+#  when: ansible_os_family == 'RedHat'
 
-- name: allow apache to read user content by default
-  seboolean:
-    name: httpd_read_user_content
-    state: yes
-    persistent: yes
+- name: allow apache to make outbound connections
+  shell: '/usr/sbin/setsebool -P httpd_can_network_connect 1'
   when:
   - ansible_os_family == "RedHat"
+  - ansible_distribution_major_version == "8"
+
+# Ansible seboolean module is broken on RHEL/Rocky 8.6. dls 20220602
+#- name: allow apache to read user content by default
+#  seboolean:
+#    name: httpd_read_user_content
+#    state: yes
+#    persistent: yes
+#  when:
+#  - ansible_os_family == "RedHat"
+
+- name: allow apache to read user content by default
+  shell: 'setsebool -P httpd_read_user_content 1'
+  when:
+  - ansible_os_family == "RedHat"
+  - ansible_distribution_major_version == "8"
+
+- name: "both redhat and ubuntu default to /var/www/html"
+  shell: 'semanage fcontext -a -t httpd_sys_content_t "/var/www/html(/.*)?" || semanage fcontext -m -t httpd_sys_content_t "/var/www/html(/.*)?"'
+
+- name: "allow apache read-only access to /var/www/html"
+  shell: 'restorecon -R -v /var/www/html'

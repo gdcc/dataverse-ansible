@@ -200,7 +200,7 @@ dataverse:
     enabled: false
     argument: '-DcompilerArgument=-Xlint:unchecked test -P all-unit-tests'
   usermgmtkey: burrito
-  version: '5.10.1'
+  version: '5.11.1'
 
 build_guides: false
 
@@ -248,7 +248,7 @@ localstack:
   web_ui: 8888
 
 maven:
-  version: 3.8.5
+  version: 3.8.6
 
 munin:
   install: false
