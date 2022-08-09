@@ -26,6 +26,7 @@
   tags:
    - prereqs
    - apache
+   - fqdn
 
 - include: sshkeys.yml
   when: sshkeys.enabled == True

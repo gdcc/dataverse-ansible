@@ -46,9 +46,16 @@
     name: ['bash-completion', 'git', 'jq', 'mlocate', 'net-tools', 'sudo', 'unzip', 'python3-psycopg2', 'zip', 'tar']
     state: latest
 
+- name: "RHEL/Rocky 8.6 provides Ansible 5.4 which wants Python-3.8"
+  ansible.builtin.package:
+    name: ['python38-psycopg2']
+    state: latest
+  when: ansible_os_family == "RedHat" and
+        ansible_distribution_major_version == "8"
+
 - name: install java-nnn-openjdk and other packages for RedHat/Rocky
   yum:
-    name: ['java-{{ java.version }}-openjdk-devel', 'python36', 'vim-enhanced']
+    name: ['java-{{ java.version }}-openjdk-devel', 'python38', 'vim-enhanced']
     state: latest
   when: ansible_os_family == "RedHat"
 
