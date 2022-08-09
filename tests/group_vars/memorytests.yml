@@ -77,7 +77,7 @@ dataverse:
     output_format: json
     platform: dash
     robots_url: "https://raw.githubusercontent.com/CDLUC3/Make-Data-Count/master/user-agents/lists/robot.txt"
-    version: "0.1"
+    version: "0.1.04"
     upload_to_hub: False
     user: counter
     year_month: "2018-05"
@@ -88,15 +88,24 @@ dataverse:
   default:
     config:
   demo: false
-  doi:
+  pid:
     authority: "10.5072"
+    protocol: doi
+    shoulder: "FK2/"
+  doi:
     baseurl: "https://mds.test.datacite.org/"
     mdcbaseurl: "https://api.test.datacite.org/"
     username: "testaccount"
     password: "notmypassword"
-    protocol: doi
     provider: FAKE
-    shoulder: "FK2/"
+  ## Handlenet variables are only used if dataverse.pid.protocol is set to 'hdl'
+  handlenet:
+    independenthandleservice: 'false'
+#   handleauthhandle: YOUR:HANDLE/USERNAME
+    admcredfile: /opt/dv/admpriv.bin
+    admcredfile_source: files/handlenet/admcredfile
+#   admprivphrase:
+#   index: 300
   externaltools:
     datacurationtool:
       enabled: true
@@ -185,7 +194,7 @@ dataverse:
     enabled: false
     argument: '-DcompilerArgument=-Xlint:unchecked test -P all-unit-tests'
   usermgmtkey: burrito
-  version: '5.10'
+  version: '5.11.1'
 
 build_guides: false
 
@@ -233,7 +242,7 @@ localstack:
   web_ui: 8888
 
 maven:
-  version: 3.8.5
+  version: 3.8.6
 
 munin:
   install: false
