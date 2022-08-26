@@ -22,7 +22,7 @@
   when: ansible_os_family == "Debian"
 
 - name: install Apache for RedHat/Rocky
-  yum: 
+  yum:
     name: ['httpd', 'mod_ssl']
     state: latest
   when: ansible_os_family == "RedHat"
@@ -73,7 +73,7 @@
   template:
     src: ports.conf.j2
     dest: "{{ apache_config_base_dir }}/ports.conf"
-  when: ansible_os_family == "Debian" ## TODO where is this in RedHat? ## it would be nicer to use than the Listen statement at the start of the virtualhost
+  when: ansible_os_family == "Debian"  ## TODO where is this in RedHat? ## it would be nicer to use than the Listen statement at the start of the virtualhost
   notify: enable and restart apache
 
 - include: dataverse-apache-ssl.yml
