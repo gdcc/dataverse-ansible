@@ -37,7 +37,7 @@
 - name: modify dataverse-previewers.sh script for local hosting previewers
   replace:
     path: '{{ ansible_user_dir }}/dataverse-previewers.sh'
-    regexp: 'https://globaldataversecommunityconsortium.github.io'
+    regexp: 'https://gdcc.github.io'
     replace: '{{ dataverse.payara.siteurl }}'
   when: dataverse.previewers.on_same_server == true
 
