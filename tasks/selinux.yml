@@ -10,6 +10,7 @@
       - policycoreutils
   when: ansible_os_family == 'RedHat'
 
+# Ansible seboolean works on Rocky 9, 8.6 handled below.
 - name: set httpd_can_network_connect on and keep it persistent across reboots
   seboolean:
     name: httpd_can_network_connect
@@ -26,6 +27,7 @@
     - ansible_os_family == "RedHat"
     - ansible_distribution_major_version == "8"
 
+# Ansible seboolean works on Rocky 9, 8.6 handled below.
 - name: allow apache to read user content by default
   seboolean:
     name: httpd_read_user_content
