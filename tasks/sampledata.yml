@@ -38,27 +38,35 @@
   args: 
     chdir: '{{ dataverse.sampledata.dir }}'
 
+- name: test for existence of dvconfig.py
+  ansible.builtin.stat:
+    path: '{{ dataverse.sampledata.dir }}/dvconfig.py'
+    register: user_supplied_dvconfig_py
+
 - name: copy dvconfig.py.sample to dvconfig.py
   copy:
     src: '{{ dataverse.sampledata.dir }}/dvconfig.py.sample'
     dest: '{{ dataverse.sampledata.dir }}/dvconfig.py'
     remote_src: yes
+  when: not user_supplied_dvconfig_py.stat.exists
 
 - name: strip backslash from siteUrl
   set_fact:
     siteUrl_stripped: '{{ siteUrl | regex_replace ("\\", "") }}'
 
-- name: set siteUrl in dvconfig.py
+- name: set siteUrl in sample dvconfig.py
   replace:
     dest: '{{ dataverse.sampledata.dir }}/dvconfig.py'
     regexp: "^base_url = 'https://demo.dataverse.org'$"
     replace: "base_url = '{{ siteUrl_stripped }}'"
+  when: not user_supplied_dvconfig_py.stat.exists
 
-- name: set api token in dvconfig.py
+- name: set api token in sample dvconfig.py
   replace:
     dest: '{{ dataverse.sampledata.dir }}/dvconfig.py'
     regexp: "^api_token = ''$"
     replace: "api_token = '{{ api_token }}'"
+  when: not user_supplied_dvconfig_py.stat.exists
 
 - name: run sampledata
   shell: 'python3 create_sample_data.py'
