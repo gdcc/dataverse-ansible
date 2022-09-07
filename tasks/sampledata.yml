@@ -57,7 +57,7 @@
 - name: set siteUrl in sample dvconfig.py
   replace:
     dest: '{{ dataverse.sampledata.dir }}/dvconfig.py'
-    regexp: "^base_url = 'https://demo.dataverse.org'$"
+    regexp: "^base_url = 'http://localhost:8080'$"
     replace: "base_url = '{{ siteUrl_stripped }}'"
   when: not user_supplied_dvconfig_py.stat.exists
 
