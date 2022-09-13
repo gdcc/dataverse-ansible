@@ -26,8 +26,8 @@
     name: "{{ packages }}"
   vars:
     packages:
-    - R-core
-    - R-core-devel
+      - R-core
+      - R-core-devel
   when: ansible_os_family == "RedHat"
 
 - name: install base packages on Debian/Ubuntu
@@ -59,11 +59,11 @@
 - name: detect installed R modules
   command: /usr/bin/Rscript --slave --no-save --no-restore-history -e "if (! ('{{item}}' %in% installed.packages()[,'Package'])) print('{{item}}')"
   with_items:
-  - R2HTML
-  - rjson
-  - DescTools
-  - Rserve
-  - haven
+    - R2HTML
+    - rjson
+    - DescTools
+    - Rserve
+    - haven
   register: not_installed_r_modules
   changed_when: false                ## this just for registering a variable, it does not change anyting by itself
 
