@@ -30,14 +30,7 @@
     - R-core-devel
   when: ansible_os_family == "RedHat"
 
-- name: install base packages on Debian
-  apt:
-    name: r-base-core, r-base-dev
-    state: latest
-  when:
-  - ansible_distribution == "Debian"
-
-- name: install base packages on Debian/Ubuntu ## we hope bullseye and others will have a good version (Ubuntu 20.04 has R 3.6) -- if not, we will need further handlers for them
+- name: install base packages on Debian/Ubuntu
   package:
     name: r-base-core, r-base-dev
   when:
