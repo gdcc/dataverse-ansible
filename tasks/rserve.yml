@@ -32,9 +32,13 @@
 
 - name: install base packages on Debian/Ubuntu
   package:
-    name: r-base-core, r-base-dev
+    name:
+      - r-base-core
+      - r-base-dev
+      - libssl-dev
+      - libcurl4-openssl-dev
   when:
-  - ansible_os_family == "Debian"
+    - ansible_os_family == "Debian"
 
 - name: detect number of system cores
   set_fact:
