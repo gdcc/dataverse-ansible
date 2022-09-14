@@ -76,6 +76,9 @@
 
 - debug: msg='The following modules are not installed -- {{ modules_to_install }}'
 
+# The second if-statement in this command makes this task fail,
+# if the installtion of the R package fails.
+# It follows the example given here https://stackoverflow.com/a/52638148/2862719
 - name: install R modules
   command: >
     /usr/bin/Rscript --slave --no-save --no-restore-history -e
