@@ -57,7 +57,9 @@
     create: yes
 
 - name: detect installed R modules
-  command: /usr/bin/Rscript --slave --no-save --no-restore-history -e "if (! ('{{item}}' %in% installed.packages()[,'Package'])) print('{{item}}')"
+  command: >
+    /usr/bin/Rscript --slave --no-save --no-restore-history -e
+    "if (! ('{{item}}' %in% installed.packages()[,'Package'])) print('{{item}}')"
   with_items:
     - R2HTML
     - rjson
@@ -75,7 +77,10 @@
 - debug: msg='The following modules are not installed -- {{ modules_to_install }}'
 
 - name: install R modules
-  command: /usr/bin/Rscript --slave --no-save --no-restore-history -e "install.packages('{{ item }}', repos=c('https://cloud.r-project.org/', Ncpus='{{ num_cores }}', quiet=TRUE))"
+  command: >
+    /usr/bin/Rscript --slave --no-save --no-restore-history -e
+    "install.packages('{{ item }}', repos=c('https://cloud.r-project.org/', Ncpus='{{ num_cores }}', quiet=TRUE));
+    if(!library('{{ item }}', character.only=TRUE, logical.return=TRUE)){quit(status=1, save='no')};"
   with_items: "{{ modules_to_install }}"
   when: modules_to_install is defined
 
