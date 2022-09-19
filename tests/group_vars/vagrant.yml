@@ -2,8 +2,8 @@
 # dataverse/tests/group_vars/vagrant.yml
 
 # un-nested so we can pass them at the CLI
-dataverse_branch: develop
-dataverse_repo: https://github.com/IQSS/dataverse.git
+dataverse_branch: 8947-payara-5-2022-3
+dataverse_repo: https://github.com/poikilotherm/dataverse.git
 any_errors_fatal: true
 
 apache:
@@ -45,7 +45,7 @@ dataverse:
     blocked_endpoints: "admin,test"
     blocked_policy: "localhost-only"
     location: "http://localhost:8080/api"
-    test_suite: false
+    test_suite: true
     # possible test values from https://github.com/IQSS/dataverse/blob/develop/conf/docker-aio/run-test-suite.sh#L11
     # beware DataversesIT and DatasetsIT at minimum must be run for any other tests to succeed. have fun.
     #tests: "DataversesIT,DatasetsIT,AdminIT"
@@ -139,8 +139,8 @@ dataverse:
     siteurl: http://0.0.0.0
     root: /usr/local
     dir: payara5
-    zipurl: https://s3-eu-west-1.amazonaws.com/payara.fish/Payara+Downloads/5.2021.6/payara-5.2021.6.zip
-    zipchecksum: sha256:635af1750cf291b800e98067bd80dfefd80608ee6709215671d11f115e94ff96
+    zipurl: https://s3-eu-west-1.amazonaws.com/payara.fish/Payara+Downloads/5.2022.3/payara-5.2022.3.zip
+    zipchecksum: sha256:4088221274882de792fda0836ddd47f0550f896e44c62174579c2c70a1177a5d
   google_analytics_key:
   jacoco:
     enabled: false
