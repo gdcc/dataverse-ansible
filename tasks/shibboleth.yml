@@ -134,3 +134,10 @@
     - mod_shib-to-shibd.pp
     - mod_shib-to-shibd.mod
   when: selinux_enabled
+
+- name: "allow Apache to read /var/cache/shibboleth"
+  shell: 'semanage fcontext -a -t httpd_sys_content_t "/var/cache/shibboleth(/.*)?"'
+  when:
+    - ansible_os_family == "RedHat"
+    - ansible_distribution_major_version == "8"
+    - selinux_enabled
