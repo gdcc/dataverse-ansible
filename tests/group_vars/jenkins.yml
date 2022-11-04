@@ -191,7 +191,7 @@ dataverse:
     enabled: true
     argument: '-DcompilerArgument=-Xlint:unchecked test -P all-unit-tests'
   usermgmtkey: burrito
-  version: '5.12'
+  version: '5.12.1'
 
 build_guides: false
 
