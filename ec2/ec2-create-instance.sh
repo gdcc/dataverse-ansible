@@ -9,7 +9,9 @@ PEM_DEFAULT=${HOME}
 VERBOSE_ARG=""
 
 # rocky linux 8.5 official, us-east-1
-AWS_AMI_DEFAULT='ami-043ceee68871e0bb5'
+#AWS_AMI_DEFAULT='ami-043ceee68871e0bb5'
+# rocky linux 8.6 official, us-east-1
+AWS_AMI_DEFAULT='ami-004b161a1cceb1ceb'
 
 usage() {
   echo "Usage: $0 -b <branch> -r <repo> -p <pem_path> -g <group_vars> -a <dataverse-ansible branch> -i aws_image -u aws_user -s aws_size -t aws_tag -f aws_security group -e aws_profile -l local_log_path -d -v" 1>&2
@@ -235,10 +237,10 @@ fi
 # epel-release is installed first to ensure the latest ansible is installed after
 # TODO: Add some error checking for this ssh command.
 ssh -T -i $PEM_FILE -o 'StrictHostKeyChecking no' -o 'UserKnownHostsFile=/dev/null' -o 'ConnectTimeout=300' $USER_AT_HOST <<EOF
-sudo yum -q -y install epel-release
+sudo dnf -q -y install epel-release
 # fix ansible installation until Rocky releases 8.6
-sudo yum -q -y install https://dl.fedoraproject.org/pub/archive/epel/8.5.2022-05-10/Everything/x86_64/Packages/s/sshpass-1.06-9.el8.x86_64.rpm
-sudo yum -q -y install ansible git nano
+#sudo yum -q -y install https://dl.fedoraproject.org/pub/archive/epel/8.5.2022-05-10/Everything/x86_64/Packages/s/sshpass-1.06-9.el8.x86_64.rpm
+sudo dnf -q -y install ansible-core git nano
 git clone -b $DA_BRANCH https://github.com/GlobalDataverseCommunityConsortium/dataverse-ansible.git dataverse
 export ANSIBLE_ROLES_PATH=.
 ansible-playbook $VERBOSE_ARG -i dataverse/inventory dataverse/dataverse.pb --connection=local $GVARG
