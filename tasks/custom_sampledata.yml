@@ -20,7 +20,7 @@
 
 - name: get dv-root.json
   get_url:
-    url: 'https://raw.githubusercontent.com/IQSS/dataverse/develop/scripts/api/data/dv-root.json'
+    url: '{{ dataverse_raw_repo }}/develop/scripts/api/data/dv-root.json'
     dest: "{{ playbook_dir }}/"
 
 - name: grant authusers add-on-root

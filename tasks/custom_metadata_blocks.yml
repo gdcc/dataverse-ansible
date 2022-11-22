@@ -39,14 +39,14 @@
 
 - name: "release case: get develop update-fields.sh from develop"
   ansible.builtin.get_url:
-    url: 'https://raw.githubusercontent.com/IQSS/dataverse/develop/conf/solr/{{ dataverse.solr.version }}/update-fields.sh'
+    url: '{{ dataverse_raw_repo }}/develop/conf/solr/{{ dataverse.solr.version }}/update-fields.sh'
     dest: /tmp/dvinstall/update-fields.sh
     mode: 0755
   when: dataverse_branch == 'release'
 
 - name: "branch case: get develop update-fields.sh from branch"
   ansible.builtin.get_url:
-    url: 'https://raw.githubusercontent.com/IQSS/dataverse/{{ dataverse_branch }}/conf/solr/{{ dataverse.solr.version }}/update-fields.sh'
+    url: '{{ dataverse_raw_repo }}/{{ dataverse_branch }}/conf/solr/{{ dataverse.solr.version }}/update-fields.sh'
     dest: /tmp/dvinstall/update-fields.sh
     mode: 0755
   when: dataverse_branch != 'release'
