@@ -24,6 +24,7 @@
     src: "{{ lang_git_dir }}/en_US/Bundle.properties"
     dest: "{{ dataverse.language.lang_directory }}"
     owner: '{{ dataverse.payara.user }}'
+    remote_src: yes
   when: (dataverse_lang_directory.stdout | trim) == ''
 
 - name: set dataverse language file path if not set
