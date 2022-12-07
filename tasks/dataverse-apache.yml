@@ -22,7 +22,7 @@
   when: ansible_os_family == "Debian"
 
 - name: install Apache for RedHat/Rocky
-  yum: 
+  yum:
     name: ['httpd', 'mod_ssl']
     state: latest
   when: ansible_os_family == "RedHat"
@@ -34,15 +34,6 @@
   when: ansible_os_family == "Debian"
   notify: enable and restart apache
 
-- name: install unified http proxy config
-  template:
-    src: http.proxy.conf.j2
-    dest: "{{ apache_virtualhost_dir }}/http.proxy.conf"
-    owner: root
-    group: root
-    mode: '0644'
-  notify: enable and restart apache
-
 - name: enable apache mods on Debian
   apache2_module:
     state: present
@@ -52,6 +43,15 @@
     - proxy_http
     - proxy_ajp
   when: ansible_os_family == "Debian"    ## CHECKME -- does this need to be Debian-specific?
+  notify: enable and restart apache
+
+- name: install unified http proxy config
+  template:
+    src: http.proxy.conf.j2
+    dest: "{{ apache_virtualhost_dir }}/http.proxy.conf"
+    owner: root
+    group: root
+    mode: '0644'
   notify: enable and restart apache
 
 - name: disable default Debian site
@@ -73,7 +73,7 @@
   template:
     src: ports.conf.j2
     dest: "{{ apache_config_base_dir }}/ports.conf"
-  when: ansible_os_family == "Debian" ## TODO where is this in RedHat? ## it would be nicer to use than the Listen statement at the start of the virtualhost
+  when: ansible_os_family == "Debian"  ## TODO where is this in RedHat? ## it would be nicer to use than the Listen statement at the start of the virtualhost
   notify: enable and restart apache
 
 - include: dataverse-apache-ssl.yml
