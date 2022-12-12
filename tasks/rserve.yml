@@ -31,22 +31,19 @@
     name: "{{ packages }}"
   vars:
     packages:
-    - R-core
-    - R-core-devel
+      - R-core
+      - R-core-devel
   when: ansible_os_family == "RedHat"
 
-- name: install base packages on Debian
-  apt:
-    name: r-base-core, r-base-dev
-    state: latest
-  when:
-  - ansible_distribution == "Debian"
-
-- name: install base packages on Debian/Ubuntu ## we hope bullseye and others will have a good version (Ubuntu 20.04 has R 3.6) -- if not, we will need further handlers for them
+- name: install base packages on Debian/Ubuntu
   package:
-    name: r-base-core, r-base-dev
+    name:
+      - r-base-core
+      - r-base-dev
+      - libssl-dev
+      - libcurl4-openssl-dev
   when:
-  - ansible_os_family == "Debian"
+    - ansible_os_family == "Debian"
 
 - name: detect number of system cores
   set_fact:
@@ -65,13 +62,15 @@
     create: yes
 
 - name: detect installed R modules
-  command: /usr/bin/Rscript --slave --no-save --no-restore-history -e "if (! ('{{item}}' %in% installed.packages()[,'Package'])) print('{{item}}')"
+  command: >
+    /usr/bin/Rscript --slave --no-save --no-restore-history -e
+    "if (! ('{{item}}' %in% installed.packages()[,'Package'])) print('{{item}}')"
   with_items:
-  - R2HTML
-  - rjson
-  - DescTools
-  - Rserve
-  - haven
+    - R2HTML
+    - rjson
+    - DescTools
+    - Rserve
+    - haven
   register: not_installed_r_modules
   changed_when: false                ## this just for registering a variable, it does not change anyting by itself
 
@@ -82,8 +81,14 @@
 
 - debug: msg='The following modules are not installed -- {{ modules_to_install }}'
 
+# The second if-statement in this command makes this task fail,
+# if the installtion of the R package fails.
+# It follows the example given here https://stackoverflow.com/a/52638148/2862719
 - name: install R modules
-  command: /usr/bin/Rscript --slave --no-save --no-restore-history -e "install.packages('{{ item }}', repos=c('https://cloud.r-project.org/', Ncpus='{{ num_cores }}', quiet=TRUE))"
+  command: >
+    /usr/bin/Rscript --slave --no-save --no-restore-history -e
+    "install.packages('{{ item }}', repos=c('https://cloud.r-project.org/', Ncpus='{{ num_cores }}', quiet=TRUE));
+    if(!library('{{ item }}', character.only=TRUE, logical.return=TRUE)){quit(status=1, save='no')};"
   with_items: "{{ modules_to_install }}"
   when: modules_to_install is defined
 
