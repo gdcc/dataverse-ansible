@@ -117,5 +117,3 @@
    - ansible_os_family == "RedHat"
    - db.postgres.log_statements != 'none'
    - not db.use_rds
-
-- include: dataverse-harvest-tests.yml
