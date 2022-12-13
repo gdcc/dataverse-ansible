@@ -302,6 +302,13 @@ sshkeys:
   urls:
   user:
 
+
+harvest:
+  oaiserver:
+    maxidentifiers: 2
+    maxrecords: 2
+
+
 # un-nesting the below so's we can pass them at the CLI
 
 dataverse_branch: develop
