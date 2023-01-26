@@ -89,7 +89,3 @@
   service:
     name: payara
     state: started
-
-- name: dataverse takes longer to auto-deploy on payara6
-  ansible.builtin.pause:
-    seconds: 45
