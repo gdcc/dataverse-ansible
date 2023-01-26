@@ -133,8 +133,8 @@ dataverse:
     siteurl: 
     root: /usr/local
     dir: payara6
-    zipurl: https://s3.eu-west-1.amazonaws.com/payara.fish/Payara+Downloads/6.2022.1.Alpha2/payara-6.2022.1.Alpha2.zip
-    zipchecksum: sha256:c2f45366df5e0d681c38c0ea10aa0a8aa1444399656b1c35c8f8eee541dc01cc
+    zipurl: https://s3.eu-west-1.amazonaws.com/payara.fish/Payara+Downloads/6.2023.1/payara-6.2023.1.zip
+    zipchecksum: sha256:469569935d5d37870c9e4d8dd7df2ae5d46e03518ebe01d4b392617ec9165dbc
   google_analytics_key:
   jacoco:
     enabled: true
@@ -304,6 +304,6 @@ sshkeys:
 
 # un-nesting the below so's we can pass them at the CLI
 
-dataverse_branch: 8305-payara6
+dataverse_branch: 8305-payara6-ee10
 dataverse_repo: https://github.com/IQSS/dataverse.git
 any_errors_fatal: true
