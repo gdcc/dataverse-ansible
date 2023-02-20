@@ -82,7 +82,7 @@
 - name: install R modules
   command: >
     /usr/bin/Rscript --slave --no-save --no-restore-history -e
-    "install.packages('{{ item }}', repos=c('https://cloud.r-project.org/', Ncpus='{{ num_cores }}', quiet=TRUE));
+    "install.packages('{{ item }}', repos=c('https://cloud.r-project.org/'), Ncpus='{{ num_cores }}', quiet=TRUE);
     if(!library('{{ item }}', character.only=TRUE, logical.return=TRUE)){quit(status=1, save='no')};"
   with_items: "{{ modules_to_install }}"
   when: modules_to_install is defined
