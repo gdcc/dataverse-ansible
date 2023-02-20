@@ -28,6 +28,8 @@
     packages:
       - R-core
       - R-core-devel
+      - libcurl-devel
+      - openssl-devel
   when: ansible_os_family == "RedHat"
 
 - name: install base packages on Debian/Ubuntu
