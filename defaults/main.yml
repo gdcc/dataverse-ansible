@@ -192,8 +192,8 @@ dataverse:
     request_timeout: 1800
     root: /usr/local
     dir: payara5
-    zipurl: https://s3-eu-west-1.amazonaws.com/payara.fish/Payara+Downloads/5.2021.6/payara-5.2021.6.zip
-    zipchecksum: sha256:635af1750cf291b800e98067bd80dfefd80608ee6709215671d11f115e94ff96
+    zipurl: https://s3-eu-west-1.amazonaws.com/payara.fish/Payara+Downloads/5.2022.3/payara-5.2022.3.zip
+    zipchecksum: sha256:4088221274882de792fda0836ddd47f0550f896e44c62174579c2c70a1177a5d
   google_analytics_key:
   jacoco:
     enabled: false
@@ -239,7 +239,7 @@ dataverse:
     enabled: false
     argument: '-DcompilerArgument=-Xlint:unchecked test -P all-unit-tests'
   usermgmtkey: burrito
-  version: '5.11.1'
+  version: '5.13'
 
 build_guides: false
 
@@ -287,7 +287,7 @@ localstack:
   web_ui: 8888
 
 maven:
-  version: 3.8.6
+  version: 3.8.7
 
 munin:
   install: false

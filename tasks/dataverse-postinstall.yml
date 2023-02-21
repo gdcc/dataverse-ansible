@@ -84,7 +84,6 @@
   with_items:
   - "{{ log4jv1_list.files | map(attribute='path') | list }}"
   tags: log4j-v1
-  
 
 - name: start payara
   service:
