@@ -130,6 +130,11 @@
   tags:
   - languages
 
+- include: dataverse-licenses.yml
+  when: dataverse.licenses.enabled == true
+  tags:
+  - licenses
+
 - include: dataverse-externaltools.yml
   tags:
   - externaltools
