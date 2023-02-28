@@ -21,7 +21,7 @@
   when: ansible_distribution == "Rocky" and
         ansible_distribution_major_version == "8"
 
-- name: Rocky 9 calls it codeready-builder
+- name: Rocky 9 calls it crb
   shell: "dnf config-manager --enable crb"
   when: ansible_distribution == "Rocky" and
         ansible_distribution_major_version == "9"
