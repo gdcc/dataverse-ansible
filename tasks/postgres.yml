@@ -72,7 +72,7 @@
   when: ansible_os_family == "Debian" and
         db.use_rds == true
 
-- include: postgresql-init.yml
+- ansible.builtin.include_tasks: postgresql-init.yml
   when: db.use_rds == false
 
 - name: install pg_hba.conf on RHEL/Rocky
@@ -139,5 +139,5 @@
     role_attr_flags: 'NOSUPERUSER,CREATEDB,CREATEROLE,INHERIT,LOGIN'
   when: db.use_rds == false
 
-- include: postgres_sequential_identifiers.yml
+- ansible.builtin.include_tasks: postgres_sequential_identifiers.yml
   when: dataverse.api.test_suite == true
