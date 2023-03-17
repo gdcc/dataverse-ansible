@@ -152,6 +152,52 @@ dataverse:
       source: https://github.com/GlobalDataverseCommunityConsortium/dataverse-language-packs.git
       version: develop
     lang_directory: /opt/dv/lang
+  licenses:
+    enabled: false
+    user: dataverseAdmin
+    licenses:
+     - name: CC0 1.0
+       uri: http://creativecommons.org/publicdomain/zero/1.0
+       shortDescription: Creative Commons CC0 1.0 Universal Public Domain Dedication.
+       iconUrl: https://licensebuttons.net/p/zero/1.0/88x31.png
+       active: true
+       sortOrder: 1
+     - name: CC BY 4.0
+       uri: http://creativecommons.org/licenses/by/4.0
+       shortDescription: Creative Commons Attribution 4.0 International License.
+       iconUrl: https://licensebuttons.net/l/by/4.0/88x31.png
+       active: true
+       sortOrder: 2
+     - name: CC BY-NC 4.0
+       uri: http://creativecommons.org/licenses/by-nc/4.0
+       shortDescription: Creative Commons Attribution-NonCommercial 4.0 International License.
+       iconUrl: https://licensebuttons.net/l/by-nc/4.0/88x31.png
+       active: true
+       sortOrder: 3
+     - name: CC BY-NC-ND 4.0
+       uri: http://creativecommons.org/licenses/by-nc-nd/4.0
+       shortDescription: Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International License.
+       iconUrl: https://licensebuttons.net/l/by-nc-nd/4.0/88x31.png
+       active: true
+       sortOrder: 4
+     - name: CC BY-NC-SA 4.0
+       uri: http://creativecommons.org/licenses/by-nc-sa/4.0
+       shortDescription: Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International License.
+       iconUrl: https://licensebuttons.net/l/by-nc-sa/4.0/88x31.png
+       active: true
+       sortOrder: 5
+     - name: CC BY-ND 4.0
+       uri: http://creativecommons.org/licenses/by-nd/4.0
+       shortDescription: Creative Commons Attribution-NoDerivatives 4.0 International License.
+       iconUrl: https://licensebuttons.net/l/by-nd/4.0/88x31.png
+       active: true
+       sortOrder: 6
+     - name: CC BY-SA 4.0
+       uri: http://creativecommons.org/licenses/by-sa/4.0
+       shortDescription: Creative Commons Attribution-ShareAlike 4.0 International License.
+       iconUrl: https://licensebuttons.net/l/by-sa/4.0/88x31.png
+       active: true
+       sortOrder: 7
   memheap: 4096
   options:
     filepids: 
@@ -301,6 +347,13 @@ sshkeys:
   files:
   urls:
   user:
+
+
+harvest:
+  oaiserver:
+    maxidentifiers: 2
+    maxrecords: 2
+
 
 # un-nesting the below so's we can pass them at the CLI
 
