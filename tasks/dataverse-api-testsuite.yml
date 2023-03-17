@@ -38,7 +38,7 @@
 
 - name: let Payara calm down
   ansible.builtin.pause:
-    seconds: 15
+    seconds: 30
 
 - name: set user management quesadilla
   uri:
