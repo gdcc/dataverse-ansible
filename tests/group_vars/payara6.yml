@@ -236,7 +236,7 @@ dataverse:
   unittests:
     enabled: true
     argument: '-DcompilerArgument=-Xlint:unchecked test -P all-unit-tests'
-  usermgmtkey: burrito
+  usermgmtkey: 'burrito'
   version: '5.13'
 
 build_guides: false
