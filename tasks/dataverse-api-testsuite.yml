@@ -36,10 +36,6 @@
 - name: ensure we have api script data directory
   shell: "/bin/cp -r {{ dataverse.srcdir }}/scripts/api/data /tmp/dvinstall/"
 
-- name: let Payara calm down
-  ansible.builtin.pause:
-    seconds: 90
-
 - name: set user management quesadilla
   uri:
     url: 'http://localhost:8080/api/admin/settings/BuiltinUsers.KEY'
