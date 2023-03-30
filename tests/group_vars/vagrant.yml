@@ -278,7 +278,7 @@ java:
   version: 11
 
 maven:
-  version: 3.8.7
+  version: 3.8.8
 
 munin:
   install: false
