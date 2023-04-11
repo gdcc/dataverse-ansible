@@ -89,3 +89,7 @@
   service:
     name: payara
     state: started
+
+- name: give Payara ample time to become ready
+  ansible.builtin.pause:
+    seconds: 90
