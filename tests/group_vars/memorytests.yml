@@ -147,9 +147,9 @@ dataverse:
   language:
     enabled: false # setting this to true allows the language task to run
     languages:
-     - locale: en
+     - locale: en_US
        title: English
-     - locale: de-DE
+     - locale: de_DE
        title: Deutsch
     language_packs:
       source: https://github.com/GlobalDataverseCommunityConsortium/dataverse-language-packs.git
