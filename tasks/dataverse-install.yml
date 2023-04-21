@@ -10,7 +10,7 @@
   debug:
     msg: '##### DATAVERSE INSTALLER #####'
 
-- include: dataverse-build.yml
+- ansible.builtin.include_tasks: dataverse-build.yml
   when: dataverse_branch != "release"
   
 - name: fix perms on dataverse-war
@@ -101,7 +101,7 @@
     mode: 0600
   when: default_config|length > 0
 
-- include: jacoco-instrument.yml
+- ansible.builtin.include_tasks: jacoco-instrument.yml
   when: dataverse.jacoco.enabled == true and
         dataverse_repo != "release"
 
