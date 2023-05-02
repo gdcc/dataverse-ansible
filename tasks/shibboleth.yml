@@ -40,16 +40,20 @@
     state: latest
   when:
    - ansible_os_family == "Debian"
-   - ansible_distribution != "Ubuntu" or ansible_distribution_major_version <= "22"
+   - not (ansible_distribution == "Ubuntu" and ansible_distribution_major_version >= "22")
+   - not (ansible_distribution == "Debian" and ansible_distribution_major_version >= "11")
+  tags: shibboleth
 
-- name: install Shibboleth for Ubuntu 22
+- name: install Shibboleth for Debian 11 or Ubuntu 22
   package:
     name: shibboleth-sp-utils, libapache2-mod-shib, libapache2-mod-jk
     state: latest
   when:
    - ansible_os_family == "Debian"
-   - ansible_distribution == "Ubuntu"
-   - ansible_distribution_major_version >= "22"
+   - (ansible_distribution == "Ubuntu" and ansible_distribution_major_version >= "22")
+     or (ansible_distribution == "Debian" and ansible_distribution_major_version >= "11")
+  tags: shibboleth
+
 
 - name: install shibboleth2.xml template
   template: src=shibboleth2.xml.j2 dest=/etc/shibboleth/shibboleth2.xml
