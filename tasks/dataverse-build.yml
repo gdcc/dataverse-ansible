@@ -4,7 +4,7 @@
   debug:
     msg: '##### BUILD WARFILE #####'
 
-- include: maven.yml
+- ansible.builtin.include_tasks: maven.yml
 
 - name: get branch_commit
   shell: 'cd "{{ dataverse.srcdir }}" && git log --oneline | head -1 | awk "{print $1}"'
