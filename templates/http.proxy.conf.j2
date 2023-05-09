@@ -69,7 +69,7 @@ Listen {{ apache.ssl.port }} https
 {% endif %}
 
 {% if dataverse.frontend.enabled == true %}
-  ProxyPassMatch ^/spa !
+  ProxyPassMatch ^/{{ dataverse.frontend.docroot.dir }} !
 {% endif %}
 
 {% if prometheus.install == true %}
