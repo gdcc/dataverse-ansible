@@ -187,6 +187,16 @@ dataverse:
       path: /usr/local/dvn/data
 #   - label: label
 #     path: /path/to/filestore   ## this is a sample entry for further file stores
+  frontend:
+    branch: develop
+    enabled: true
+    docroot:
+      base: /var/www/html
+      dir: spa
+    nodejs:
+      version: 18
+    repo: "http://github.com/IQSS/dataverse-frontend"
+    srcdir: /tmp/dataverse-frontend
   payara:
     user: dataverse
     group: dataverse

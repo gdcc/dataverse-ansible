@@ -95,6 +95,11 @@
   tags:
   - postinstall
 
+- ansible.builtin.include_tasks: dataverse-frontend.yml
+  tags:
+  - frontend
+  when: dataverse.frontend.enabled
+
 - ansible.builtin.include_tasks: dataverse-gui.yml
   tags:
   - gui
