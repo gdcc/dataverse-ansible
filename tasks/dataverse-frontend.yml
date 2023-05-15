@@ -25,6 +25,12 @@
     state: present
   when: dataverse.frontend.branch != "release"
 
+- name: build design-system sub-package
+  ansible.builtin.command: 'npm run build'
+  args:
+    chdir: "{{ dataverse.frontend.srcdir }}/packages/design-system"
+  when: dataverse.frontend.branch != "release"
+
 - name: npm run build
   ansible.builtin.command: 'npm run build -- --base=/{{ dataverse.frontend.docroot.dir }}'
   args:
