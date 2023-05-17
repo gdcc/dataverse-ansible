@@ -28,7 +28,7 @@
   get_url:
     url: "https://archive.apache.org/dist/lucene/solr/{{ dataverse.solr.version }}/solr-{{ dataverse.solr.version }}.tgz"
     checksum: "{{ dataverse.solr.checksum }}"
-    dest: /tmp
+    dest: /tmp/solr-{{ dataverse.solr.version }}.tgz
   register: solr_installer_download
 
 - name: untar solr
