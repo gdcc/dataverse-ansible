@@ -35,3 +35,14 @@
   shell: '{{ payara_dir}}/bin/asadmin create-jvm-options "-Ddataverse.oai.server.maxrecords={{ harvest.oaiserver.maxrecords }}"'
   when: harvest.oaiserver.maxrecords is defined
 
+- name: set DATAVERSE_FEATURE_API_SESSION_AUTH=1 when told
+  become: yes
+  become_user: "{{ dataverse.payara.user }}"
+  shell: '{{ payara_dir}}/bin/asadmin create-jvm-options "-Ddataverse.feature.api-session-auth=true"'
+  when: dataverse.api.session_auth == true
+
+- name: set DATAVERSE_FEATURE_API_BEARER_AUTH=1 when told
+  become: yes
+  become_user: "{{ dataverse.payara.user }}"
+  shell: '{{ payara_dir}}/bin/asadmin create-jvm-options "-Ddataverse.feature.api-bearer-auth=true"'
+  when: dataverse.api.bearer_auth == true
