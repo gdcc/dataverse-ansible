@@ -19,7 +19,7 @@
   shell: "{{ payara_dir }}/bin/asadmin create-jvm-options -Djava.io.tmpdir={{ dataverse.payara.tempdir }}"
   when: dataverse.payara.tempdir is defined
 
-- ansible.builtin.include_tasks: custom_metadata_blocks.yml
+- ansible.builtin.import_tasks: custom_metadata_blocks.yml
   when: dataverse.custom_metadata_blocks.enabled == True
 
 - name: suppress grizzly ajp warnings
@@ -45,9 +45,9 @@
     - { prop: ":BlockedApiPolicy", val: "{{ dataverse.api.blocked_policy }}", desc: "control API access"}
     - { prop: ":FileFixityChecksumAlgorithm", val: "{{ dataverse.file_fixity_checksum_algorithm }}", desc: "checksum algorithm used for file fixity" }
 
-- ansible.builtin.include_tasks: dataverse-optional-settings.yml
+- ansible.builtin.import_tasks: dataverse-optional-settings.yml
 
-- ansible.builtin.include_tasks: dataverse-handlenet.yml
+- ansible.builtin.import_tasks: dataverse-handlenet.yml
   when: dataverse.pid.protocol == 'hdl'
 
 - name: final payara post-configuration cleanup

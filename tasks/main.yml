@@ -5,178 +5,181 @@
   debug:
     msg: '##### BEGIN ANSIBLE ROLE #####'
 
-- ansible.builtin.include_tasks: sanity-checks.yml
+- ansible.builtin.import_tasks: sanity-checks.yml
   tags:
   - prereqs
 
-- ansible.builtin.include_tasks: dataverse-prereqs.yml
+- ansible.builtin.import_tasks: dataverse-prereqs.yml
   tags: 
   - prereqs
 
-- ansible.builtin.include_tasks: dataverse-required-variables.yml
+- ansible.builtin.import_tasks: dataverse-required-variables.yml
   tags:
    - always
 
-- ansible.builtin.include_tasks: rserve.yml
+- ansible.builtin.import_tasks: rserve.yml
   when: rserve.install == true
   tags:
   - rserve
 
-- ansible.builtin.include_tasks: dataverse-fqdn.yml
+- ansible.builtin.import_tasks: dataverse-fqdn.yml
   tags:
    - prereqs
    - apache
    - fqdn
+   - dataverse
 
-- ansible.builtin.include_tasks: sshkeys.yml
+- ansible.builtin.import_tasks: sshkeys.yml
   when: sshkeys.enabled == True
   tags:
   - sshkeys
 
-- ansible.builtin.include_tasks: postfix.yml
+- ansible.builtin.import_tasks: postfix.yml
   when: postfix.enabled == true
   tags:
   - postfix
 
-- ansible.builtin.include_tasks: dataverse-apache.yml
+- ansible.builtin.import_tasks: dataverse-apache.yml
   when: apache.enabled == True
   tags:
   - apache
 
-- ansible.builtin.include_tasks: postgres.yml
+- ansible.builtin.import_tasks: postgres.yml
   when: db.postgres.enabled == True
   tags:
   - postgres
 
-- ansible.builtin.include_tasks: dataverse-branch.yml
+- ansible.builtin.import_tasks: dataverse-branch.yml
   when: dataverse_branch != "release"
+  tags:
+  - dataverse
 
-- ansible.builtin.include_tasks: jacoco-download.yml
+- ansible.builtin.import_tasks: jacoco-download.yml
   when: dataverse.jacoco.enabled == true and
         dataverse_repo != "release"
 
-- ansible.builtin.include_tasks: dataverse-installer.yml
+- ansible.builtin.import_tasks: dataverse-installer.yml
   tags:
   - payara
 
-- ansible.builtin.include_tasks: payara.yml
+- ansible.builtin.import_tasks: payara.yml
   tags:
   - payara
 
-- ansible.builtin.include_tasks: solr.yml
+- ansible.builtin.import_tasks: solr.yml
   tags:
   - solr
 
-- ansible.builtin.include_tasks: localstack.yml
+- ansible.builtin.import_tasks: localstack.yml
   when: localstack.enabled == true
   tags:
   - localstack
 
-- ansible.builtin.include_tasks: s3.yml
+- ansible.builtin.import_tasks: s3.yml
   when: s3.enabled == true
   tags:
   - s3
 
-- ansible.builtin.include_tasks: localstack_create.yml
+- ansible.builtin.import_tasks: localstack_create.yml
   when: localstack.enabled == true
   tags:
   - localstack 
 
-- ansible.builtin.include_tasks: dataverse-install.yml
+- ansible.builtin.import_tasks: dataverse-install.yml
   tags:
   - dataverse
 
-- ansible.builtin.include_tasks: dataverse-storage.yml
+- ansible.builtin.import_tasks: dataverse-storage.yml
   when: dataverse.filesdirs[0] is defined
   tags:
   - storage
 
-- ansible.builtin.include_tasks: dataverse-postinstall.yml
+- ansible.builtin.import_tasks: dataverse-postinstall.yml
   tags:
   - postinstall
 
-- ansible.builtin.include_tasks: dataverse-frontend.yml
+- ansible.builtin.import_tasks: dataverse-frontend.yml
   tags:
   - frontend
   when: dataverse.frontend.enabled
 
-- ansible.builtin.include_tasks: dataverse-gui.yml
+- ansible.builtin.import_tasks: dataverse-gui.yml
   tags:
   - gui
   when: dataverse.branding.enabled
 
-- ansible.builtin.include_tasks: shibboleth.yml
+- ansible.builtin.import_tasks: shibboleth.yml
   when: shibboleth.enabled == True
   tags:
   - shibboleth
 
-- ansible.builtin.include_tasks: sampledata.yml
+- ansible.builtin.import_tasks: sampledata.yml
   when: dataverse.sampledata.enabled == true
   tags:
   - sampledata
 
-- ansible.builtin.include_tasks: custom_sampledata.yml
+- ansible.builtin.import_tasks: custom_sampledata.yml
   when: dataverse.custom_sampledata.enabled == true
   tags:
   - custom_sampledata
 
-- ansible.builtin.include_tasks: dataverse-counter.yml
+- ansible.builtin.import_tasks: dataverse-counter.yml
   when: dataverse.counter.enabled == true
   tags:
   - counter
 
-- ansible.builtin.include_tasks: dataverse-previewers.yml
+- ansible.builtin.import_tasks: dataverse-previewers.yml
   when: dataverse.previewers.enabled == true
   tags:
   - previewers
 
-- ansible.builtin.include_tasks: dataverse-languages.yml
+- ansible.builtin.import_tasks: dataverse-languages.yml
   when: dataverse.language.enabled == true
   tags:
   - languages
 
-- ansible.builtin.include_tasks: dataverse-licenses.yml
+- ansible.builtin.import_tasks: dataverse-licenses.yml
   when: dataverse.licenses.enabled == true
   tags:
   - licenses
 
-- ansible.builtin.include_tasks: dataverse-externaltools.yml
+- ansible.builtin.import_tasks: dataverse-externaltools.yml
   tags:
   - externaltools
 
-- ansible.builtin.include_tasks: prometheus.yml
+- ansible.builtin.import_tasks: prometheus.yml
   when: prometheus.install == true
   tags:
   - prometheus
 
-- ansible.builtin.include_tasks: dataverse-api-testsuite.yml
+- ansible.builtin.import_tasks: dataverse-api-testsuite.yml
   when: dataverse.api.test_suite == true
   tags:
   - apitestsuite
 
-- ansible.builtin.include_tasks: jacoco-generate_report.yml
+- ansible.builtin.import_tasks: jacoco-generate_report.yml
   when: dataverse.jacoco.enabled == true and
         dataverse_repo != "release"
 
-- ansible.builtin.include_tasks: build_guides.yml
+- ansible.builtin.import_tasks: build_guides.yml
   when: build_guides == true
   tags:
   - build_guides
 
-- ansible.builtin.include_tasks: munin.yml
+- ansible.builtin.import_tasks: munin.yml
   when: munin.install == true
   tags:
   - munin
 
-- ansible.builtin.include_tasks: pg_backups.yml
+- ansible.builtin.import_tasks: pg_backups.yml
   when: db.backups.enabled == true
   tags:
   - pg_backups
 
-- ansible.builtin.include_tasks: schemaspy.yml
+- ansible.builtin.import_tasks: schemaspy.yml
   when: schemaspy.enabled == true
   tags:
   - schemaspy
 
-- ansible.builtin.include_tasks: fin.yml
+- ansible.builtin.import_tasks: fin.yml
   
