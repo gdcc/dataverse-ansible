@@ -98,3 +98,4 @@
   ansible.builtin.get_url:
     url: http://localhost:8080/api/admin/index
     dest: /tmp/index_status.out
+  when: not upgrade_only

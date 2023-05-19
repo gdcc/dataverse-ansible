@@ -143,12 +143,20 @@
   become_user: '{{ dataverse.payara.user }}'
   args:
     chdir: /tmp/dvinstall
+  when: not dataverse.deployment.upgrade_only
+
+- name: upgrade only -- deploy dataverse war
+  shell: '{{ payara_dir }}/bin/asadmin redeploy --name dataverse /tmp/dvinstall/dataverse.war'
+  become: yes
+  become_user: '{{ dataverse.payara.user }}'
+  when: dataverse.deployment.upgrade_only
 
 - name: stop payara manually (systemd gums up the works)
   become: yes
   become_user: "{{ dataverse.payara.user }}"
   shell: '{{ payara_dir }}/bin/asadmin stop-domain {{ dataverse.payara.domain }}'
   ignore_errors: yes
+  when: not dataverse.deployment.upgrade_only
 
 - name: now start payara with systemd
   service:
