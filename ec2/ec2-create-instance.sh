@@ -235,10 +235,8 @@ fi
 # epel-release is installed first to ensure the latest ansible is installed after
 # TODO: Add some error checking for this ssh command.
 ssh -T -i $PEM_FILE -o 'StrictHostKeyChecking no' -o 'UserKnownHostsFile=/dev/null' -o 'ConnectTimeout=300' $USER_AT_HOST <<EOF
-sudo yum -q -y install epel-release
-# fix ansible installation until Rocky releases 8.6
-sudo yum -q -y install https://dl.fedoraproject.org/pub/archive/epel/8.5.2022-05-10/Everything/x86_64/Packages/s/sshpass-1.06-9.el8.x86_64.rpm
-sudo yum -q -y install ansible git nano
+sudo dnf -q -y install epel-release
+sudo dnf -q -y --enablerepo epel-testing install ansible git
 git clone -b $DA_BRANCH https://github.com/GlobalDataverseCommunityConsortium/dataverse-ansible.git dataverse
 export ANSIBLE_ROLES_PATH=.
 ansible-playbook $VERBOSE_ARG -i dataverse/inventory dataverse/dataverse.pb --connection=local $GVARG
@@ -267,8 +265,9 @@ if [ ! -z "$LOCAL_LOG_PATH" ]; then
    rsync -av -e "ssh -i $PEM_FILE" --ignore-missing-args $AWS_USER@$PUBLIC_DNS:/usr/local/payara5/glassfish/domains/domain1/logs/server.log* $LOCAL_LOG_PATH/
    # 6 query_count.out
    rsync -av -e "ssh -i $PEM_FILE" --ignore-missing-args $AWS_USER@$PUBLIC_DNS:/tmp/query_count.out $LOCAL_LOG_PATH/
-   # 7 install.out
+   # 7 install.out and setup-all.*.log
    rsync -av -e "ssh -i $PEM_FILE" --ignore-missing-args $AWS_USER@$PUBLIC_DNS:/tmp/dvinstall/install.out $LOCAL_LOG_PATH/
+   rsync -av -e "ssh -i $PEM_FILE" --ignore-missing-args $AWS_USER@$PUBLIC_DNS:/tmp/dvinstall/setup-all.*.log $LOCAL_LOG_PATH/
 fi
 
 # Port 8080 has been added because Ansible puts a redirect in place
