@@ -37,9 +37,11 @@ dataverse:
   allow_signups: true
   api:
     allow_lookup: false
+    bearer_auth: true
     blocked_endpoints: "admin,test"
     blocked_policy: "localhost-only"
     location: "http://localhost:8080/api"
+    session_auth: true
     test_suite: true
     # possible test values from https://github.com/IQSS/dataverse/blob/develop/conf/docker-aio/run-test-suite.sh#L11
     # beware DataversesIT and DatasetsIT at minimum must be run for any other tests to succeed. have fun.
