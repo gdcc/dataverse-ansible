@@ -113,6 +113,11 @@
   tags:
   - shibboleth
 
+- ansible.builtin.import_tasks: orcid.yml
+  when: orcid.enabled == "true"
+  tags:
+  - orcid
+
 - ansible.builtin.import_tasks: sampledata.yml
   when: dataverse.sampledata.enabled == true
   tags:
