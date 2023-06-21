@@ -409,6 +409,7 @@ shibboleth:
 #      emailAddress: TODO
   SSO: "<SSO>SAML2 SAML1</SSO>"
   MetadataProvider: '<MetadataProvider type="XML" file="dataverse-idp-metadata.xml" backingFilePath="local-idp-metadata.xml" legacyOrgNames="true" reloadInterval="7200"/>'
+  showListFirst: 'true'
 
 sshkeys:
   enabled: false
