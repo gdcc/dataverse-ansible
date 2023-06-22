@@ -5,3 +5,10 @@
 - name: construct payara_dir
   set_fact:
     payara_dir: '{{ dataverse.payara.root }}/{{ dataverse.payara.dir }}'
+
+- name: construct dataverse_raw_repo (githubusercontent) URL
+  set_fact:
+    dataverse_raw_repo: "{{ dataverse_repo | replace('https://github.com/','https://raw.githubusercontent.com/') | regex_replace('.git$','') }}"
+
+#- fail:
+#    msg: "{{ dataverse_raw_repo }}"
