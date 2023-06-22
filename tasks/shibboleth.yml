@@ -134,9 +134,3 @@
     - mod_shib-to-shibd.pp
     - mod_shib-to-shibd.mod
   when: selinux_enabled
-
-- name: set showListFirst value in the deployed idpselect_config.js
-  lineinfile:
-    path: '{{ payara_dir }}/glassfish/domains/{{ dataverse.payara.domain }}/applications/dataverse/resources/js/shib/idpselect_config.js'
-    regexp: '^    this.showListFirst = '
-    line: '    this.showListFirst = {{ shibboleth.showListFirst }}      // Do we start with a list of IdPs or just the dropdown'

@@ -121,5 +121,9 @@
 
 - ansible.builtin.import_tasks: selinux.yml
 
+- ansible.builtin.import_tasks: dataverse-apache-robots-txt.yml
+  when: dataverse.robotsTxtUrl is defined
+
 - name: run handlers -- this runs the apache restart scripts
   meta: flush_handlers
+
