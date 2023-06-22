@@ -1,0 +1,45 @@
+---
+
+- name: enable NodeJS module on RedHat family if not pulling release
+  ansible.builtin.command: 'dnf -qy module enable nodejs:{{ dataverse.frontend.nodejs.version }}'
+  when: ansible_os_family == "RedHat" and
+        dataverse.frontend.branch != "release"
+
+- name: install NodeJS PM on RedHat family if not pulling release
+  ansible.builtin.package:
+    name: nodejs
+    state: latest
+  when: ansible_os_family == "RedHat" and
+        dataverse.frontend.branch != "release"
+
+- name: clone specified branch
+  ansible.builtin.git:
+    repo: "{{ dataverse.frontend.repo }}"
+    dest: "{{ dataverse.frontend.srcdir }}"
+    version: "{{ dataverse.frontend.branch }}"
+  when: dataverse.frontend.branch != "release"
+
+- name: install NodeJS packages from package.json
+  community.general.npm:
+    path: "{{ dataverse.frontend.srcdir }}"
+    state: present
+  when: dataverse.frontend.branch != "release"
+
+- name: build design-system sub-package
+  ansible.builtin.command: 'npm run build'
+  args:
+    chdir: "{{ dataverse.frontend.srcdir }}/packages/design-system"
+  when: dataverse.frontend.branch != "release"
+
+- name: npm run build
+  ansible.builtin.command: 'npm run build -- --base=/{{ dataverse.frontend.docroot.dir }}'
+  args:
+    chdir: "{{ dataverse.frontend.srcdir }}"
+  when: dataverse.frontend.branch != "release"
+
+- name: copy build folder to docroot
+  ansible.builtin.copy:
+    src: "{{ dataverse.frontend.srcdir }}/dist/"
+    dest: "{{ dataverse.frontend.docroot.base }}/{{ dataverse.frontend.docroot.dir }}"
+    remote_src: no
+  when: dataverse.frontend.branch != "release"

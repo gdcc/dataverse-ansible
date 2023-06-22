@@ -10,7 +10,7 @@
   debug:
     msg: '##### DATAVERSE INSTALLER #####'
 
-- include: dataverse-build.yml
+- ansible.builtin.import_tasks: dataverse-build.yml
   when: dataverse_branch != "release"
   
 - name: fix perms on dataverse-war
@@ -101,7 +101,7 @@
     mode: 0600
   when: default_config|length > 0
 
-- include: jacoco-instrument.yml
+- ansible.builtin.import_tasks: jacoco-instrument.yml
   when: dataverse.jacoco.enabled == true and
         dataverse_repo != "release"
 
@@ -160,6 +160,10 @@
     port: 8009
     state: present
     timeout: "{{ dataverse.payara.launch_timeout }}"
+
+- name: really wait for Payara to become ready
+  ansible.builtin.pause:
+    seconds: 90
 
 # install.py doesn't currently log this output, nothing sensitive in install.out
 #- name: negate need for password aliases

@@ -4,9 +4,9 @@
   debug:
     msg: '##### RUN INTEGRATION TESTS #####'
 
-- include: maven.yml
+- ansible.builtin.import_tasks: maven.yml
 
-- include: postgresql_statements.yml
+- ansible.builtin.import_tasks: postgresql_statements.yml
   when:
    - ansible_os_family == "RedHat"
    - db.postgres.log_statements != 'none'
@@ -42,7 +42,7 @@
     method: PUT
     body: '{{ dataverse.usermgmtkey }}'
 
-- include: dataverse-apitoken.yml
+- ansible.builtin.import_tasks: dataverse-apitoken.yml
 
 - name: allow authenticated users to add to root
   uri:
@@ -112,7 +112,7 @@
     chdir: '{{ dataverse.srcdir }}'
   when: maven.version != 'default'
 
-- include: postgresql_perl_party.yml
+- ansible.builtin.import_tasks: postgresql_perl_party.yml
   when:
    - ansible_os_family == "RedHat"
    - db.postgres.log_statements != 'none'
