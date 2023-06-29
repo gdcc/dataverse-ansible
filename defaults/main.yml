@@ -363,6 +363,21 @@ s3:
   payload_signing: false
   chunked_encoding: true
 
+swift:
+  enabled: false
+  is_default: false
+  label: swift
+  defaultEndpoint: endpoint1
+  authType: 
+  authUrl: 
+  tenant: 
+  username: 
+  endpoint: 
+  password: 
+  folderPathSeparator: '-'
+  hashKey: 
+  temporaryUrlExpiryTime: 3600
+
 schemaspy:
   enabled: false
   jarurl: https://github.com/schemaspy/schemaspy/releases/download/v6.1.0/schemaspy-6.1.0.jar
