@@ -71,6 +71,11 @@
   tags:
   - payara
 
+- ansible.builtin.import_tasks: tasks/extra-certificate-authorities.yml
+  when: extra_certificates.files
+  tags:
+   - extracerts
+
 - ansible.builtin.import_tasks: solr.yml
   tags:
   - solr
