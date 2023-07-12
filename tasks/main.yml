@@ -17,6 +17,11 @@
   tags:
    - always
 
+- ansible.builtin.import_tasks: ansible-scripts.yml
+  tags:
+   - always
+   - scripts
+
 - ansible.builtin.import_tasks: rserve.yml
   when: rserve.install == true
   tags:
