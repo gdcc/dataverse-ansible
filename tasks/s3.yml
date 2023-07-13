@@ -1,11 +1,11 @@
 ---
 
-- name: we need awscli on 7
-  yum:
+- name: we need awscli on RedHat 7 and Debian
+  package:
     name: awscli
     state: latest
-  when: ansible_os_family == "RedHat" and
-        ansible_distribution_major_version == "7"
+  when: ( ansible_os_family == "RedHat" and ansible_distribution_major_version == "7" ) or
+        ansible_os_family == "Debian"
 
 - name: we need awscli on 8
   pip:
@@ -38,26 +38,43 @@
     group: '{{ dataverse.payara.group }}'
     mode: '0600'
 
-- name: set storage-driver-id to s3
-  shell: '{{ payara_dir}}/bin/asadmin create-jvm-options "-Ddataverse.files.storage-driver-id={{ s3.storage_driver_id }}"'
-
-- name: set s3 type to s3
-  shell: '{{ payara_dir}}/bin/asadmin create-jvm-options "-Ddataverse.files.s3.type={{ s3.files_type }}"'
-
-- name: set s3 label to s3
-  shell: '{{ payara_dir}}/bin/asadmin create-jvm-options "-Ddataverse.files.s3.label={{ s3.label }}"'
-
-- name: set s3 bucket name
-  shell: '{{ payara_dir}}/bin/asadmin create-jvm-options "-Ddataverse.files.s3.bucket-name={{ s3.bucket_name }}"'
-
-- name: set s3 url expiration minutes
-  shell: '{{ payara_dir}}/bin/asadmin create-jvm-options "-Ddataverse.files.s3.url-expiration-minutes={{ s3.url_expiration_minutes }}"'
+- name: set s3 settings in dataverse
+  shell: 'asadmin-create-or-replace-option.sh "{{ item.key }}" "{{ item.value }}"'
+  register: output
+  changed_when: "'Command create-jvm-options executed successfully.' in output.stdout"
+  when:
+   - item.value is defined
+   - item.value != ''
+  with_items:
+   - key: dataverse.files.storage-driver-id
+     value: "{{ s3.storage_driver_id }}"
+   - key: dataverse.files.s3.type
+     value: "{{ s3.files_type }}"
+   - key: dataverse.files.s3.label
+     value: "{{ s3.label }}"
+   - key: dataverse.files.s3.bucket-name
+     value: "{{ s3.bucket_name }}"
+   - key: dataverse.files.s3.url-expiration-minutes
+     value: "{{ s3.url_expiration_minutes }}"
+   - key: dataverse.files.s3.upload-redirect
+     value: "{{ s3.upload_redirect }}"
+   - key: dataverse.files.s3.path-style-access
+     value: "{{ s3.path_style_access }}"
+   - key: dataverse.files.s3.payload-signing
+     value: "{{ s3.payload_signing }}"
+   - key: dataverse.files.s3.chunked-encoding
+     value: "{{ s3.chunked_encoding }}"
+   - key: dataverse.files.s3.custom-endpoint-region
+     value: "{{ s3.custom_endpoint_region }}"
 
 # optional s3 settings
 
 - name: expose custom_endpoint_url as variable
   set_fact:
     custom_endpoint_url: '{{ s3.custom_endpoint_url }}'
+
+- ansible.builtin.import_tasks: s3_custom_endpoint_url.yml
+  when: custom_endpoint_url | length > 0
 
 - name: create S3 bucket
   shell:
@@ -92,30 +109,8 @@
   when: (s3.download_redirect == true or s3.upload_redirect == true)
     and custom_endpoint_url | length == 0
     and s3.cors_already_set == false
-
-- ansible.builtin.import_tasks: s3_custom_endpoint_url.yml
-  when: custom_endpoint_url | length > 0
-
 - name: set s3 direct download
-  shell: '{{ payara_dir}}/bin/asadmin create-jvm-options "-Ddataverse.files.s3.download-redirect={{ s3.download_redirect }}"'
-  when: s3.download_redirect == true
+  shell: 'asadmin-create-or-replace-option.sh "dataverse.files.s3.download-redirect" "{{ s3.download_redirect }}"'
+  register: output
+  changed_when: "'Command create-jvm-options executed successfully.' in output.stdout"
 
-- name: set s3 direct upload
-  shell: '{{ payara_dir}}/bin/asadmin create-jvm-options "-Ddataverse.files.s3.upload-redirect={{ s3.upload_redirect }}"'
-  when: s3.upload_redirect == true
-
-- name: set s3 path style access
-  shell: '{{ payara_dir}}/bin/asadmin create-jvm-options "-Ddataverse.files.s3.path-style-access={{ s3.path_style_access }}"'
-  when: s3.path_style_access == true
-
-- name: set s3 payload signing
-  shell: '{{ payara_dir}}/bin/asadmin create-jvm-options "-Ddataverse.files.s3.payload-signing={{ s3.payload_signing }}"'
-  when: s3.payload_signing == true
-
-- name: turn chunked encoding off
-  shell: '{{ payara_dir}}/bin/asadmin create-jvm-options "-Ddataverse.files.s3.chunked-encoding={{ s3.chunked_encoding }}"'
-  when: s3.chunked_encoding == false
-
-- name: set custom endpoint region
-  shell: '{{ payara_dir}}/bin/asadmin create-jvm-options "-Ddataverse.files.s3.custom-endpoint-region={{ s3.custom_endpoint_region }}"'
-  when: s3.custom_endpoint_region is defined and s3.custom_endpoint_region != ''

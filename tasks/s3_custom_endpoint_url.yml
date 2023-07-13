@@ -1,20 +1,20 @@
 ---
 
-- name: escape custom endpoint url colons
-  set_fact: "custom_endpoint_escaped={{ s3.custom_endpoint_url | regex_replace (':','\\:') }}"
-
 - name: set s3 custom endpoint url
-  shell: '{{ payara_dir}}/bin/asadmin create-jvm-options "-Ddataverse.files.s3.custom-endpoint-url={{ custom_endpoint_escaped }}"'
+  shell: 'asadmin-create-or-replace-option.sh "dataverse.files.s3.custom-endpoint-url" "{{ custom_endpoint_url }}"'
 
 - name: create S3 bucket
   shell:
     'aws s3api create-bucket --bucket {{ s3.bucket_name }} --endpoint-url {{ s3.custom_endpoint_url }}'
   args:
     executable: /bin/bash
+  become: yes
   become_user: '{{ dataverse.payara.user }}'
   environment:
     PATH: "{{ lookup('env', 'PATH') }}:/usr/local/bin"
   when: s3.create_bucket == true
+  register: output
+  changed_when: "'Command create-jvm-options executed successfully.' in output.stdout"
 
 - name: enable CORS on S3 bucket
   shell:
@@ -27,3 +27,5 @@
     PATH: "{{ lookup('env', 'PATH') }}:/usr/local/bin"
   when: s3.download_redirect == true or
     s3.upload_redirect == true
+  register: output
+  changed_when: "'Command create-jvm-options executed successfully.' in output.stdout"
