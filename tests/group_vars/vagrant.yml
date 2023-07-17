@@ -129,7 +129,7 @@ dataverse:
 #     path: /path/to/filestore   ## this is a sample entry for further file stores
   frontend:
     branch: develop
-    enabled: true
+    enabled: false
     docroot:
       base: /var/www/html
       dir: spa
