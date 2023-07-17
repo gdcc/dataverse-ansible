@@ -248,6 +248,7 @@ dataverse:
     root: /usr/local/solr
     user: solr
     version: 8.11.1
+    # download_url: # override the default download URL
     checksum: sha256:9ec540cbd8e45f3d15a6b615a22939f5e6242ca81099951a47d3c082c79866a9
     listen: 127.0.0.1
   srcdir: /tmp/dataverse
