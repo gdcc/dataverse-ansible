@@ -93,7 +93,7 @@
   when: db.use_rds == false
   notify: enable and restart postgres
 
-- include: postgres_replication.yml
+- ansible.builtin.import_tasks: postgres_replication.yml
   when: db.postgres.replication.enabled
 
 - name: log_lock_waits when told
