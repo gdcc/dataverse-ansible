@@ -143,8 +143,8 @@ dataverse:
     siteurl: 
     root: /usr/local
     dir: payara6
-    zipurl: https://nexus.payara.fish/repository/payara-community/fish/payara/distributions/payara/6.2023.6/payara-6.2023.6.zip
-    zipchecksum: sha256:cb82a14cc5d59eb6aeff62ab095f912e28638ffc363b42e7a39446edf6b4ae4f
+    zipurl: https://nexus.payara.fish/repository/payara-community/fish/payara/distributions/payara/6.2023.7/payara-6.2023.7.zip
+    zipchecksum: sha256:485d14bb54ba945fa5ad2e7b5fac125ba2de8bf2b1c872c48d0d8c4e6fcba545
   google_analytics_key:
   jacoco:
     enabled: true
