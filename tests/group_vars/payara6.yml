@@ -375,6 +375,6 @@ harvest:
 
 # un-nesting the below so's we can pass them at the CLI
 
-dataverse_branch: 8305-payara6-ee10
+dataverse_branch: 8305-payara6-ee10-v3
 dataverse_repo: https://github.com/IQSS/dataverse.git
 any_errors_fatal: true
