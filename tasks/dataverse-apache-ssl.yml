@@ -8,7 +8,7 @@
   set_fact:
     use_pems: "{{ apache.ssl.pem.cert | default('', true) | trim != '' }}"
 
-- include: dataverse-apache-ssl-pems.yml
+- ansible.builtin.import_tasks: dataverse-apache-ssl-pems.yml
   when: use_pems
 
 - name: if we're not using pems, set filenames

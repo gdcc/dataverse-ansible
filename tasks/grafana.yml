@@ -1,7 +1,7 @@
 ---
 
 # for hostname and siteUrl
-- include: dataverse-fqdn.yml
+- ansible.builtin.import_tasks: dataverse-fqdn.yml
 
 - name: install grafana
   debug:

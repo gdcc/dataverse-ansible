@@ -19,3 +19,25 @@
 - name: set TabularIngestSizeLimit when provided
   shell: 'curl -X PUT -d {{ dataverse.options.tabularingestsizelimit }} {{ dataverse.api.location }}/admin/settings/:TabularIngestSizeLimit'
   when: dataverse.options.tabularingestsizelimit
+
+# Our automated harvesting server tests rely on the paging limits to be set to something low
+# (so that the behavior may be triggered and tested without having to create and export 100 datasets)
+
+- name: set page size limit for ListIdentifiers
+  become: yes
+  become_user: "{{ dataverse.payara.user }}"
+  shell: '{{ payara_dir}}/bin/asadmin create-jvm-options "-Ddataverse.oai.server.maxidentifiers={{ harvest.oaiserver.maxidentifiers }}"'
+  when: harvest.oaiserver.maxidentifiers is defined
+
+- name: set page size limit for ListRecords
+  become: yes
+  become_user: "{{ dataverse.payara.user }}"
+  shell: '{{ payara_dir}}/bin/asadmin create-jvm-options "-Ddataverse.oai.server.maxrecords={{ harvest.oaiserver.maxrecords }}"'
+  when: harvest.oaiserver.maxrecords is defined
+
+- name: overwrite robots.txt in dataverse installation using the file defined by dataverse.robots_txt_url
+  get_url:
+    url: '{{ dataverse.robots_txt_url }}'
+    dest: '{{ payara_dir }}/glassfish/domains/{{ dataverse.payara.domain }}/applications/dataverse/robots.txt'
+    force: true
+  when: dataverse.robots_txt_url is defined

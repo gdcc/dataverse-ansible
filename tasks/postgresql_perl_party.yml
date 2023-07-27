@@ -12,8 +12,8 @@
     dest: '/var/lib/pgsql/{{ db.postgres.version }}/data/log/'
     mode: '0755'
   loop:
-    - https://raw.githubusercontent.com/IQSS/dataverse/develop/scripts/database/querycount/parse.pl
-    - https://raw.githubusercontent.com/IQSS/dataverse/develop/scripts/database/querycount/count.pl
+    - "{{ dataverse_raw_repo }}/develop/scripts/database/querycount/parse.pl"
+    - "{{ dataverse_raw_repo }}/develop/scripts/database/querycount/count.pl"
 
 - name: get name of Postgres logfile
   ansible.builtin.find:

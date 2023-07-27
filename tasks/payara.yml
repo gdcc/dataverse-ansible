@@ -79,8 +79,7 @@
   when: dataverse.payara.zipurl is match(".*glassfish-4.1.zip")
   notify: enable and restart payara
 
-# python installer fails to place jdbc driver for whatever reason
-# and we want this configurable for testing updated drivers anyway
+# we don't need the JDBC driver any more but let's keep custom JDBC URLs
 - name: set jdbcurl
   set_fact:
    jdbc_url='{{ db.postgres.jdbcurl }}'
@@ -90,22 +89,6 @@
     url: '{{ db.postgres.jdbcurl }}'
     dest: '{{ payara_dir }}/glassfish/lib/'
   when: jdbc_url|default(None)
-
-- name: allow installer write access for release jdbc driver
-  file:
-    path: '{{ payara_dir }}/glassfish/lib'
-    state: directory
-    owner: '{{ dataverse.payara.user }}'
-  when: not jdbc_url|default(None)
-
-- name: install release jdbc driver
-  copy:
-    src: "{{ item }}"
-    dest: "{{ payara_dir }}/glassfish/lib/"
-    remote_src: true
-  when: not jdbc_url|default(None)
-  notify: enable and restart payara
-  with_fileglob: /tmp/dvinstall/pgdriver/postgresql-*.jar
 
 - name: increase resource limits for payara
   blockinfile:
@@ -153,5 +136,24 @@
     mode: '0750'
     state: directory
 
-- name: flush hadlers to start payara and possibly reload systemd
+- name: workaround for FISH-7665
+  lineinfile:
+    path: '{{ payara_dir }}/glassfish/config/asenv.conf'
+    line: '{{ item }}'
+  with_items:
+    - 'export JAVA_TOOL_OPTIONS'
+    - 'JAVA_TOOL_OPTIONS="-Djdk.util.zip.disableZip64ExtraFieldValidation=true --add-opens=java.base/java.io=ALL-UNNAMED"'
+  when: dataverse.payara.zipurl is match(".*payara-6.*")
+
+- name: workaround for FISH-7665
+  template:
+    src: payara6.service.j2
+    dest: /usr/lib/systemd/system/payara.service
+    owner: root
+    group: root
+    mode: 0644
+  when: (ansible_os_family == "RedHat") and (dataverse.payara.zipurl is match(".*payara-6.*"))
+  notify: reload systemd
+
+- name: flush handlers to start payara and possibly reload systemd
   meta: flush_handlers

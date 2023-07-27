@@ -13,7 +13,13 @@
   shell: "{{ payara_dir }}/bin/asadmin set-log-file-format {{ dataverse.payara.logformat }}"
   #ignore_errors: yes
 
-- include: custom_metadata_blocks.yml
+- name: set custom temporary directory, if provided
+  become: yes
+  become_user: "{{ dataverse.payara.user }}"
+  shell: "{{ payara_dir }}/bin/asadmin create-jvm-options -Djava.io.tmpdir={{ dataverse.payara.tempdir }}"
+  when: dataverse.payara.tempdir is defined
+
+- ansible.builtin.import_tasks: custom_metadata_blocks.yml
   when: dataverse.custom_metadata_blocks.enabled == True
 
 - name: suppress grizzly ajp warnings
@@ -29,17 +35,20 @@
     - { prop: ":GoogleAnalyticsCode", val: "{{ dataverse.google_analytics_key }}", desc: "key for Google Analytics"}
     - { prop: ":FooterCopyright" , val: "{{ dataverse.copyright }}", desc: "addition to the default copyright statement"}
     - { prop: ":SystemEmail", val: "{{ dataverse.service_email }}", desc: "instance email address"}
-    - { prop: ":Protocol", val: "{{ dataverse.doi.protocol }}", desc: "global identifier protocol"}
+    - { prop: ":Protocol", val: "{{ dataverse.pid.protocol }}", desc: "global identifier protocol"}
     - { prop: ":DoiProvider", val: "{{ dataverse.doi.provider }}", desc: "DOI service provider (EZID or DataCite)"}
-    - { prop: ":Authority", val: "{{ dataverse.doi.authority }}", desc: "DOI prefix"}
-    - { prop: ":Shoulder", val: "{{ dataverse.doi.shoulder }}", desc: "DOI shoulder."}
+    - { prop: ":Authority", val: "{{ dataverse.pid.authority }}", desc: "DOI/handle prefix"}
+    - { prop: ":Shoulder", val: "{{ dataverse.pid.shoulder }}", desc: "DOI/handle shoulder."}
     - { prop: ":ShibEnabled", val: "{{ shibboleth.enabled }}", desc: "enable/disable shibboleth" }
     - { prop: ":AllowSignUp", val: "{{ dataverse.allow_signups }}", desc: "don't allow self-signup"}
     - { prop: ":BlockedApiEndpoints", val: "{{ dataverse.api.blocked_endpoints }}", desc: "APIs that are controlled"}
     - { prop: ":BlockedApiPolicy", val: "{{ dataverse.api.blocked_policy }}", desc: "control API access"}
     - { prop: ":FileFixityChecksumAlgorithm", val: "{{ dataverse.file_fixity_checksum_algorithm }}", desc: "checksum algorithm used for file fixity" }
 
-- include: dataverse-optional-settings.yml
+- ansible.builtin.import_tasks: dataverse-optional-settings.yml
+
+- ansible.builtin.import_tasks: dataverse-handlenet.yml
+  when: dataverse.pid.protocol == 'hdl'
 
 - name: final payara post-configuration cleanup
   service:
@@ -63,6 +72,9 @@
     recurse: yes
     use_regex: yes
   register: log4jv1_list
+  tags: log4j-v1
+
+#- fail: msg='{{ log4jv1_list.files }}'
 
 - name: remove JMSAppender from bundled log4j
   ansible.builtin.shell:
@@ -71,8 +83,18 @@
   become_user: '{{ dataverse.payara.user }}'
   with_items:
   - "{{ log4jv1_list.files | map(attribute='path') | list }}"
+  tags: log4j-v1
 
 - name: start payara
   service:
     name: payara
     state: started
+
+- name: give Payara ample time to become ready
+  ansible.builtin.pause:
+    seconds: 90
+
+- name: start solr indexing -- if this was an upgrade to an existing install, the install scripts reset the solr indexes
+  ansible.builtin.get_url:
+    url: http://localhost:8080/api/admin/index
+    dest: /tmp/index_status.out

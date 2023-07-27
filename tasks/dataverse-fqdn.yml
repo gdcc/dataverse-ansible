@@ -69,15 +69,15 @@
   ansible.builtin.set_fact:
     public_hostname: "{{ ec2_hostname_output.content }}"
   when: is_aws_environment
-        and is_public_hostname
         and custom_fqdn is undefined
+        and is_public_hostname
 
 - name: correct siteUrl for EC2
   ansible.builtin.set_fact:
     siteUrl: '{{ protocol }}://{{ public_hostname }}'
   when: is_aws_environment
-        and is_public_hostname
         and custom_fqdn is undefined
+        and is_public_hostname
 
 # for asadmin command
 - name: escape colons in siteurl

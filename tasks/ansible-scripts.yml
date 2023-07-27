@@ -1,0 +1,9 @@
+
+- name: install script(s) necessary for various ansible subtasks
+  template:
+    src: '{{ item }}.j2'
+    dest: '/usr/local/bin/{{ item }}'
+    mode: 0755
+  with_items:
+   - asadmin-create-or-replace-option.sh
+   - asadmin-create-or-replace-password-alias.sh

@@ -24,11 +24,21 @@
         createhome=no comment="Dataverse Solr user"
   when: dataverse.solr.user != "root"
 
+- name: Set default solr download url
+  set_fact:
+    solr_download_url: "https://archive.apache.org/dist/lucene/solr/{{ dataverse.solr.version }}/solr-{{ dataverse.solr.version }}.tgz"
+  when: dataverse.solr.download_url is not defined
+
+- name: Set custom solr download url
+  set_fact:
+    solr_download_url: "{{ dataverse.solr.download_url }}"
+  when: dataverse.solr.download_url is defined
+
 - name: download and unzip solr
   get_url:
-    url: "https://archive.apache.org/dist/lucene/solr/{{ dataverse.solr.version }}/solr-{{ dataverse.solr.version }}.tgz"
+    url: "{{ solr_download_url }}"
     checksum: "{{ dataverse.solr.checksum }}"
-    dest: /tmp
+    dest: /tmp/solr-{{ dataverse.solr.version }}.tgz
   register: solr_installer_download
 
 - name: untar solr

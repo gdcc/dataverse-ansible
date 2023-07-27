@@ -105,10 +105,10 @@ dataverse:
 #   index: 300
   externaltools:
     datacurationtool:
-      enabled: true
+      enabled: false
       method: demo
     dataexplorer:
-      enabled: true
+      enabled: false
     wholetale:
       enabled: false
   ## The first item of 'filesdirs' is the default filestore
@@ -142,9 +142,9 @@ dataverse:
     request_timeout: 1800
     siteurl: 
     root: /usr/local
-    dir: payara5
-    zipurl: https://nexus.payara.fish/repository/payara-community/fish/payara/distributions/payara/5.2022.3/payara-5.2022.3.zip
-    zipchecksum: sha256:4088221274882de792fda0836ddd47f0550f896e44c62174579c2c70a1177a5d
+    dir: payara6
+    zipurl: https://nexus.payara.fish/repository/payara-community/fish/payara/distributions/payara/6.2023.7/payara-6.2023.7.zip
+    zipchecksum: sha256:485d14bb54ba945fa5ad2e7b5fac125ba2de8bf2b1c872c48d0d8c4e6fcba545
   google_analytics_key:
   jacoco:
     enabled: true
@@ -154,9 +154,9 @@ dataverse:
   language:
     enabled: false
     languages:
-     - locale: en_US
+     - locale: en
        title: English
-     - locale: de_DE
+     - locale: de-DE
        title: Deutsch
     language_packs:
       source: https://github.com/GlobalDataverseCommunityConsortium/dataverse-language-packs.git
@@ -246,7 +246,7 @@ dataverse:
   unittests:
     enabled: true
     argument: '-DcompilerArgument=-Xlint:unchecked test -P all-unit-tests'
-  usermgmtkey: burrito
+  usermgmtkey: 'burrito'
   version: '5.13'
 
 build_guides: false
@@ -375,6 +375,6 @@ harvest:
 
 # un-nesting the below so's we can pass them at the CLI
 
-dataverse_branch: develop
+dataverse_branch: 8305-payara6-ee10-v3
 dataverse_repo: https://github.com/IQSS/dataverse.git
 any_errors_fatal: true

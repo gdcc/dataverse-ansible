@@ -9,10 +9,10 @@
     path: "{{ dataverse.custom_sampledata.custom_sampledir }}"
   register: sampledir_exists
 
-- include: dataverse-sampledata-examples.yml
+- ansible.builtin.import_tasks: dataverse-sampledata-examples.yml
   when: sampledir_exists.stat.exists == false
 
-- include: dataverse-apitoken.yml
+- ansible.builtin.import_tasks: dataverse-apitoken.yml
     
 - name: publish root dataverse
   shell: 'curl -s --insecure -u {{ api_token }}: -X POST -H "In-Progress: false" --data-binary @- http://localhost:8080/dvn/api/data-deposit/v1.1/swordv2/edit/dataverse/root'
@@ -20,7 +20,7 @@
 
 - name: get dv-root.json
   get_url:
-    url: 'https://raw.githubusercontent.com/IQSS/dataverse/develop/scripts/api/data/dv-root.json'
+    url: '{{ dataverse_raw_repo }}/develop/scripts/api/data/dv-root.json'
     dest: "{{ playbook_dir }}/"
 
 - name: grant authusers add-on-root

@@ -5,6 +5,7 @@
   debug:
     msg: '##### POSTGRES #####'
 
+
 - name: ansible postgres module wants python-psycopg2 on debian and RedHat 7
   package:
     name: python-psycopg2
@@ -44,6 +45,13 @@
   set_fact:
     dataverse_pg_version_short: "{{ db.postgres.version | regex_replace('\\.','') }}"
 
+- name: get postgres config directory
+  set_fact:
+    postgres_config_dir: "{{ (ansible_os_family == 'RedHat') |
+                             ternary('/var/lib/pgsql/'+(db.postgres.version|string)+'/data',
+                                     '/etc/postgresql/'+(db.postgres.version|string)+'/main'
+                         ) }}"
+
 - name: install postgres server on RedHat / Rocky
   yum:
    name: 'postgresql{{ dataverse_pg_version_short }}-server'
@@ -72,48 +80,28 @@
   when: ansible_os_family == "Debian" and
         db.use_rds == true
 
-- include: postgresql-init.yml
+- ansible.builtin.import_tasks: postgresql-init.yml
   when: db.use_rds == false
 
-- name: install pg_hba.conf on RHEL/Rocky
-  copy:
-    src: pg_hba.conf
-    dest: '/var/lib/pgsql/{{ db.postgres.version }}/data'
+- name: install pg_hba.conf
+  template:
+    src: pg_hba.conf.j2
+    dest: '{{ postgres_config_dir }}/pg_hba.conf'
     owner: postgres
     group: postgres
     mode: 0644
-  when: ansible_os_family == "RedHat" and
-        db.use_rds == false
+  when: db.use_rds == false
   notify: enable and restart postgres
 
-- name: install pg_hba.conf on Debian
-  copy:
-    src: pg_hba.conf
-    dest: '/etc/postgresql/{{ db.postgres.version }}/main'
-    owner: postgres
-    group: postgres
-    mode: 0644
-  when: ansible_os_family == "Debian" and
-        db.use_rds == false
-  notify: enable and restart postgres
+- ansible.builtin.import_tasks: postgres_replication.yml
+  when: db.postgres.replication.enabled
 
 - name: log_lock_waits when told
   lineinfile:
-    path: '/var/lib/pgsql/{{ db.postgres.version }}/data/postgresql.conf'
-    regexp: '^#log_lock_waits'
-    line: 'log_lock_waits = on'
-  when: db.postgres.log_lock_waits == true and
-        db.use_rds == false and
-        ansible_os_family == "RedHat"
-  notify: enable and restart postgres
-
-- name: log_lock_waits when told
-  lineinfile:
-    path: '/etc/postgresql/{{ db.postgres.version }}/main/postgresql.conf'
+    path: '{{ postgres_config_dir }}/postgresql.conf'
     regexp: '^#log_lock_waits'
     line: 'log_lock_waits = on'
   when:
-   - ansible_os_family == "Debian"
    - db.postgres.log_lock_waits
    - not db.use_rds
   notify: enable and restart postgres
@@ -139,5 +127,5 @@
     role_attr_flags: 'NOSUPERUSER,CREATEDB,CREATEROLE,INHERIT,LOGIN'
   when: db.use_rds == false
 
-- include: postgres_sequential_identifiers.yml
+- ansible.builtin.import_tasks: postgres_sequential_identifiers.yml
   when: dataverse.api.test_suite == true

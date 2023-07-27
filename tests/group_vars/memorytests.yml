@@ -77,7 +77,7 @@ dataverse:
     output_format: json
     platform: dash
     robots_url: "https://raw.githubusercontent.com/CDLUC3/Make-Data-Count/master/user-agents/lists/robot.txt"
-    version: "0.1"
+    version: "0.1.04"
     upload_to_hub: False
     user: counter
     year_month: "2018-05"
@@ -88,15 +88,24 @@ dataverse:
   default:
     config:
   demo: false
-  doi:
+  pid:
     authority: "10.5072"
+    protocol: doi
+    shoulder: "FK2/"
+  doi:
     baseurl: "https://mds.test.datacite.org/"
     mdcbaseurl: "https://api.test.datacite.org/"
     username: "testaccount"
     password: "notmypassword"
-    protocol: doi
     provider: FAKE
-    shoulder: "FK2/"
+  ## Handlenet variables are only used if dataverse.pid.protocol is set to 'hdl'
+  handlenet:
+    independenthandleservice: 'false'
+#   handleauthhandle: YOUR:HANDLE/USERNAME
+    admcredfile: /opt/dv/admpriv.bin
+    admcredfile_source: files/handlenet/admcredfile
+#   admprivphrase:
+#   index: 300
   externaltools:
     datacurationtool:
       enabled: true
@@ -115,6 +124,16 @@ dataverse:
       path: /usr/local/dvn/data
 #   - label: label
 #     path: /path/to/filestore   ## this is a sample entry for further file stores
+  frontend:
+    branch: develop
+    enabled: true
+    docroot:
+      base: /var/www/html
+      dir: spa
+    nodejs:
+      version: 18
+    repo: "http://github.com/IQSS/dataverse-frontend"
+    srcdir: /tmp/dataverse-frontend
   payara:
     user: dataverse
     group: dataverse
@@ -127,8 +146,8 @@ dataverse:
     request_timeout: 1800
     root: /usr/local
     dir: payara5
-    zipurl: https://s3-eu-west-1.amazonaws.com/payara.fish/Payara+Downloads/5.2021.6/payara-5.2021.6.zip
-    zipchecksum: sha256:635af1750cf291b800e98067bd80dfefd80608ee6709215671d11f115e94ff96
+    zipurl: https://nexus.payara.fish/repository/payara-community/fish/payara/distributions/payara/5.2022.3/payara-5.2022.3.zip
+    zipchecksum: sha256:4088221274882de792fda0836ddd47f0550f896e44c62174579c2c70a1177a5d
   google_analytics_key:
   jacoco:
     enabled: false
@@ -138,14 +157,60 @@ dataverse:
   language:
     enabled: false # setting this to true allows the language task to run
     languages:
-     - locale: en
+     - locale: en_US
        title: English
-     - locale: de-DE
+     - locale: de_DE
        title: Deutsch
     language_packs:
       source: https://github.com/GlobalDataverseCommunityConsortium/dataverse-language-packs.git
       version: develop
     lang_directory: /opt/dv/lang
+  licenses:
+    enabled: false
+    user: dataverseAdmin
+    licenses:
+     - name: CC0 1.0
+       uri: http://creativecommons.org/publicdomain/zero/1.0
+       shortDescription: Creative Commons CC0 1.0 Universal Public Domain Dedication.
+       iconUrl: https://licensebuttons.net/p/zero/1.0/88x31.png
+       active: true
+       sortOrder: 1
+     - name: CC BY 4.0
+       uri: http://creativecommons.org/licenses/by/4.0
+       shortDescription: Creative Commons Attribution 4.0 International License.
+       iconUrl: https://licensebuttons.net/l/by/4.0/88x31.png
+       active: true
+       sortOrder: 2
+     - name: CC BY-NC 4.0
+       uri: http://creativecommons.org/licenses/by-nc/4.0
+       shortDescription: Creative Commons Attribution-NonCommercial 4.0 International License.
+       iconUrl: https://licensebuttons.net/l/by-nc/4.0/88x31.png
+       active: true
+       sortOrder: 3
+     - name: CC BY-NC-ND 4.0
+       uri: http://creativecommons.org/licenses/by-nc-nd/4.0
+       shortDescription: Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International License.
+       iconUrl: https://licensebuttons.net/l/by-nc-nd/4.0/88x31.png
+       active: true
+       sortOrder: 4
+     - name: CC BY-NC-SA 4.0
+       uri: http://creativecommons.org/licenses/by-nc-sa/4.0
+       shortDescription: Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International License.
+       iconUrl: https://licensebuttons.net/l/by-nc-sa/4.0/88x31.png
+       active: true
+       sortOrder: 5
+     - name: CC BY-ND 4.0
+       uri: http://creativecommons.org/licenses/by-nd/4.0
+       shortDescription: Creative Commons Attribution-NoDerivatives 4.0 International License.
+       iconUrl: https://licensebuttons.net/l/by-nd/4.0/88x31.png
+       active: true
+       sortOrder: 6
+     - name: CC BY-SA 4.0
+       uri: http://creativecommons.org/licenses/by-sa/4.0
+       shortDescription: Creative Commons Attribution-ShareAlike 4.0 International License.
+       iconUrl: https://licensebuttons.net/l/by-sa/4.0/88x31.png
+       active: true
+       sortOrder: 7
   memheap: 2048
   options:
     filepids: 
@@ -185,7 +250,7 @@ dataverse:
     enabled: false
     argument: '-DcompilerArgument=-Xlint:unchecked test -P all-unit-tests'
   usermgmtkey: burrito
-  version: '5.10'
+  version: '5.13'
 
 build_guides: false
 
@@ -202,6 +267,14 @@ db:
     log_statements: none
     version: 13
     port: 5432
+    replication:
+      enabled: false
+      # all servers must be defined so firewalls may be opened accordingly
+      servers: 
+        - 192.168.0.1
+        - 192.168.0.2
+      user: rep
+#      pass: WRITE SOME GOOD PASSWORD
   backups:
     enabled: false
     rootdir: /opt/pg_backups
@@ -233,7 +306,7 @@ localstack:
   web_ui: 8888
 
 maven:
-  version: 3.8.5
+  version: 3.8.8
 
 munin:
   install: false

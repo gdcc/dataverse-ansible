@@ -68,6 +68,10 @@ Listen {{ apache.ssl.port }} https
   {% endif %}
 {% endif %}
 
+{% if dataverse.frontend.enabled == true %}
+  ProxyPassMatch ^/{{ dataverse.frontend.docroot.dir }} !
+{% endif %}
+
 {% if prometheus.install == true %}
   <Location "/prometheus">
     ProxyPass "http://localhost:9090/prometheus"
@@ -83,11 +87,6 @@ Listen {{ apache.ssl.port }} https
   # custom error document when Glassfish isn't responding
   ErrorDocument 503 /503.html
   ProxyPassMatch ^/503.html$ !
-
-  # don't pass paths used by rApache and TwoRavens to Glassfish
-  ProxyPassMatch ^/RApacheInfo$ !
-  ProxyPassMatch ^/custom !
-  ProxyPassMatch ^/dataexplore !
 
   # allow munin
   ProxyPassMatch ^/munin !

@@ -4,7 +4,7 @@
   debug:
     msg: '##### BUILD WARFILE #####'
 
-- include: maven.yml
+- ansible.builtin.import_tasks: maven.yml
 
 - name: get branch_commit
   shell: 'cd "{{ dataverse.srcdir }}" && git log --oneline | head -1 | awk "{print $1}"'
@@ -27,7 +27,7 @@
     create: yes
 
 - name: build warfile without tests and default maven. tail /tmp/dataverse/mvn.out for gory details.
-  shell: "export JAVA_HOME=/usr/lib/jvm/java-{{ java.version}} && mvn -T 2C clean package -Dmaven.test.skip=true > mvn.out"
+  shell: "export JAVA_HOME={{ java.home }} && mvn -T 2C clean package -Dmaven.test.skip=true > mvn.out"
   args:
     chdir: "{{ dataverse.srcdir }}"
   when: dataverse.unittests.enabled == false and

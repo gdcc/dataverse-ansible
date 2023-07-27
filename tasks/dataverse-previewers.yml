@@ -20,7 +20,7 @@
   when: dataverse.previewers.on_same_server == true
 
 - name: rename dataverse previewers folder
-  shell: 'mv {{ dataverse.previewers.dir }}/dataverse-previewers-* {{ dataverse.previewers.dir }}/dataverse-previewers'
+  shell: '[ -d {{ dataverse.previewers.dir }}/dataverse-previewers/dataverse-previewers-* ] || mv {{ dataverse.previewers.dir }}/dataverse-previewers-* {{ dataverse.previewers.dir }}/dataverse-previewers'
   when: dataverse.previewers.on_same_server == true
 
 - name: 1.2 release zip includes 1.1.1
@@ -37,7 +37,7 @@
 - name: modify dataverse-previewers.sh script for local hosting previewers
   replace:
     path: '{{ ansible_user_dir }}/dataverse-previewers.sh'
-    regexp: 'https://globaldataversecommunityconsortium.github.io'
+    regexp: 'https://gdcc.github.io'
     replace: '{{ dataverse.payara.siteurl }}'
   when: dataverse.previewers.on_same_server == true
 
