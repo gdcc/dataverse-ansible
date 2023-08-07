@@ -257,7 +257,7 @@ dataverse:
     enabled: false
     argument: '-DcompilerArgument=-Xlint:unchecked test -P all-unit-tests'
   usermgmtkey: burrito
-  version: '5.13'
+  version: '5.14'
 #  robots_txt_url: https://guides.dataverse.org/en/latest/_downloads/3a5cd7a283eecd5e93289e30af713554/robots.txt
 
 build_guides: false
