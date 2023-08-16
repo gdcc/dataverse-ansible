@@ -68,6 +68,10 @@ Listen {{ apache.ssl.port }} https
   {% endif %}
 {% endif %}
 
+{% if dataverse.frontend.enabled == true %}
+  ProxyPassMatch ^/{{ dataverse.frontend.docroot.dir }} !
+{% endif %}
+
 {% if prometheus.install == true %}
   <Location "/prometheus">
     ProxyPass "http://localhost:9090/prometheus"

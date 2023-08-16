@@ -93,7 +93,7 @@
     and custom_endpoint_url | length == 0
     and s3.cors_already_set == false
 
-- include: s3_custom_endpoint_url.yml
+- ansible.builtin.import_tasks: s3_custom_endpoint_url.yml
   when: custom_endpoint_url | length > 0
 
 - name: set s3 direct download

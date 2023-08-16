@@ -71,9 +71,9 @@ dataverse:
   language:
     enabled: false # setting this to true allows the language task to run
     languages:
-     - locale: en
+     - locale: en_US
        title: English
-     - locale: de-DE
+     - locale: de_DE
        title: Deutsch
     language_packs:
       source: https://github.com/GlobalDataverseCommunityConsortium/dataverse-language-packs.git
@@ -187,6 +187,16 @@ dataverse:
       path: /usr/local/dvn/data
 #   - label: label
 #     path: /path/to/filestore   ## this is a sample entry for further file stores
+  frontend:
+    branch: develop
+    enabled: false
+    docroot:
+      base: /var/www/html
+      dir: spa
+    nodejs:
+      version: 18
+    repo: "http://github.com/IQSS/dataverse-frontend"
+    srcdir: /tmp/dataverse-frontend
   payara:
     user: dataverse
     group: dataverse
@@ -199,7 +209,7 @@ dataverse:
     request_timeout: 1800
     root: /usr/local
     dir: payara5
-    zipurl: https://s3-eu-west-1.amazonaws.com/payara.fish/Payara+Downloads/5.2022.3/payara-5.2022.3.zip
+    zipurl: https://nexus.payara.fish/repository/payara-community/fish/payara/distributions/payara/5.2022.3/payara-5.2022.3.zip
     zipchecksum: sha256:4088221274882de792fda0836ddd47f0550f896e44c62174579c2c70a1177a5d
   google_analytics_key:
   jacoco:
@@ -263,6 +273,14 @@ db:
     log_statements: none
     version: 13
     port: 5432
+    replication:
+      enabled: false
+      # all servers must be defined so firewalls may be opened accordingly
+      servers: 
+        - 192.168.0.1
+        - 192.168.0.2
+      user: rep
+#      pass: WRITE SOME GOOD PASSWORD
   backups:
     enabled: false
     rootdir: /opt/pg_backups

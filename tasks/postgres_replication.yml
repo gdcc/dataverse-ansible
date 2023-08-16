@@ -1,0 +1,46 @@
+---
+
+#- name: Find servers that get dataverse installed to in this server group. This is later needed for postgres master/slave configuration
+#  set_fact:
+#    servers_in_group: "{{ groups['dataverse'] | intersect(groups[server_group]) }}"
+
+- name: enable replication-related settings on all servers if there are authorized replicators
+  lineinfile:
+    path: '{{ postgres_config_dir }}/postgresql.conf'
+    regexp: '{{ item.regexp }}'
+    line: '{{ item.line }}'
+  with_items:
+   - regexp: 'hot_standby = '
+     line: 'hot_standby = on			# "off" disallows queries during recovery'
+   - regexp: 'listen_addresses = '
+     line: "listen_addresses = '*'		# what IP address(es) to listen on; "
+  when:
+   - db.use_rds == false
+  notify: enable and restart postgres
+
+- name: some more replication-related settings on older (<13) postgres
+  lineinfile:
+    path: '{{ postgres_config_dir }}/postgresql.conf'
+    regexp: '{{ item.regexp }}'
+    line: '{{ item.line }}'
+  with_items:
+   - regexp: 'wal_keep_segments = '
+     line: 'wal_keep_segments = 100		# in logfile segments; 0 disables'
+  when:
+   - db.use_rds == false
+   - db.postgres.version < '13'
+  notify: enable and restart postgres
+
+- name: allow in firewall for specific servers to access postgres
+  ufw: rule=allow port=5432 proto=tcp src={{ item }}
+  with_items: "{{ db.postgres.replication.servers }}"
+  when:
+   - firewall is defined
+   - firewall=='ufw'
+
+- name: create replication postgres user, set permissions
+  postgresql_user:
+    db: '{{ db.postgres.name }}'
+    name: 'rep'
+    password: '{{ db.postgres.replication.pass }}'
+    role_attr_flags: 'REPLICATION'

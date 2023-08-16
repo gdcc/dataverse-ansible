@@ -5,7 +5,7 @@
     msg: '##### GENERATE JACOCO REPORT #####'
 
 # write out jacoco_exec
-- include: restart_payara.yml
+- ansible.builtin.import_tasks: restart_payara.yml
 
 - name: ensure jacoco can write out report
   file:

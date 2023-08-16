@@ -43,7 +43,7 @@
     state: started
 
 # so we can run localstack task stand-alone
-- include: dataverse-fqdn.yml
+- ansible.builtin.import_tasks: dataverse-fqdn.yml
 
 - name: is hostname_external set
   set_fact:

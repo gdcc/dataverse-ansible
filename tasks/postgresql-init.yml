@@ -2,27 +2,31 @@
 
 - name: set postgresql init command
   set_fact:
-    postgres_init: 'creates=/var/lib/pgsql/{{ db.postgres.version }}/data/postgresql.conf /usr/pgsql-{{ db.postgres.version }}/bin/postgresql{{ dataverse_pg_version_short }}-setup initdb'
-  when: ansible_os_family == "RedHat" and
-        db.use_rds == false
+    postgres_init: 'creates={{ postgres_config_dir }}/postgresql.conf /usr/pgsql-{{ db.postgres.version }}/bin/postgresql{{ dataverse_pg_version_short }}-setup initdb'
+    when: ansible_os_family == "RedHat" and
+          db.use_rds == false
 
 - name: init command needs a dash on postgres 10+
   set_fact:
-    postgres_init: 'creates=/var/lib/pgsql/{{ db.postgres.version }}/data/postgresql.conf /usr/pgsql-{{ db.postgres.version }}/bin/postgresql-{{ dataverse_pg_version_short }}-setup initdb'
-  when: >
-    dataverse_pg_version_short is search("1[0-9]") and
-    ansible_os_family == "RedHat" and
-    db.use_rds == false
+    postgres_init: 'creates={{ postgres_config_dir }}/postgresql.conf /usr/pgsql-{{ db.postgres.version }}/bin/postgresql-{{ dataverse_pg_version_short }}-setup initdb'
+  when:
+   - dataverse_pg_version_short is search("1[0-9]")
+   - ansible_os_family == "RedHat"
+   - db.use_rds == false
 
 - name: have we init-ed postgres yet?
   stat:
     path: '/var/lib/pgsql/{{ db.postgres.version }}/initdb.log'
   register: postgres_initdb
-  when: db.use_rds == false
+  when:
+   - db.use_rds == false
+   - ansible_os_family == "RedHat"
 
 - name: init postgres on RHEL/Rocky
   shell: '{{ postgres_init }}'
-  when: postgres_initdb.stat.exists == false and
-        db.use_rds == false and
-        ansible_os_family == "RedHat"
+  when: 
+   - db.use_rds == false
+   - ansible_os_family == "RedHat"
+   - postgres_initdb.stat.exists == false
   notify: enable and restart postgres
+

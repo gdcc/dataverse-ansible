@@ -1,0 +1,19 @@
+# "local" is for Unix domain socket connections only
+local   all             all                                     trust
+# IPv4 local connections:
+host    all             all             127.0.0.1/32            password
+# IPv6 local connections:
+host    all             all             ::1/128                 password
+
+# replication and dataverse access from other servers
+{% if db.postgres.replication.enabled is defined %}
+{% for item in db.postgres.replication.servers %}
+{% if item | regex_search(".*/.*") %}
+host    all             all        {{ item }}      md5
+host    replication     rep        {{ item }}      md5
+{% else %}
+host    all             all        {{ item }}/32      md5
+host    replication     rep        {{ item }}/32      md5
+{% endif %}
+{% endfor %}
+{% endif %}

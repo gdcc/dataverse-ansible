@@ -5,10 +5,10 @@
     msg: '##### SAMPLEDATA #####'
 
 # grab siteUrl so sampledata can run standalone
-- include: dataverse-fqdn.yml
+- ansible.builtin.import_tasks: dataverse-fqdn.yml
 
 # grab apitoken so sampledata can run standalone
-- include: dataverse-apitoken.yml
+- ansible.builtin.import_tasks: dataverse-apitoken.yml
 
 - name: "RHEL/Rocky 8.6 wants Python-3.8 these days."
   ansible.builtin.package:

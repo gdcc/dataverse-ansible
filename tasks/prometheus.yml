@@ -4,7 +4,7 @@
   debug:
     msg: '##### PROMETHEUS #####'
 
-- include: dataverse-fqdn.yml
+- ansible.builtin.import_tasks: dataverse-fqdn.yml
 
 - name: systemd no likey escaped colons
   set_fact:
@@ -19,7 +19,7 @@
     policy: targeted
     state: permissive
 
-- include: collectd.yml
+- ansible.builtin.import_tasks: collectd.yml
 
 - name: add prometheus service account
   user:
@@ -106,4 +106,4 @@
     state: started
     enabled: yes
 
-- include: grafana.yml
+- ansible.builtin.import_tasks: grafana.yml
