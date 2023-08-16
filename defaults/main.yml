@@ -248,6 +248,7 @@ dataverse:
     root: /usr/local/solr
     user: solr
     version: 8.11.1
+    # download_url: # override the default download URL
     checksum: sha256:9ec540cbd8e45f3d15a6b615a22939f5e6242ca81099951a47d3c082c79866a9
     listen: 127.0.0.1
   srcdir: /tmp/dataverse
@@ -256,7 +257,8 @@ dataverse:
     enabled: false
     argument: '-DcompilerArgument=-Xlint:unchecked test -P all-unit-tests'
   usermgmtkey: burrito
-  version: '5.13'
+  version: '5.14'
+#  robots_txt_url: https://guides.dataverse.org/en/latest/_downloads/3a5cd7a283eecd5e93289e30af713554/robots.txt
 
 build_guides: false
 
@@ -298,6 +300,7 @@ grafana:
 
 java:
   version: 11
+  home: /usr/lib/jvm/java-{{ java.version}}
 
 localstack:
   enabled: false
@@ -409,6 +412,11 @@ shibboleth:
 #      emailAddress: TODO
   SSO: "<SSO>SAML2 SAML1</SSO>"
   MetadataProvider: '<MetadataProvider type="XML" file="dataverse-idp-metadata.xml" backingFilePath="local-idp-metadata.xml" legacyOrgNames="true" reloadInterval="7200"/>'
+
+orcid:
+  enabled: false
+  clientId: SETME
+  clientSecret: SETME
 
 sshkeys:
   enabled: false

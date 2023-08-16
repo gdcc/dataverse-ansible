@@ -1,0 +1,16 @@
+
+- name: create orcid.json
+  template:
+    src: orcid.json.j2
+    dest: /opt/dv/orcid.json
+  register: orcid_json
+
+- name: configure orcid login
+  uri:
+    url: "{{ dataverse.api.location }}/admin/authenticationProviders"
+    method: POST
+    src: /opt/dv/orcid.json
+    remote_src: true
+    body_format: json
+    status_code: 201
+  when: orcid_json.changed

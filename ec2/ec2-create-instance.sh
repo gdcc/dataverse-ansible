@@ -253,7 +253,6 @@ if [ ! -z "$LOCAL_LOG_PATH" ]; then
    # 2 grab logs for local processing in jenkins
    rsync -av -e "ssh -i $PEM_FILE" --ignore-missing-args $AWS_USER@$PUBLIC_DNS:/tmp/dataverse/target/site $LOCAL_LOG_PATH/
    rsync -av -e "ssh -i $PEM_FILE" --ignore-missing-args $AWS_USER@$PUBLIC_DNS:/tmp/dataverse/target/surefire-reports $LOCAL_LOG_PATH/
-   rsync -av -e "ssh -i $PEM_FILE" --ignore-missing-args $AWS_USER@$PUBLIC_DNS:/usr/local/payara5/glassfish/domains/domain1/logs/server* $LOCAL_LOG_PATH/
    # 3 grab mvn.out
    rsync -av -e "ssh -i $PEM_FILE" --ignore-missing-args $AWS_USER@$PUBLIC_DNS:/tmp/dataverse/mvn.out $LOCAL_LOG_PATH/
    # 4 jacoco
@@ -261,8 +260,8 @@ if [ ! -z "$LOCAL_LOG_PATH" ]; then
    rsync -av -e "ssh -i $PEM_FILE" --ignore-missing-args $AWS_USER@$PUBLIC_DNS:/tmp/dataverse/target/*.exec $LOCAL_LOG_PATH/
    rsync -av -e "ssh -i $PEM_FILE" --ignore-missing-args $AWS_USER@$PUBLIC_DNS:/tmp/dataverse/target/classes $LOCAL_LOG_PATH/
    rsync -av -e "ssh -i $PEM_FILE" --ignore-missing-args $AWS_USER@$PUBLIC_DNS:/tmp/dataverse/src $LOCAL_LOG_PATH/
-   # 5 server.log*
-   rsync -av -e "ssh -i $PEM_FILE" --ignore-missing-args $AWS_USER@$PUBLIC_DNS:/usr/local/payara5/glassfish/domains/domain1/logs/server.log* $LOCAL_LOG_PATH/
+   # 5 server.logs
+   rsync -av -e "ssh -i $PEM_FILE" --ignore-missing-args $AWS_USER@$PUBLIC_DNS:/usr/local/payara*/glassfish/domains/domain1/logs/server* $LOCAL_LOG_PATH/
    # 6 query_count.out
    rsync -av -e "ssh -i $PEM_FILE" --ignore-missing-args $AWS_USER@$PUBLIC_DNS:/tmp/query_count.out $LOCAL_LOG_PATH/
    # 7 install.out and setup-all.*.log

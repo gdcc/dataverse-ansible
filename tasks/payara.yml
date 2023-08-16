@@ -136,5 +136,24 @@
     mode: '0750'
     state: directory
 
+- name: workaround for FISH-7665
+  lineinfile:
+    path: '{{ payara_dir }}/glassfish/config/asenv.conf'
+    line: '{{ item }}'
+  with_items:
+    - 'export JAVA_TOOL_OPTIONS'
+    - 'JAVA_TOOL_OPTIONS="-Djdk.util.zip.disableZip64ExtraFieldValidation=true --add-opens=java.base/java.io=ALL-UNNAMED"'
+  when: dataverse.payara.zipurl is match(".*payara-6.*")
+
+- name: workaround for FISH-7665
+  template:
+    src: payara6.service.j2
+    dest: /usr/lib/systemd/system/payara.service
+    owner: root
+    group: root
+    mode: 0644
+  when: (ansible_os_family == "RedHat") and (dataverse.payara.zipurl is match(".*payara-6.*"))
+  notify: reload systemd
+
 - name: flush handlers to start payara and possibly reload systemd
   meta: flush_handlers

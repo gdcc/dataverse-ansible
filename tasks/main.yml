@@ -17,6 +17,11 @@
   tags:
    - always
 
+- ansible.builtin.import_tasks: ansible-scripts.yml
+  tags:
+   - always
+   - scripts
+
 - ansible.builtin.import_tasks: rserve.yml
   when: rserve.install == true
   tags:
@@ -112,6 +117,11 @@
   when: shibboleth.enabled == True
   tags:
   - shibboleth
+
+- ansible.builtin.import_tasks: orcid.yml
+  when: orcid.enabled == "true"
+  tags:
+  - orcid
 
 - ansible.builtin.import_tasks: sampledata.yml
   when: dataverse.sampledata.enabled == true
