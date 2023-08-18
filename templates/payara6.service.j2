@@ -1,0 +1,15 @@
+[Unit]
+Description = Payara Server
+After = syslog.target network.target
+
+[Service]
+Type = forking
+User = {{ dataverse.payara.user }}
+ExecStart = {{ payara_dir }}/bin/asadmin start-domain
+ExecStop = {{ payara_dir }}/bin/asadmin stop-domain
+ExecReload = {{ payara_dir }}/bin/asadmin restart-domain
+LimitNOFILE = 65000
+TimeoutStartSec = {{ dataverse.payara.launch_timeout }}s
+
+[Install]
+WantedBy = multi-user.target

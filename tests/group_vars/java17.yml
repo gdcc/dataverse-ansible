@@ -247,8 +247,6 @@ dataverse:
     enabled: true
     argument: '-DcompilerArgument=-Xlint:unchecked test -P all-unit-tests'
   usermgmtkey: burrito
-  deployment:
-    upgrade_only: false
   version: '5.14'
 
 build_guides: false
@@ -290,7 +288,7 @@ grafana:
   grafana_password: 'adm1n'
 
 java:
-  version: 11
+  version: 17
 
 localstack:
   enabled: false
@@ -377,6 +375,6 @@ harvest:
 
 # un-nesting the below so's we can pass them at the CLI
 
-dataverse_branch: develop
+dataverse_branch: 8094-java-17
 dataverse_repo: https://github.com/IQSS/dataverse.git
 any_errors_fatal: true
