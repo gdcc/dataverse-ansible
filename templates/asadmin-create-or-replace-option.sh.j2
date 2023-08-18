@@ -1,0 +1,16 @@
+#!/bin/bash
+
+OPTION=$1
+VALUE=`echo "$2" | sed 's/:/\\:/g'`
+ESCVALUE=`echo "$VALUE" | sed 's/:/\\\\:/g'`
+
+
+if {{ payara_dir}}/bin/asadmin list-jvm-options | grep -q "^-D$OPTION=$VALUE$"
+then
+	echo "\-D$OPTION=$VALUE" already specified, nothing to do
+else
+	CURRENT=`{{ payara_dir}}/bin/asadmin list-jvm-options | grep "^-D$OPTION=" | sed 's/:/\\:/g'`
+#	echo "$CURRENT"
+	[ "$CURRENT" ] && {{ payara_dir}}/bin/asadmin delete-jvm-options "$CURRENT"
+	{{ payara_dir}}/bin/asadmin create-jvm-options "-D$OPTION=$ESCVALUE"
+fi
