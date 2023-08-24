@@ -289,7 +289,7 @@ grafana:
   grafana_password: 'adm1n'
 
 java:
-  version: 11
+  version: 17
 
 localstack:
   enabled: false
