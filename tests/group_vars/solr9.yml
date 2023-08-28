@@ -143,8 +143,8 @@ dataverse:
     siteurl: 
     root: /usr/local
     dir: payara6
-    zipurl: https://nexus.payara.fish/repository/payara-community/fish/payara/distributions/payara/6.2023.7/payara-6.2023.7.zip
-    zipchecksum: sha256:485d14bb54ba945fa5ad2e7b5fac125ba2de8bf2b1c872c48d0d8c4e6fcba545
+    zipurl: https://nexus.payara.fish/repository/payara-community/fish/payara/distributions/payara/6.2023.8/payara-6.2023.8.zip
+    zipchecksum: sha256:108ed0fa7f97bb3833ff00610a4951dd41389e2647dffe28132ad54231af694a
   google_analytics_key:
   jacoco:
     enabled: true
@@ -289,7 +289,7 @@ grafana:
   grafana_password: 'adm1n'
 
 java:
-  version: 11
+  version: 17
 
 localstack:
   enabled: false
