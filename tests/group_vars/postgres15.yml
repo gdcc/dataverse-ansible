@@ -1,0 +1,381 @@
+---
+# dataverse/tests/group_vars/jenkins.yml
+
+apache:
+  enabled: true
+  public_fqdn: 
+  ssl:
+    enabled: false
+    remote_cert: false
+    port: 443
+    cert: 
+    interm: 
+    key: 
+    pem:
+      cert: 
+      key: 
+      interm: 
+  port: 80
+  use_ajp: true
+  behind_reverse_proxy: false
+  behind_ssl_reverse_proxy: false
+  block:
+    admin: true
+    builtin_users: true
+    destroy: true
+    sword: false
+
+letsencrypt:
+  enabled: false
+  certbot:
+    autorenew: true
+    email: 
+    user: certbot
+
+dataverse:
+  adminpass: admin1
+  allow_signups: true
+  api:
+    allow_lookup: false
+    blocked_endpoints: "admin,test"
+    blocked_policy: "localhost-only"
+    location: "http://localhost:8080/api"
+    test_suite: true
+    # possible test values from https://github.com/IQSS/dataverse/blob/develop/conf/docker-aio/run-test-suite.sh#L11
+    # beware DataversesIT and DatasetsIT at minimum must be run for any other tests to succeed. have fun.
+    #tests: "DataversesIT,DatasetsIT,AdminIT"
+    tests: default
+  branding:
+    enabled: false
+    directory: "{{ playbook_dir }}/files/branding"
+    favicons_directory: "{{ playbook_dir }}/files/favicons"
+    fileSettings:
+     - setting: HeaderCustomizationFile
+       file: custom-header.html
+     - setting: StyleCustomizationFile
+       file: custom-stylesheet.css
+     - setting: LogoCustomizationFile
+       file: topbanner001w425_darkbg.png'
+    otherSettings:
+     - setting: FooterCopyright
+       value: Your institute name here
+  copyright: "Your Institution"
+  counter:
+    enabled: false
+    #geoipdir: maxmind_geoip
+    #geoipfile: GeoLite2-Country.mmdb
+    hub_api_token: set_me_in_secrets
+    hub_base_url: "https://api.datacite.org"
+    machines_url: "https://raw.githubusercontent.com/CDLUC3/Make-Data-Count/master/user-agents/lists/machine.txt"
+    maxmind_geoip_country_path: "maxmind_geoip/GeoLite2-Country.mmdb"
+    output_file: "/dataverse/sushi_sample_logs"
+    output_format: json
+    platform: dash
+    robots_url: "https://raw.githubusercontent.com/CDLUC3/Make-Data-Count/master/user-agents/lists/robot.txt"
+    version: "0.1.04"
+    upload_to_hub: False
+    user: counter
+    year_month: "2018-05"
+  custom_metadata_blocks:
+    enabled: false
+    urls:
+      - https://github.com/IQSS/dataverse/files/3744336/codemeta.tsv.txt
+  default:
+    config:
+    storage_id: file
+  demo: false
+  pid:
+    authority: "10.5072"
+    protocol: doi
+    shoulder: "FK2/"
+  doi:
+    baseurl: "https://mds.test.datacite.org/"
+    username: "test.account"
+    password: "not.my.password"
+    provider: FAKE
+    mdcbaseurl: "https://api.test.datacite.org/"
+    dataciterestapiurl: "https://api.test.datacite.org"
+  ## Handlenet variables are only used if dataverse.pid.protocol is set to 'hdl'
+  handlenet:
+    independenthandleservice: 'false'
+#   handleauthhandle: YOUR:HANDLE/USERNAME
+    admcredfile: /opt/dv/admpriv.bin
+    admcredfile_source: files/handlenet/admcredfile
+#   admprivphrase:
+#   index: 300
+  externaltools:
+    datacurationtool:
+      enabled: true
+      method: demo
+    dataexplorer:
+      enabled: true
+    wholetale:
+      enabled: false
+  ## The first item of 'filesdirs' is the default filestore
+  ## If you change the label, be prepared to change the SQL database if there are already files here
+  ## It is better practice to add a new data store and then migrate to it later
+  ## Also, changing the default storage takes effect immediately for temp files, but
+  ## only after restart for publishing (i.e. without restart the temp files will be moved to the old default data store at publish time).
+  filesdirs:
+    - label: file
+      path: /usr/local/dvn/data
+#   - label: label
+#     path: /path/to/filestore   ## this is a sample entry for further file stores
+  frontend:
+    branch: develop
+    enabled: false
+    docroot:
+      base: /var/www/html
+      dir: spa
+    nodejs:
+      version: 18
+    repo: "http://github.com/IQSS/dataverse-frontend"
+    srcdir: /tmp/dataverse-frontend
+  payara:
+    user: dataverse
+    group: dataverse
+    domain: domain1
+    logformat: ulf
+    adminuser: admin
+    adminpass: notPr0d
+    launch_timeout: 180
+    request_timeout: 1800
+    siteurl: 
+    root: /usr/local
+    dir: payara6
+    zipurl: https://nexus.payara.fish/repository/payara-community/fish/payara/distributions/payara/6.2023.8/payara-6.2023.8.zip
+    zipchecksum: sha256:108ed0fa7f97bb3833ff00610a4951dd41389e2647dffe28132ad54231af694a
+  google_analytics_key:
+  jacoco:
+    enabled: true
+    home: /tmp/jacoco
+    version: 0.8.7
+  file_fixity_checksum_algorithm: "MD5"
+  language:
+    enabled: false
+    languages:
+     - locale: en_US
+       title: English
+     - locale: de_DE
+       title: Deutsch
+    language_packs:
+      source: https://github.com/GlobalDataverseCommunityConsortium/dataverse-language-packs.git
+      version: develop
+    lang_directory: /opt/dv/lang
+  licenses:
+    enabled: false
+    user: dataverseAdmin
+    licenses:
+     - name: CC0 1.0
+       uri: http://creativecommons.org/publicdomain/zero/1.0
+       shortDescription: Creative Commons CC0 1.0 Universal Public Domain Dedication.
+       iconUrl: https://licensebuttons.net/p/zero/1.0/88x31.png
+       active: true
+       sortOrder: 1
+     - name: CC BY 4.0
+       uri: http://creativecommons.org/licenses/by/4.0
+       shortDescription: Creative Commons Attribution 4.0 International License.
+       iconUrl: https://licensebuttons.net/l/by/4.0/88x31.png
+       active: true
+       sortOrder: 2
+     - name: CC BY-NC 4.0
+       uri: http://creativecommons.org/licenses/by-nc/4.0
+       shortDescription: Creative Commons Attribution-NonCommercial 4.0 International License.
+       iconUrl: https://licensebuttons.net/l/by-nc/4.0/88x31.png
+       active: true
+       sortOrder: 3
+     - name: CC BY-NC-ND 4.0
+       uri: http://creativecommons.org/licenses/by-nc-nd/4.0
+       shortDescription: Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International License.
+       iconUrl: https://licensebuttons.net/l/by-nc-nd/4.0/88x31.png
+       active: true
+       sortOrder: 4
+     - name: CC BY-NC-SA 4.0
+       uri: http://creativecommons.org/licenses/by-nc-sa/4.0
+       shortDescription: Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International License.
+       iconUrl: https://licensebuttons.net/l/by-nc-sa/4.0/88x31.png
+       active: true
+       sortOrder: 5
+     - name: CC BY-ND 4.0
+       uri: http://creativecommons.org/licenses/by-nd/4.0
+       shortDescription: Creative Commons Attribution-NoDerivatives 4.0 International License.
+       iconUrl: https://licensebuttons.net/l/by-nd/4.0/88x31.png
+       active: true
+       sortOrder: 6
+     - name: CC BY-SA 4.0
+       uri: http://creativecommons.org/licenses/by-sa/4.0
+       shortDescription: Creative Commons Attribution-ShareAlike 4.0 International License.
+       iconUrl: https://licensebuttons.net/l/by-sa/4.0/88x31.png
+       active: true
+       sortOrder: 7
+  memheap: 4096
+  options:
+    filepids: 
+    maxfileuploadsizeinbytes:
+    provcollectionenabled: true
+    tabularingestsizelimit: 
+  previewers:
+    enabled: false
+    on_same_server: true
+    zip_url: https://github.com/gdcc/dataverse-previewers/releases/download/1.2/dataverse-previewers-1.2.zip
+    dir: /var/www/html
+  sampledata:
+    enabled: false
+    dir: /tmp/sampledata
+    repo: https://github.com/IQSS/dataverse-sample-data.git
+    branch: master
+    venv: /tmp/sampledata_venv
+  custom_sampledata: 
+    enabled: false
+    custom_sampledir: "{{ playbook_dir }}/custom_sampledata"
+    custom_sampledatasets: "{{ playbook_dir }}/custom_sampledata/datasets"
+    custom_sampledataverses: "{{ playbook_dir }}/custom_sampledata/dataverses"
+    custom_sampleusers: "{{ playbook_dir }}/custom_sampledata/users"
+    custom_samplefiles: "{{ playbook_dir }}/custom_sampledata/files"
+  service_email: noreply@dataverse.yourinstitution.edu
+  smtp: localhost
+  solr:
+    download_url: https://archive.apache.org/dist/solr/solr/9.3.0/solr-9.3.0.tgz
+    group: solr
+    root: /usr/local/solr
+    user: solr
+    version: 9.3.0
+    listen: 127.0.0.1
+    checksum: sha256:2a924a776d7c06dea561f12bdb17291dbaecc9e9a06f363d4599acb7fb7bfa71
+  srcdir: /tmp/dataverse
+  thumbnails: false
+  unittests:
+    enabled: true
+    argument: '-DcompilerArgument=-Xlint:unchecked test -P all-unit-tests'
+  usermgmtkey: burrito
+  version: '5.14'
+
+build_guides: false
+
+db:
+  postgres:
+    enabled: true
+    adminpass: DVn33dsth1s
+    name: dvndb
+    host: localhost
+    user: dvnuser
+    pass: dvnsecret
+    jdbcurl:
+    log_lock_waits: true
+    log_statements: all
+    version: 15
+    port: 5432
+    replication:
+      enabled: false
+      # all servers must be defined so firewalls may be opened accordingly
+      servers: 
+        - 192.168.0.1
+        - 192.168.0.2
+      user: rep
+#      pass: WRITE SOME GOOD PASSWORD
+  backups:
+    enabled: false
+    rootdir: /opt/pg_backups
+    backupdir: backups
+    host: localhost
+    user: postgres
+    custom: 'yes'
+    globals: 'no'
+    plain: 'no'
+  use_rds: false
+
+grafana:
+  grafana_user: 'admin'
+  grafana_password: 'adm1n'
+
+java:
+  version: 17
+
+localstack:
+  enabled: false
+  docker:
+    cidr: 
+    repo: https://download.docker.com/linux/centos/docker-ce.repo
+  container: 's3-test'
+  # set to /tmp/localstack/data to enable persistence
+  data_dir:
+  debug: true
+  hostname_external:
+  web_ui: 8888
+
+maven:
+  version: 3.8.8
+
+munin:
+  install: false
+  admin:
+    user: admin
+    passwd: p4sswurd
+
+postfix:
+  enabled: true
+
+prometheus:
+  install: false
+  node_exporter: https://github.com/prometheus/node_exporter/releases/download/v1.0.1/node_exporter-1.0.1.linux-amd64.tar.gz
+  root: /usr/local/prometheus
+  url: https://github.com/prometheus/prometheus/releases/download/v2.19.1/prometheus-2.19.1.linux-amd64.tar.gz
+  user: prometheus
+
+rserve:
+  install: false
+  host: localhost
+  user: rserve
+  group: rserve
+  pass: rserve
+  port: 6311
+  workdir: /tmp/Rserv
+
+s3:
+  enabled: false
+  access_key: 4cc355_k3y
+  secret_access_key: s3cr3t_4cc355_k3y
+  bucket_name: s3-test
+  cors_already_set: false
+  create_bucket: true
+  # for non-amazon services.
+  custom_endpoint_url: "http://localhost:4572"
+  # note: direct upload and download require CORS on the bucket
+  download_redirect: true
+  upload_redirect: true
+  files_type: s3
+  ingestsizelimit:
+  label: s3-test
+  # for localstack this must be true
+  path_style_access: true
+  region: us-east-1
+  storage_driver_id: s3
+  url_expiration_minutes: 60
+  payload_signing: false
+  chunked_encoding: true
+
+schemaspy:
+  enabled: false
+  jarurl: https://github.com/schemaspy/schemaspy/releases/download/v6.1.0/schemaspy-6.1.0.jar
+
+shibboleth:
+  enabled: false
+
+sshkeys:
+  enabled: false
+  files:
+  urls:
+  user:
+
+
+harvest:
+  oaiserver:
+    maxidentifiers: 2
+    maxrecords: 2
+
+
+# un-nesting the below so's we can pass them at the CLI
+
+dataverse_branch: develop
+dataverse_repo: https://github.com/IQSS/dataverse.git
+any_errors_fatal: true
