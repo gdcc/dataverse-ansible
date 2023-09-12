@@ -127,5 +127,13 @@
     role_attr_flags: 'NOSUPERUSER,CREATEDB,CREATEROLE,INHERIT,LOGIN'
   when: db.use_rds == false
 
+- name: postgresql 15 requires explicit permissions on public schema
+  community.postgresql.postgresql_privs:
+    db: '{{ db.postgres.name }}'
+    privs: CREATE
+    type: schema
+    objs: public
+    role: '{{ db.postgres.user }}'
+
 - ansible.builtin.import_tasks: postgres_sequential_identifiers.yml
   when: dataverse.api.test_suite == true
