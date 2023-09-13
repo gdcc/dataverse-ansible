@@ -259,6 +259,7 @@ build_guides: false
 db:
   postgres:
     enabled: true
+    auth: trust
     adminpass: DVn33dsth1s
     name: vagrantdb
     host: localhost

@@ -1,9 +1,9 @@
 # "local" is for Unix domain socket connections only
-local   all             all                                     trust
+local   all             all                                     {{ db.postgres.auth }}
 # IPv4 local connections:
-host    all             all             127.0.0.1/32            password
+host    all             all             127.0.0.1/32            {{ db.postgres.auth }}
 # IPv6 local connections:
-host    all             all             ::1/128                 password
+host    all             all             ::1/128                 {{ db.postgres.auth }}
 
 # replication and dataverse access from other servers
 {% if db.postgres.replication.enabled is defined %}

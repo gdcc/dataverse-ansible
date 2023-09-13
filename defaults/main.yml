@@ -265,6 +265,7 @@ build_guides: false
 db:
   postgres:
     enabled: true
+    auth: scram-sha-256
     adminpass: DVn33dsth1s
     name: dvndb
     host: localhost
