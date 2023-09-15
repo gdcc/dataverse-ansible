@@ -235,7 +235,7 @@ dataverse:
   service_email: noreply@dataverse.yourinstitution.edu
   smtp: localhost
   solr:
-    download_url: https://archive.apache.org/dist/solr/solr/9.3.0/solr-9.3.0.tgz
+    download_url: https://dlcdn.apache.org/solr/solr/9.3.0/solr-9.3.0.tgz
     group: solr
     root: /usr/local/solr
     user: solr
@@ -248,7 +248,7 @@ dataverse:
     enabled: true
     argument: '-DcompilerArgument=-Xlint:unchecked test -P all-unit-tests'
   usermgmtkey: burrito
-  version: '5.14'
+  version: '6.0'
 
 build_guides: false
 
