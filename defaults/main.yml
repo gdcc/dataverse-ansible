@@ -208,9 +208,9 @@ dataverse:
     launch_timeout: 180
     request_timeout: 1800
     root: /usr/local
-    dir: payara5
-    zipurl: https://nexus.payara.fish/repository/payara-community/fish/payara/distributions/payara/5.2022.3/payara-5.2022.3.zip
-    zipchecksum: sha256:4088221274882de792fda0836ddd47f0550f896e44c62174579c2c70a1177a5d
+    dir: payara6
+    zipurl: https://nexus.payara.fish/repository/payara-community/fish/payara/distributions/payara/6.2023.8/payara-6.2023.8.zip
+    zipchecksum: sha256:108ed0fa7f97bb3833ff00610a4951dd41389e2647dffe28132ad54231af694a
   google_analytics_key:
   jacoco:
     enabled: false
@@ -244,20 +244,20 @@ dataverse:
   service_email: noreply@dataverse.yourinstitution.edu
   smtp: localhost # or the FQDN of your organization's SMTP relay
   solr:
+    download_url: https://dlcdn.apache.org/solr/solr/9.3.0/solr-9.3.0.tgz
     group: solr
     root: /usr/local/solr
     user: solr
-    version: 8.11.1
-    # download_url: # override the default download URL
-    checksum: sha256:9ec540cbd8e45f3d15a6b615a22939f5e6242ca81099951a47d3c082c79866a9
+    version: 9.3.0
     listen: 127.0.0.1
+    checksum: sha256:2a924a776d7c06dea561f12bdb17291dbaecc9e9a06f363d4599acb7fb7bfa71
   srcdir: /tmp/dataverse
   thumbnails: false
   unittests:
     enabled: false
     argument: '-DcompilerArgument=-Xlint:unchecked test -P all-unit-tests'
   usermgmtkey: burrito
-  version: '5.14'
+  version: '6.0'
 #  robots_txt_url: https://guides.dataverse.org/en/latest/_downloads/3a5cd7a283eecd5e93289e30af713554/robots.txt
 
 build_guides: false
@@ -300,7 +300,7 @@ grafana:
   grafana_password: 'adm1n'
 
 java:
-  version: 11
+  version: 17
   home: /usr/lib/jvm/java-{{ java.version}}
 
 localstack:
