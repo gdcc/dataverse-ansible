@@ -260,7 +260,8 @@ build_guides: false
 db:
   postgres:
     enabled: true
-    auth: trust
+    auth: scram-sha-256
+    adminuser: postgres
     adminpass: DVn33dsth1s
     name: vagrantdb
     host: localhost

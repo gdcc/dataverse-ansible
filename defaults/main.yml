@@ -267,6 +267,7 @@ db:
     enabled: true
     auth: scram-sha-256
     adminpass: DVn33dsth1s
+    adminuser: postgres
     name: dvndb
     host: localhost
     user: dvnuser

@@ -109,14 +109,20 @@
 - meta: flush_handlers
 
 - name: dataverse python installer wants to be a postgres admin
-  postgresql_user:
-    name: postgres
+  community.postgresql.postgresql_user:
+    db: postgres
+    login_user: '{{ db.postgres.adminuser }}'
+    name: '{{ db.postgres.adminuser }}'
     password: '{{ db.postgres.adminpass }}'
+  become: true
+  become_user: postgres
   when: db.use_rds == false
 
 - name: create dataverse postgres database
   postgresql_db:
     name: '{{ db.postgres.name }}'
+  become: true
+  become_user: postgres
   when: db.use_rds == false
 
 - name: create dataverse postgres user, set permissions
@@ -125,6 +131,8 @@
     name: '{{ db.postgres.user }}'
     password: '{{ db.postgres.pass }}'
     role_attr_flags: 'NOSUPERUSER,CREATEDB,CREATEROLE,INHERIT,LOGIN'
+  become: true
+  become_user: postgres
   when: db.use_rds == false
 
 - name: postgresql 15 requires explicit permissions on public schema
@@ -134,6 +142,9 @@
     type: schema
     objs: public
     role: '{{ db.postgres.user }}'
+  become: true
+  become_user: postgres
+  when: db.use_rds == false
 
 - ansible.builtin.import_tasks: postgres_sequential_identifiers.yml
   when: dataverse.api.test_suite == true
