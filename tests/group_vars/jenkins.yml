@@ -263,7 +263,7 @@ db:
     jdbcurl:
     log_lock_waits: true
     log_statements: all
-    version: 13
+    version: 16
     port: 5432
     replication:
       enabled: false
