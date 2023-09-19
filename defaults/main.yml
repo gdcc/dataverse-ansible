@@ -41,6 +41,8 @@ letsencrypt:
     email:
     user: certbot
 
+dataverse_misc_files_dir: '/opt/dv'
+
 dataverse:
   adminpass: admin1
   allow_signups: true
@@ -78,7 +80,7 @@ dataverse:
     language_packs:
       source: https://github.com/GlobalDataverseCommunityConsortium/dataverse-language-packs.git
       version: develop
-    lang_directory: /opt/dv/lang
+    lang_directory: "{{ dataverse_misc_files_dir }}/lang"
   licenses:
     enabled: false
     user: dataverseAdmin
@@ -165,7 +167,7 @@ dataverse:
   handlenet:
     independenthandleservice: 'false'
 #   handleauthhandle: YOUR:HANDLE/USERNAME
-    admcredfile: /opt/dv/admpriv.bin
+    admcredfile: "{{ dataverse_misc_files_dir }}/admpriv.bin"
     admcredfile_source: files/handlenet/admcredfile
 #   admprivphrase:
 #   index: 300
