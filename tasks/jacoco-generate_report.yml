@@ -16,7 +16,7 @@
     mode: '0755'
 
 - name: merge jacoco exec files
-  shell: 'java -jar {{ dataverse.jacoco.home }}/lib/jacococli.jar merge {{ payara_dir }}/glassfish/domains/{{ dataverse.payara.domain }}/config/jacoco.exec {{ dataverse.srcdir }}/target/jacoco.exec --destfile {{ dataverse.srcdir }}/target/jacoco_merged.exec'
+  shell: 'java -jar {{ dataverse.jacoco.home }}/lib/jacococli.jar merge {{ payara_dir }}/glassfish/domains/{{ dataverse.payara.domain }}/config/jacoco.exec {{ dataverse.srcdir }}/target/coverage-reports/jacoco-unit.exec --destfile {{ dataverse.srcdir }}/target/jacoco_merged.exec'
   args:
     chdir: '{{ dataverse.jacoco.home }}'
 
