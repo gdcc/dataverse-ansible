@@ -257,7 +257,8 @@ if [ ! -z "$LOCAL_LOG_PATH" ]; then
    rsync -av -e "ssh -i $PEM_FILE" --ignore-missing-args $AWS_USER@$PUBLIC_DNS:/tmp/dataverse/mvn.out $LOCAL_LOG_PATH/
    # 4 jacoco
    rsync -av -e "ssh -i $PEM_FILE" --ignore-missing-args $AWS_USER@$PUBLIC_DNS:/tmp/dataverse/target/coverage-it $LOCAL_LOG_PATH/
-   rsync -av -e "ssh -i $PEM_FILE" --ignore-missing-args $AWS_USER@$PUBLIC_DNS:/tmp/dataverse/target/*.exec $LOCAL_LOG_PATH/
+   rsync -av -e "ssh -i $PEM_FILE" --ignore-missing-args $AWS_USER@$PUBLIC_DNS:/tmp/dataverse/target/coverage-reports/jacoco-unit.exec $LOCAL_LOG_PATH/
+   rsync -av -e "ssh -i $PEM_FILE" --ignore-missing-args $AWS_USER@$PUBLIC_DNS:/tmp/dataverse/target/jacoco_merged.exec $LOCAL_LOG_PATH/
    rsync -av -e "ssh -i $PEM_FILE" --ignore-missing-args $AWS_USER@$PUBLIC_DNS:/tmp/dataverse/target/classes $LOCAL_LOG_PATH/
    rsync -av -e "ssh -i $PEM_FILE" --ignore-missing-args $AWS_USER@$PUBLIC_DNS:/tmp/dataverse/src $LOCAL_LOG_PATH/
    # 5 server.logs
