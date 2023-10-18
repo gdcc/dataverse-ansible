@@ -117,6 +117,7 @@ dataverse:
   ## Also, changing the default storage takes effect immediately for temp files, but
   ## only after restart for publishing (i.e. without restart the temp files will be moved to the old default data store at publish time).
   filesdirs:
+    storage_driver_id: file
     - label: file
       path: /usr/local/dvn/data
 #   - label: label
@@ -334,7 +335,8 @@ rserve:
   workdir: /tmp/Rserv
 
 s3:
-  - bucket_name: s3-test
+  - label: s3-test
+    bucket_name: s3-test
     enabled: false
     access_key: 4cc355_k3y
     secret_access_key: s3cr3t_4cc355_k3y
@@ -347,15 +349,14 @@ s3:
     upload_redirect: false
     files_type: s3
     ingestsizelimit:
-    label: s3-test
     # for localstack this must be true
     path_style_access: true
     region: us-east-1
-    storage_driver_id: s3
     url_expiration_minutes: 60
     payload_signing: false
     chunked_encoding: true
-  - bucket_name: s3-test-direct
+  - label: s3-test-direct
+    bucket_name: s3-test-direct
     enabled: false
     access_key: 4cc355_k3y
     secret_access_key: s3cr3t_4cc355_k3y
@@ -368,11 +369,9 @@ s3:
     upload_redirect: true
     files_type: s3
     ingestsizelimit:
-    label: s3-test-direct
     # for localstack this must be true
     path_style_access: true
     region: us-east-1
-    storage_driver_id: s3
     url_expiration_minutes: 60
     payload_signing: false
     chunked_encoding: true
