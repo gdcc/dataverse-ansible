@@ -35,7 +35,7 @@
   become: true
   become_user: '{{ dataverse.payara.user }}'
 
-- name: build warfile without tests and custom maven. tail /tmp/dataverse/mvn.out for gory details.
+- name: build warfile without tests and custom maven. tail /home/dataverse/dataverse/mvn.out for gory details.
   shell: "source /etc/profile.d/maven.sh && mvn -T 2C clean package -Dmaven.test.skip=true > mvn.out"
   args:
     chdir: "{{ dataverse.srcdir }}"
