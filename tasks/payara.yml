@@ -133,6 +133,15 @@
     mode: '0750'
     state: directory
 
+- name: workaround for FISH-7665
+  lineinfile:
+    path: '{{ payara_dir }}/glassfish/config/asenv.conf'
+    line: '{{ item }}'
+  with_items:
+    - 'export JAVA_TOOL_OPTIONS'
+    - 'JAVA_TOOL_OPTIONS="-Djdk.util.zip.disableZip64ExtraFieldValidation=true --add-opens=java.base/java.io=ALL-UNNAMED"'
+  when: dataverse.payara.zipurl is match(".*payara-6.*")
+
 - name: so installations can still install payara5 if they want
   template:
     src: payara6.service.j2
