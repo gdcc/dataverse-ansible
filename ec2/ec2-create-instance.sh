@@ -251,16 +251,16 @@ if [ ! -z "$LOCAL_LOG_PATH" ]; then
    # 1 logdir should exist
    mkdir -p $LOCAL_LOG_PATH
    # 2 grab logs for local processing in jenkins
-   rsync -av -e "ssh -i $PEM_FILE" --ignore-missing-args $AWS_USER@$PUBLIC_DNS:/tmp/dataverse/target/site $LOCAL_LOG_PATH/
-   rsync -av -e "ssh -i $PEM_FILE" --ignore-missing-args $AWS_USER@$PUBLIC_DNS:/tmp/dataverse/target/surefire-reports $LOCAL_LOG_PATH/
+   rsync -av -e "ssh -i $PEM_FILE" --ignore-missing-args $AWS_USER@$PUBLIC_DNS:/home/dataverse/dataverse/target/site $LOCAL_LOG_PATH/
+   rsync -av -e "ssh -i $PEM_FILE" --ignore-missing-args $AWS_USER@$PUBLIC_DNS:/home/dataverse/dataverse/target/surefire-reports $LOCAL_LOG_PATH/
    # 3 grab mvn.out
-   rsync -av -e "ssh -i $PEM_FILE" --ignore-missing-args $AWS_USER@$PUBLIC_DNS:/tmp/dataverse/mvn.out $LOCAL_LOG_PATH/
+   rsync -av -e "ssh -i $PEM_FILE" --ignore-missing-args $AWS_USER@$PUBLIC_DNS:/home/dataverse/dataverse/mvn.out $LOCAL_LOG_PATH/
    # 4 jacoco
-   rsync -av -e "ssh -i $PEM_FILE" --ignore-missing-args $AWS_USER@$PUBLIC_DNS:/tmp/dataverse/target/coverage-it $LOCAL_LOG_PATH/
-   rsync -av -e "ssh -i $PEM_FILE" --ignore-missing-args $AWS_USER@$PUBLIC_DNS:/tmp/dataverse/target/coverage-reports/jacoco-unit.exec $LOCAL_LOG_PATH/
-   rsync -av -e "ssh -i $PEM_FILE" --ignore-missing-args $AWS_USER@$PUBLIC_DNS:/tmp/dataverse/target/jacoco_merged.exec $LOCAL_LOG_PATH/
-   rsync -av -e "ssh -i $PEM_FILE" --ignore-missing-args $AWS_USER@$PUBLIC_DNS:/tmp/dataverse/target/classes $LOCAL_LOG_PATH/
-   rsync -av -e "ssh -i $PEM_FILE" --ignore-missing-args $AWS_USER@$PUBLIC_DNS:/tmp/dataverse/src $LOCAL_LOG_PATH/
+   rsync -av -e "ssh -i $PEM_FILE" --ignore-missing-args $AWS_USER@$PUBLIC_DNS:/home/dataverse/dataverse/target/coverage-it $LOCAL_LOG_PATH/
+   rsync -av -e "ssh -i $PEM_FILE" --ignore-missing-args $AWS_USER@$PUBLIC_DNS:/home/dataverse/dataverse/target/coverage-reports/jacoco-unit.exec $LOCAL_LOG_PATH/
+   rsync -av -e "ssh -i $PEM_FILE" --ignore-missing-args $AWS_USER@$PUBLIC_DNS:/home/dataverse/dataverse/target/jacoco_merged.exec $LOCAL_LOG_PATH/
+   rsync -av -e "ssh -i $PEM_FILE" --ignore-missing-args $AWS_USER@$PUBLIC_DNS:/home/dataverse/dataverse/target/classes $LOCAL_LOG_PATH/
+   rsync -av -e "ssh -i $PEM_FILE" --ignore-missing-args $AWS_USER@$PUBLIC_DNS:/home/dataverse/dataverse/src $LOCAL_LOG_PATH/
    # 5 server.logs
    rsync -av -e "ssh -i $PEM_FILE" --ignore-missing-args $AWS_USER@$PUBLIC_DNS:/usr/local/payara*/glassfish/domains/domain1/logs/server.log* $LOCAL_LOG_PATH/
    # 6 query_count.out
