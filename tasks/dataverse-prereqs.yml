@@ -85,3 +85,13 @@
     name: curl
   when:
     - ansible_os_family == "Debian"
+
+- name: Payara service account must exist
+  import_tasks: payara_service_account.yml
+
+- name: create dataverse misc files directory for language and handle and other similar auxilliary files
+  file:
+    path: "{{ dataverse_misc_files_dir }}"
+    state: directory
+    owner: "{{ dataverse.payara.user }}"
+    group: "{{ dataverse.payara.group }}"

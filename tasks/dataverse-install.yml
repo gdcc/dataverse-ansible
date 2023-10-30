@@ -10,6 +10,14 @@
   debug:
     msg: '##### DATAVERSE INSTALLER #####'
 
+# this is necessary for the installer. dataverse-storage.yml does the real work later.
+- name: filesdir must pre-exist
+  ansible.builtin.file:
+    path: '{{ dataverse.filesdirs[0].path }}'
+    state: directory
+    owner: '{{ dataverse.payara.user }}'
+    group: '{{ dataverse.payara.group }}'
+
 - ansible.builtin.import_tasks: dataverse-build.yml
   when: dataverse_branch != "release"
   
