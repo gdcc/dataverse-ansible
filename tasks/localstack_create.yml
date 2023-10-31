@@ -1,27 +1,23 @@
 ---
 
-- name: ensure dot dir exists
-  file:
-    path: '~/.aws'
-    state: directory
-    mode: '0700'
-    
-- name: place aws credentials
-  template:
-    src: aws_credentials.j2
-    dest: '~/.aws/credentials'
-    mode: '0600'
+- name: flush handlers to restart Payara if needed
+  meta: flush_handlers
 
-- name: place aws config
-  template:
-    src: aws_config.j2
-    dest: '~/.aws/config'
-    mode: '0600'
+- ansible.builtin.import_tasks: aws_config.yml
 
 - name: escape custom endpoint url colons
-  set_fact: "custom_endpoint_escaped={{ s3.custom_endpoint_url | regex_replace (':','\\:') }}"
+  ansible.builtin.set_fact: "custom_endpoint_escaped={{ s3.custom_endpoint_url | regex_replace (':','\\:') }}"
   when: s3.custom_endpoint_url | length > 0
 
-- name: create localstack bucket for testing
-  shell: 'aws --endpoint={{ custom_endpoint_escaped }} s3 mb s3://{{ s3.bucket_name }}'
-  when: s3.custom_endpoint_url | length > 0
+- name: build list of s3 datastores
+  ansible.builtin.set_fact:
+    s3_datastores: "
+
+#- name: create localstack bucket for testing
+#  shell: 'aws --endpoint={{ custom_endpoint_escaped }} s3 mb s3://{{ s3.bucket_name }}'
+#  when: s3.custom_endpoint_url | length > 0
+
+- name: create localstack buckets for testing
+  ansible.builtin.debug:
+    msg: 'aws --endpoint={{ custom_endpoint_escaped }} s3 mb s3://{{ item[0].bucket-name }}'
+  loop: "{{ lookup('ansible.builtin.dict', buckets) }}"

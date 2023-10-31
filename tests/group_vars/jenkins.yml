@@ -289,6 +289,11 @@ db:
     plain: 'no'
   use_rds: false
 
+docker:
+  cidr: 10.0.0.99/24
+  repo: https://download.docker.com/linux/centos/docker-ce.repo
+
+
 grafana:
   grafana_user: 'admin'
   grafana_password: 'adm1n'
@@ -297,11 +302,7 @@ java:
   version: 17
 
 localstack:
-  enabled: false
-  docker:
-    cidr: 
-    repo: https://download.docker.com/linux/centos/docker-ce.repo
-  container: 's3-test'
+  enabled: true
   # set to /tmp/localstack/data to enable persistence
   data_dir:
   debug: true
@@ -310,6 +311,8 @@ localstack:
 
 maven:
   version: 3.9.5
+
+minio:
 
 munin:
   install: false
@@ -337,46 +340,47 @@ rserve:
   workdir: /tmp/Rserv
 
 s3:
-  - label: s3-test
-    bucket_name: s3-test
-    enabled: false
-    access_key: 4cc355_k3y
-    secret_access_key: s3cr3t_4cc355_k3y
-    cors_already_set: false
-    create_bucket: true
-    # for non-amazon services.
-    custom_endpoint_url: "http://localhost:4572"
-    # note: direct upload and download require CORS on the bucket
-    download_redirect: false
-    upload_redirect: false
-    files_type: s3
-    ingestsizelimit:
-    # for localstack this must be true
-    path_style_access: true
-    region: us-east-1
-    url_expiration_minutes: 60
-    payload_signing: false
-    chunked_encoding: true
-  - label: s3-test-direct
-    bucket_name: s3-test-direct
-    enabled: false
-    access_key: 4cc355_k3y
-    secret_access_key: s3cr3t_4cc355_k3y
-    cors_already_set: false
-    create_bucket: true
-    # for non-amazon services.
-    custom_endpoint_url: "http://localhost:4572"
-    # note: direct upload and download require CORS on the bucket
-    download_redirect: true
-    upload_redirect: true
-    files_type: s3
-    ingestsizelimit:
-    # for localstack this must be true
-    path_style_access: true
-    region: us-east-1
-    url_expiration_minutes: 60
-    payload_signing: false
-    chunked_encoding: true
+  buckets:
+    - label: s3-test
+      bucket_name: s3-test
+      enabled: false
+      access_key: 4cc355_k3y
+      secret_access_key: s3cr3t_4cc355_k3y
+      cors_already_set: false
+      create_bucket: true
+      # for non-amazon services.
+      custom_endpoint_url: "http://localhost:4572"
+      # note: direct upload and download require CORS on the bucket
+      download_redirect: false
+      upload_redirect: false
+      files_type: s3
+      ingestsizelimit:
+      # for localstack this must be true
+      path_style_access: true
+      region: us-east-1
+      url_expiration_minutes: 60
+      payload_signing: false
+      chunked_encoding: true
+    - label: s3-test-direct
+      bucket_name: s3-test-direct
+      enabled: false
+      access_key: 4cc355_k3y
+      secret_access_key: s3cr3t_4cc355_k3y
+      cors_already_set: false
+      create_bucket: true
+      # for non-amazon services.
+      custom_endpoint_url: "http://localhost:4572"
+      # note: direct upload and download require CORS on the bucket
+      download_redirect: true
+      upload_redirect: true
+      files_type: s3
+      ingestsizelimit:
+      # for localstack this must be true
+      path_style_access: true
+      region: us-east-1
+      url_expiration_minutes: 60
+      payload_signing: false
+      chunked_encoding: true
 
 schemaspy:
   enabled: false
