@@ -19,5 +19,5 @@
 
 - name: create localstack buckets for testing
   ansible.builtin.debug:
-    msg: 'aws --endpoint={{ custom_endpoint_escaped }} s3 mb s3://{{ item[0].bucket-name }}'
-  loop: "{{ lookup('ansible.builtin.dict', buckets) }}"
+    msg: 'aws --endpoint={{ custom_endpoint_escaped }} s3 mb s3://{{ item.bucket-name }}'
+  loop: "{{ lookup('ansible.builtin.dict', s3.buckets) }}"
