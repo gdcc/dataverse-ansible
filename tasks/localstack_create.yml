@@ -5,19 +5,26 @@
 
 - ansible.builtin.import_tasks: aws_config.yml
 
-- name: escape custom endpoint url colons
-  ansible.builtin.set_fact: "custom_endpoint_escaped={{ s3.custom_endpoint_url | regex_replace (':','\\:') }}"
-  when: s3.custom_endpoint_url | length > 0
-
-- name: build list of s3 datastores
-  ansible.builtin.set_fact:
-    s3_datastores: "
-
-#- name: create localstack bucket for testing
-#  shell: 'aws --endpoint={{ custom_endpoint_escaped }} s3 mb s3://{{ s3.bucket_name }}'
-#  when: s3.custom_endpoint_url | length > 0
-
-- name: create localstack buckets for testing
+- name: read group_vars
   ansible.builtin.debug:
-    msg: 'aws --endpoint={{ custom_endpoint_escaped }} s3 mb s3://{{ item.bucket-name }}'
-  loop: "{{ lookup('ansible.builtin.dict', s3.buckets) }}"
+    msg: "{{ s3 }}"
+
+- name: build list from json
+  ansible.builtin.set_fact:
+    s3_bucketlist: "{{ s3.buckets }}"
+
+- name: debug list
+  ansible.builtin.debug:
+    msg: "{{ item }}"
+  loop: "{{ s3_bucketlist }}"
+
+- name: iterate
+  ansible.builtin.include_tasks: localstack_create_bucket.yml
+  vars:
+    label: "{{ item.label }}"
+    custom_endpoint_url: "{{ item.custom_endpoint_url }}"
+    custom_endpoint_region: "{{ item.region }}"
+    bucket_name: "{{ item.bucket_name }}"
+    path_style_access: "{{ item.path_style_access }}"
+    upload_redirect: "{{ item.upload_redirect }}"
+    download_redirect: "{{ item.download_redirect }}"
