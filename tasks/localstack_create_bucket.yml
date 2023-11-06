@@ -15,16 +15,25 @@
   when: item.custom_endpoint_url | length > 0
 
 - name: create localstack bucket for testing
-  shell: 'aws --endpoint={{ custom_endpoint_escaped }} s3 mb s3://{{ item.bucket_name }}'
+  ansible.builtin.shell: 'aws --endpoint={{ custom_endpoint_escaped }} s3 mb s3://{{ item.bucket_name }}'
   when: item.custom_endpoint_url | length > 0
 
-# todo: do we need this?
-#- name: set CORS on bucket when upload_redirect is true
+- name: place CORS.json
+  ansible.builtin.copy:
+    src: cors.json
+    dest: /tmp/cors.json
+    owner: root
+    group: root
+    mode: '0644'
+
+- name: set CORS on bucket when upload_redirect is true
+  ansible.builtin.shell: 'aws s3api put-bucket-cors --bucket {{ item.bucket_name }} --cors-configuration file://tmp/cors.json'
+  when: item.upload_redirect = true
 
 - name: set Payara JVM options  
   become: yes
   become_user: "{{ dataverse.payara.user }}"
-  shell: "{{ payara_dir }}/bin/asadmin create-jvm-options -Ddataverse.{{ item.label }}.{{ item.key }}={{ item.value}}"
+  ansible.builtin.shell: "{{ payara_dir }}/bin/asadmin create-jvm-options -Ddataverse.{{ item.label }}.{{ item.key }}={{ item.value}}"
   with_items:
     - { 'key': 'type' , ' value': 's3' }
     - { 'key': 'label' , 'value': '{{ item.label }}' }
