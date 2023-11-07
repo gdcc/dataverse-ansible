@@ -34,7 +34,7 @@
 
 - name: register docker_user
   ansible.builtin.set_fact:
-    docker_user: "{{ whoami_output.stdout }}"{% endraw %}
+    docker_user: "{{ whoami_output.stdout }}"
 
 - name: add ansible_ssh_user to docker group
   ansible.builtin.user:
