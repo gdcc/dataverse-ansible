@@ -28,9 +28,17 @@
     mode: 0644
   when: docker.cidr is undefined
 
+- name: infer become_user
+  ansible.builtin.command: whoami
+  register: whoami_output
+
+- name: register docker_user
+  ansible.builtin.set_fact:
+    docker_user: "{{ whoami_output.stdout }}"{% endraw %}
+
 - name: add ansible_ssh_user to docker group
   ansible.builtin.user:
-    name: '{{ ansible_ssh_user }}'
+    name: '{{ docker_user }}'
     groups: docker
     append: yes
 
