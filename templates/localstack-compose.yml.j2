@@ -2,7 +2,7 @@ version: '2.1'
 
 services:
   localstack:
-    container_name: "{{ localstack.container }}"
+    container_name: "{{ localstack.container_name }}"
     image: localstack/localstack
     ports:
       - "4567-4599:4567-4599"
