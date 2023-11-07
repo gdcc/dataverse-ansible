@@ -1,9 +1,14 @@
 ---
 
+- name: install docker-ce repo
+  ansible.builtin.get_url:
+    url: '{{ docker.repo }}'
+    dest: /etc/yum.repos.d/docker-ce.repo
+    mode: '0644'
+
 - name: install docker-ce
   ansible.builtin.dnf:
-    name: ['docker-ce','docker-ce-cli','containerd.io','docker-compose','python-docker-py']
-    enablerepo: '{{ docker.repo }}'
+    name: ['docker-ce']
     state: latest
 
 - name: ensure /etc/docker exists
