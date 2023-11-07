@@ -119,7 +119,7 @@ dataverse:
   ## Also, changing the default storage takes effect immediately for temp files, but
   ## only after restart for publishing (i.e. without restart the temp files will be moved to the old default data store at publish time).
   filesdirs:
-    storage_driver_id: file
+    #storage_driver_id: file
     - label: file
       path: /usr/local/dvn/data
 #   - label: label
@@ -303,10 +303,11 @@ java:
 
 localstack:
   enabled: true
+  container_name: dev_localstack
   # set to /tmp/localstack/data to enable persistence
-  data_dir:
-  debug: true
-  hostname_external:
+  data_dir: /tmp/localstack/data
+  debug: false
+  hostname_external: localstack
   web_ui: 8888
 
 maven:
