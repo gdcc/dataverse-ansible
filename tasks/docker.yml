@@ -3,7 +3,7 @@
 - name: install docker-ce
   ansible.builtin.dnf:
     name: ['docker-ce','docker-ce-cli','containerd.io','docker-compose','python-docker-py']
-    enablerepo: '{{ localstack.docker.repo }}'
+    enablerepo: '{{ docker.repo }}'
     state: latest
 
 - name: ensure /etc/docker exists
