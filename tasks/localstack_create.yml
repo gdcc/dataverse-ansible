@@ -3,8 +3,6 @@
 - name: flush handlers to restart Payara if needed
   meta: flush_handlers
 
-- ansible.builtin.import_tasks: aws_config.yml
-
 - name: read group_vars
   ansible.builtin.debug:
     msg: "{{ s3 }}"
@@ -28,3 +26,5 @@
     path_style_access: "{{ item.path_style_access }}"
     upload_redirect: "{{ item.upload_redirect }}"
     download_redirect: "{{ item.download_redirect }}"
+    access_key: "{{ item.access_key }}"
+    secret_access_key: "{{ item.secret_access_key }}"

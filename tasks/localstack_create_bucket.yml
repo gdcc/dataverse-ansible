@@ -1,15 +1,5 @@
 ---
 
-# for reference
-#    vars:
-#      label: "{{ item.label }}"
-#      custom_endpoint_url: "{{ item.custom_endpoint_url }}"
-#      custom_endpoint_region: "{{ item.region }}"
-#      bucket_name: "{{ item.bucket_name }}"
-#      path_style_access: "{{ item.path_style_access }}"
-#      upload_redirect: "{{ item.upload_redirect }}"
-#      download_redirect: "{{ item.download_redirect }}"
-
 - name: escape custom endpoint url colons
   ansible.builtin.set_fact: "custom_endpoint_escaped={{ item.custom_endpoint_url | regex_replace (':','\\:') }}"
   when: item.custom_endpoint_url | length > 0
@@ -43,3 +33,5 @@
     - { 'key': 'path-style-access' , 'value': '{{ item.path_style_access }}' }
     - { 'key': 'upload-redirect' , 'value': '{{ item.upload_redirect }}' }
     - { 'key': 'download-redirect' , 'value': '{{ item.download_redirect }}' }
+    - { 'key': 'access-key' , 'value': '{{ item.access_key }}' }
+    - { 'key': 'secret-access-key' , 'value': '{{ item.secret_access_key }}' }

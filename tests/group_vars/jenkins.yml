@@ -341,6 +341,7 @@ rserve:
   workdir: /tmp/Rserv
 
 s3:
+  enabled: false
   buckets:
     - label: s3-test
       bucket_name: s3-test
