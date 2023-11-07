@@ -26,7 +26,7 @@
     owner: root
     group: root
     mode: 0644
-  when: localstack.docker.cidr is undefined
+  when: docker.cidr is undefined
 
 - name: add ansible_user to docker group
   ansible.builtin.user:
