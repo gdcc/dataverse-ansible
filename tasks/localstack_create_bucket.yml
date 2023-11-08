@@ -5,7 +5,7 @@
   when: item.custom_endpoint_url | length > 0
 
 - name: create localstack bucket for testing
-  ansible.builtin.shell: 'aws --endpoint={{ item.custom_endpoint_escaped }} s3 mb s3://{{ item.bucket_name }}'
+  ansible.builtin.shell: 'aws --endpoint={{ custom_endpoint_escaped }} s3 mb s3://{{ item.bucket_name }}'
   when: item.custom_endpoint_url | length > 0
 
 - name: place CORS.json
