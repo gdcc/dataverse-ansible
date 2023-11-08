@@ -17,10 +17,11 @@
 #  loop: "{{ s3_bucketlist }}"
 
 - name: create buckets and set options
-  ansible.builtin.include_tasks: localstack_create_bucket.yml
-  vars:
-    - "{{ item }}"
-  loop: "{{ s3_bucketlist }}"
+  block:
+    - name: create bucket and set options
+      ansible.builtin.include_tasks: localstack_create_bucket.yml
+      vars: "{{ item }}"
+  with_items: "{{ s3_bucketlist }}"
 
 #    label: "{{ item.label }}"
 #    custom_endpoint_url: "{{ item.custom_endpoint_url }}"
