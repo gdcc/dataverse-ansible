@@ -2,11 +2,11 @@
 
 - name: escape custom endpoint url colons
   ansible.builtin.set_fact: "custom_endpoint_escaped={{ item.custom_endpoint_url | regex_replace (':','\\:') }}"
-  when: custom_endpoint_url | length > 0
+  when: item.custom_endpoint_url | length > 0
 
 - name: create localstack bucket for testing
   ansible.builtin.shell: 'aws --endpoint={{ item.custom_endpoint_escaped }} s3 mb s3://{{ item.bucket_name }}'
-  when: custom_endpoint_url | length > 0
+  when: item.custom_endpoint_url | length > 0
 
 - name: place CORS.json
   ansible.builtin.copy:
@@ -18,7 +18,7 @@
 
 - name: set CORS on bucket when upload_redirect is true
   ansible.builtin.shell: 'aws s3api put-bucket-cors --bucket {{ item.bucket_name }} --cors-configuration file://tmp/cors.json'
-  when: upload_redirect = true
+  when: item.upload_redirect = true
 
 - name: set Payara JVM options  
   become: yes
