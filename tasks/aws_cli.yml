@@ -1,8 +1,13 @@
 ---
 
-- name: we need awscli on 8
-  pip:
+#- name: we need awscli on 8
+#  pip:
+#    name: awscli
+#    executable: pip3
+#  when: (ansible_os_family == "RedHat") and
+#        (ansible_distribution_major_version) == "8"
+
+- name: just use OS-included binary for now
+  ansible.builtin.package:
     name: awscli
-    executable: pip3
-  when: (ansible_os_family == "RedHat") and
-        (ansible_distribution_major_version) == "8"
+    state: latest
