@@ -20,8 +20,9 @@
   block:
     - name: create bucket and set options
       ansible.builtin.include_tasks: localstack_create_bucket.yml
-      vars: "{{ item }}"
-  with_items: "{{ s3_bucketlist }}"
+      vars:
+        bucket_options: "{{ item }}"
+      with_items: "{{ s3_bucketlist }}"
 
 #    label: "{{ item.label }}"
 #    custom_endpoint_url: "{{ item.custom_endpoint_url }}"
