@@ -4,6 +4,8 @@
 
 - ansible.builtin.import_tasks: aws_cli.yml
 
+- ansible.builtin.import_tasks: aws_config.yml
+
 # so we can run localstack task stand-alone
 - ansible.builtin.import_tasks: dataverse-fqdn.yml
 

@@ -11,3 +11,4 @@
   ansible.builtin.package:
     name: awscli
     state: latest
+  when: (ansible_os_family == "RedHat") and
