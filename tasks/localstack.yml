@@ -26,6 +26,6 @@
     mode: 0777
 
 - name: start s3-test container
-  ansible.builtin.shell: 'docker compose -f localstack-compose.yml up -d'
+  ansible.builtin.shell: 'docker compose -f localstack-compose.yml up -d &'
   args:
     chdir: '~{{ dataverse.payara.user }}'
