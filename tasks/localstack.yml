@@ -28,7 +28,7 @@
     mode: 0755
 
 - name: start s3-test container
-  ansible.builtin.shell: 'docker compose -f localstack-compose.yml up'
+  ansible.builtin.shell: 'docker compose -f localstack-compose.yml up -d'
   become: true
   become_user: '{{ dataverse.payara.user }}'
   args:
