@@ -33,7 +33,7 @@
     - { 'key': 'label' , 'value': '{{ item.label }}' }
     - { 'key': 'bucket-name' , 'value': '{{ item.bucket_name }}' }
     - { 'key': 'custom-endpoint-url' , 'value': '{{ item.custom_endpoint_url }}' }
-    - { 'key': 'custom-endpoint-region' , 'value': '{{ item.custom_endpoint_region }}' }
+    - { 'key': 'region' , 'value': '{{ item.region}}' }
     - { 'key': 'path-style-access' , 'value': '{{ item.path_style_access }}' }
     - { 'key': 'upload-redirect' , 'value': '{{ item.upload_redirect }}' }
     - { 'key': 'download-redirect' , 'value': '{{ item.download_redirect }}' }
