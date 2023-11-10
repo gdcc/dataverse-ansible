@@ -20,6 +20,8 @@
   block:
     - name: create bucket and set options
       ansible.builtin.include_tasks: localstack_create_bucket.yml
+      loop_control:
+        loop_var: outer
       vars:
         bucket_options: "{{ item }}"
       with_items: "{{ s3_bucketlist }}"

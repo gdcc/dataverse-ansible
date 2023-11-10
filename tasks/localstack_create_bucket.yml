@@ -1,14 +1,14 @@
 ---
 
 - name: escape custom endpoint url colons
-  ansible.builtin.set_fact: "custom_endpoint_escaped={{ item.custom_endpoint_url | regex_replace (':','\\:') }}"
-  when: item.custom_endpoint_url | length > 0
+  ansible.builtin.set_fact: "custom_endpoint_escaped={{ outer.custom_endpoint_url | regex_replace (':','\\:') }}"
+  when: outer.custom_endpoint_url | length > 0
 
 - name: create localstack bucket for testing
-  ansible.builtin.shell: 'aws --endpoint={{ custom_endpoint_escaped }} s3 mb s3://{{ item.bucket_name }}'
+  ansible.builtin.shell: 'aws --endpoint={{ custom_endpoint_escaped }} s3 mb s3://{{ outer.bucket_name }}'
   become: yes
   become_user: "{{ dataverse.payara.user }}"
-  when: item.custom_endpoint_url | length > 0
+  when: outer.custom_endpoint_url | length > 0
 
 - name: place CORS.json
   ansible.builtin.copy:
@@ -19,17 +19,15 @@
     mode: '0644'
 
 - name: set CORS on bucket when upload_redirect is true
-  ansible.builtin.shell: 'aws s3api put-bucket-cors --bucket {{ item.bucket_name }} --cors-configuration file://tmp/cors.json'
+  ansible.builtin.shell: 'aws s3api put-bucket-cors --bucket {{ outer.bucket_name }} --cors-configuration file://tmp/cors.json'
   become: yes
   become_user: "{{ dataverse.payara.user }}"
-  when: item.upload_redirect == true
+  when: outer.upload_redirect == true
 
 - name: set Payara JVM options  
   become: yes
   become_user: "{{ dataverse.payara.user }}"
-  ansible.builtin.shell: "{{ payara_dir }}/bin/asadmin create-jvm-options -Ddataverse.{{ item.label }}.{{ inner.key }}={{ inner.value}}"
-  loop_control:
-    loop_var: inner
+  ansible.builtin.shell: "{{ payara_dir }}/bin/asadmin create-jvm-options -Ddataverse.{{ outer.label }}.{{ item.key }}={{ item.value}}"
   with_items:
     - { 'key': 'type' , ' value': 's3' }
     - { 'key': 'label' , 'value': '{{ item.label }}' }
