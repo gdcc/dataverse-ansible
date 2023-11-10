@@ -29,13 +29,13 @@
   become_user: "{{ dataverse.payara.user }}"
   ansible.builtin.shell: "{{ payara_dir }}/bin/asadmin create-jvm-options -Ddataverse.{{ outer.label }}.{{ item.key }}={{ item.value }}"
   with_items:
-    - { type : 's3' }
-    - { label : '{{ outer.label }}' }
-    - { bucket-name : '{{ outer.bucket_name }}' }
-    - { custom-endpoint-url : '{{ outer.custom_endpoint_url }}' }
-    - { region : '{{ outer.region }}' }
-    - { path-style-access : '{{ outer.path_style_access }}' }
-    - { upload-redirect : '{{ outer.upload_redirect }}' }
-    - { download-redirect : '{{ outer.download_redirect }}' }
-    - { access-key : '{{ outer.access_key }}' }
-    - { secret-access-key : '{{ outer.secret_access_key }}' }
+    - { 'type' : 's3' }
+    - { 'label' : '{{ outer.label }}' }
+    - { 'bucket-name' : '{{ outer.bucket_name }}' }
+    - { 'custom-endpoint-url' : '{{ outer.custom_endpoint_url }}' }
+    - { 'region' : '{{ outer.region }}' }
+    - { 'path-style-access' : '{{ outer.path_style_access }}' }
+    - { 'upload-redirect' : '{{ outer.upload_redirect }}' }
+    - { 'download-redirect' : '{{ outer.download_redirect }}' }
+    - { 'access-key' : '{{ outer.access_key }}' }
+    - { 'secret-access-key' : '{{ outer.secret_access_key }}' }
