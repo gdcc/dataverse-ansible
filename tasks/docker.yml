@@ -42,6 +42,12 @@
     groups: docker
     append: yes
 
+- name: add dataverse user to docker group
+  ansible.builtin.user:
+    name: '{{ dataverse.payara.user }}'
+    groups: docker
+    append: yes
+
 - name: reload systemd, enable docker, start
   ansible.builtin.systemd:
     name: docker
