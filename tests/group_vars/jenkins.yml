@@ -308,6 +308,7 @@ localstack:
   data_dir: /tmp/localstack/data
   debug: false
   hostname_external: localstack
+  port: 4566
   web_ui: 8888
 
 maven:
@@ -342,6 +343,10 @@ rserve:
 
 s3:
   enabled: false
+  # for localstack testing
+  access_key: 4cc355_k3y
+  secret_access_key: s3cr3t_4cc355_k3y
+  region: us-east-1
   buckets:
     - label: s3-test
       bucket_name: s3-test
@@ -351,7 +356,7 @@ s3:
       cors_already_set: false
       create_bucket: true
       # for non-amazon services.
-      custom_endpoint_url: "http://localhost:4572"
+      custom_endpoint_url: "http://localhost:4566"
       # note: direct upload and download require CORS on the bucket
       download_redirect: false
       upload_redirect: false
@@ -371,7 +376,7 @@ s3:
       cors_already_set: false
       create_bucket: true
       # for non-amazon services.
-      custom_endpoint_url: "http://localhost:4572"
+      custom_endpoint_url: "http://localhost:4566"
       # note: direct upload and download require CORS on the bucket
       download_redirect: true
       upload_redirect: true
