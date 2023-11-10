@@ -22,7 +22,7 @@
   ansible.builtin.shell: 'aws s3api put-bucket-cors --bucket {{ item.bucket_name }} --cors-configuration file://tmp/cors.json'
   become: yes
   become_user: "{{ dataverse.payara.user }}"
-  when: item.upload_redirect = true
+  when: item.upload_redirect == true
 
 - name: set Payara JVM options  
   become: yes
