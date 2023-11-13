@@ -24,10 +24,9 @@
   become_user: "{{ dataverse.payara.user }}"
   when: outer.upload_redirect == true
 
-- name: set Payara JVM options  
-  become: yes
-  become_user: "{{ dataverse.payara.user }}"
-  ansible.builtin.shell: "{{ payara_dir }}/bin/asadmin create-jvm-options -Ddataverse.{{ outer.label }}.{{ item.key }}={{ item.value }}"
+- name: create jvm-options dictionary
+  set_fact:
+    jvm-options: "{{ jvm-options | default({}) | combine ({ item.key : item.value }) }}"
   with_items:
     - { 'type' : 's3' }
     - { 'label' : '{{ outer.label }}' }
@@ -39,3 +38,9 @@
     - { 'download-redirect' : '{{ outer.download_redirect }}' }
     - { 'access-key' : '{{ outer.access_key }}' }
     - { 'secret-access-key' : '{{ outer.secret_access_key }}' }
+
+- name: set Payara JVM options
+  become: yes
+  become_user: "{{ dataverse.payara.user }}"
+  ansible.builtin.shell: "{{ payara_dir }}/bin/asadmin create-jvm-options -Ddataverse.{{ outer.label }}.{{ item.key }}={{ item.value }}"
+  loop: "{{ lookup('dict', jvm-options) }}"
