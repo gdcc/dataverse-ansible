@@ -43,6 +43,10 @@
     - { 'access-key' : '{{ outer.access_key }}' }
     - { 'secret-access-key' : '{{ outer.secret_access_key }}' }
 
+- name: debug
+  ansible.builtin.debug:
+    msg: '{{ jvm-options }}'
+
 - name: set Payara JVM options
   become: yes
   become_user: '{{ dataverse.payara.user }}'
