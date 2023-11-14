@@ -24,6 +24,13 @@
   become_user: "{{ dataverse.payara.user }}"
   when: outer.upload_redirect == true
 
+- name: debug
+  ansible.builtin.debug:
+    msg: '{{ outer }}'
+
+- name: bail
+  meta: end_play
+
 - name: create jvm-options dictionary
   set_fact:
     jvm-options: "{{ jvm-options | default({}) | combine ({ item.key : item.value }) }}"
