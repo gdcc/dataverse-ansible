@@ -28,9 +28,6 @@
   ansible.builtin.debug:
     msg: '{{ outer }}'
 
-- name: bail
-  meta: end_play
-
 - name: create jvm-options dictionary
   set_fact:
     jvm-options: "{{ jvm-options | default({}) | combine ({ item.key : item.value }) }}"
@@ -48,6 +45,6 @@
 
 - name: set Payara JVM options
   become: yes
-  become_user: "{{ dataverse.payara.user }}"
-  ansible.builtin.shell: "{{ payara_dir }}/bin/asadmin create-jvm-options -Ddataverse.{{ outer.label }}.{{ item.key }}={{ item.value }}"
+  become_user: '{{ dataverse.payara.user }}'
+  ansible.builtin.shell: '{{ payara_dir }}/bin/asadmin create-jvm-options "-Ddataverse.{{ outer.label }}.{{ item.key }}={{ item.value }}"'
   loop: "{{ lookup('dict', jvm-options) }}"
