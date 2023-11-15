@@ -306,7 +306,7 @@ localstack:
   container_name: dev_localstack
   # set to /tmp/localstack/data to enable persistence
   data_dir: /tmp/localstack/data
-  debug: false
+  debug: true
   hostname_external: localstack
   port: 4566
   web_ui: 8888
@@ -361,7 +361,7 @@ s3:
       download_redirect: false
       upload_redirect: false
       files_type: s3
-      ingestsizelimit:
+      ingestsizelimit: 2000000000
       # for localstack this must be true
       path_style_access: true
       region: us-east-1
@@ -381,7 +381,7 @@ s3:
       download_redirect: true
       upload_redirect: true
       files_type: s3
-      ingestsizelimit:
+      ingestsizelimit: 2000000000
       # for localstack this must be true
       path_style_access: true
       region: us-east-1
