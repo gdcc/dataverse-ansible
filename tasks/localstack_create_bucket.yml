@@ -1,14 +1,14 @@
 ---
 
 - name: escape custom endpoint url colons
-  ansible.builtin.set_fact: "custom_endpoint_escaped={{ outer.custom_endpoint_url | regex_replace (':','\\:') }}"
-  when: outer.custom_endpoint_url | length > 0
+  ansible.builtin.set_fact: "custom_endpoint_escaped={{ bucket_options.custom_endpoint_url | regex_replace (':','\\:') }}"
+  when: bucket_options.custom_endpoint_url | length > 0
 
 - name: create localstack bucket for testing
-  ansible.builtin.shell: 'aws --endpoint={{ custom_endpoint_escaped }} s3 mb s3://{{ outer.bucket_name }}'
+  ansible.builtin.shell: 'aws --endpoint={{ custom_endpoint_escaped }} s3 mb s3://{{ bucket_options.bucket_name }}'
   become: yes
   become_user: "{{ dataverse.payara.user }}"
-  when: outer.custom_endpoint_url | length > 0
+  when: bucket_options.custom_endpoint_url | length > 0
 
 - name: place CORS.json
   ansible.builtin.copy:
@@ -19,29 +19,31 @@
     mode: '0644'
 
 - name: set CORS on bucket when upload_redirect is true
-  ansible.builtin.shell: 'aws s3api put-bucket-cors --bucket {{ outer.bucket_name }} --cors-configuration file://tmp/cors.json'
+  ansible.builtin.shell: 'aws s3api put-bucket-cors --bucket {{ bucket_options.bucket_name }} --cors-configuration file://tmp/cors.json'
   become: yes
   become_user: "{{ dataverse.payara.user }}"
-  when: outer.upload_redirect == true
+  when: bucket_options.upload_redirect == true
 
 - name: debug
   ansible.builtin.debug:
-    msg: '{{ outer }}'
+    msg: '{{ bucket_options }}'
 
 - name: create jvm_options dictionary
   set_fact:
-    jvm_options: "{{ outer | default({}) | combine ({ item.key : item.value }) }}"
+    jvm_options: "{{ bucket_options | default({}) | combine ({ inner.key : inner.value }) }}"
+  loop_control:
+    loop_var: inner
   with_items:
     - { 'key' : 'type' , 'value' : 's3' }
-    - { 'key' : 'label' , 'value' : '{{ outer.label }}' }
-    - { 'key' : 'bucket-name' , 'value' : '{{ outer.bucket_name }}' }
-    - { 'key' : 'custom-endpoint-url' , 'value' : '{{ outer.custom_endpoint_url }}' }
-    - { 'key' : 'region' , 'value' : '{{ outer.region }}' }
-    - { 'key' : 'path-style-access' , 'value' : '{{ outer.path_style_access }}' }
-    - { 'key' : 'upload-redirect' , 'value' : '{{ outer.upload_redirect }}' }
-    - { 'key' : 'download-redirect' , 'value' : '{{ outer.download_redirect }}' }
-    - { 'key' : 'access-key' , 'value' : '{{ outer.access_key }}' }
-    - { 'key' : 'secret-access-key' , 'value' : '{{ outer.secret_access_key }}' }
+    - { 'key' : 'label' , 'value' : '{{ bucket_options.label }}' }
+    - { 'key' : 'bucket-name' , 'value' : '{{ bucket_options.bucket_name }}' }
+    - { 'key' : 'custom-endpoint-url' , 'value' : '{{ bucket_options.custom_endpoint_url }}' }
+    - { 'key' : 'region' , 'value' : '{{ bucket_options.region }}' }
+    - { 'key' : 'path-style-access' , 'value' : '{{ bucket_options.path_style_access }}' }
+    - { 'key' : 'upload-redirect' , 'value' : '{{ bucket_options.upload_redirect }}' }
+    - { 'key' : 'download-redirect' , 'value' : '{{ bucket_options.download_redirect }}' }
+    - { 'key' : 'access-key' , 'value' : '{{ bucket_options.access_key }}' }
+    - { 'key' : 'secret-access-key' , 'value' : '{{ bucket_options.secret_access_key }}' }
 
 - name: debug
   ansible.builtin.debug:
@@ -50,5 +52,7 @@
 - name: set Payara JVM options
   become: yes
   become_user: '{{ dataverse.payara.user }}'
-  ansible.builtin.shell: '{{ payara_dir }}/bin/asadmin create-jvm-options "-Ddataverse.{{ outer.label }}.{{ item.key }}={{ item.value }}"'
+  ansible.builtin.shell: '{{ payara_dir }}/bin/asadmin create-jvm-options "-Ddataverse.{{ bucket_options.label }}.{{ inner.key }}={{ inner.value }}"'
   loop: "{{ lookup('dict', jvm_options) }}"
+  loop_control:
+    loop_var: inner
