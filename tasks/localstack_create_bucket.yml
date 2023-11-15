@@ -30,7 +30,7 @@
 
 - name: create jvm-options dictionary
   set_fact:
-    jvm-options: "{{ jvm-options | default({}) | combine ({ item.key : item.value }) }}"
+    jvm-options: "{{ outer | default({}) | combine ({ item.key : item.value }) }}"
   with_items:
     - { 'key' : 'type' , 'value' : 's3' }
     - { 'key' : 'label' , 'value' : '{{ outer.label }}' }
