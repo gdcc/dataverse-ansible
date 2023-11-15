@@ -28,9 +28,9 @@
   ansible.builtin.debug:
     msg: '{{ outer }}'
 
-- name: create jvm-options dictionary
+- name: create jvm_options dictionary
   set_fact:
-    jvm-options: "{{ outer | default({}) | combine ({ item.key : item.value }) }}"
+    jvm_options: "{{ outer | default({}) | combine ({ item.key : item.value }) }}"
   with_items:
     - { 'key' : 'type' , 'value' : 's3' }
     - { 'key' : 'label' , 'value' : '{{ outer.label }}' }
@@ -45,10 +45,10 @@
 
 - name: debug
   ansible.builtin.debug:
-    msg: '{{ jvm-options }}'
+    msg: '{{ jvm_options }}'
 
 - name: set Payara JVM options
   become: yes
   become_user: '{{ dataverse.payara.user }}'
   ansible.builtin.shell: '{{ payara_dir }}/bin/asadmin create-jvm-options "-Ddataverse.{{ outer.label }}.{{ item.key }}={{ item.value }}"'
-  loop: "{{ lookup('dict', jvm-options) }}"
+  loop: "{{ lookup('dict', jvm_options) }}"
