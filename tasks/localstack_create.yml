@@ -3,18 +3,14 @@
 - name: flush handlers to restart Payara if needed
   meta: flush_handlers
 
-#- name: read group_vars
-#  ansible.builtin.debug:
-#    msg: "{{ s3 }}"
-
 - name: build list from json
   ansible.builtin.set_fact:
     s3_bucketlist: "{{ s3.buckets }}"
 
-#- name: debug list
-#  ansible.builtin.debug:
-#    msg: "{{ item }}"
-#  loop: "{{ s3_bucketlist }}"
+- name: debug list
+  ansible.builtin.debug:
+    msg: "{{ item }}"
+  loop: "{{ s3_bucketlist }}"
 
 - name: create buckets and set options
   block:
@@ -25,13 +21,3 @@
       vars:
         bucket_options: "{{ item }}"
       with_items: "{{ s3_bucketlist }}"
-
-#    label: "{{ item.label }}"
-#    custom_endpoint_url: "{{ item.custom_endpoint_url }}"
-#    custom_endpoint_region: "{{ item.region }}"
-#    bucket_name: "{{ item.bucket_name }}"
-#    path_style_access: "{{ item.path_style_access }}"
-#    upload_redirect: "{{ item.upload_redirect }}"
-#    download_redirect: "{{ item.download_redirect }}"
-#    access_key: "{{ item.access_key }}"
-#    secret_access_key: "{{ item.secret_access_key }}"
