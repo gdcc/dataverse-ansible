@@ -32,16 +32,16 @@
   set_fact:
     jvm-options: "{{ jvm-options | default({}) | combine ({ item.key : item.value }) }}"
   with_items:
-    - { 'type' : 's3' }
-    - { 'label' : '{{ outer.label }}' }
-    - { 'bucket-name' : '{{ outer.bucket_name }}' }
-    - { 'custom-endpoint-url' : '{{ outer.custom_endpoint_url }}' }
-    - { 'region' : '{{ outer.region }}' }
-    - { 'path-style-access' : '{{ outer.path_style_access }}' }
-    - { 'upload-redirect' : '{{ outer.upload_redirect }}' }
-    - { 'download-redirect' : '{{ outer.download_redirect }}' }
-    - { 'access-key' : '{{ outer.access_key }}' }
-    - { 'secret-access-key' : '{{ outer.secret_access_key }}' }
+    - { 'key' : 'type' , 'value' : 's3' }
+    - { 'key' : 'label' , 'value' : '{{ outer.label }}' }
+    - { 'key' : 'bucket-name' , 'value' : '{{ outer.bucket_name }}' }
+    - { 'key' : 'custom-endpoint-url' , 'value' : '{{ outer.custom_endpoint_url }}' }
+    - { 'key' : 'region' , 'value' : '{{ outer.region }}' }
+    - { 'key' : 'path-style-access' , 'value' : '{{ outer.path_style_access }}' }
+    - { 'key' : 'upload-redirect' , 'value' : '{{ outer.upload_redirect }}' }
+    - { 'key' : 'download-redirect' , 'value' : '{{ outer.download_redirect }}' }
+    - { 'key' : 'access-key' , 'value' : '{{ outer.access_key }}' }
+    - { 'key' : 'secret-access-key' , 'value' : '{{ outer.secret_access_key }}' }
 
 - name: debug
   ansible.builtin.debug:
