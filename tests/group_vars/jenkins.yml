@@ -353,8 +353,6 @@ s3:
       enabled: false
       access_key: 4cc355_k3y
       secret_access_key: s3cr3t_4cc355_k3y
-      cors_already_set: false
-      create_bucket: true
       # for non-amazon services.
       custom_endpoint_url: "http://localhost:4566"
       # note: direct upload and download require CORS on the bucket
@@ -373,8 +371,6 @@ s3:
       enabled: false
       access_key: 4cc355_k3y
       secret_access_key: s3cr3t_4cc355_k3y
-      cors_already_set: false
-      create_bucket: true
       # for non-amazon services.
       custom_endpoint_url: "http://localhost:4566"
       # note: direct upload and download require CORS on the bucket
