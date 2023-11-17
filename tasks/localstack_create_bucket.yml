@@ -1,11 +1,11 @@
 ---
 
-#- name: escape custom endpoint url colons
-#  ansible.builtin.set_fact: "custom_endpoint_escaped={{ bucket_options.custom_endpoint_url | regex_replace (':','\\:') }}"
-#  when: bucket_options.custom_endpoint_url | length > 0
+- name: escape custom endpoint url colons
+  ansible.builtin.set_fact: "custom_endpoint_escaped={{ bucket_options.custom_endpoint_url | regex_replace (':','\\:') }}"
+  when: bucket_options.custom_endpoint_url | length > 0
 
 - name: create localstack bucket for testing
-  ansible.builtin.shell: 'aws --endpoint={{ bucket_options.custom_endpoint_url }} s3 mb s3://{{ bucket_options.bucket_name }}'
+  ansible.builtin.shell: "aws --endpoint={{ custom_endpoint_escaped }} s3 mb s3://{{ bucket_options.bucket_name }}"
   become: yes
   become_user: "{{ dataverse.payara.user }}"
   when: bucket_options.custom_endpoint_url | length > 0
