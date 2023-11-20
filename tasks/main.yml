@@ -90,6 +90,11 @@
   tags:
   - localstack 
 
+- ansible.builtin.import_tasks: minio.yml
+  when: minio.enabled == true
+  tags:
+  - minio
+
 - ansible.builtin.import_tasks: dataverse-install.yml
   tags:
   - dataverse
