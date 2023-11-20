@@ -1,0 +1,42 @@
+version: "3"
+
+networks:
+  {{ minio.docker.network.name }}:
+    driver: bridge
+    external: {{ minio.docker.network.external }}
+
+services:
+  {{ minio.docker.service.name }}:
+    container_name: {{ minio.docker.service_name }}
+    image: quay.io/minio/minio:{{ minio.docker.version }}
+{% if (minio.docker.user | length) and (minio.docker.group | length) %}
+    user: {{ minio.docker.user }}:{{ minio.docker.group }}
+{% endif %}
+    environment:
+        TZ: {{ minio.docker.timezone }}
+        MINIO_ROOT_USER: {{ minio.docker.root.user }}
+        MINIO_ROOT_PASSWORD: {{ minio.docker.root.password }}
+    ports:
+        - {{ minio.docker.server_port }}:{{ minio.docker.server_port }}
+        - {{ minio.docker.console_port }}:{{ minio.docker.console_port }}
+    networks:
+        - {{ minio.docker.network.name }}
+    volumes:
+        - {{ minio.docker.project.location }}/data:/data:rw
+    entrypoint: ["/bin/sh","-c"]
+    command:
+        - |
+            mkdir -p /data/{{ minio.docker.default_bucket }}
+            minio server --address ":{{ minio.docker.server_port }}" --console-address ":{{ minio.docker.console_port }}" /data
+    healthcheck:
+        test: ["CMD", "curl", "-f", "http://localhost:{{ minio.docker.server_port }}/minio/health/live"]
+        interval: 30s
+        timeout: 20s
+        retries: 3
+    restart: always
+    deploy:
+        restart_policy:
+            condition: on-failure
+            delay: 5s
+            max_attempts: 3
+            window: 120s
