@@ -30,7 +30,7 @@
 
 - name: create jvm_options dictionary
   set_fact:
-    jvm_options: "{{ bucket_options | default({}) | combine ({ inner.key : inner.value }) }}"
+    jvm_options: "{{ jvm_options | default({}) | combine ({ inner.key : inner.value }) }}"
   loop_control:
     loop_var: inner
   with_items:
