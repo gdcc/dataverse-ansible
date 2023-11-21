@@ -335,21 +335,27 @@ maven:
 
 minio:
   enabled: true
-    docker:
-      version: "latest"
-      service_name: "minio"
-      network:
-        name: "app-tier"
-        external: false
-      project_location: "/home/minio"
-      timezone: "America/New_York"
-      user: "dataverse"
-      group: "dataverse"
-      server_port: 9000
-      console_port: 9001
-      root_user: "rot"
-      root_password: "m1n10"
-      default_bucket: "mybucket"
+  docker:
+    version: "latest"
+    service_name: "minio"
+    network:
+      name: "app-tier"
+      external: false
+    project_location: "/home/minio"
+    timezone: "America/New_York"
+    user: "dataverse"
+    group: "dataverse"
+    server_port: 9000
+    console_port: 9001
+    root_user: "rot"
+    root_password: "m1n10"
+    default_bucket: "mybucket"
+    label: minio1
+    custom-endpoint-url=http://minio:9000
+    custom-endpoint-region=us-east-1
+    path-style-access=true
+    access-key=minioadmin
+    secret-key=minioadmin
 
 munin:
   install: false
