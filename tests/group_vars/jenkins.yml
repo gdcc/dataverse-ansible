@@ -351,11 +351,11 @@ minio:
     root_password: "m1n10"
     default_bucket: "mybucket"
     label: minio1
-    custom-endpoint-url=http://minio:9000
-    custom-endpoint-region=us-east-1
-    path-style-access=true
-    access-key=minioadmin
-    secret-key=minioadmin
+    custom-endpoint-url: http://minio:9000
+    custom-endpoint-region: us-east-1
+    path-style-access: true
+    access-key: minioadmin
+    secret-key: minioadmin
 
 munin:
   install: false
