@@ -41,8 +41,8 @@
 
     - name: STORAGE | Copy MinIO docker compose variables
       ansible.builtin.template:
-        src: compose.j2
-        dest: "{{ minio.docker.project_location }}/docker-compose.yml"
+        src: minio_compose.j2
+        dest: "{{ minio.docker.project_location }}/minio_compose.yml"
         mode: "0644"
         lstrip_blocks: true
         force: true
@@ -58,7 +58,7 @@
 
     - name: STORAGE | Check docker compose file
       ansible.builtin.stat:
-        path: "{{ minio.docker.project_location }}/docker-compose.yml"
+        path: "{{ minio.docker.project_location }}/minio_compose.yml"
       register: compose_file
 
     - name: STORAGE | Stop `docker-compose down` MinIO
