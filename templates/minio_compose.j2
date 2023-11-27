@@ -1,12 +1,12 @@
 version: "3"
 
-networks:
-  {{ minio.docker.network.name }}:
-    driver: bridge
-    external: {{ minio.docker.network.external }}
+#networks:
+#  {{ minio.docker.network.name }}:
+#    driver: bridge
+#    external: {{ minio.docker.network.external }}
 
 services:
-  {{ minio.docker.service.name }}:
+  {{ minio.docker.service_name }}:
     container_name: {{ minio.docker.service_name }}
     image: quay.io/minio/minio:{{ minio.docker.version }}
 {% if (minio.docker.user | length) and (minio.docker.group | length) %}
