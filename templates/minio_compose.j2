@@ -14,8 +14,8 @@ services:
 {% endif %}
     environment:
         TZ: {{ minio.docker.timezone }}
-        MINIO_ROOT_USER: {{ minio.docker.root.user }}
-        MINIO_ROOT_PASSWORD: {{ minio.docker.root.password }}
+        MINIO_ROOT_USER: {{ minio.docker.root_user }}
+        MINIO_ROOT_PASSWORD: {{ minio.docker.root_password }}
     ports:
         - {{ minio.docker.server_port }}:{{ minio.docker.server_port }}
         - {{ minio.docker.console_port }}:{{ minio.docker.console_port }}
