@@ -16,7 +16,7 @@
     name: 'python3-docker'
     state: latest
 
-- name and docker-compose python package
+- name: and docker-compose python package
   ansible.builtin.pip:
     name: docker-compose
 
