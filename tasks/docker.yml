@@ -11,6 +11,11 @@
     name: ['docker-ce', 'docker-compose-plugin']
     state: latest
 
+- name: Ansible docker module requires python-docker
+  ansible.builtin.package:
+    name: 'python-docker'
+    state: latest
+
 - name: ensure /etc/docker exists
   ansible.builtin.file:
     path: /etc/docker
