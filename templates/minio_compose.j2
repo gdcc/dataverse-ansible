@@ -19,8 +19,8 @@ services:
     ports:
         - {{ minio.docker.server_port }}:{{ minio.docker.server_port }}
         - {{ minio.docker.console_port }}:{{ minio.docker.console_port }}
-    networks:
-        - {{ minio.docker.network.name }}
+    #networks:
+    #    - {{ minio.docker.network.name }}
     volumes:
         - {{ minio.docker.project_location }}/data:/data:rw
     entrypoint: ["/bin/sh","-c"]
