@@ -13,7 +13,7 @@
 
 - name: Ansible docker module requires python-docker
   ansible.builtin.package:
-    name: 'python-docker'
+    name: 'python3-docker'
     state: latest
 
 - name: ensure /etc/docker exists
