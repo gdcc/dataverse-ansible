@@ -22,7 +22,7 @@ services:
     networks:
         - {{ minio.docker.network.name }}
     volumes:
-        - {{ minio.docker.project.location }}/data:/data:rw
+        - {{ minio.docker.project_location }}/data:/data:rw
     entrypoint: ["/bin/sh","-c"]
     command:
         - |
