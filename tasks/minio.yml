@@ -33,6 +33,8 @@
       ansible.builtin.file:
         path: "{{ minio.docker.project_location }}/data"
         state: directory
+        owner: '{{ dataverse.payara.user }}'
+        group: '{{ dataverse.payara.group }}'
         mode: "0755"
         recurse: true
       when:
@@ -43,6 +45,8 @@
       ansible.builtin.template:
         src: minio_compose.j2
         dest: "{{ minio.docker.project_location }}/minio_compose.yml"
+        owner: '{{ dataverse.payara.user }}'
+        group: '{{ dataverse.payara.group }}'
         mode: "0644"
         lstrip_blocks: true
         force: true
