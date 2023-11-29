@@ -9,9 +9,9 @@ services:
   {{ minio.docker.service_name }}:
     container_name: {{ minio.docker.service_name }}
     image: quay.io/minio/minio:{{ minio.docker.version }}
-    #{% if (minio.docker.user | length) and (minio.docker.group | length) %}
-    #    user: {{ minio.docker.user }}:{{ minio.docker.group }}
-    #{% endif %}
+        #{% if (minio.docker.user | length) and (minio.docker.group | length) %}
+        #    user: {{ minio.docker.user }}:{{ minio.docker.group }}
+        #{% endif %}
     environment:
         TZ: {{ minio.docker.timezone }}
         MINIO_ROOT_USER: {{ minio.docker.root_user }}
