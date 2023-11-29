@@ -343,8 +343,8 @@ minio:
       external: false
     project_location: "/home/dataverse/minio"
     timezone: "America/New_York"
-    user: 
-    group: 
+    user: dataverse
+    group: dataverse
     server_port: 9000
     console_port: 9001
     root_user: "rot"
