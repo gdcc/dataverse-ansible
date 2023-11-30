@@ -1,0 +1,40 @@
+---
+
+- name: flush handlers to restart Payara if needed
+  meta: flush_handlers
+
+#        -Ddataverse.files.minio1.type=s3
+#        -Ddataverse.files.minio1.label=MinIO
+#        -Ddataverse.files.minio1.custom-endpoint-url=http://minio:9000
+#        -Ddataverse.files.minio1.custom-endpoint-region=us-east-1
+#        -Ddataverse.files.minio1.bucket-name=mybucket
+#        -Ddataverse.files.minio1.path-style-access=true
+#        -Ddataverse.files.minio1.upload-redirect=false
+#        -Ddataverse.files.minio1.download-redirect=false
+#        -Ddataverse.files.minio1.access-key=minioadmin
+#        -Ddataverse.files.minio1.secret-key=minioadmin
+
+- name: build minio dict
+  ansible.builtin.set_fact:
+    minio_dict: "{{ minio_dict | default({}) | combine ({ item.key : item.value }) }}"
+  with_items:
+    - { 'key' : 'type', 'value' : 's3'}
+    - { 'key' : 'label', 'value' : '{{ minio.docker.label }}'}
+    - { 'key' : 'custom-endpoint-url', 'value' : '{{ minio.docker.custom-endpoint-url }}'}
+    - { 'key' : 'custom-endpoint-region', 'value' : '{{ minio.docker.custom-endpoint-region }}'}
+    - { 'key' : 'bucket-name', 'value' : '{{ minio.docker.default_bucket }}'}
+    - { 'key' : 'path-style-access', 'value' : 'true'}
+    - { 'key' : 'upload-redirect', 'value' : 'false'}
+    - { 'key' : 'download-redirect', 'value' : 'false'}
+    - { 'key' : 'access-key', 'value' : '{{ minio.docker.access-key }}'}
+    - { 'key' : 'secret-key', 'value' : '{{ minio.docker.secret-key }}'}
+
+- name: debug
+  ansible.builtin.debug:
+    msg: '{{ minio_dict }}'
+
+- name: set Payara MinIO JVM-options
+  become: yes
+  become_user: '{{ dataverse.payara.user }}'
+  ansible.builtin.shell: '{{ payara_dir }}/bin/asadmin create-jvm-options "\-Ddataverse.minio1.{{ item.key }}={{ item.value }}"'
+  loop: "{{ lookup('dict', minio_dict) }}"

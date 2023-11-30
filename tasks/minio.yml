@@ -82,3 +82,5 @@
         build: true
         files: minio_compose.yml
       when: (not minio_container.exists and minio_dir.stat.isdir and compose_file.stat.exists) or continer_stop.changed
+
+- ansible.builtin.import_tasks: minio_jvm_options.yml
