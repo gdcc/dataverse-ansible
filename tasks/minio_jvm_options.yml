@@ -15,7 +15,7 @@
 #        -Ddataverse.files.minio1.secret-key=minioadmin
 
 - name: escape custom endpoint url colons
-  ansible.builtin.set_fact: "custom_endpoint_escaped={{ minio.docker.custom-endpoint-url | regex_replace (':','\\:') }}"
+  ansible.builtin.set_fact: "custom_endpoint_escaped={{ minio.docker.custom_endpoint_url | regex_replace (':','\\:') }}"
 
 - name: build minio dict
   ansible.builtin.set_fact:
@@ -24,13 +24,13 @@
     - { 'key' : 'type' , 'value' : 's3' }
     - { 'key' : 'label' , 'value' : '{{ minio.docker.label }}' }
     - { 'key' : 'custom-endpoint-url' , 'value' : '{{ custom_endpoint_escaped }}' }
-    - { 'key' : 'custom-endpoint-region' , 'value' : '{{ minio.docker.custom-endpoint-region }}' }
+    - { 'key' : 'custom-endpoint-region' , 'value' : '{{ minio.docker.custom_endpoint_region }}' }
     - { 'key' : 'bucket-name' , 'value' : '{{ minio.docker.default_bucket }}' }
     - { 'key' : 'path-style-access' , 'value' : 'true' }
     - { 'key' : 'upload-redirect' , 'value' : 'false' }
     - { 'key' : 'download-redirect' , 'value' : 'false' }
-    - { 'key' : 'access-key' , 'value' : '{{ minio.docker.access-key }}' }
-    - { 'key' : 'secret-key' , 'value' : '{{ minio.docker.secret-key }}' }
+    - { 'key' : 'access-key' , 'value' : '{{ minio.docker.access_key }}' }
+    - { 'key' : 'secret-key' , 'value' : '{{ minio.docker.secret_key }}' }
 
 - name: debug
   ansible.builtin.debug:
