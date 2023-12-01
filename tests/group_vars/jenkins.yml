@@ -311,7 +311,7 @@ localstack:
   port: 4566
   web_ui: 8888
   buckets:
-    - label: localstack1
+    - label: LocalStack
       bucket_name: mybucket
       enabled: false
       access_key: 4cc355_k3y
