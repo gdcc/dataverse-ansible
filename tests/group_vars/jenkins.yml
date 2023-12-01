@@ -347,8 +347,8 @@ minio:
     group: dataverse
     server_port: 9000
     console_port: 9001
-    root_user: "rot"
-    root_password: "m1n10"
+    root_user: "minioadmin"
+    root_password: "minioadmin"
     default_bucket: "mybucket"
     label: minio1
     custom_endpoint_url: "http://minio:9000"

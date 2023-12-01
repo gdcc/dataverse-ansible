@@ -13,6 +13,8 @@ services:
         TZ: {{ minio.docker.timezone }}
         MINIO_ROOT_USER: {{ minio.docker.root_user }}
         MINIO_ROOT_PASSWORD: {{ minio.docker.root_password }}
+        MINIO_ACCESS_KEY: {{ minio.docker.access_key }}
+        MINIO_SECRET_KEY: {{ minio.docker.secret_key }}
     ports:
         - {{ minio.docker.server_port }}:{{ minio.docker.server_port }}
         - {{ minio.docker.console_port }}:{{ minio.docker.console_port }}
@@ -26,8 +28,9 @@ services:
             mkdir -p /data/{{ minio.docker.default_bucket }}
             minio server --address ":{{ minio.docker.server_port }}" --console-address ":{{ minio.docker.console_port }}" /data
     healthcheck:
-        test: ["CMD", "curl", "-f", "http://localhost:{{ minio.docker.server_port }}/minio/health/live"]
-        interval: 30s
+        #disable: true
+        #test: ["CMD", "curl", "-f", "http://localhost:{{ minio.docker.server_port }}/minio/health/live"]
+        nterval: 30s
         timeout: 20s
         retries: 3
     restart: always
