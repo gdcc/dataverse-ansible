@@ -314,8 +314,8 @@ localstack:
     - label: LocalStack
       bucket_name: mybucket
       enabled: false
-      access_key: default
-      secret_access_key: default
+      access_key: 4cc355_k3y
+      secret_access_key: s3cr3t_4cc355_k3y
       # for non-amazon services.
       custom_endpoint_url: "http://localhost:4566"
       # note: direct upload and download require CORS on the bucket
@@ -350,12 +350,12 @@ minio:
     root_user: "minioadmin"
     root_password: "minioadmin"
     default_bucket: "mybucket"
-    label: minio1
-    custom_endpoint_url: "http://minio:9000"
+    label: MinIO
+    custom_endpoint_url: "http://localhost:9000"
     custom_endpoint_region: us-east-1
     path-style-access: true
-    access_key: minioadmin
-    secret_key: minioadmin
+    access_key: 4cc355_k3y
+    secret_key: s3cr3t_4cc355_k3y
 
 munin:
   install: false

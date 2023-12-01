@@ -52,7 +52,7 @@
 - name: set Payara JVM options
   become: yes
   become_user: '{{ dataverse.payara.user }}'
-  ansible.builtin.shell: '{{ payara_dir }}/bin/asadmin create-jvm-options "\-Ddataverse.{{ bucket_options.label }}.{{ inner.key }}={{ inner.value }}"'
+  ansible.builtin.shell: '{{ payara_dir }}/bin/asadmin create-jvm-options "\-Ddataverse.files.{{ bucket_options.label }}.{{ inner.key }}={{ inner.value }}"'
   loop: "{{ lookup('dict', jvm_options) }}"
   loop_control:
     loop_var: inner
