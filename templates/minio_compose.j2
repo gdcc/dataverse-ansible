@@ -29,8 +29,8 @@ services:
             minio server --address ":{{ minio.docker.server_port }}" --console-address ":{{ minio.docker.console_port }}" /data
     healthcheck:
         #disable: true
-        #test: ["CMD", "curl", "-f", "http://localhost:{{ minio.docker.server_port }}/minio/health/live"]
-        nterval: 30s
+        test: ["CMD", "curl", "-f", "http://localhost:{{ minio.docker.server_port }}/minio/health/live"]
+        interval: 30s
         timeout: 20s
         retries: 3
     restart: always

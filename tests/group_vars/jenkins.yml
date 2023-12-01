@@ -311,8 +311,8 @@ localstack:
   port: 4566
   web_ui: 8888
   buckets:
-    - label: s3-test
-      bucket_name: s3-test
+    - label: localstack1
+      bucket_name: mybucket
       enabled: false
       access_key: 4cc355_k3y
       secret_access_key: s3cr3t_4cc355_k3y
