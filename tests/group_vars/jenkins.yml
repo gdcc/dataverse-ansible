@@ -146,7 +146,8 @@ dataverse:
     siteurl: 
     root: /usr/local
     dir: payara6
-    zipurl: https://nexus.payara.fish/repository/payara-community/fish/payara/distributions/payara/6.2023.8/payara-6.2023.8.zip
+    #zipurl: https://nexus.payara.fish/repository/payara-community/fish/payara/distributions/payara/6.2023.8/payara-6.2023.8.zip
+    zipurl: https://mirrors.ibiblio.org/payara/payara-6.2023.8.zip
     zipchecksum: sha256:108ed0fa7f97bb3833ff00610a4951dd41389e2647dffe28132ad54231af694a
   google_analytics_key:
   jacoco:
@@ -348,8 +349,8 @@ minio:
     group: dataverse
     server_port: 9000
     console_port: 9001
-    root_user: "minioadmin"
-    root_password: "minioadmin"
+    root_user: "4cc355_k3y"
+    root_password: "s3cr3t_4cc355_k3y"
     default_bucket: "mybucket"
     label: MinIO
     custom_endpoint_url: "http://localhost:9000"
