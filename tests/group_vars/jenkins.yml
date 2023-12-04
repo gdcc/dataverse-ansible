@@ -312,6 +312,7 @@ localstack:
   web_ui: 8888
   buckets:
     - label: LocalStack
+      id: localstack1
       bucket_name: mybucket
       enabled: false
       access_key: 4cc355_k3y

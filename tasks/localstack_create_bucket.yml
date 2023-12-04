@@ -35,10 +35,11 @@
     loop_var: inner
   with_items:
     - { 'key' : 'type' , 'value' : 's3' }
+    - { 'key' : 'id' , 'value' : 'bucket_options.id' }
     - { 'key' : 'label' , 'value' : '{{ bucket_options.label }}' }
     - { 'key' : 'bucket-name' , 'value' : '{{ bucket_options.bucket_name }}' }
     - { 'key' : 'custom-endpoint-url' , 'value' : '{{ custom_endpoint_escaped }}' }
-    - { 'key' : 'region' , 'value' : '{{ bucket_options.region }}' }
+    - { 'key' : 'custom-endpoint-region' , 'value' : '{{ bucket_options.region }}' }
     - { 'key' : 'path-style-access' , 'value' : '{{ bucket_options.path_style_access }}' }
     - { 'key' : 'upload-redirect' , 'value' : '{{ bucket_options.upload_redirect }}' }
     - { 'key' : 'download-redirect' , 'value' : '{{ bucket_options.download_redirect }}' }
@@ -52,7 +53,7 @@
 - name: set Payara JVM options
   become: yes
   become_user: '{{ dataverse.payara.user }}'
-  ansible.builtin.shell: '{{ payara_dir }}/bin/asadmin create-jvm-options "\-Ddataverse.files.{{ bucket_options.label }}.{{ inner.key }}={{ inner.value }}"'
+  ansible.builtin.shell: '{{ payara_dir }}/bin/asadmin create-jvm-options "\-Ddataverse.files.{{ bucket_options.id }}.{{ inner.key }}={{ inner.value }}"'
   loop: "{{ lookup('dict', jvm_options) }}"
   loop_control:
     loop_var: inner
