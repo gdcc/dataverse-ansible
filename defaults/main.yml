@@ -298,6 +298,10 @@ db:
     plain: 'no'
   use_rds: false
 
+docker:
+  cidr: 10.0.0.99/24
+  repo: https://download.docker.com/linux/centos/docker-ce.repo
+
 grafana:
   grafana_user: 'admin'
   grafana_password: 'adm1n'
