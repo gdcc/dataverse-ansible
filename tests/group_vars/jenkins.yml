@@ -356,7 +356,7 @@ minio:
     custom_endpoint_region: us-east-1
     path-style-access: true
     access_key: 4cc355_k3y
-    secret_key: s3cr3t_4cc355_k35
+    secret_key: s3cr3t_4cc355_k3y
 
 munin:
   install: false
