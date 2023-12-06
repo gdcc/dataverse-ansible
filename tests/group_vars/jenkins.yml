@@ -294,7 +294,6 @@ docker:
   cidr: 10.0.0.99/24
   repo: https://download.docker.com/linux/centos/docker-ce.repo
 
-
 grafana:
   grafana_user: 'admin'
   grafana_password: 'adm1n'
@@ -357,7 +356,7 @@ minio:
     custom_endpoint_region: us-east-1
     path-style-access: true
     access_key: 4cc355_k3y
-    secret_key: s3cr3t_4cc355_k3y
+    secret_key: s3cr3t_4cc355_k35
 
 munin:
   install: false
@@ -429,6 +428,6 @@ harvest:
 
 # un-nesting the below so's we can pass them at the CLI
 
-dataverse_branch: 6783-s3-tests
+dataverse_branch: develop
 dataverse_repo: https://github.com/IQSS/dataverse.git
 any_errors_fatal: true
