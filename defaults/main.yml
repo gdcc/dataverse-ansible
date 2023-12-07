@@ -298,6 +298,10 @@ db:
     plain: 'no'
   use_rds: false
 
+docker:
+  cidr: 10.0.0.99/24
+  repo: https://download.docker.com/linux/centos/docker-ce.repo
+
 grafana:
   grafana_user: 'admin'
   grafana_password: 'adm1n'
@@ -309,18 +313,60 @@ java:
 
 localstack:
   enabled: false
-  docker:
-    cidr: 
-    repo: https://download.docker.com/linux/centos/docker-ce.repo
-  container: 's3-test'
+  container_name: dev_localstack
   # set to /tmp/localstack/data to enable persistence
-  data_dir:
+  data_dir: /tmp/localstack/data
   debug: true
-  hostname_external: 
+  hostname_external: localstack
+  port: 4566
   web_ui: 8888
+  buckets:
+    - label: LocalStack
+      id: localstack1
+      bucket_name: mybucket
+      enabled: false
+      access_key: 4cc355_k3y
+      secret_access_key: s3cr3t_4cc355_k3y
+      # for non-amazon services.
+      custom_endpoint_url: "http://localhost:4566"
+      # note: direct upload and download require CORS on the bucket
+      download_redirect: true
+      upload_redirect: true
+      files_type: s3
+      ingestsizelimit: 2000000000
+      # for localstack this must be true
+      path_style_access: true
+      region: us-east-2
+      url_expiration_minutes: 60
+      payload_signing: false
+      chunked_encoding: true
 
 maven:
   version: 3.8.8
+
+minio:
+  enabled: false
+  docker:
+    version: "latest"
+    service_name: "minio"
+    network:
+      name: "minio"
+      external: false
+    project_location: "/home/dataverse/minio"
+    timezone: "America/New_York"
+    user: dataverse
+    group: dataverse
+    server_port: 9000
+    console_port: 9001
+    root_user: "4cc355_k3y"
+    root_password: "s3cr3t_4cc355_k3y"
+    default_bucket: "mybucket"
+    label: MinIO
+    custom_endpoint_url: "http://localhost:9000"
+    custom_endpoint_region: us-east-1
+    path-style-access: true
+    access_key: 4cc355_k3y
+    secret_key: s3cr3t_4cc355_k3y
 
 munin:
   install: false
