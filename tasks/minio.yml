@@ -1,0 +1,86 @@
+---
+
+- ansible.builtin.import_tasks: docker.yml
+
+- name: STORAGE | Import assert.yml
+  ansible.builtin.import_tasks: minio_assert.yml
+  run_once: true
+  delegate_to: localhost
+
+- name: STORAGE | Initialized MINIO project directory.
+  block:
+    - name: STORAGE | Check MinIO initial directory
+      ansible.builtin.stat:
+        path: "{{ minio.docker.project_location }}"
+      register: minio_init_dir
+
+    - name: STORAGE | Create minio project directory
+      ansible.builtin.file:
+        path: "{{ minio.docker.project_location }}"
+        state: directory
+        mode: "0755"
+        recurse: true
+      when: not minio_init_dir.stat.exists
+
+- name: STORAGE | Setup MINIO project.
+  block:
+    - name: STORAGE | Check MinIO initial directory
+      ansible.builtin.stat:
+        path: "{{ minio.docker.project_location }}"
+      register: minio_dir
+
+    - name: STORAGE | Create minio persistent data directory.
+      ansible.builtin.file:
+        path: "{{ minio.docker.project_location }}/data"
+        state: directory
+        owner: '{{ dataverse.payara.user }}'
+        group: '{{ dataverse.payara.group }}'
+        mode: "0755"
+        recurse: true
+      when:
+        - minio_dir.stat.exists
+        - minio_dir.stat.isdir
+
+    - name: STORAGE | Copy MinIO docker compose variables
+      ansible.builtin.template:
+        src: minio_compose.j2
+        dest: "{{ minio.docker.project_location }}/minio_compose.yml"
+        owner: '{{ dataverse.payara.user }}'
+        group: '{{ dataverse.payara.group }}'
+        mode: "0644"
+        lstrip_blocks: true
+        force: true
+      register: copy_compose
+      when:
+        - minio_dir.stat.exists
+        - minio_dir.stat.isdir
+
+    - name: STORAGE | Get infos on container
+      community.docker.docker_container_info:
+        name: "{{ minio.docker.service_name }}"
+      register: minio_container
+
+    - name: STORAGE | Check docker compose file
+      ansible.builtin.stat:
+        path: "{{ minio.docker.project_location }}/minio_compose.yml"
+      register: compose_file
+
+    - name: STORAGE | Stop `docker-compose down` MinIO
+      community.docker.docker_compose:
+        project_src: "{{ minio.docker.project_location }}"
+        state: absent
+        remove_orphans: true
+      become: true
+      register: continer_stop
+      when:
+        - minio_container.exists
+        - copy_compose.changed
+
+    - name: STORAGE | Run `docker-compose up` MinIO
+      community.docker.docker_compose:
+        project_src: "{{ minio.docker.project_location }}"
+        build: true
+        files: minio_compose.yml
+      when: (not minio_container.exists and minio_dir.stat.isdir and compose_file.stat.exists) or continer_stop.changed
+
+- ansible.builtin.import_tasks: minio_jvm_options.yml

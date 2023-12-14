@@ -1,27 +1,21 @@
 ---
 
-- name: ensure dot dir exists
-  file:
-    path: '~/.aws'
-    state: directory
-    mode: '0700'
-    
-- name: place aws credentials
-  template:
-    src: aws_credentials.j2
-    dest: '~/.aws/credentials'
-    mode: '0600'
+- name: flush handlers to restart Payara if needed
+  meta: flush_handlers
 
-- name: place aws config
-  template:
-    src: aws_config.j2
-    dest: '~/.aws/config'
-    mode: '0600'
+- name: build list from json
+  ansible.builtin.set_fact:
+    s3_bucketlist: "{{ localstack.buckets }}"
 
-- name: escape custom endpoint url colons
-  set_fact: "custom_endpoint_escaped={{ s3.custom_endpoint_url | regex_replace (':','\\:') }}"
-  when: s3.custom_endpoint_url | length > 0
+- name: debug list
+  ansible.builtin.debug:
+    msg: "{{ item }}"
+  loop: "{{ s3_bucketlist }}"
 
-- name: create localstack bucket for testing
-  shell: 'aws --endpoint={{ custom_endpoint_escaped }} s3 mb s3://{{ s3.bucket_name }}'
-  when: s3.custom_endpoint_url | length > 0
+- name: create buckets and set options
+  block:
+    - name: create bucket and set options
+      ansible.builtin.include_tasks: localstack_create_bucket.yml
+      vars:
+        bucket_options: "{{ item }}"
+      with_items: "{{ s3_bucketlist }}"

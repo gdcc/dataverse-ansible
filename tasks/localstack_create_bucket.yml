@@ -1,0 +1,59 @@
+---
+
+- name: escape custom endpoint url colons
+  ansible.builtin.set_fact: "custom_endpoint_escaped={{ bucket_options.custom_endpoint_url | regex_replace (':','\\:') }}"
+  when: bucket_options.custom_endpoint_url | length > 0
+
+- name: create localstack bucket for testing
+  ansible.builtin.shell: "aws --endpoint={{ custom_endpoint_escaped }} s3 mb s3://{{ bucket_options.bucket_name }}"
+  become: yes
+  become_user: "{{ dataverse.payara.user }}"
+  when: bucket_options.custom_endpoint_url | length > 0
+
+- name: place CORS.json
+  ansible.builtin.copy:
+    src: cors.json
+    dest: /tmp/cors.json
+    owner: root
+    group: root
+    mode: '0644'
+
+- name: set CORS on bucket when upload_redirect is true
+  ansible.builtin.shell: 'aws --endpoint={{ custom_endpoint_escaped }} s3api put-bucket-cors --bucket {{ bucket_options.bucket_name }} --cors-configuration file:///tmp/cors.json'
+  become: yes
+  become_user: "{{ dataverse.payara.user }}"
+  when: bucket_options.upload_redirect == true
+
+- name: debug
+  ansible.builtin.debug:
+    msg: '{{ bucket_options }}'
+
+- name: create jvm_options dictionary
+  set_fact:
+    jvm_options: "{{ jvm_options | default({}) | combine ({ inner.key : inner.value }) }}"
+  loop_control:
+    loop_var: inner
+  with_items:
+    - { 'key' : 'type' , 'value' : 's3' }
+    - { 'key' : 'id' , 'value' : '{{ bucket_options.id }}' }
+    - { 'key' : 'label' , 'value' : '{{ bucket_options.label }}' }
+    - { 'key' : 'bucket-name' , 'value' : '{{ bucket_options.bucket_name }}' }
+    - { 'key' : 'custom-endpoint-url' , 'value' : '{{ custom_endpoint_escaped }}' }
+    - { 'key' : 'custom-endpoint-region' , 'value' : '{{ bucket_options.region }}' }
+    - { 'key' : 'path-style-access' , 'value' : '{{ bucket_options.path_style_access }}' }
+    - { 'key' : 'upload-redirect' , 'value' : '{{ bucket_options.upload_redirect }}' }
+    - { 'key' : 'download-redirect' , 'value' : '{{ bucket_options.download_redirect }}' }
+    - { 'key' : 'access-key' , 'value' : '{{ bucket_options.access_key }}' }
+    - { 'key' : 'secret-access-key' , 'value' : '{{ bucket_options.secret_access_key }}' }
+
+- name: debug
+  ansible.builtin.debug:
+    msg: '{{ jvm_options }}'
+
+- name: set Payara JVM options
+  become: yes
+  become_user: '{{ dataverse.payara.user }}'
+  ansible.builtin.shell: '{{ payara_dir }}/bin/asadmin create-jvm-options "\-Ddataverse.files.{{ bucket_options.id }}.{{ inner.key }}={{ inner.value }}"'
+  loop: "{{ lookup('dict', jvm_options) }}"
+  loop_control:
+    loop_var: inner

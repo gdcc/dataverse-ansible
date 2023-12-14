@@ -4,9 +4,21 @@
   debug:
     msg: '##### CLONE BRANCH #####'
 
+- name: ensure service account and group exist
+  ansible.builtin.import_tasks: payara_service_account.yml
+
+- name: ensure target dir exists
+  ansible.builtin.file:
+    path: '{{ dataverse.srcdir }}'
+    state: directory
+    owner: '{{ dataverse.payara.user }}'
+    group: '{{ dataverse.payara.user }}'
+
 - name: clone specified branch
   git:
     repo: "{{ dataverse_repo }}"
     dest: "{{ dataverse.srcdir }}"
     version: "{{ dataverse_branch }}"
   when: dataverse_branch != "release"
+  become: true
+  become_user: '{{ dataverse.payara.user }}'

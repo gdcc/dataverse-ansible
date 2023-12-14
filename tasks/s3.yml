@@ -1,18 +1,6 @@
 ---
 
-- name: we need awscli on 7
-  yum:
-    name: awscli
-    state: latest
-  when: ansible_os_family == "RedHat" and
-        ansible_distribution_major_version == "7"
-
-- name: we need awscli on 8
-  pip:
-    name: awscli
-    executable: pip3
-  when: ansible_os_family == "RedHat" and
-        ansible_distribution_major_version == "8"
+- ansible.builtin.import_tasks: aws_cli.yml
 
 - name: ensure dot dir exists
   file:
@@ -38,8 +26,9 @@
     group: '{{ dataverse.payara.group }}'
     mode: '0600'
 
-- name: set storage-driver-id to s3
-  shell: '{{ payara_dir}}/bin/asadmin create-jvm-options "-Ddataverse.files.storage-driver-id={{ s3.storage_driver_id }}"'
+# this assumes only one S3 datastore. not completely viable any more.
+#- name: set storage-driver-id to s3
+#  shell: '{{ payara_dir}}/bin/asadmin create-jvm-options "-Ddataverse.files.storage-driver-id={{ s3.storage_driver_id }}"'
 
 - name: set s3 type to s3
   shell: '{{ payara_dir}}/bin/asadmin create-jvm-options "-Ddataverse.files.s3.type={{ s3.files_type }}"'

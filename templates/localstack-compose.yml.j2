@@ -2,19 +2,21 @@ version: '2.1'
 
 services:
   localstack:
-    container_name: "{{ localstack.container }}"
+    container_name: "{{ localstack.container_name }}"
     image: localstack/localstack
     ports:
-      - "4567-4599:4567-4599"
-      - "{{ localstack.web_ui }}-{{ localstack.web_ui }}:{{ localstack.web_ui }}-{{ localstack.web_ui }}"
+      - "127.0.0.1:4566:4566"
+      #- "4567-4599:4567-4599"
+      #- "{{ localstack.web_ui }}-{{ localstack.web_ui }}:{{ localstack.web_ui }}-{{ localstack.web_ui }}"
     environment:
       - SERVICES=s3
       - DEBUG={{ localstack.debug }}
-      - DATA_DIR={{ localstack.data_dir }}
-      - PORT_WEB_UI={{ localstack.web_ui }}
+      #- DATA_DIR={{ localstack.data_dir }}
+      #- PORT_WEB_UI={{ localstack.web_ui }}
       - LOCALSTACK_HOSTNAME={{ localstack.hostname_external }}
-      - LAMBDA_EXECUTOR=local
+      #- LAMBDA_EXECUTOR=local
       - DOCKER_HOST=unix:///var/run/docker.sock
     volumes:
-      - "/tmp/localstack:/tmp/localstack"
       - "/var/run/docker.sock:/var/run/docker.sock"
+    tmpfs:
+      - /localstack:mode=770,size=128M,uid=1000,gid=1000
