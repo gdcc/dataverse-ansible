@@ -235,7 +235,7 @@ dataverse:
   service_email: noreply@dataverse.yourinstitution.edu
   smtp: localhost
   solr:
-    download_url: https://archive.apache.org/dist/solr/solr/9.3.0/solr-9.3.0.tgz
+    download_url: https://dlcdn.apache.org/solr/solr/9.3.0/solr-9.3.0.tgz
     group: solr
     root: /usr/local/solr
     user: solr
@@ -263,7 +263,7 @@ db:
     jdbcurl:
     log_lock_waits: true
     log_statements: all
-    version: 13
+    version: 15
     port: 5432
     replication:
       enabled: false
@@ -376,6 +376,6 @@ harvest:
 
 # un-nesting the below so's we can pass them at the CLI
 
-dataverse_branch: develop
+dataverse_branch: 9717_postgres_15
 dataverse_repo: https://github.com/IQSS/dataverse.git
 any_errors_fatal: true
