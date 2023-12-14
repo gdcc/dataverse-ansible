@@ -340,13 +340,14 @@ maven:
 
 minio:
   enabled: true
+  user: minio
   docker:
     version: "latest"
     service_name: "minio"
     network:
       name: "minio"
       external: false
-    project_location: "/home/dataverse/minio"
+    project_location: "/home/minio/minio"
     timezone: "America/New_York"
     user: dataverse
     group: dataverse
