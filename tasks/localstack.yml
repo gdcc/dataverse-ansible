@@ -1,10 +1,33 @@
 ---
 
-- ansible.builtin.import_tasks: docker.yml
+- ansible.builtin.import_tasks: podman.yml
 
 - ansible.builtin.import_tasks: aws_cli.yml
 
-- ansible.builtin.import_tasks: aws_config.yml
+- name: create localstack user
+  ansible.builtin.user:
+    name: '{{ localstack.user }}'
+
+- name: ensure dot dir exists
+  file:
+    path: '~{{ localstack.user }}/.aws'
+    state: directory
+    owner: '{{ localstack.user }}'
+    mode: '0700'
+
+- name: place localstack aws credentials
+  template:
+    src: localstack_aws_credentials.j2
+    dest: '~{{ localstack.user }}/.aws/credentials'
+    owner: '{{ localstack.user }}'
+    mode: '0600'
+
+- name: place localstack aws config
+  template:
+    src: localstack_aws_config.j2
+    dest: '~{{ localstack.user }}/.aws/config'
+    owner: '{{ localstack.user }}'
+    mode: '0600'
 
 # so we can run localstack task stand-alone
 - ansible.builtin.import_tasks: dataverse-fqdn.yml
@@ -17,19 +40,19 @@
 - name: place docker-compose.yml template
   ansible.builtin.template:
     src: localstack-compose.yml.j2
-    dest: '~{{ dataverse.payara.user }}/localstack-compose.yml'
+    dest: '~{{ localstack.user }}/localstack-compose.yml'
+    owner: '{{ localstack.user }}'
 
 - name: ensure DATA_DIR exists
   ansible.builtin.file:
     path: '{{ localstack.data_dir }}'
     state: directory
-    owner: '{{ dataverse.payara.user }}'
-    group: '{{ dataverse.payara.group }}'
+    owner: '{{ localstack.user }}'
     mode: 0755
 
-- name: start s3-test container
-  ansible.builtin.shell: 'docker compose -f localstack-compose.yml up -d'
+- name: start localstack s3 container
+  ansible.builtin.shell: 'docker-compose -f localstack-compose.yml up -d'
   become: true
-  become_user: '{{ dataverse.payara.user }}'
+  become_user: '{{ localstack.user }}'
   args:
-    chdir: '~{{ dataverse.payara.user }}'
+    chdir: '~{{ localstack.user }}'
