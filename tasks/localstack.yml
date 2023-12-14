@@ -51,7 +51,7 @@
     mode: 0755
 
 - name: start localstack s3 container
-  ansible.builtin.shell: 'podman compose -f localstack-compose.yml up -d'
+  ansible.builtin.shell: 'podman-compose -f localstack-compose.yml up -d'
   become: true
   become_user: '{{ localstack.user }}'
   args:
