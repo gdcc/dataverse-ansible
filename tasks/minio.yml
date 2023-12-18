@@ -2,6 +2,10 @@
 
 - ansible.builtin.import_tasks: docker.yml
 
+- name: ensure minio service account exists
+  ansible.builtin.user:
+    name: '{{ minio.user }}'
+
 - name: STORAGE | Import assert.yml
   ansible.builtin.import_tasks: minio_assert.yml
   run_once: true
@@ -33,8 +37,7 @@
       ansible.builtin.file:
         path: "{{ minio.docker.project_location }}/data"
         state: directory
-        owner: '{{ dataverse.payara.user }}'
-        group: '{{ dataverse.payara.group }}'
+        owner: '{{ dataverse.minio.user }}'
         mode: "0755"
         recurse: true
       when:
@@ -45,8 +48,7 @@
       ansible.builtin.template:
         src: minio_compose.j2
         dest: "{{ minio.docker.project_location }}/minio_compose.yml"
-        owner: '{{ dataverse.payara.user }}'
-        group: '{{ dataverse.payara.group }}'
+        owner: '{{ dataverse.minio.user }}'
         mode: "0644"
         lstrip_blocks: true
         force: true

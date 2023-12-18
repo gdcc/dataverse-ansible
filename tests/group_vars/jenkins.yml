@@ -304,11 +304,15 @@ java:
 localstack:
   enabled: true
   container_name: dev_localstack
+  access_key: 4cc355_k3y
+  secret_access_key: s3cr3t_4cc355_k3y
+  region: us-east-2
   # set to /tmp/localstack/data to enable persistence
   data_dir: /tmp/localstack/data
   debug: true
   hostname_external: localstack
   port: 4566
+  user: localstack
   web_ui: 8888
   buckets:
     - label: LocalStack
@@ -336,13 +340,14 @@ maven:
 
 minio:
   enabled: true
+  user: minio
   docker:
     version: "latest"
     service_name: "minio"
     network:
       name: "minio"
       external: false
-    project_location: "/home/dataverse/minio"
+    project_location: "/home/minio/minio"
     timezone: "America/New_York"
     user: dataverse
     group: dataverse
