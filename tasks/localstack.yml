@@ -40,18 +40,18 @@
 - name: place docker-compose.yml template
   ansible.builtin.template:
     src: localstack-compose.yml.j2
-    dest: '~{{ dataverse.localstack.user }}/localstack-compose.yml'
+    dest: '~{{ localstack.user }}/localstack-compose.yml'
 
 - name: ensure DATA_DIR exists
   ansible.builtin.file:
     path: '{{ localstack.data_dir }}'
     state: directory
-    owner: '{{ dataverse.localstack.user }}'
+    owner: '{{ localstack.user }}'
     mode: 0755
 
 - name: start s3-test container
   ansible.builtin.shell: 'docker compose -f localstack-compose.yml up -d'
   become: true
-  become_user: '{{ dataverse.localstack.user }}'
+  become_user: '{{ localstack.user }}'
   args:
-    chdir: '~{{ dataverse.localstack.user }}'
+    chdir: '~{{ localstack.user }}'

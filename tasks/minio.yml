@@ -37,7 +37,7 @@
       ansible.builtin.file:
         path: "{{ minio.docker.project_location }}/data"
         state: directory
-        owner: '{{ dataverse.minio.user }}'
+        owner: '{{ minio.user }}'
         mode: "0755"
         recurse: true
       when:
@@ -48,7 +48,7 @@
       ansible.builtin.template:
         src: minio_compose.j2
         dest: "{{ minio.docker.project_location }}/minio_compose.yml"
-        owner: '{{ dataverse.minio.user }}'
+        owner: '{{ minio.user }}'
         mode: "0644"
         lstrip_blocks: true
         force: true
