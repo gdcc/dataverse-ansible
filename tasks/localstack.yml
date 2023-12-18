@@ -7,6 +7,7 @@
 - name: create localstack user
   ansible.builtin.user:
     name: '{{ localstack.user }}'
+    group: docker
 
 - name: ensure dot dir exists
   file:

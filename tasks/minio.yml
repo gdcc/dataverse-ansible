@@ -5,6 +5,7 @@
 - name: ensure minio service account exists
   ansible.builtin.user:
     name: '{{ minio.user }}'
+    group: docker
 
 - name: STORAGE | Import assert.yml
   ansible.builtin.import_tasks: minio_assert.yml
