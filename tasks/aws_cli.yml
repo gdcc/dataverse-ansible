@@ -7,6 +7,13 @@
 #  when: (ansible_os_family == "RedHat") and
 #        (ansible_distribution_major_version) == "8"
 
+- name: why is rocky9 failing on docutils
+  ansible.builtin.package:
+    name: python3-docutils
+    state: latest
+  when: ansible_os_family == "RedHat" and
+        ansible_distribution_major_version == "9"
+
 - name: just use OS-included binary for now
   ansible.builtin.package:
     name: awscli
