@@ -8,7 +8,6 @@
   ansible.builtin.shell: "aws --endpoint={{ custom_endpoint_escaped }} s3 mb s3://{{ bucket_options.bucket_name }}"
   become: yes
   become_user: "{{ localstack.user }}"
-  when: bucket_options.custom_endpoint_url | length > 0
 
 - name: place CORS.json
   ansible.builtin.copy:

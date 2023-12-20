@@ -69,21 +69,22 @@
       register: compose_file
 
     - name: STORAGE | Stop `docker-compose down` MinIO
-      community.docker.docker_compose:
-        project_src: "{{ minio.docker.project_location }}"
-        state: absent
-        remove_orphans: true
+      ansible.builtin.shell: 'docker compose -f minio_compose.yml down'
       become: true
+      become_user: '{{ minio.user }}'
+      args:
+        chdir: '~{{ minio.user }}'
       register: continer_stop
       when:
         - minio_container.exists
         - copy_compose.changed
 
     - name: STORAGE | Run `docker-compose up` MinIO
-      community.docker.docker_compose:
-        project_src: "{{ minio.docker.project_location }}"
-        build: true
-        files: minio_compose.yml
+      ansible.builtin.shell: 'docker compose -f minio_compose.yml up -d'
+      become: true
+      become_user: '{{ minio.user }}'
+      args:
+        chdir: '~{{ minio.user }}'
       when: (not minio_container.exists and minio_dir.stat.isdir and compose_file.stat.exists) or continer_stop.changed
 
 - ansible.builtin.import_tasks: minio_jvm_options.yml
