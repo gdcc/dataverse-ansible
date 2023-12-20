@@ -1,12 +1,13 @@
 ---
 
-- ansible.builtin.import_tasks: podman.yml
+- ansible.builtin.import_tasks: docker.yml
 
 - ansible.builtin.import_tasks: aws_cli.yml
 
 - name: create localstack user
   ansible.builtin.user:
     name: '{{ localstack.user }}'
+    group: docker
 
 - name: ensure dot dir exists
   file:
@@ -51,7 +52,7 @@
     mode: 0755
 
 - name: start localstack s3 container
-  ansible.builtin.shell: 'podman-compose -f localstack-compose.yml up -d'
+  ansible.builtin.shell: 'docker compose -f localstack-compose.yml up -d'
   become: true
   become_user: '{{ localstack.user }}'
   args:
