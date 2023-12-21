@@ -19,7 +19,7 @@
     - { 'key' : 'upload-redirect' , 'value' : 'false' }
     - { 'key' : 'download-redirect' , 'value' : 'false' }
     - { 'key' : 'access-key' , 'value' : '{{ minio.docker.access_key }}' }
-    - { 'key' : 'secret-access-key' , 'value' : '{{ minio.docker.secret_key }}' }
+    - { 'key' : 'secret-key' , 'value' : '{{ minio.docker.secret_key }}' }
 
 - name: debug
   ansible.builtin.debug:
