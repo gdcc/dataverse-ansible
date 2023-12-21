@@ -43,7 +43,7 @@
     - { 'key' : 'upload-redirect' , 'value' : '{{ bucket_options.upload_redirect }}' }
     - { 'key' : 'download-redirect' , 'value' : '{{ bucket_options.download_redirect }}' }
     - { 'key' : 'access-key' , 'value' : '{{ bucket_options.access_key }}' }
-    - { 'key' : 'secret-access-key' , 'value' : '{{ bucket_options.secret_access_key }}' }
+    - { 'key' : 'secret-key' , 'value' : '{{ bucket_options.secret_access_key }}' }
 
 - name: debug
   ansible.builtin.debug:
