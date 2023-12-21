@@ -35,6 +35,7 @@
   with_items:
     - { 'key' : 'type' , 'value' : 's3' }
     - { 'key' : 'id' , 'value' : '{{ bucket_options.id }}' }
+    - { 'key' : 'profile' , 'value' : '{{ bucket_options.id }}' }
     - { 'key' : 'label' , 'value' : '{{ bucket_options.label }}' }
     - { 'key' : 'bucket-name' , 'value' : '{{ bucket_options.bucket_name }}' }
     - { 'key' : 'custom-endpoint-url' , 'value' : '{{ custom_endpoint_escaped }}' }

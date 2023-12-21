@@ -12,6 +12,7 @@
   with_items:
     - { 'key' : 'type' , 'value' : 's3' }
     - { 'key' : 'label' , 'value' : '{{ minio.docker.label }}' }
+    - { 'key' : 'profile' , 'value' : '{{ minio.docker.label }}' }
     - { 'key' : 'custom-endpoint-url' , 'value' : '{{ custom_endpoint_escaped }}' }
     - { 'key' : 'custom-endpoint-region' , 'value' : '{{ minio.docker.custom_endpoint_region }}' }
     - { 'key' : 'bucket-name' , 'value' : '{{ minio.docker.default_bucket }}' }
