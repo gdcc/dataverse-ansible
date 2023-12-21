@@ -18,7 +18,7 @@
     mode: '0644'
 
 - name: set CORS on bucket when upload_redirect is true
-  ansible.builtin.shell: 'aws --endpoint={{ custom_endpoint_escaped }} s3api put-bucket-cors --bucket {{ bucket_options.bucket_name }} --cors-configuration file:///tmp/cors.json'
+  ansible.builtin.shell: 'aws --profile={{ bucket_options.id }} --endpoint={{ custom_endpoint_escaped }} s3api put-bucket-cors --bucket {{ bucket_options.bucket_name }} --cors-configuration file:///tmp/cors.json'
   become: yes
   become_user: "{{ localstack.user }}"
   when: bucket_options.upload_redirect == true
