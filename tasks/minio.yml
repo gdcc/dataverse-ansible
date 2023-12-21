@@ -9,13 +9,13 @@
 
 # S3AccessIT tests will fail without hard-coded AWS credentials
 
-#- name: ensure dot dir exists
-#  ansible.builtin.file:
-#    path: '~{{ dataverse.payara.user }}/.aws'
-#    state: directory
-#    owner: '{{ dataverse.payara.user }}'
-#    group: '{{ dataverse.payara.group }}'
-#    mode: '0700'
+- name: ensure dot dir exists
+  ansible.builtin.file:
+    path: '~{{ dataverse.payara.user }}/.aws'
+    state: directory
+    owner: '{{ dataverse.payara.user }}'
+    group: '{{ dataverse.payara.group }}'
+    mode: '0700'
 
 #- name: place aws credentials
 #  template:
@@ -33,21 +33,21 @@
 #    group: '{{ dataverse.payara.group }}'
 #    mode: '0600'
 
-#- name: touch empty credentials
-#  ansible.builtin.file:
-#    path: '~{{ dataverse.payara.user }}/.aws/credentials'
-#    state: touch
-#    owner: '{{ dataverse.payara.user }}'
-#    group: '{{ dataverse.payara.group }}'
-#    mode: '0600'
+- name: touch empty credentials
+  ansible.builtin.file:
+    path: '~{{ dataverse.payara.user }}/.aws/credentials'
+    state: touch
+    owner: '{{ dataverse.payara.user }}'
+    group: '{{ dataverse.payara.group }}'
+    mode: '0600'
 
-#- name: touch empty config
-#  ansible.builtin.file:
-#    path: '~{{ dataverse.payara.user }}/.aws/config'
-#    state: touch
-#    owner: '{{ dataverse.payara.user }}'
-#    group: '{{ dataverse.payara.group }}'
-#    mode: '0600'
+- name: touch empty config
+  ansible.builtin.file:
+    path: '~{{ dataverse.payara.user }}/.aws/config'
+    state: touch
+    owner: '{{ dataverse.payara.user }}'
+    group: '{{ dataverse.payara.group }}'
+    mode: '0600'
 
 # remove these once #### has been merged.
 
