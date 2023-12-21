@@ -5,7 +5,7 @@
   when: bucket_options.custom_endpoint_url | length > 0
 
 - name: create localstack bucket for testing
-  ansible.builtin.shell: "aws --endpoint={{ custom_endpoint_escaped }} s3 mb s3://{{ bucket_options.bucket_name }}"
+  ansible.builtin.shell: "aws --profile={{ bucket_options.id }} --endpoint={{ custom_endpoint_escaped }} s3 mb s3://{{ bucket_options.bucket_name }}"
   become: yes
   become_user: "{{ localstack.user }}"
 
