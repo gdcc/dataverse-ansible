@@ -2,6 +2,11 @@
 
 - ansible.builtin.import_tasks: docker.yml
 
+- name: ensure minio service account exists
+  ansible.builtin.user:
+    name: '{{ minio.user }}'
+    group: docker
+
 - name: STORAGE | Import assert.yml
   ansible.builtin.import_tasks: minio_assert.yml
   run_once: true
@@ -33,8 +38,7 @@
       ansible.builtin.file:
         path: "{{ minio.docker.project_location }}/data"
         state: directory
-        owner: '{{ dataverse.payara.user }}'
-        group: '{{ dataverse.payara.group }}'
+        owner: '{{ minio.user }}'
         mode: "0755"
         recurse: true
       when:
@@ -45,8 +49,7 @@
       ansible.builtin.template:
         src: minio_compose.j2
         dest: "{{ minio.docker.project_location }}/minio_compose.yml"
-        owner: '{{ dataverse.payara.user }}'
-        group: '{{ dataverse.payara.group }}'
+        owner: '{{ minio.user }}'
         mode: "0644"
         lstrip_blocks: true
         force: true
@@ -66,21 +69,22 @@
       register: compose_file
 
     - name: STORAGE | Stop `docker-compose down` MinIO
-      community.docker.docker_compose:
-        project_src: "{{ minio.docker.project_location }}"
-        state: absent
-        remove_orphans: true
+      ansible.builtin.shell: 'docker compose -f {{ minio.docker.project_location }}/minio_compose.yml down'
       become: true
+      become_user: '{{ minio.user }}'
+      args:
+        chdir: '~{{ minio.user }}'
       register: continer_stop
       when:
         - minio_container.exists
         - copy_compose.changed
 
     - name: STORAGE | Run `docker-compose up` MinIO
-      community.docker.docker_compose:
-        project_src: "{{ minio.docker.project_location }}"
-        build: true
-        files: minio_compose.yml
+      ansible.builtin.shell: 'docker compose -f {{ minio.docker.project_location }}/minio_compose.yml up -d'
+      become: true
+      become_user: '{{ minio.user }}'
+      args:
+        chdir: '~{{ minio.user }}'
       when: (not minio_container.exists and minio_dir.stat.isdir and compose_file.stat.exists) or continer_stop.changed
 
 - ansible.builtin.import_tasks: minio_jvm_options.yml

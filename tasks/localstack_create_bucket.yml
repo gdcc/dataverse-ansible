@@ -7,8 +7,7 @@
 - name: create localstack bucket for testing
   ansible.builtin.shell: "aws --endpoint={{ custom_endpoint_escaped }} s3 mb s3://{{ bucket_options.bucket_name }}"
   become: yes
-  become_user: "{{ dataverse.payara.user }}"
-  when: bucket_options.custom_endpoint_url | length > 0
+  become_user: "{{ localstack.user }}"
 
 - name: place CORS.json
   ansible.builtin.copy:
@@ -21,7 +20,7 @@
 - name: set CORS on bucket when upload_redirect is true
   ansible.builtin.shell: 'aws --endpoint={{ custom_endpoint_escaped }} s3api put-bucket-cors --bucket {{ bucket_options.bucket_name }} --cors-configuration file:///tmp/cors.json'
   become: yes
-  become_user: "{{ dataverse.payara.user }}"
+  become_user: "{{ localstack.user }}"
   when: bucket_options.upload_redirect == true
 
 - name: debug
@@ -44,7 +43,7 @@
     - { 'key' : 'upload-redirect' , 'value' : '{{ bucket_options.upload_redirect }}' }
     - { 'key' : 'download-redirect' , 'value' : '{{ bucket_options.download_redirect }}' }
     - { 'key' : 'access-key' , 'value' : '{{ bucket_options.access_key }}' }
-    - { 'key' : 'secret-access-key' , 'value' : '{{ bucket_options.secret_access_key }}' }
+    - { 'key' : 'secret-key' , 'value' : '{{ bucket_options.secret_access_key }}' }
 
 - name: debug
   ansible.builtin.debug:
