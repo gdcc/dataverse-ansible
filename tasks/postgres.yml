@@ -27,11 +27,11 @@
 - name: import RPM-GPG-KEY-PGDG
   rpm_key:
     state: present
-    key: https://download.postgresql.org/pub/repos/yum/RPM-GPG-KEY-PGDG
+    key: https://download.postgresql.org/pub/repos/yum/keys/PGDG-RPM-GPG-KEY-RHEL
   when: ansible_os_family == "RedHat"
 
 - name: install postgres repo RPM
-  yum:
+  ansible.builtin.package:
     name: 'https://download.postgresql.org/pub/repos/yum/reporpms/EL-{{ ansible_distribution_major_version }}-x86_64/pgdg-redhat-repo-latest.noarch.rpm'
     state: present
   when: ansible_os_family == "RedHat"
