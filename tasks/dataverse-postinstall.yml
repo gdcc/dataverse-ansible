@@ -92,9 +92,10 @@
 
 - name: give Payara ample time to become ready
   ansible.builtin.pause:
-    seconds: 90
+    seconds: 120
 
 - name: start solr indexing -- if this was an upgrade to an existing install, the install scripts reset the solr indexes
   ansible.builtin.get_url:
     url: http://localhost:8080/api/admin/index
     dest: /tmp/index_status.out
+  when: not dataverse.deployment.upgrade_only

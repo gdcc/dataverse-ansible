@@ -1,61 +1,35 @@
 ---
 
-- name: we need yum-utils
-  yum:
-    name: yum-utils
-    state: latest
+- ansible.builtin.import_tasks: docker.yml
 
-- name: to install the docker-ce repo
-  shell: 'yum-config-manager --add-repo {{ localstack.docker.repo }}'
+- ansible.builtin.import_tasks: aws_cli.yml
 
-- name: install docker-ce
-  yum:
-    name: ['docker-ce','docker-ce-cli','containerd.io','docker-compose','python-docker-py']
-
-- name: ensure /etc/docker exists
-  file:
-    path: /etc/docker
-    state: directory
-    owner: root
-    group: root
-    mode: 0755
-
-- name: configure cidr range
-  template:
-    src: daemon.json.j2
-    dest: /etc/docker/daemon.json
-    owner: root
-    group: root
-    mode: 0644
-  when: localstack.docker.cidr is undefined
-
-- name: add ansible_user to docker group
-  user:
-    name: '{{ ansible_user }}'
-    groups: docker
-    append: yes
-
-- name: reload systemd, enable docker, start
-  systemd:
-    name: docker
-    enabled: yes
-    daemon_reload: yes
-    state: started
+- ansible.builtin.import_tasks: aws_config.yml
 
 # so we can run localstack task stand-alone
 - ansible.builtin.import_tasks: dataverse-fqdn.yml
 
 - name: is hostname_external set
-  set_fact:
+  ansible.builtin.set_fact:
     hostname_external: '{{ public_fqdn }}'
   when: localstack.hostname_external is undefined
 
 - name: place docker-compose.yml template
-  template:
+  ansible.builtin.template:
     src: localstack-compose.yml.j2
-    dest: '{{ ansible_env.HOME }}/localstack-compose.yml'
+    dest: '~{{ dataverse.payara.user }}/localstack-compose.yml'
+
+- name: ensure DATA_DIR exists
+  ansible.builtin.file:
+    path: '{{ localstack.data_dir }}'
+    state: directory
+    owner: '{{ dataverse.payara.user }}'
+    group: '{{ dataverse.payara.group }}'
+    mode: 0755
 
 - name: start s3-test container
-  shell: 'docker-compose -f localstack-compose.yml up -d'
+  ansible.builtin.shell: 'docker compose -f localstack-compose.yml up -d'
+  become: true
+  become_user: '{{ dataverse.payara.user }}'
   args:
-    chdir: '{{ ansible_env.HOME }}'
+    chdir: '~{{ dataverse.payara.user }}'

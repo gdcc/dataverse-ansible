@@ -35,3 +35,16 @@
   shell: '{{ payara_dir}}/bin/asadmin create-jvm-options "-Ddataverse.oai.server.maxrecords={{ harvest.oaiserver.maxrecords }}"'
   when: harvest.oaiserver.maxrecords is defined
 
+- name: set showListFirst value in the deployed idpselect_config.js
+  lineinfile:
+    path: '{{ payara_dir }}/glassfish/domains/{{ dataverse.payara.domain }}/applications/dataverse/resources/js/shib/idpselect_config.js'
+    regexp: '^    this.showListFirst = '
+    line: '    this.showListFirst = {{ shibboleth.showListFirst }}      // Do we start with a list of IdPs or just the dropdown'
+  when: shibboleth.showListFirst is defined
+
+- name: overwrite robots.txt in dataverse installation using the file defined by dataverse.robots_txt_url
+  get_url:
+    url: '{{ dataverse.robots_txt_url }}'
+    dest: '{{ payara_dir }}/glassfish/domains/{{ dataverse.payara.domain }}/applications/dataverse/robots.txt'
+    force: true
+  when: dataverse.robots_txt_url is defined

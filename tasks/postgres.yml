@@ -26,11 +26,11 @@
 - name: import RPM-GPG-KEY-PGDG
   rpm_key:
     state: present
-    key: https://download.postgresql.org/pub/repos/yum/RPM-GPG-KEY-PGDG
+    key: https://download.postgresql.org/pub/repos/yum/keys/PGDG-RPM-GPG-KEY-RHEL
   when: ansible_os_family == "RedHat"
 
 - name: install postgres repo RPM
-  yum:
+  ansible.builtin.package:
     name: 'https://download.postgresql.org/pub/repos/yum/reporpms/EL-{{ ansible_distribution_major_version }}-x86_64/pgdg-redhat-repo-latest.noarch.rpm'
     state: present
   when: ansible_os_family == "RedHat"
@@ -92,7 +92,7 @@
   when: db.use_rds == false
   notify: enable and restart postgres
 
-- include: postgres_replication.yml
+- ansible.builtin.import_tasks: postgres_replication.yml
   when: db.postgres.replication.enabled
 
 - name: log_lock_waits when told
@@ -125,6 +125,14 @@
     password: '{{ db.postgres.pass }}'
     role_attr_flags: 'NOSUPERUSER,CREATEDB,CREATEROLE,INHERIT,LOGIN'
   when: db.use_rds == false
+
+- name: postgresql 15 requires explicit permissions on public schema
+  community.postgresql.postgresql_privs:
+    db: '{{ db.postgres.name }}'
+    privs: CREATE
+    type: schema
+    objs: public
+    role: '{{ db.postgres.user }}'
 
 - ansible.builtin.import_tasks: postgres_sequential_identifiers.yml
   when: dataverse.api.test_suite == true

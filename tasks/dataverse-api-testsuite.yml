@@ -89,6 +89,8 @@
     DV_APIKEY: '{{ dataverse.usermgmtkey }}'
     DV_API_KEY: '{{ dataverse.usermgmtkey }}'
   when: maven.version == 'default'
+  become: true
+  become_user: '{{ dataverse.payara.user }}'
 
 - name: run test suite with custom maven
   shell: 'source /etc/profile.d/maven.sh && mvn test -Dtest={{ integration_test_list }} -Ddataverse.test.baseurl=http://localhost:8080'
@@ -99,18 +101,24 @@
     DV_APIKEY: '{{ dataverse.usermgmtkey }}'
     DV_API_KEY: '{{ dataverse.usermgmtkey }}'
   when: maven.version != 'default'
+  become: true
+  become_user: '{{ dataverse.payara.user }}'
 
 - name: generate HTML reports with default maven
   shell: 'mvn surefire-report:report'
   args:
     chdir: '{{ dataverse.srcdir }}'
   when: maven.version == 'default'
+  become: true
+  become_user: '{{ dataverse.payara.user }}'
 
 - name: generate HTML reports with custom maven
   shell: 'source /etc/profile.d/maven.sh && mvn surefire-report:report'
   args:
     chdir: '{{ dataverse.srcdir }}'
   when: maven.version != 'default'
+  become: true
+  become_user: '{{ dataverse.payara.user }}'
 
 - ansible.builtin.import_tasks: postgresql_perl_party.yml
   when:
