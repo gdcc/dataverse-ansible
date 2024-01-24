@@ -384,6 +384,12 @@ prometheus:
   url: https://github.com/prometheus/prometheus/releases/download/v2.19.1/prometheus-2.19.1.linux-amd64.tar.gz
   user: prometheus
 
+redis:
+  host: localhost
+  port: 6379
+  user: default
+  pass: redis_secret
+
 rserve:
   install: true
   host: localhost
