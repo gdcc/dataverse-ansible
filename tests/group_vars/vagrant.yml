@@ -215,7 +215,7 @@ dataverse:
        iconUrl: https://licensebuttons.net/l/by-sa/4.0/88x31.png
        active: true
        sortOrder: 7
-  memheap: 1024
+  memheap: 4096
   options:
     filepids: 
     maxfileuploadsizeinbytes:
