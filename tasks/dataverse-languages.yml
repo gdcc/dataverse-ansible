@@ -4,6 +4,9 @@
   debug:
     msg: '##### DATAVERSE LANGUAGES #####'
 
+- set_fact:
+    lang_git_dir: /usr/local/src/dataverse_language_packs
+
 - name: get dataverse language file path
   shell: "{{ payara_dir }}/bin/asadmin list-jvm-options | grep dataverse.lang.directory | sed 's/.*=//'"
   register: dataverse_lang_directory
@@ -16,46 +19,46 @@
     owner: '{{ dataverse.payara.user }}'
   when: (dataverse_lang_directory.stdout | trim) == ''
 
-- name: set dataverse language file path if not set
-  shell: "{{ payara_dir }}/bin/asadmin create-jvm-options -Ddataverse.lang.directory={{ dataverse.language.lang_directory }}"
-  when: (dataverse_lang_directory.stdout | trim) == ''
-
-- name: clone dataverse language packs
-  local_action:
-    module: git
-    repo: "{{ dataverse.language.language_packs.source }}"
-    dest: "/tmp/dataverse_language_packs"
-    version: "{{ dataverse.language.language_packs.version }}"
-  run_once: true
-
 - name: copy default bundle to the language directory if it was just created
   copy:
-    src: /tmp/dataverse_language_packs/en_US/Bundle.properties
+    src: "{{ lang_git_dir }}/en_US/Bundle.properties"
     dest: "{{ dataverse.language.lang_directory }}"
     owner: '{{ dataverse.payara.user }}'
+    remote_src: yes
+  when: (dataverse_lang_directory.stdout | trim) == ''
+
+- name: set dataverse language file path if not set
+  shell: "{{ payara_dir }}/bin/asadmin create-jvm-options -Ddataverse.lang.directory={{ dataverse.language.lang_directory }}"
   when: (dataverse_lang_directory.stdout | trim) == ''
 
 - name: restart payara after setting language directory
   service: name=payara state=restarted
   when: (dataverse_lang_directory.stdout | trim) == ''
 
+- name: clone dataverse language packs
+  git:
+    repo: "{{ dataverse.language.language_packs.source }}"
+    dest: "{{ lang_git_dir }}"
+    version: "{{ dataverse.language.language_packs.version }}"
+  run_once: true
+
 - name: prepare language file temporary directory
-  local_action: shell cd /tmp/dataverse_language_packs ; rm -rf tmp.bak ; [ -d tmp ] && mv tmp tmp.bak && rm tmp.bak/*.zip ; mkdir tmp
+  shell: cd {{ lang_git_dir }} ; rm -rf tmp.bak ; [ -d tmp ] && mv tmp tmp.bak && rm tmp.bak/*.zip ; mkdir tmp
   changed_when: false
 
 - name: copy language files to temporary directory
-  local_action: shell cd /tmp/dataverse_language_packs ; cp -R {{ item.locale }}*/*.properties tmp/
+  shell: cd {{ lang_git_dir }} ; cp -R {{ item.locale }}*/*.properties tmp/
   changed_when: false
   with_items: "{{ dataverse.language.languages }}"
 
 - name: check if there was a change in the temporary directory
-  local_action: shell cd /tmp/dataverse_language_packs ; diff -r tmp tmp.bak
+  shell: cd {{ lang_git_dir }} ; diff -r tmp tmp.bak
   register: diff
   changed_when: diff.rc != 0
   failed_when: diff.rc > 2
 
 - name: create language pack
-  local_action: shell cd /tmp/dataverse_language_packs/tmp ; zip languages.zip *.properties
+  shell: cd {{ lang_git_dir }}/tmp ; zip languages.zip *.properties
   when: diff.changed
 
 - name: upload language pack
@@ -64,11 +67,13 @@
     method: POST
     headers:
       Content-type: "application/zip"
-      Accept: application/json
-    src: /tmp/dataverse_language_packs/tmp/languages.zip
+#      Accept: application/json
+    src: "{{ lang_git_dir }}/tmp/languages.zip"
+    remote_src: yes
     status_code: 200
     body_format: raw
   when: diff.changed
+  notify: enable and restart payara
 
 - name: configure available languages
   uri:

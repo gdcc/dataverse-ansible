@@ -208,7 +208,7 @@ fi
 
 echo "Creating EC2 instance"
 # TODO: Add some error checking for "ec2 run-instances".
-INSTANCE_ID=$(aws $PROFILE ec2 run-instances --image-id $AMI_ID --security-groups $AWS_SG $TAGARG --count 1 --instance-type $SIZE --key-name $KEY_NAME --query 'Instances[0].InstanceId' --block-device-mappings '[ { "DeviceName": "/dev/sda1", "Ebs": { "DeleteOnTermination": true } } ]' | tr -d \")
+INSTANCE_ID=$(aws $PROFILE ec2 run-instances --image-id $AMI_ID --security-groups $AWS_SG $TAGARG --count 1 --instance-type $SIZE --key-name $KEY_NAME --query 'Instances[0].InstanceId' --block-device-mappings '[ { "DeviceName": "/dev/sda1", "Ebs": { "DeleteOnTermination": true, "VolumeSize": 20 } } ]' | tr -d \")
 echo "Instance ID: "$INSTANCE_ID
 
 DESTROY_CMD="aws $PROFILE ec2 terminate-instances --instance-ids $INSTANCE_ID"
@@ -236,7 +236,7 @@ fi
 # TODO: Add some error checking for this ssh command.
 ssh -T -i $PEM_FILE -o 'StrictHostKeyChecking no' -o 'UserKnownHostsFile=/dev/null' -o 'ConnectTimeout=300' $USER_AT_HOST <<EOF
 sudo dnf -q -y install epel-release
-sudo dnf -q -y --enablerepo epel-testing install ansible git
+sudo dnf -q -y install ansible git
 git clone -b $DA_BRANCH https://github.com/GlobalDataverseCommunityConsortium/dataverse-ansible.git dataverse
 export ANSIBLE_ROLES_PATH=.
 ansible-playbook $VERBOSE_ARG -i dataverse/inventory dataverse/dataverse.pb --connection=local $GVARG
@@ -251,15 +251,16 @@ if [ ! -z "$LOCAL_LOG_PATH" ]; then
    # 1 logdir should exist
    mkdir -p $LOCAL_LOG_PATH
    # 2 grab logs for local processing in jenkins
-   rsync -av -e "ssh -i $PEM_FILE" --ignore-missing-args $AWS_USER@$PUBLIC_DNS:/tmp/dataverse/target/site $LOCAL_LOG_PATH/
-   rsync -av -e "ssh -i $PEM_FILE" --ignore-missing-args $AWS_USER@$PUBLIC_DNS:/tmp/dataverse/target/surefire-reports $LOCAL_LOG_PATH/
+   rsync -av -e "ssh -i $PEM_FILE" --ignore-missing-args $AWS_USER@$PUBLIC_DNS:/opt/dataverse/dataverse/target/site $LOCAL_LOG_PATH/
+   rsync -av -e "ssh -i $PEM_FILE" --ignore-missing-args $AWS_USER@$PUBLIC_DNS:/opt/dataverse/dataverse/target/surefire-reports $LOCAL_LOG_PATH/
    # 3 grab mvn.out
-   rsync -av -e "ssh -i $PEM_FILE" --ignore-missing-args $AWS_USER@$PUBLIC_DNS:/tmp/dataverse/mvn.out $LOCAL_LOG_PATH/
+   rsync -av -e "ssh -i $PEM_FILE" --ignore-missing-args $AWS_USER@$PUBLIC_DNS:/opt/dataverse/dataverse/mvn.out $LOCAL_LOG_PATH/
    # 4 jacoco
-   rsync -av -e "ssh -i $PEM_FILE" --ignore-missing-args $AWS_USER@$PUBLIC_DNS:/tmp/dataverse/target/coverage-it $LOCAL_LOG_PATH/
-   rsync -av -e "ssh -i $PEM_FILE" --ignore-missing-args $AWS_USER@$PUBLIC_DNS:/tmp/dataverse/target/*.exec $LOCAL_LOG_PATH/
-   rsync -av -e "ssh -i $PEM_FILE" --ignore-missing-args $AWS_USER@$PUBLIC_DNS:/tmp/dataverse/target/classes $LOCAL_LOG_PATH/
-   rsync -av -e "ssh -i $PEM_FILE" --ignore-missing-args $AWS_USER@$PUBLIC_DNS:/tmp/dataverse/src $LOCAL_LOG_PATH/
+   rsync -av -e "ssh -i $PEM_FILE" --ignore-missing-args $AWS_USER@$PUBLIC_DNS:/opt/dataverse/dataverse/target/coverage-it $LOCAL_LOG_PATH/
+   rsync -av -e "ssh -i $PEM_FILE" --ignore-missing-args $AWS_USER@$PUBLIC_DNS:/opt/dataverse/dataverse/target/coverage-reports/jacoco-unit.exec $LOCAL_LOG_PATH/
+   rsync -av -e "ssh -i $PEM_FILE" --ignore-missing-args $AWS_USER@$PUBLIC_DNS:/opt/dataverse/dataverse/target/jacoco_merged.exec $LOCAL_LOG_PATH/
+   rsync -av -e "ssh -i $PEM_FILE" --ignore-missing-args $AWS_USER@$PUBLIC_DNS:/opt/dataverse/dataverse/target/classes $LOCAL_LOG_PATH/
+   rsync -av -e "ssh -i $PEM_FILE" --ignore-missing-args $AWS_USER@$PUBLIC_DNS:/opt/dataverse/dataverse/src $LOCAL_LOG_PATH/
    # 5 server.logs
    rsync -av -e "ssh -i $PEM_FILE" --ignore-missing-args $AWS_USER@$PUBLIC_DNS:/usr/local/payara*/glassfish/domains/domain1/logs/server.log* $LOCAL_LOG_PATH/
    # 6 query_count.out

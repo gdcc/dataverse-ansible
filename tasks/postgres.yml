@@ -5,83 +5,24 @@
   debug:
     msg: '##### POSTGRES #####'
 
-
-- name: ansible postgres module wants python-psycopg2 on debian and RedHat 7
-  package:
-    name: python-psycopg2
-    state: latest
-  when: (ansible_os_family == "RedHat" and
-        ansible_distribution_major_version == "7") or
-        (ansible_os_family == "Debian" and
-        ansible_distribution_major_version == "10")
-
 - name: ansible postgres module wants python3-psycopg2
   package:
     name: python3-psycopg2
     state: latest
-  when: (ansible_os_family == "RedHat" and
-        ansible_distribution_major_version == "8") or
-        (ansible_os_family == "Debian" and
-        ansible_distribution_major_version == "11")
-
-- name: import RPM-GPG-KEY-PGDG
-  rpm_key:
-    state: present
-    key: https://download.postgresql.org/pub/repos/yum/RPM-GPG-KEY-PGDG
-  when: ansible_os_family == "RedHat"
-
-- name: install postgres repo RPM
-  yum:
-    name: 'https://download.postgresql.org/pub/repos/yum/reporpms/EL-{{ ansible_distribution_major_version }}-x86_64/pgdg-redhat-repo-latest.noarch.rpm'
-    state: present
-  when: ansible_os_family == "RedHat"
-
-- name: "RHEL/Rocky8: disable PostgreSQL proper in the OS"
-  shell: 'dnf -qy module disable postgresql'
-  when: ansible_os_family == "RedHat" and
-        ansible_distribution_major_version == "8"
 
 - name: postgres uses differing version syntax in a few commands/packages
   set_fact:
     dataverse_pg_version_short: "{{ db.postgres.version | regex_replace('\\.','') }}"
 
-- name: get postgres config directory
-  set_fact:
-    postgres_config_dir: "{{ (ansible_os_family == 'RedHat') |
-                             ternary('/var/lib/pgsql/'+(db.postgres.version|string)+'/data',
-                                     '/etc/postgresql/'+(db.postgres.version|string)+'/main'
-                         ) }}"
+- ansible.builtin.import_tasks: postgres_debian.yml
+  when: ansible_os_family == "Debian"
 
-- name: install postgres server on RedHat / Rocky
-  yum:
-   name: 'postgresql{{ dataverse_pg_version_short }}-server'
-   state: latest
+- ansible.builtin.import_tasks: postgres_redhat.yml
+  when: ansible_os_family == "RedHat"
+
+- ansible.builtin.import_tasks: postgres-init_redhat.yml
   when: ansible_os_family == "RedHat" and
         db.use_rds == false
-
-- name: install postgres server on Debian
-  apt:
-   name: 'postgresql-{{ dataverse_pg_version_short }}'
-   state: latest
-  when: ansible_os_family == "Debian" and
-        db.use_rds == false
-
-- name: install postgres client on RedHat / Rocky for RDS
-  yum:
-    name: 'postgresql{{ dataverse_pg_version_short }}'
-    state: latest
-  when: ansible_os_family == "RedHat" and
-        db.use_rds == true
-
-- name: install postgres client on Debian
-  apt:
-    name: 'postgresql-client-{{ dataverse_pg_version_short }}'
-    state: latest
-  when: ansible_os_family == "Debian" and
-        db.use_rds == true
-
-- ansible.builtin.import_tasks: postgresql-init.yml
-  when: db.use_rds == false
 
 - name: install pg_hba.conf
   template:
