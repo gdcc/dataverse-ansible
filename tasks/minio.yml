@@ -2,43 +2,6 @@
 
 - ansible.builtin.import_tasks: docker.yml
 
-- name: ensure minio service account exists
-  ansible.builtin.user:
-    name: '{{ minio.user }}'
-
-- name: ensure minio service account exists
-  ansible.builtin.user:
-    name: '{{ minio.user }}'
-    group: docker
-
-# S3AccessIT tests will fail without hard-coded AWS credentials
-
-- name: ensure dot dir exists
-  file:
-    path: '~{{ dataverse.payara.user }}/.aws'
-    state: directory
-    owner: '{{ dataverse.payara.user }}'
-    group: '{{ dataverse.payara.group }}'
-    mode: '0700'
-
-- name: place aws credentials
-  template:
-    src: aws_credentials.j2
-    dest: '~{{ dataverse.payara.user }}/.aws/credentials'
-    owner: '{{ dataverse.payara.user }}'
-    group: '{{ dataverse.payara.group }}'
-    mode: '0600'
-
-- name: place aws config
-  template:
-    src: aws_config.j2
-    dest: '~{{ dataverse.payara.user }}/.aws/config'
-    owner: '{{ dataverse.payara.user }}'
-    group: '{{ dataverse.payara.group }}'
-    mode: '0600'
-
-# remove these once #### has been merged.
-
 - name: STORAGE | Import assert.yml
   ansible.builtin.import_tasks: minio_assert.yml
   run_once: true
@@ -70,7 +33,8 @@
       ansible.builtin.file:
         path: "{{ minio.docker.project_location }}/data"
         state: directory
-        owner: '{{ minio.user }}'
+        owner: '{{ dataverse.payara.user }}'
+        group: '{{ dataverse.payara.group }}'
         mode: "0755"
         recurse: true
       when:
@@ -81,7 +45,8 @@
       ansible.builtin.template:
         src: minio_compose.j2
         dest: "{{ minio.docker.project_location }}/minio_compose.yml"
-        owner: '{{ minio.user }}'
+        owner: '{{ dataverse.payara.user }}'
+        group: '{{ dataverse.payara.group }}'
         mode: "0644"
         lstrip_blocks: true
         force: true
@@ -101,22 +66,21 @@
       register: compose_file
 
     - name: STORAGE | Stop `docker-compose down` MinIO
-      ansible.builtin.shell: 'docker compose -f {{ minio.docker.project_location }}/minio_compose.yml down'
+      community.docker.docker_compose:
+        project_src: "{{ minio.docker.project_location }}"
+        state: absent
+        remove_orphans: true
       become: true
-      become_user: '{{ minio.user }}'
-      args:
-        chdir: '~{{ minio.user }}'
       register: continer_stop
       when:
         - minio_container.exists
         - copy_compose.changed
 
     - name: STORAGE | Run `docker-compose up` MinIO
-      ansible.builtin.shell: 'docker compose -f {{ minio.docker.project_location }}/minio_compose.yml up -d'
-      become: true
-      become_user: '{{ minio.user }}'
-      args:
-        chdir: '~{{ minio.user }}'
+      community.docker.docker_compose:
+        project_src: "{{ minio.docker.project_location }}"
+        build: true
+        files: minio_compose.yml
       when: (not minio_container.exists and minio_dir.stat.isdir and compose_file.stat.exists) or continer_stop.changed
 
 - ansible.builtin.import_tasks: minio_jvm_options.yml
