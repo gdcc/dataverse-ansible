@@ -301,6 +301,11 @@ grafana:
   grafana_user: 'admin'
   grafana_password: 'admin'
 
+harvest:
+  oaiserver:
+    maxidentifiers: 2
+    maxrecords: 2
+
 java:
   version: 17
 

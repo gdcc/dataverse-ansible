@@ -16,7 +16,18 @@
     owner: root
     group: root
     mode: 0644
-  when: ansible_distribution == "Rocky"
+  when: ansible_distribution == "Rocky" and
+        ansible_distribution_major_version == "8"
+
+- name: install shibboleth repo for Rocky 9
+  ansible.builtin.copy:
+    src: 'shibboleth.rocky9.repo'
+    dest: /etc/yum.repos.d/shibboleth.repo
+    owner: root
+    group: root
+    mode: 0644
+  when: ansible_distribution == "Rocky" and
+        ansible_distribution_major_version == "9"
 
 - name: install shibboleth repo for RHEL/CentOS 8
   ansible.builtin.copy:

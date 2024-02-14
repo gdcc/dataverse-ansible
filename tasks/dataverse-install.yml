@@ -137,8 +137,8 @@
   set_fact:
     python_bin: '/usr/bin/python3'
   when:
-  - ansible_os_family == "RedHat"
-  - ansible_distribution_major_version == "8"
+  - ansible_os_family == "RedHat" and
+    (ansible_distribution_major_version == "8") or (ansible_distribution_major_version == "9")
 
 - name: Debian only offers Python3 nowadays
   set_fact:
