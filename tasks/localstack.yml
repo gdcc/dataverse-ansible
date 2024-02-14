@@ -23,7 +23,8 @@
   ansible.builtin.file:
     path: '{{ localstack.data_dir }}'
     state: directory
-    owner: '{{ localstack.user }}'
+    owner: '{{ dataverse.payara.user }}'
+    group: '{{ dataverse.payara.group }}'
     mode: 0755
 
 - name: start s3-test container
