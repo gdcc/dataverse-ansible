@@ -107,8 +107,8 @@ Listen {{ apache.ssl.port }} https
 
 {% if apache.block.destroy == true %}
   # restrict destroy endpoint to localhost
-  ProxyPassMatch /api/datasets/:persistentId/destroy !
-  RedirectMatch ^/api/datasets/:persistentId/destroy(.*) /
+  ProxyPassMatch /api/datasets/[^/]*/destroy !
+  RedirectMatch ^/api/datasets/[^/]*/destroy(.*) /
 {% endif %}
 
 {% if apache.block.sword == true %}
