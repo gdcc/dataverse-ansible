@@ -9,9 +9,7 @@ PEM_DEFAULT=${HOME}
 VERBOSE_ARG=""
 
 # rocky linux 9.3 official, us-east-1
-#AWS_AMI_DEFAULT='ami-06b7b440778b965d8'
-# let's stick with rocky 8.9 until ITs pass
-AWS_AMI_DEFAULT='ami-0408f4c4a072e3fb9'
+AWS_AMI_DEFAULT='ami-06b7b440778b965d8'
 
 usage() {
   echo "Usage: $0 -b <branch> -r <repo> -p <pem_path> -g <group_vars> -a <dataverse-ansible branch> -i aws_image -u aws_user -s aws_size -t aws_tag -f aws_security group -e aws_profile -l local_log_path -d -v" 1>&2

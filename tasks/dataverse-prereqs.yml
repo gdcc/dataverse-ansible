@@ -53,13 +53,6 @@
   when: ansible_os_family == "RedHat" and
         ansible_distribution_major_version == "8"
 
-- name: "RHEL/Rocky 9 provides Python-3.9"
-  ansible.builtin.package:
-    name: python3-psycopg2
-    state: latest
-  when: ansible_os_family == "RedHat" and
-        ansible_distribution_major_version == "9"
-
 - name: install java-nnn-openjdk and other packages for RedHat/Rocky
   yum:
     name: ['java-{{ java.version }}-openjdk-devel', 'tzdata-java', 'vim-enhanced']

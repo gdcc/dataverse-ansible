@@ -11,9 +11,9 @@
     name: ['docker-ce', 'docker-compose-plugin']
     state: latest
 
-- name: Ansible docker module requires python-docker
+- name: Ansible docker module requires python-docker and pip3
   ansible.builtin.package:
-    name: 'python3-docker'
+    name: ['python3-docker','python3-pip']
     state: latest
 
 - name: pip must update itself
