@@ -22,6 +22,11 @@
     executable: pip3
     state: latest
 
+- name: stupid test to remove python3-requests
+  ansible.builtin.package:
+    name: python3-requests
+    state: absent
+
 - name: and docker-compose python package
   ansible.builtin.pip:
     name: ['docker-py','docker-compose']
