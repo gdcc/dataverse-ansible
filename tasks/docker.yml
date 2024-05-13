@@ -29,7 +29,7 @@
 
 - name: and docker-compose python package
   ansible.builtin.pip:
-    name: ['docker-py','docker-compose']
+    name: ['docker','docker-compose']
 
 - name: ensure /etc/docker exists
   ansible.builtin.file:
