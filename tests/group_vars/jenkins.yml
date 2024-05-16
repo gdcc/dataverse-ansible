@@ -256,6 +256,10 @@ dataverse:
     upgrade_only: false
   version: '6.2'
 
+breakpoint:
+  installer: false
+  test_suite: false
+
 build_guides: false
 
 db:

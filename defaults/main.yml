@@ -264,6 +264,10 @@ dataverse:
   version: '6.2'
 #  robots_txt_url: https://guides.dataverse.org/en/latest/_downloads/3a5cd7a283eecd5e93289e30af713554/robots.txt
 
+breakpoint:
+  installer: false
+  test_suite: false
+
 build_guides: false
 
 db:
