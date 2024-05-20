@@ -76,3 +76,7 @@
     enabled: yes
     daemon_reload: yes
     state: started
+
+- name: wait for Docker to become ready
+  ansible.builtin.pause:
+    seconds: 10
