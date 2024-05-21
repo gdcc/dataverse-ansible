@@ -30,7 +30,7 @@
 - name: and docker-compose python package
   ansible.builtin.pip:
     name:
-     - docker==6.1.3
+     - docker
      - docker-compose
 
 - name: ensure /etc/docker exists
