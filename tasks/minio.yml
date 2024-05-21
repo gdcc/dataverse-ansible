@@ -55,35 +55,32 @@
         - minio_dir.stat.exists
         - minio_dir.stat.isdir
 
-# barf: community.docker.docker_container_info can't call the Docker API
-#    - name: STORAGE | Get infos on container
-#      community.docker.docker_container_info:
-#        name: "{{ minio.docker.service_name }}"
-#      register: minio_container
+    - name: STORAGE | Get infos on container
+      community.docker.docker_container_info:
+        name: "{{ minio.docker.service_name }}"
+      register: minio_container
 
     - name: STORAGE | Check docker compose file
       ansible.builtin.stat:
         path: "{{ minio.docker.project_location }}/minio_compose.yml"
       register: compose_file
 
-# no need to stop a non-existant container
-#    - name: STORAGE | Stop `docker-compose down` MinIO
-#      community.docker.docker_compose:
-#        project_src: "{{ minio.docker.project_location }}"
-#        state: absent
-#        remove_orphans: true
-#      become: true
-#      register: continer_stop
-#      when:
-#        - minio_container.exists
-#        - copy_compose.changed
-#
-# can community.docker.docker_compose talk to Docker?
+    - name: STORAGE | Stop `docker-compose down` MinIO
+      community.docker.docker_compose:
+        project_src: "{{ minio.docker.project_location }}"
+        state: absent
+        remove_orphans: true
+      become: true
+      register: continer_stop
+      when:
+        - minio_container.exists
+        - copy_compose.changed
+
     - name: STORAGE | Run `docker-compose up` MinIO
       community.docker.docker_compose:
         project_src: "{{ minio.docker.project_location }}"
         build: true
         files: minio_compose.yml
-      #when: (not minio_container.exists and minio_dir.stat.isdir and compose_file.stat.exists) or continer_stop.changed
+      when: (not minio_container.exists and minio_dir.stat.isdir and compose_file.stat.exists) or continer_stop.changed
 
 - ansible.builtin.import_tasks: minio_jvm_options.yml
