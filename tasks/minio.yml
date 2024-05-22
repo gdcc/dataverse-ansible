@@ -58,6 +58,7 @@
     - name: STORAGE | Get infos on container
       community.docker.docker_container_info:
         name: "{{ minio.docker.service_name }}"
+      connection: docker
       register: minio_container
 
     - name: STORAGE | Check docker compose file
@@ -71,7 +72,8 @@
         state: absent
         remove_orphans: true
       become: true
-      register: continer_stop
+      connection: docker
+      register: container_stop
       when:
         - minio_container.exists
         - copy_compose.changed
@@ -81,6 +83,7 @@
         project_src: "{{ minio.docker.project_location }}"
         build: true
         files: minio_compose.yml
+      connection: docker
       when: (not minio_container.exists and minio_dir.stat.isdir and compose_file.stat.exists) or continer_stop.changed
 
 - ansible.builtin.import_tasks: minio_jvm_options.yml
