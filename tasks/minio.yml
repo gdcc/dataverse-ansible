@@ -55,35 +55,33 @@
         - minio_dir.stat.exists
         - minio_dir.stat.isdir
 
-    - name: STORAGE | Get infos on container
-      community.docker.docker_container_info:
-        name: "{{ minio.docker.service_name }}"
-      connection: docker
-      register: minio_container
+# disabling because python can't perform an HTTP GET
+#    - name: STORAGE | Get infos on container
+#      community.docker.docker_container_info:
+#        name: "{{ minio.docker.service_name }}"
+#      register: minio_container
 
     - name: STORAGE | Check docker compose file
       ansible.builtin.stat:
         path: "{{ minio.docker.project_location }}/minio_compose.yml"
       register: compose_file
 
-    - name: STORAGE | Stop `docker-compose down` MinIO
-      community.docker.docker_compose:
-        project_src: "{{ minio.docker.project_location }}"
-        state: absent
-        remove_orphans: true
-      become: true
-      connection: docker
-      register: container_stop
-      when:
-        - minio_container.exists
-        - copy_compose.changed
+# disabling because python can't perform an HTTP GET
+#    - name: STORAGE | Stop `docker-compose down` MinIO
+#      community.docker.docker_compose:
+#        project_src: "{{ minio.docker.project_location }}"
+#        state: absent
+#        remove_orphans: true
+#      become: true
+#      register: container_stop
+#      when:
+#        - minio_container.exists
+#        - copy_compose.changed
 
+# switching to shell command because python can't perform an HTTP GET
     - name: STORAGE | Run `docker-compose up` MinIO
-      community.docker.docker_compose:
-        project_src: "{{ minio.docker.project_location }}"
-        build: true
-        files: minio_compose.yml
-      connection: docker
-      when: (not minio_container.exists and minio_dir.stat.isdir and compose_file.stat.exists) or continer_stop.changed
+      ansible.builtin.shell
+        cmd: 'docker-compose up -f minio_compose.yml'
+        chdir: "{{ minio.docker.project_location }}"
 
 - ansible.builtin.import_tasks: minio_jvm_options.yml
