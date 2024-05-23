@@ -81,7 +81,7 @@
 # switching to shell command because python can't perform an HTTP GET
     - name: STORAGE | Run `docker-compose up` MinIO
       ansible.builtin.shell:
-        cmd: '/usr/local/bin/docker-compose up -f minio_compose.yml'
+        cmd: '/usr/bin/docker compose up -f minio_compose.yml'
         chdir: "{{ minio.docker.project_location }}"
 
 - ansible.builtin.import_tasks: minio_jvm_options.yml
