@@ -1,0 +1,21 @@
+---
+
+- name: are we on Debian 12
+  set_fact:
+    dataverse_pg_version_short: "15"
+  when: ansible_os_family == "Debian" and
+        ansible_distribution_major_version == "12"
+
+- name: get postgres config directory
+  set_fact:
+    postgres_config_dir: '/etc/postgresql/{{ dataverse_pg_version_short }}/main'
+
+- name: install postgres server on Debian
+  apt:
+   name: 'postgresql-{{ dataverse_pg_version_short }}'
+   state: latest
+
+- name: install postgres client on Debian
+  apt:
+    name: 'postgresql-client-{{ dataverse_pg_version_short }}'
+  when: db.use_rds == true

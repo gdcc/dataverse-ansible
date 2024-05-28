@@ -32,8 +32,6 @@ letsencrypt:
     email: 
     user: certbot
 
-dataverse_misc_files_dir: '/opt/dv'
-
 dataverse:
   adminpass: admin1
   allow_signups: true
@@ -250,7 +248,7 @@ dataverse:
     enabled: true
     argument: '-DcompilerArgument=-Xlint:unchecked test -P all-unit-tests'
   usermgmtkey: burrito
-  version: '5.14'
+  version: '6.0'
 
 build_guides: false
 
@@ -265,7 +263,7 @@ db:
     jdbcurl:
     log_lock_waits: true
     log_statements: all
-    version: 13
+    version: 15
     port: 5432
     replication:
       enabled: false
@@ -378,6 +376,6 @@ harvest:
 
 # un-nesting the below so's we can pass them at the CLI
 
-dataverse_branch: 9260-solr930
+dataverse_branch: 9717_postgres_15
 dataverse_repo: https://github.com/IQSS/dataverse.git
 any_errors_fatal: true

@@ -71,6 +71,14 @@
   tags:
   - payara
 
+- ansible.builtin.import_tasks: tasks/extra-certificate-authorities.yml
+  when:
+   - extra_certificates is defined
+   - extra_certificates.files is defined
+   - extra_certificates.files
+  tags:
+   - extracerts
+
 - ansible.builtin.import_tasks: solr.yml
   tags:
   - solr
@@ -89,6 +97,11 @@
   when: localstack.enabled == true
   tags:
   - localstack 
+
+- ansible.builtin.import_tasks: minio.yml
+  when: minio.enabled == true
+  tags:
+  - minio
 
 - ansible.builtin.import_tasks: dataverse-install.yml
   tags:
