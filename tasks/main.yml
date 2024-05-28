@@ -72,7 +72,10 @@
   - payara
 
 - ansible.builtin.import_tasks: tasks/extra-certificate-authorities.yml
-  when: extra_certificates.files
+  when:
+   - extra_certificates is defined
+   - extra_certificates.files is defined
+   - extra_certificates.files
   tags:
    - extracerts
 
