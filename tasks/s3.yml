@@ -1,18 +1,6 @@
 ---
 
-- name: we need awscli on RedHat 7 and Debian
-  package:
-    name: awscli
-    state: latest
-  when: ( ansible_os_family == "RedHat" and ansible_distribution_major_version == "7" ) or
-        ansible_os_family == "Debian"
-
-- name: we need awscli on 8
-  pip:
-    name: awscli
-    executable: pip3
-  when: ansible_os_family == "RedHat" and
-        ansible_distribution_major_version == "8"
+- ansible.builtin.import_tasks: aws_cli.yml
 
 - name: ensure dot dir exists
   file:

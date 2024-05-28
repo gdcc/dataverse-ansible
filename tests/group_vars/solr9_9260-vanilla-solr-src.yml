@@ -1,10 +1,5 @@
 ---
-# dataverse/defaults/main.yml
-
-# un-nested so we can pass them at the CLI
-dataverse_branch: release
-dataverse_repo: https://github.com/IQSS/dataverse.git
-any_errors_fatal: false
+# dataverse/tests/group_vars/jenkins.yml
 
 apache:
   enabled: true
@@ -34,10 +29,8 @@ letsencrypt:
   enabled: false
   certbot:
     autorenew: true
-    email:
+    email: 
     user: certbot
-
-dataverse_misc_files_dir: '/opt/dv'
 
 dataverse:
   adminpass: admin1
@@ -47,7 +40,7 @@ dataverse:
     blocked_endpoints: "admin,test"
     blocked_policy: "localhost-only"
     location: "http://localhost:8080/api"
-    test_suite: false
+    test_suite: true
     # possible test values from https://github.com/IQSS/dataverse/blob/develop/conf/docker-aio/run-test-suite.sh#L11
     # beware DataversesIT and DatasetsIT at minimum must be run for any other tests to succeed. have fun.
     #tests: "DataversesIT,DatasetsIT,AdminIT"
@@ -69,8 +62,8 @@ dataverse:
   copyright: "Your Institution"
   counter:
     enabled: false
-    geoipdir: maxmind_geoip
-    geoipfile: GeoLite2-Country.mmdb
+    #geoipdir: maxmind_geoip
+    #geoipfile: GeoLite2-Country.mmdb
     hub_api_token: set_me_in_secrets
     hub_base_url: "https://api.datacite.org"
     machines_url: "https://raw.githubusercontent.com/CDLUC3/Make-Data-Count/master/user-agents/lists/machine.txt"
@@ -89,6 +82,7 @@ dataverse:
       - https://github.com/IQSS/dataverse/files/3744336/codemeta.tsv.txt
   default:
     config:
+    storage_id: file
   demo: false
   pid:
     authority: "10.5072"
@@ -96,15 +90,16 @@ dataverse:
     shoulder: "FK2/"
   doi:
     baseurl: "https://mds.test.datacite.org/"
-    mdcbaseurl: "https://api.test.datacite.org/"
-    username: "testaccount"
-    password: "notmypassword"
+    username: "test.account"
+    password: "not.my.password"
     provider: FAKE
+    mdcbaseurl: "https://api.test.datacite.org/"
+    dataciterestapiurl: "https://api.test.datacite.org"
   ## Handlenet variables are only used if dataverse.pid.protocol is set to 'hdl'
   handlenet:
     independenthandleservice: 'false'
 #   handleauthhandle: YOUR:HANDLE/USERNAME
-    admcredfile: "{{ dataverse_misc_files_dir }}/admpriv.bin"
+    admcredfile: /opt/dv/admpriv.bin
     admcredfile_source: files/handlenet/admcredfile
 #   admprivphrase:
 #   index: 300
@@ -128,7 +123,7 @@ dataverse:
 #     path: /path/to/filestore   ## this is a sample entry for further file stores
   frontend:
     branch: develop
-    enabled: true
+    enabled: false
     docroot:
       base: /var/www/html
       dir: spa
@@ -143,21 +138,21 @@ dataverse:
     logformat: ulf
     adminuser: admin
     adminpass: notPr0d
-    siteurl:
-    timeout: 180
+    launch_timeout: 180
     request_timeout: 1800
+    siteurl: 
     root: /usr/local
-    dir: payara5
-    zipurl: https://nexus.payara.fish/repository/payara-community/fish/payara/distributions/payara/5.2022.3/payara-5.2022.3.zip
-    zipchecksum: sha256:4088221274882de792fda0836ddd47f0550f896e44c62174579c2c70a1177a5d
+    dir: payara6
+    zipurl: https://nexus.payara.fish/repository/payara-community/fish/payara/distributions/payara/6.2023.8/payara-6.2023.8.zip
+    zipchecksum: sha256:108ed0fa7f97bb3833ff00610a4951dd41389e2647dffe28132ad54231af694a
   google_analytics_key:
   jacoco:
-    enabled: false
+    enabled: true
     home: /tmp/jacoco
     version: 0.8.7
   file_fixity_checksum_algorithm: "MD5"
   language:
-    enabled: false # setting this to true allows the language task to run
+    enabled: false
     languages:
      - locale: en_US
        title: English
@@ -166,7 +161,7 @@ dataverse:
     language_packs:
       source: https://github.com/GlobalDataverseCommunityConsortium/dataverse-language-packs.git
       version: develop
-    lang_directory: "{{ dataverse_misc_files_dir }}/lang"
+    lang_directory: /opt/dv/lang
   licenses:
     enabled: false
     user: dataverseAdmin
@@ -213,24 +208,24 @@ dataverse:
        iconUrl: https://licensebuttons.net/l/by-sa/4.0/88x31.png
        active: true
        sortOrder: 7
-  memheap: 2048
+  memheap: 4096
   options:
     filepids: 
     maxfileuploadsizeinbytes:
-    provcollectionenabled:
+    provcollectionenabled: true
     tabularingestsizelimit: 
   previewers:
-    enabled: true
+    enabled: false
     on_same_server: true
     zip_url: https://github.com/gdcc/dataverse-previewers/releases/download/1.2/dataverse-previewers-1.2.zip
     dir: /var/www/html
   sampledata:
-    enabled: true
+    enabled: false
     dir: /tmp/sampledata
     repo: https://github.com/IQSS/dataverse-sample-data.git
     branch: master
-    venv: /tmp/sampledata/venv
-  custom_sampledata:
+    venv: /tmp/sampledata_venv
+  custom_sampledata: 
     enabled: false
     custom_sampledir: "{{ playbook_dir }}/custom_sampledata"
     custom_sampledatasets: "{{ playbook_dir }}/custom_sampledata/datasets"
@@ -238,23 +233,22 @@ dataverse:
     custom_sampleusers: "{{ playbook_dir }}/custom_sampledata/users"
     custom_samplefiles: "{{ playbook_dir }}/custom_sampledata/files"
   service_email: noreply@dataverse.yourinstitution.edu
-  smtp: localhost # or the FQDN of your organization's SMTP relay
+  smtp: localhost
   solr:
+    download_url: https://dlcdn.apache.org/solr/solr/9.3.0/solr-9.3.0.tgz
     group: solr
     root: /usr/local/solr
     user: solr
-    version: 8.11.1
-    checksum: sha256:9ec540cbd8e45f3d15a6b615a22939f5e6242ca81099951a47d3c082c79866a9
+    version: 9.3.0
     listen: 127.0.0.1
+    checksum: sha256:2a924a776d7c06dea561f12bdb17291dbaecc9e9a06f363d4599acb7fb7bfa71
   srcdir: /tmp/dataverse
   thumbnails: false
   unittests:
-    enabled: false
+    enabled: true
     argument: '-DcompilerArgument=-Xlint:unchecked test -P all-unit-tests'
   usermgmtkey: burrito
-  deployment:
-    upgrade_only: false
-  version: '6.2'
+  version: '5.14'
 
 build_guides: false
 
@@ -266,9 +260,9 @@ db:
     host: localhost
     user: dvnuser
     pass: dvnsecret
-    jdbcurl: 
+    jdbcurl:
     log_lock_waits: true
-    log_statements: none
+    log_statements: all
     version: 13
     port: 5432
     replication:
@@ -295,7 +289,7 @@ grafana:
   grafana_password: 'adm1n'
 
 java:
-  version: 11
+  version: 17
 
 localstack:
   enabled: false
@@ -306,7 +300,7 @@ localstack:
   # set to /tmp/localstack/data to enable persistence
   data_dir:
   debug: true
-  hostname_external: 
+  hostname_external:
   web_ui: 8888
 
 maven:
@@ -346,7 +340,9 @@ s3:
   create_bucket: true
   # for non-amazon services.
   custom_endpoint_url: "http://localhost:4572"
+  # note: direct upload and download require CORS on the bucket
   download_redirect: true
+  upload_redirect: true
   files_type: s3
   ingestsizelimit:
   label: s3-test
@@ -354,7 +350,6 @@ s3:
   path_style_access: true
   region: us-east-1
   storage_driver_id: s3
-  upload_redirect: true
   url_expiration_minutes: 60
   payload_signing: false
   chunked_encoding: true
@@ -365,46 +360,6 @@ schemaspy:
 
 shibboleth:
   enabled: false
-  email: TODO
-  organizationName: TODO
-  organizationalUnitName: TODO
-  requestedAttributes:
-# the ones marked Required seem to be really required by dataverse
-   - '<md:RequestedAttribute FriendlyName="eduPersonPrincipalName" Name="urn:oid:1.3.6.1.4.1.5923.1.1.1.6" isRequired="true"/>'
-   - '<md:RequestedAttribute FriendlyName="email" Name="urn:oid:0.9.2342.19200300.100.1.3" isRequired="true"/>'
-   - '<md:RequestedAttribute FriendlyName="givenName" Name="urn:oid:2.5.4.42" isRequired="true"/>'
-   - '<md:RequestedAttribute FriendlyName="sn" Name="urn:oid:2.5.4.4" isRequired="true"/>'
-   - '<md:RequestedAttribute FriendlyName="eduPersonScopedAffiliation" Name="urn:oid:1.3.6.1.4.1.5923.1.1.1.9" />'
-#   - '<md:RequestedAttribute FriendlyName="affiliation" Name="urn:oid:1.3.6.1.4.1.5923.1.1.1.9" />'
-  organizationDisplayName: TODO
-  organizationURL: TODO
-  UIInfo: []
-## this is an example below
-#    - lang: en
-#      DisplayName: TODO
-#      Description: TODO
-#      InformationURL: TODO
-#      PrivacyStatementURL: TODO
-#      Logo:
-#        url: TODO
-#        height: TODO
-#        width: TODO
-  contactPerson: []
-## this is an example below
-#    - type: technical
-#      givenName: TODO
-#      surName: TODO
-#      emailAddress: TODO
-#    - type: support
-#      givenName: TODO
-#      surName: TODO
-#      emailAddress: TODO
-#    - type: administrative
-#      givenName: TODO
-#      surName: TODO
-#      emailAddress: TODO
-  SSO: "<SSO>SAML2 SAML1</SSO>"
-  MetadataProvider: '<MetadataProvider type="XML" file="dataverse-idp-metadata.xml" backingFilePath="local-idp-metadata.xml" legacyOrgNames="true" reloadInterval="7200"/>'
 
 sshkeys:
   enabled: false
@@ -412,3 +367,15 @@ sshkeys:
   urls:
   user:
 
+
+harvest:
+  oaiserver:
+    maxidentifiers: 2
+    maxrecords: 2
+
+
+# un-nesting the below so's we can pass them at the CLI
+
+dataverse_branch: 9260-vanilla-solr-src
+dataverse_repo: https://github.com/IQSS/dataverse.git
+any_errors_fatal: true

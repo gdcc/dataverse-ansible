@@ -46,16 +46,23 @@
     name: ['bash-completion', 'git', 'jq', 'mlocate', 'net-tools', 'sudo', 'unzip', 'python3-psycopg2', 'zip', 'tar']
     state: latest
 
-- name: "RHEL/Rocky 8.6 provides Ansible 5.4 which wants Python-3.8"
+- name: "RHEL/Rocky 8.6-packaged Ansible wants Python-3.8"
   ansible.builtin.package:
     name: ['python38-psycopg2']
     state: latest
   when: ansible_os_family == "RedHat" and
         ansible_distribution_major_version == "8"
 
+- name: "RHEL/Rocky 9 provides Python-3.9"
+  ansible.builtin.package:
+    name: python3-psycopg2
+    state: latest
+  when: ansible_os_family == "RedHat" and
+        ansible_distribution_major_version == "9"
+
 - name: install java-nnn-openjdk and other packages for RedHat/Rocky
   yum:
-    name: ['java-{{ java.version }}-openjdk-devel', 'python38', 'vim-enhanced']
+    name: ['java-{{ java.version }}-openjdk-devel', 'tzdata-java', 'vim-enhanced']
     state: latest
   when: ansible_os_family == "RedHat"
 
@@ -70,7 +77,7 @@
     name: GraphicsMagick
   when:
     - ansible_os_family == "RedHat"
-    - ansible_distribution_major_version == "8"
+    - ansible_distribution_major_version == "8" or ansible_distribution_major_version == "9"
     - dataverse.thumbnails
 
 - name: install GraphicsMagic on Debian/Ubuntu for thumbnail generation
@@ -85,3 +92,13 @@
     name: curl
   when:
     - ansible_os_family == "Debian"
+
+- name: Payara service account must exist
+  import_tasks: payara_service_account.yml
+
+- name: create dataverse misc files directory for language and handle and other similar auxilliary files
+  file:
+    path: "{{ dataverse_misc_files_dir }}"
+    state: directory
+    owner: "{{ dataverse.payara.user }}"
+    group: "{{ dataverse.payara.group }}"

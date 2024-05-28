@@ -10,6 +10,14 @@
   debug:
     msg: '##### DATAVERSE INSTALLER #####'
 
+# this is necessary for the installer. dataverse-storage.yml does the real work later.
+- name: filesdir must pre-exist
+  ansible.builtin.file:
+    path: '{{ dataverse.filesdirs[0].path }}'
+    state: directory
+    owner: '{{ dataverse.payara.user }}'
+    group: '{{ dataverse.payara.group }}'
+
 - ansible.builtin.import_tasks: dataverse-build.yml
   when: dataverse_branch != "release"
   
@@ -61,17 +69,6 @@
     path: /tmp/dvinstall/setup-all.sh
     regexp: '^DV_SU_PASSWORD'
     line: 'DV_SU_PASSWORD="{{ dataverse.adminpass }}"'
-
-- name: bash aliases won't expand in non-interactive shells
-  replace:
-    path: /tmp/dvinstall/as-setup.sh
-    regexp: '{{ item.regexp }}'
-    replace: '{{ item.replace }}'
-  with_items:
-    - { regexp: '^(.*)ALIAS=rserve_password_alias(.*)$', replace: '  ./asadmin $ASADMIN_OPTS create-jvm-options "\-Ddataverse.rserve.password=${RSERVE_PASS}"' }
-    - { regexp: '^(.*)ALIAS=doi_password_alias(.*)$', replace: '  ./asadmin $ASADMIN_OPTS create-jvm-options "\-Ddoi.password=${DOI_PASSWORD}"' }
-    - { regexp: '^(.*)ALIAS=db_password_alias(.*)$', replace: '  ./asadmin $ASADMIN_OPTS set "resources.jdbc-connection-pool.dvnDbPool.property.password=${DB_PASS}"' }
-  when: dataverse.payara.zipurl is not match(".*glassfish-4.1.zip")
 
 - name: ensure as-setup.sh is executable
   file:
@@ -129,8 +126,8 @@
   set_fact:
     python_bin: '/usr/bin/python3'
   when:
-  - ansible_os_family == "RedHat"
-  - ansible_distribution_major_version == "8"
+  - ansible_os_family == "RedHat" and
+    (ansible_distribution_major_version == "8") or (ansible_distribution_major_version == "9")
 
 - name: Debian only offers Python3 nowadays
   set_fact:
@@ -143,12 +140,20 @@
   become_user: '{{ dataverse.payara.user }}'
   args:
     chdir: /tmp/dvinstall
+  when: not dataverse.deployment.upgrade_only
+
+- name: upgrade only -- deploy dataverse war
+  shell: '{{ payara_dir }}/bin/asadmin redeploy --name dataverse /tmp/dvinstall/dataverse.war'
+  become: yes
+  become_user: '{{ dataverse.payara.user }}'
+  when: dataverse.deployment.upgrade_only
 
 - name: stop payara manually (systemd gums up the works)
   become: yes
   become_user: "{{ dataverse.payara.user }}"
   shell: '{{ payara_dir }}/bin/asadmin stop-domain {{ dataverse.payara.domain }}'
   ignore_errors: yes
+  when: not dataverse.deployment.upgrade_only
 
 - name: now start payara with systemd
   service:
@@ -163,7 +168,7 @@
 
 - name: really wait for Payara to become ready
   ansible.builtin.pause:
-    seconds: 90
+    seconds: 120
 
 # install.py doesn't currently log this output, nothing sensitive in install.out
 #- name: negate need for password aliases

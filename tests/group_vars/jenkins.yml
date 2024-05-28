@@ -32,6 +32,8 @@ letsencrypt:
     email: 
     user: certbot
 
+dataverse_misc_files_dir: '/opt/dv'
+
 dataverse:
   adminpass: admin1
   allow_signups: true
@@ -99,7 +101,7 @@ dataverse:
   handlenet:
     independenthandleservice: 'false'
 #   handleauthhandle: YOUR:HANDLE/USERNAME
-    admcredfile: /opt/dv/admpriv.bin
+    admcredfile: "{{ dataverse_misc_files_dir }}/admpriv.bin"
     admcredfile_source: files/handlenet/admcredfile
 #   admprivphrase:
 #   index: 300
@@ -117,6 +119,7 @@ dataverse:
   ## Also, changing the default storage takes effect immediately for temp files, but
   ## only after restart for publishing (i.e. without restart the temp files will be moved to the old default data store at publish time).
   filesdirs:
+    #storage_driver_id: file
     - label: file
       path: /usr/local/dvn/data
 #   - label: label
@@ -142,9 +145,10 @@ dataverse:
     request_timeout: 1800
     siteurl: 
     root: /usr/local
-    dir: payara5
-    zipurl: https://nexus.payara.fish/repository/payara-community/fish/payara/distributions/payara/5.2022.3/payara-5.2022.3.zip
-    zipchecksum: sha256:4088221274882de792fda0836ddd47f0550f896e44c62174579c2c70a1177a5d
+    dir: payara6
+    #zipurl: https://nexus.payara.fish/repository/payara-community/fish/payara/distributions/payara/6.2023.8/payara-6.2023.8.zip
+    zipurl: https://mirrors.ibiblio.org/payara/payara-6.2023.8.zip
+    zipchecksum: sha256:108ed0fa7f97bb3833ff00610a4951dd41389e2647dffe28132ad54231af694a
   google_analytics_key:
   jacoco:
     enabled: true
@@ -161,7 +165,7 @@ dataverse:
     language_packs:
       source: https://github.com/GlobalDataverseCommunityConsortium/dataverse-language-packs.git
       version: develop
-    lang_directory: /opt/dv/lang
+    lang_directory: "{{ dataverse_misc_files_dir }}/lang"
   licenses:
     enabled: false
     user: dataverseAdmin
@@ -235,19 +239,22 @@ dataverse:
   service_email: noreply@dataverse.yourinstitution.edu
   smtp: localhost
   solr:
+    download_url: https://archive.apache.org/dist/solr/solr/9.3.0/solr-9.3.0.tgz
     group: solr
     root: /usr/local/solr
     user: solr
-    version: 8.11.1
+    version: 9.3.0
     listen: 127.0.0.1
-    checksum: sha256:9ec540cbd8e45f3d15a6b615a22939f5e6242ca81099951a47d3c082c79866a9
-  srcdir: /tmp/dataverse
+    checksum: sha256:2a924a776d7c06dea561f12bdb17291dbaecc9e9a06f363d4599acb7fb7bfa71
+  srcdir: /opt/dataverse/dataverse
   thumbnails: false
   unittests:
     enabled: true
     argument: '-DcompilerArgument=-Xlint:unchecked test -P all-unit-tests'
   usermgmtkey: burrito
-  version: '5.13'
+  deployment:
+    upgrade_only: false
+  version: '6.2'
 
 build_guides: false
 
@@ -283,27 +290,73 @@ db:
     plain: 'no'
   use_rds: false
 
+docker:
+  cidr: 10.0.0.99/24
+  repo: https://download.docker.com/linux/centos/docker-ce.repo
+
 grafana:
   grafana_user: 'admin'
   grafana_password: 'adm1n'
 
 java:
-  version: 11
+  version: 17
 
 localstack:
-  enabled: false
-  docker:
-    cidr: 
-    repo: https://download.docker.com/linux/centos/docker-ce.repo
-  container: 's3-test'
+  enabled: true
+  container_name: dev_localstack
   # set to /tmp/localstack/data to enable persistence
-  data_dir:
+  data_dir: /tmp/localstack/data
   debug: true
-  hostname_external:
+  hostname_external: localstack
+  port: 4566
   web_ui: 8888
+  buckets:
+    - label: LocalStack
+      id: localstack1
+      bucket_name: mybucket
+      enabled: false
+      access_key: 4cc355_k3y
+      secret_access_key: s3cr3t_4cc355_k3y
+      # for non-amazon services.
+      custom_endpoint_url: "http://localhost:4566"
+      # note: direct upload and download require CORS on the bucket
+      download_redirect: true
+      upload_redirect: true
+      files_type: s3
+      ingestsizelimit: 2000000000
+      # for localstack this must be true
+      path_style_access: true
+      region: us-east-2
+      url_expiration_minutes: 60
+      payload_signing: false
+      chunked_encoding: true
 
 maven:
-  version: 3.8.8
+  version: 3.9.5
+
+minio:
+  enabled: true
+  docker:
+    version: "latest"
+    service_name: "minio"
+    network:
+      name: "minio"
+      external: false
+    project_location: "/home/dataverse/minio"
+    timezone: "America/New_York"
+    user: dataverse
+    group: dataverse
+    server_port: 9000
+    console_port: 9001
+    root_user: "4cc355_k3y"
+    root_password: "s3cr3t_4cc355_k3y"
+    default_bucket: "mybucket"
+    label: MinIO
+    custom_endpoint_url: "http://localhost:9000"
+    custom_endpoint_region: us-east-1
+    path-style-access: true
+    access_key: 4cc355_k3y
+    secret_key: s3cr3t_4cc355_k3y
 
 munin:
   install: false

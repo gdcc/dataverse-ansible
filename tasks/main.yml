@@ -90,6 +90,11 @@
   tags:
   - localstack 
 
+- ansible.builtin.import_tasks: minio.yml
+  when: minio.enabled == true
+  tags:
+  - minio
+
 - ansible.builtin.import_tasks: dataverse-install.yml
   tags:
   - dataverse
@@ -117,6 +122,11 @@
   when: shibboleth.enabled == True
   tags:
   - shibboleth
+
+- ansible.builtin.import_tasks: orcid.yml
+  when: orcid.enabled == "true"
+  tags:
+  - orcid
 
 - ansible.builtin.import_tasks: sampledata.yml
   when: dataverse.sampledata.enabled == true

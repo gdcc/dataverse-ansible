@@ -1,0 +1,25 @@
+---
+
+- name: ensure dot dir exists
+  file:
+    path: '~{{ dataverse.payara.user }}/.aws'
+    state: directory
+    owner: '{{ dataverse.payara.user }}'
+    group: '{{ dataverse.payara.group }}'
+    mode: '0700'
+
+- name: place aws credentials
+  template:
+    src: aws_credentials.j2
+    dest: '~{{ dataverse.payara.user }}/.aws/credentials'
+    owner: '{{ dataverse.payara.user }}'
+    group: '{{ dataverse.payara.group }}'
+    mode: '0600'
+
+- name: place aws config
+  template:
+    src: aws_config.j2
+    dest: '~{{ dataverse.payara.user }}/.aws/config'
+    owner: '{{ dataverse.payara.user }}'
+    group: '{{ dataverse.payara.group }}'
+    mode: '0600'

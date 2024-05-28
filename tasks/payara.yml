@@ -35,11 +35,8 @@
   when: payara_zip_download.changed
   notify: enable and restart payara
 
-- name: create payara service group
-  group: name={{ dataverse.payara.group }} state=present
-
-- name: create payara service account
-  user: name={{ dataverse.payara.user }} group={{ dataverse.payara.group }}
+- name: ensure service account and group exist
+  ansible.builtin.import_tasks: payara_service_account.yml
 
 - name: payara service account should own {{ dataverse.payara.domain }}
   file: path={{ payara_dir }}/glassfish/domains/{{ dataverse.payara.domain }} owner={{ dataverse.payara.user }}
@@ -136,5 +133,24 @@
     mode: '0750'
     state: directory
 
-- name: flush hadlers to start payara and possibly reload systemd
+- name: workaround for FISH-7665
+  lineinfile:
+    path: '{{ payara_dir }}/glassfish/config/asenv.conf'
+    line: '{{ item }}'
+  with_items:
+    - 'export JAVA_TOOL_OPTIONS'
+    - 'JAVA_TOOL_OPTIONS="-Djdk.util.zip.disableZip64ExtraFieldValidation=true --add-opens=java.base/java.io=ALL-UNNAMED"'
+  when: dataverse.payara.zipurl is match(".*payara-6.*")
+
+- name: so installations can still install payara5 if they want
+  template:
+    src: payara6.service.j2
+    dest: /usr/lib/systemd/system/payara.service
+    owner: root
+    group: root
+    mode: 0644
+  when: (ansible_os_family == "RedHat") and (dataverse.payara.zipurl is match(".*payara-6.*"))
+  notify: reload systemd
+
+- name: flush handlers to start payara and possibly reload systemd
   meta: flush_handlers
