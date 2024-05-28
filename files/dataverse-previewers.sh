@@ -1,6 +1,19 @@
 #!/bin/sh
 
-curl -X POST -H 'Content-type: application/json' http://localhost:8080/api/admin/externalTools -d \
+curl http://localhost:8080/api/admin/externalTools > /tmp/externalTools.json
+
+upload_if_necessary() {
+	JSON=$1
+	TOOL_URL_LINE=`echo "$JSON" | grep toolUrl | sed -e 's/^[[:space:]]*//'`
+	CONTENT_TYPE_LINE=`echo "$JSON" | grep contentType | sed -e 's/^[[:space:]]*//'`
+	grep -q "$TOOL_URL_LINE" /tmp/externalTools.json && \
+		grep -q "$CONTENT_TYPE_LINE" /tmp/externalTools.json && \
+		echo "skipping $TOOL_URL_LINE $CONTENT_TYPE_LINE"
+		return
+	curl -X POST -H 'Content-type: application/json' http://localhost:8080/api/admin/externalTools -d "$JSON"
+}
+
+upload_if_necessary \
 '{
   "displayName":"Read Text",
   "description":"Read the text file.",
@@ -21,7 +34,7 @@ curl -X POST -H 'Content-type: application/json' http://localhost:8080/api/admin
   "contentType":"text/plain"
 }'
 
-curl -X POST -H 'Content-type: application/json' http://localhost:8080/api/admin/externalTools -d \
+upload_if_necessary \
 '{
   "displayName":"View Html",
   "description":"View the html file.",
@@ -42,7 +55,7 @@ curl -X POST -H 'Content-type: application/json' http://localhost:8080/api/admin
   "contentType":"text/html"
 }'
 
-curl -X POST -H 'Content-type: application/json' http://localhost:8080/api/admin/externalTools -d \
+upload_if_necessary \
 '{
   "displayName":"Play Audio",
   "description":"Listen to an audio file.",
@@ -63,7 +76,7 @@ curl -X POST -H 'Content-type: application/json' http://localhost:8080/api/admin
   "contentType":"audio/mp3"
 }'
 
-curl -X POST -H 'Content-type: application/json' http://localhost:8080/api/admin/externalTools -d \
+upload_if_necessary \
 '{
   "displayName":"Play Audio",
   "description":"Listen to an audio file.",
@@ -84,7 +97,7 @@ curl -X POST -H 'Content-type: application/json' http://localhost:8080/api/admin
   "contentType":"audio/mpeg"
 }'
 
-curl -X POST -H 'Content-type: application/json' http://localhost:8080/api/admin/externalTools -d \
+upload_if_necessary \
 '{
   "displayName":"Play Audio",
   "description":"Listen to an audio file.",
@@ -105,7 +118,7 @@ curl -X POST -H 'Content-type: application/json' http://localhost:8080/api/admin
   "contentType":"audio/wav"
 }'
 
-curl -X POST -H 'Content-type: application/json' http://localhost:8080/api/admin/externalTools -d \
+upload_if_necessary \
 '{
   "displayName":"Play Audio",
   "description":"Listen to an audio file.",
@@ -126,7 +139,7 @@ curl -X POST -H 'Content-type: application/json' http://localhost:8080/api/admin
   "contentType":"audio/ogg"
 }'
 
-curl -X POST -H 'Content-type: application/json' http://localhost:8080/api/admin/externalTools -d \
+upload_if_necessary \
 '{
   "displayName":"View Image",
   "description":"Preview an image file.",
@@ -147,7 +160,7 @@ curl -X POST -H 'Content-type: application/json' http://localhost:8080/api/admin
   "contentType":"image/gif"
 }'
 
-curl -X POST -H 'Content-type: application/json' http://localhost:8080/api/admin/externalTools -d \
+upload_if_necessary \
 '{
   "displayName":"View Image",
   "description":"Preview an image file.",
@@ -168,7 +181,7 @@ curl -X POST -H 'Content-type: application/json' http://localhost:8080/api/admin
   "contentType":"image/jpeg"
 }'
 
-curl -X POST -H 'Content-type: application/json' http://localhost:8080/api/admin/externalTools -d \
+upload_if_necessary \
 '{
   "displayName":"View Image",
   "description":"Preview an image file.",
@@ -189,7 +202,7 @@ curl -X POST -H 'Content-type: application/json' http://localhost:8080/api/admin
   "contentType":"image/png"
 }'
 
-curl -X POST -H 'Content-type: application/json' http://localhost:8080/api/admin/externalTools -d \
+upload_if_necessary \
 '{
   "displayName":"Read Document",
   "description":"Read a pdf document.",
@@ -210,7 +223,7 @@ curl -X POST -H 'Content-type: application/json' http://localhost:8080/api/admin
   "contentType":"application/pdf"
 }'
 
-curl -X POST -H 'Content-type: application/json' http://localhost:8080/api/admin/externalTools -d \
+upload_if_necessary \
 '{
   "displayName":"Play Video",
   "description":"Watch a video file.",
@@ -231,7 +244,7 @@ curl -X POST -H 'Content-type: application/json' http://localhost:8080/api/admin
   "contentType":"video/mp4"
 }'
 
-curl -X POST -H 'Content-type: application/json' http://localhost:8080/api/admin/externalTools -d \
+upload_if_necessary \
 '{
   "displayName":"Play Video",
   "description":"Watch a video file.",
@@ -252,7 +265,7 @@ curl -X POST -H 'Content-type: application/json' http://localhost:8080/api/admin
   "contentType":"video/ogg"
 }'
 
-curl -X POST -H 'Content-type: application/json' http://localhost:8080/api/admin/externalTools -d \
+upload_if_necessary \
 '{
   "displayName":"Play Video",
   "description":"Watch a video file.",
@@ -273,7 +286,7 @@ curl -X POST -H 'Content-type: application/json' http://localhost:8080/api/admin
   "contentType":"video/quicktime"
 }'
 
-curl -X POST -H 'Content-type: application/json' http://localhost:8080/api/admin/externalTools -d \
+upload_if_necessary \
 '{
   "displayName":"View Data",
   "description":"View the spreadsheet data.",
@@ -294,7 +307,7 @@ curl -X POST -H 'Content-type: application/json' http://localhost:8080/api/admin
   "contentType":"text/comma-separated-values"
 }'
 
-curl -X POST -H 'Content-type: application/json' http://localhost:8080/api/admin/externalTools -d \
+upload_if_necessary \
 '{
   "displayName":"View Data",
   "description":"View the spreadsheet data.",
@@ -315,7 +328,7 @@ curl -X POST -H 'Content-type: application/json' http://localhost:8080/api/admin
   "contentType":"text/tab-separated-values"
 }'
 
-curl -X POST -H 'Content-type: application/json' http://localhost:8080/api/admin/externalTools -d \
+upload_if_necessary \
 '{
   "displayName":"View Data",
   "description":"View the spreadsheet data.",
@@ -336,7 +349,7 @@ curl -X POST -H 'Content-type: application/json' http://localhost:8080/api/admin
   "contentType":"text/csv"
 }'
 
-curl -X POST -H 'Content-type: application/json' http://localhost:8080/api/admin/externalTools -d \
+upload_if_necessary \
 '{
   "displayName":"View Data",
   "description":"View the spreadsheet data.",
@@ -357,7 +370,7 @@ curl -X POST -H 'Content-type: application/json' http://localhost:8080/api/admin
   "contentType":"text/tsv"
 }'
 
-curl -X POST -H 'Content-type: application/json' http://localhost:8080/api/admin/externalTools -d \
+upload_if_necessary \
 '{
   "displayName":"View Stata File",
   "description":"View the Stata file as text.",
@@ -378,7 +391,7 @@ curl -X POST -H 'Content-type: application/json' http://localhost:8080/api/admin
   "contentType":"application/x-stata-syntax"
 }'
 
-curl -X POST -H 'Content-type: application/json' http://localhost:8080/api/admin/externalTools -d \
+upload_if_necessary \
 '{
   "displayName":"View R file",
   "description":"View the R file as text.",
@@ -399,7 +412,7 @@ curl -X POST -H 'Content-type: application/json' http://localhost:8080/api/admin
   "contentType":"type/x-r-syntax"
 }'
 
-curl -X POST -H 'Content-type: application/json' http://localhost:8080/api/admin/externalTools -d \
+upload_if_necessary \
 '{
   "displayName":"View Annotations",
   "description":"View the annotation entries in a file.",
