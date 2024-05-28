@@ -1,0 +1,32 @@
+---
+
+- name: begin certificate authority update task
+  debug:
+    msg: '##### CERTIFICATE AUTHORITIES #####'
+
+- name: create directory to copy certificates to
+  file:
+    path: /opt/certs
+    state: directory
+
+- name: copy extra certificate authorities
+  copy:
+    src: '{{ item }}'
+    dest: /opt/certs/{{ item }}
+  with_items: '{{ extra_certificates.files }}'
+  register: certfiles
+
+- name: add certificates to java keystores
+  community.general.java_cert:
+    cert_path: /opt/certs/{{ item.0 }}
+    keystore_path: '{{ item.1.path }}'
+    cert_alias: '{{ item.0 }}'
+    keystore_pass: '{{ item.1.pass }}'
+    state: present
+  when: certfiles.changed
+  loop: "{{ extra_certificates.files | product(extra_certificates.java_keystores) | list }}"
+  notify: enable and restart payara
+
+## TODO: we may want to add certificate to other keystores later
+## e.g.
+## * system keystore for debian (/etc/ssl/certs) or redhat (?)

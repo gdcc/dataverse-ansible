@@ -476,3 +476,11 @@ sshkeys:
   urls:
   user:
 
+extra_certificates:
+  # this should be a list of certificate files in x509 format put in your files/ ansible directory
+  files: []
+  java_keystores:
+    - path: '{{ payara_dir }}/glassfish/domains/{{ dataverse.payara.domain }}/config/cacerts.jks'
+      pass: changeit
+    - path: '{{ java.home }}/lib/security/cacerts'
+      pass: changeit
