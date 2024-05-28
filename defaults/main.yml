@@ -308,8 +308,7 @@ grafana:
 
 java:
   version: 17
-  # this breaks templating.
-  #home: /usr/lib/jvm/java-{{ java.version}}
+java_home: /usr/lib/jvm/java-{{ java.version }}
 
 localstack:
   enabled: false
