@@ -1,19 +1,6 @@
 #!/bin/sh
 
-curl http://localhost:8080/api/admin/externalTools > /tmp/externalTools.json
-
-upload_if_necessary() {
-	JSON=$1
-	TOOL_URL_LINE=`echo "$JSON" | grep toolUrl | sed -e 's/^[[:space:]]*//'`
-	CONTENT_TYPE_LINE=`echo "$JSON" | grep contentType | sed -e 's/^[[:space:]]*//'`
-	grep -q "$TOOL_URL_LINE" /tmp/externalTools.json && \
-		grep -q "$CONTENT_TYPE_LINE" /tmp/externalTools.json && \
-		echo "skipping $TOOL_URL_LINE $CONTENT_TYPE_LINE"
-		return
-	curl -X POST -H 'Content-type: application/json' http://localhost:8080/api/admin/externalTools -d "$JSON"
-}
-
-upload_if_necessary \
+curl -X POST -H 'Content-type: application/json' http://localhost:8080/api/admin/externalTools -d \
 '{
   "displayName":"Read Text",
   "description":"Read the text file.",
@@ -34,7 +21,7 @@ upload_if_necessary \
   "contentType":"text/plain"
 }'
 
-upload_if_necessary \
+curl -X POST -H 'Content-type: application/json' http://localhost:8080/api/admin/externalTools -d \
 '{
   "displayName":"View Html",
   "description":"View the html file.",
@@ -55,7 +42,7 @@ upload_if_necessary \
   "contentType":"text/html"
 }'
 
-upload_if_necessary \
+curl -X POST -H 'Content-type: application/json' http://localhost:8080/api/admin/externalTools -d \
 '{
   "displayName":"Play Audio",
   "description":"Listen to an audio file.",
@@ -76,7 +63,7 @@ upload_if_necessary \
   "contentType":"audio/mp3"
 }'
 
-upload_if_necessary \
+curl -X POST -H 'Content-type: application/json' http://localhost:8080/api/admin/externalTools -d \
 '{
   "displayName":"Play Audio",
   "description":"Listen to an audio file.",
@@ -97,7 +84,7 @@ upload_if_necessary \
   "contentType":"audio/mpeg"
 }'
 
-upload_if_necessary \
+curl -X POST -H 'Content-type: application/json' http://localhost:8080/api/admin/externalTools -d \
 '{
   "displayName":"Play Audio",
   "description":"Listen to an audio file.",
@@ -118,7 +105,7 @@ upload_if_necessary \
   "contentType":"audio/wav"
 }'
 
-upload_if_necessary \
+curl -X POST -H 'Content-type: application/json' http://localhost:8080/api/admin/externalTools -d \
 '{
   "displayName":"Play Audio",
   "description":"Listen to an audio file.",
@@ -139,7 +126,7 @@ upload_if_necessary \
   "contentType":"audio/ogg"
 }'
 
-upload_if_necessary \
+curl -X POST -H 'Content-type: application/json' http://localhost:8080/api/admin/externalTools -d \
 '{
   "displayName":"View Image",
   "description":"Preview an image file.",
@@ -160,7 +147,7 @@ upload_if_necessary \
   "contentType":"image/gif"
 }'
 
-upload_if_necessary \
+curl -X POST -H 'Content-type: application/json' http://localhost:8080/api/admin/externalTools -d \
 '{
   "displayName":"View Image",
   "description":"Preview an image file.",
@@ -181,7 +168,7 @@ upload_if_necessary \
   "contentType":"image/jpeg"
 }'
 
-upload_if_necessary \
+curl -X POST -H 'Content-type: application/json' http://localhost:8080/api/admin/externalTools -d \
 '{
   "displayName":"View Image",
   "description":"Preview an image file.",
@@ -202,7 +189,7 @@ upload_if_necessary \
   "contentType":"image/png"
 }'
 
-upload_if_necessary \
+curl -X POST -H 'Content-type: application/json' http://localhost:8080/api/admin/externalTools -d \
 '{
   "displayName":"Read Document",
   "description":"Read a pdf document.",
@@ -223,7 +210,7 @@ upload_if_necessary \
   "contentType":"application/pdf"
 }'
 
-upload_if_necessary \
+curl -X POST -H 'Content-type: application/json' http://localhost:8080/api/admin/externalTools -d \
 '{
   "displayName":"Play Video",
   "description":"Watch a video file.",
@@ -244,7 +231,7 @@ upload_if_necessary \
   "contentType":"video/mp4"
 }'
 
-upload_if_necessary \
+curl -X POST -H 'Content-type: application/json' http://localhost:8080/api/admin/externalTools -d \
 '{
   "displayName":"Play Video",
   "description":"Watch a video file.",
@@ -265,7 +252,7 @@ upload_if_necessary \
   "contentType":"video/ogg"
 }'
 
-upload_if_necessary \
+curl -X POST -H 'Content-type: application/json' http://localhost:8080/api/admin/externalTools -d \
 '{
   "displayName":"Play Video",
   "description":"Watch a video file.",
@@ -286,7 +273,7 @@ upload_if_necessary \
   "contentType":"video/quicktime"
 }'
 
-upload_if_necessary \
+curl -X POST -H 'Content-type: application/json' http://localhost:8080/api/admin/externalTools -d \
 '{
   "displayName":"View Data",
   "description":"View the spreadsheet data.",
@@ -307,7 +294,7 @@ upload_if_necessary \
   "contentType":"text/comma-separated-values"
 }'
 
-upload_if_necessary \
+curl -X POST -H 'Content-type: application/json' http://localhost:8080/api/admin/externalTools -d \
 '{
   "displayName":"View Data",
   "description":"View the spreadsheet data.",
@@ -328,7 +315,7 @@ upload_if_necessary \
   "contentType":"text/tab-separated-values"
 }'
 
-upload_if_necessary \
+curl -X POST -H 'Content-type: application/json' http://localhost:8080/api/admin/externalTools -d \
 '{
   "displayName":"View Data",
   "description":"View the spreadsheet data.",
@@ -349,7 +336,7 @@ upload_if_necessary \
   "contentType":"text/csv"
 }'
 
-upload_if_necessary \
+curl -X POST -H 'Content-type: application/json' http://localhost:8080/api/admin/externalTools -d \
 '{
   "displayName":"View Data",
   "description":"View the spreadsheet data.",
@@ -370,7 +357,7 @@ upload_if_necessary \
   "contentType":"text/tsv"
 }'
 
-upload_if_necessary \
+curl -X POST -H 'Content-type: application/json' http://localhost:8080/api/admin/externalTools -d \
 '{
   "displayName":"View Stata File",
   "description":"View the Stata file as text.",
@@ -391,7 +378,7 @@ upload_if_necessary \
   "contentType":"application/x-stata-syntax"
 }'
 
-upload_if_necessary \
+curl -X POST -H 'Content-type: application/json' http://localhost:8080/api/admin/externalTools -d \
 '{
   "displayName":"View R file",
   "description":"View the R file as text.",
@@ -412,7 +399,7 @@ upload_if_necessary \
   "contentType":"type/x-r-syntax"
 }'
 
-upload_if_necessary \
+curl -X POST -H 'Content-type: application/json' http://localhost:8080/api/admin/externalTools -d \
 '{
   "displayName":"View Annotations",
   "description":"View the annotation entries in a file.",
