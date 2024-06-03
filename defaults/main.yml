@@ -384,7 +384,7 @@ prometheus:
   user: prometheus
 
 rserve:
-  install: true
+  install: false
   host: localhost
   user: rserve
   group: rserve
