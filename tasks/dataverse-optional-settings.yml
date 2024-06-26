@@ -16,6 +16,10 @@
   shell: 'curl -X PUT -d {{ dataverse.options.provcollectionenabled }} {{ dataverse.api.location }}/admin/settings/:ProvCollectionEnabled'
   when: dataverse.options.provcollectionenabled
 
+- name: set SystemEmail as a jvm-option now
+  shell: '{{ payara_dir}}/bin/asadmin create-jvm-options "-Ddataverse.mail.system-email={{ dataverse.service_email }}"'
+  when: dataverse.service_email is defined
+
 - name: set TabularIngestSizeLimit when provided
   shell: 'curl -X PUT -d {{ dataverse.options.tabularingestsizelimit }} {{ dataverse.api.location }}/admin/settings/:TabularIngestSizeLimit'
   when: dataverse.options.tabularingestsizelimit
