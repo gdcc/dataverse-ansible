@@ -35,6 +35,12 @@
   shell: '{{ payara_dir}}/bin/asadmin create-jvm-options "-Ddataverse.oai.server.maxrecords={{ harvest.oaiserver.maxrecords }}"'
   when: harvest.oaiserver.maxrecords is defined
 
+- name: set dataverse.feature.index-harvested-metadata-source for harvesting tests
+  become: yes
+  become_user: "{{ dataverse.payara.user }}"
+  shell: '{{ payara_dir }}/bin/asadmin create-jvm-options "-Ddataverse.feature.index-harvested-metadata-source=true"'
+  when: dataverse.api.test_suite == true
+
 - name: set showListFirst value in the deployed idpselect_config.js
   lineinfile:
     path: '{{ payara_dir }}/glassfish/domains/{{ dataverse.payara.domain }}/applications/dataverse/resources/js/shib/idpselect_config.js'
