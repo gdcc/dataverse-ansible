@@ -34,7 +34,6 @@
   with_items:
     - { prop: ":GoogleAnalyticsCode", val: "{{ dataverse.google_analytics_key }}", desc: "key for Google Analytics"}
     - { prop: ":FooterCopyright" , val: "{{ dataverse.copyright }}", desc: "addition to the default copyright statement"}
-    - { prop: ":SystemEmail", val: "{{ dataverse.service_email }}", desc: "instance email address"}
     - { prop: ":Protocol", val: "{{ dataverse.pid.protocol }}", desc: "global identifier protocol"}
     - { prop: ":DoiProvider", val: "{{ dataverse.doi.provider }}", desc: "DOI service provider (EZID or DataCite)"}
     - { prop: ":Authority", val: "{{ dataverse.pid.authority }}", desc: "DOI/handle prefix"}
