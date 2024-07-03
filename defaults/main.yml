@@ -246,7 +246,7 @@ dataverse:
   service_email: noreply@dataverse.yourinstitution.edu
   smtp: localhost # or the FQDN of your organization's SMTP relay
   solr:
-    download_url: https://archive.apache.org/dist/solr/solr/9.3.0/solr-9.3.0.tgz
+    download_url: https://archive.apache.org/dist/solr/solr/9.4.1/solr-9.4.1.tgz
     group: solr
     root: /usr/local/solr
     user: solr
