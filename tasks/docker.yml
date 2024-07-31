@@ -13,13 +13,7 @@
 
 - name: Ansible docker module requires python-docker
   ansible.builtin.package:
-    name: 'python3-docker'
-    state: latest
-
-- name: pip must update itself
-  ansible.builtin.pip:
-    name: pip
-    executable: pip3
+    name: ['python3-docker','python3-pip']
     state: latest
 
 - name: and docker-compose python package
