@@ -153,7 +153,7 @@ dataverse:
   jacoco:
     enabled: true
     home: /tmp/jacoco
-    version: 0.8.7
+    version: 0.8.12
   file_fixity_checksum_algorithm: "MD5"
   language:
     enabled: false

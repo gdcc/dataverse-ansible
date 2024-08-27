@@ -154,7 +154,7 @@ dataverse:
   jacoco:
     enabled: false
     home: /tmp/jacoco
-    version: 0.8.7
+    version: 0.8.12
   file_fixity_checksum_algorithm: "MD5"
   language:
     enabled: false # setting this to true allows the language task to run
