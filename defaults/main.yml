@@ -258,6 +258,7 @@ dataverse:
   unittests:
     enabled: false
     argument: '-DcompilerArgument=-Xlint:unchecked test -P all-unit-tests'
+  uploads_dir: /tmp
   usermgmtkey: burrito
   deployment:
     upgrade_only: false

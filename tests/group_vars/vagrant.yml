@@ -254,6 +254,7 @@ dataverse:
   unittests:
     enabled: true
     argument: '-DcompilerArgument=-Xlint:unchecked test -P all-unit-tests'
+  uploads_dir: /tmp
   usermgmtkey: burrito
   deployment:
     upgrade_only: false
@@ -416,7 +417,7 @@ s3:
   chunked_encoding: true
 
 schemaspy:
-  enabled: true
+  enabled: false
   jarurl: https://github.com/schemaspy/schemaspy/releases/download/v6.2.4/schemaspy-6.2.4.jar
 
 shibboleth:
