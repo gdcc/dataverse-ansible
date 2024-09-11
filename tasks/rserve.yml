@@ -37,15 +37,29 @@
       - openssl-devel
   when: ansible_os_family == "RedHat"
 
+- name: get cran debian key
+  shell:
+    cmd: "gpg --keyserver keyserver.ubuntu.com --recv-key '95C0FAF38DB3CCAD0C080A7BDC78B2DDEABC47B7' ; gpg --armor --export '95C0FAF38DB3CCAD0C080A7BDC78B2DDEABC47B7' > /etc/apt/trusted.gpg.d/cran_debian_key.asc"
+    creates: /etc/apt/trusted.gpg.d/cran_debian_key.asc
+  when: ansible_os_family == "Debian"
+
+- name: add R repo on Debian/Ubuntu
+  lineinfile:
+    path: /etc/apt/sources.list.d/cran.list
+    regex: '^deb'
+    line: 'deb http://cloud.r-project.org/bin/linux/debian bookworm-cran40/'
+    create: true
+  when: ansible_os_family == "Debian"
+
 - name: install base packages on Debian/Ubuntu
-  package:
+  apt:
     name:
       - r-base-core
       - r-base-dev
       - libssl-dev
       - libcurl4-openssl-dev
-  when:
-    - ansible_os_family == "Debian"
+    update_cache: true
+  when: ansible_os_family == "Debian"
 
 - name: detect number of system cores
   set_fact:
