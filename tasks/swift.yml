@@ -1,0 +1,43 @@
+---
+
+- name: define swift storage type
+  shell: 'asadmin-create-or-replace-option.sh "dataverse.files.{{ swift.label }}.type" "swift"'
+  register: output
+  changed_when: "'Command create-jvm-options executed successfully.' in output.stdout"
+
+- name: set default swift parameters for {{ swift.label }}
+  shell: 'asadmin-create-or-replace-option.sh "dataverse.files.{{ swift.label }}.{{ item }}" "{{ swift[item] }}"'
+  register: output
+  changed_when: "'Command create-jvm-options executed successfully.' in output.stdout"
+  with_items:
+   - label
+   - defaultEndpoint
+   - folderPathSeparator
+   - temporaryUrlExpiryTime
+
+- name: set swift parameters for default endpoint
+  shell: 'asadmin-create-or-replace-option.sh "dataverse.files.{{ swift.label }}.{{ item }}.{{ swift.defaultEndpoint }}" "{{ swift[item] }}"'
+  register: output
+  changed_when: "'Command create-jvm-options executed successfully.' in output.stdout"
+  when: item != ''
+  with_items:
+   - authType
+   - authUrl
+   - tenant
+   - username
+   - endpoint
+   - hashKey
+
+- name: set default storage driver id, if applicable
+  shell: 'asadmin-create-or-replace-option.sh "dataverse.files.storage-driver-id" "{{ swift.label }}"'
+  register: output
+  changed_when: "'Command create-jvm-options executed successfully.' in output.stdout"
+  when: swift.is_default
+
+- name: set password alias name
+  shell: "asadmin-create-or-replace-option.sh \"dataverse.files.{{ swift.label }}.password.{{ swift.defaultEndpoint }}\" \"'\\${ALIAS=swiftpassword-alias}'\""
+  register: output
+  changed_when: "'Command create-jvm-options executed successfully.' in output.stdout"
+
+- name: set password alias -- we cannot determine if the password has changed or not since the last run, so we always change it -- this is due to asadmin
+  shell: 'asadmin-create-or-replace-password-alias.sh "swiftpassword-alias" "{{ swift.password }}"'

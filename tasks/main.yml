@@ -93,6 +93,11 @@
   tags:
   - s3
 
+- ansible.builtin.import_tasks: swift.yml
+  when: swift.enabled == true
+  tags:
+  - swift
+
 - ansible.builtin.import_tasks: localstack_create.yml
   when: localstack.enabled == true
   tags:
