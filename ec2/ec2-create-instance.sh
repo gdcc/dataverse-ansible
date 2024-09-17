@@ -188,8 +188,10 @@ fi
 
 # were we passed a pem file?
 if [ ! -z "$PEM_PATH" ]; then
-  KEY_NAME=`echo $PEM_PATH | sed 's/\.pem//g'`
+  KEY_NAME=`basename $PEM_PATH | sed 's/\.pem//g'`
   echo "using key_name: $KEY_NAME"
+  PEM_FILE=$PEM_PATH
+  echo "pem_file: $PEM_FILE"
 elif [ -z "$PEM_PATH" ]; then
   RANDOM_STRING="$(uuidgen | cut -c-8)"
   KEY_NAME="key-$USER-$RANDOM_STRING"
