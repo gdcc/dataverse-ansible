@@ -123,6 +123,27 @@ curl -X POST -H 'Content-type: application/json' http://localhost:8080/api/admin
         {"locale":"{localeCode}"}
       ]
     },
+  "contentType":"audio/mp4"
+}'
+
+curl -X POST -H 'Content-type: application/json' http://localhost:8080/api/admin/externalTools -d \
+'{
+  "displayName":"Play Audio",
+  "description":"Listen to an audio file.",
+  "toolName":"audioPreviewer",
+  "scope":"file",
+  "types":["preview"],
+  "toolUrl":"https://gdcc.github.io/dataverse-previewers/previewers/v1.2/AudioPreview.html",
+  "toolParameters": {
+      "queryParameters":[
+        {"fileid":"{fileId}"},
+        {"siteUrl":"{siteUrl}"},
+        {"key":"{apiToken}"},
+        {"datasetid":"{datasetId}"},
+        {"datasetversion":"{datasetVersion}"},
+        {"locale":"{localeCode}"}
+      ]
+    },
   "contentType":"audio/ogg"
 }'
 
