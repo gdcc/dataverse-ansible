@@ -1,35 +1,35 @@
 ---
 
-- name: ensure root_dir exists
-  file:
+- name: Ensure root_dir exists
+  ansible.builtin.file:
     path: '{{ db.backups.rootdir }}'
     owner: '{{ db.backups.user }}'
     mode: '0700'
     state: directory
 
-- name: and backup directory
-  file:
+- name: Ensure backup directory exists
+  ansible.builtin.file:
     path: '{{ db.backups.rootdir }}/{{ db.backups.backupdir }}'
     owner: '{{ db.backups.user }}'
     mode: '0700'
     state: directory
 
-- name: place script
-  template:
+- name: Place script
+  ansible.builtin.template:
     src: pg_backup.sh.j2
     dest: '{{ db.backups.rootdir }}/pg_backup.sh'
     owner: '{{ db.backups.user }}'
     mode: '0700'
 
-- name: place config
-  template:
+- name: Place config
+  ansible.builtin.template:
     src: pg_backup.config.j2
     dest: '{{ db.backups.rootdir }}/pg_backup.config'
     owner: '{{ db.backups.user }}'
     mode: '0600'
 
-- name: place cron config
-  template:
+- name: Place cron config
+  ansible.builtin.template:
     src: pg_backup.cron.j2
     dest: /etc/cron.d/pg_backup.cron
     owner: root
@@ -39,8 +39,8 @@
 
 # Debian does not execute cron.d entries that have suffixes
 # cf. https://unix.stackexchange.com/a/465526/133739
-- name: place cron config on Debian
-  template:
+- name: Place cron config on Debian
+  ansible.builtin.template:
     src: pg_backup.cron.j2
     dest: /etc/cron.d/pg_backup
     owner: root
