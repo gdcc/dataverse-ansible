@@ -1,27 +1,27 @@
 ---
 
-- name: begin certbot task
-  debug:
+- name: Begin certbot task
+  ansible.builtin.debug:
     msg: '##### CERTBOT #####'
 
-- name: create certbot user
-  user:
+- name: Create certbot user
+  ansible.builtin.user:
     name: '{{ letsencrypt.certbot.user }}'
 
-- name: install certbot package
-  package:
+- name: Install certbot package
+  ansible.builtin.package:
     name:
       - certbot
       - python3-certbot-apache
     state: latest
 
-- name: check if certificate already exists
-  stat:
+- name: Check if certificate already exists
+  ansible.builtin.stat:
     path: /etc/letsencrypt/live/{{ servername }}/cert.pem
   register: letsencrypt_cert
 
-- name: stop services to allow certbot to generate a cert
-  service:
+- name: Stop services to allow certbot to generate a cert
+  ansible.builtin.service:
     name: httpd
     state: stopped
   when:
@@ -29,19 +29,19 @@
     - not letsencrypt_cert.stat.exists
 
 - name: Generate new certificate if one doesn't exist.
-  command: 'certbot --apache --noninteractive --agree-tos --email {{ letsencrypt.certbot.email }} -d {{ servername }} {{ "--test-cert" if letsencrypt.certbot.test_cert else "" }}'
+  ansible.builtin.command: 'certbot --apache --noninteractive --agree-tos --email {{ letsencrypt.certbot.email }} -d {{ servername }} {{ "--test-cert" if letsencrypt.certbot.test_cert else "" }}'
   when: not letsencrypt_cert.stat.exists
 
-- name: start services after cert has been generated
-  service:
+- name: Start services after cert has been generated
+  ansible.builtin.service:
     name: httpd
     state: started
   when:
     - ansible_os_family == "RedHat"
     - not letsencrypt_cert.stat.exists
 
-- name: automatically renew certs on rocky
-  service:
+- name: Automatically renew certs on rocky
+  ansible.builtin.service:
     name: certbot-renew.timer
     state: started
     enabled: true
@@ -49,8 +49,8 @@
     - letsencrypt.certbot.autorenew == true
     - ansible_os_family == "RedHat"
 
-- name: automatically renew certs on debian
-  service:
+- name: Automatically renew certs on debian
+  ansible.builtin.service:
     name: certbot
     state: started
     enabled: true
