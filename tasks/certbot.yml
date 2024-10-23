@@ -9,7 +9,7 @@
     name: '{{ letsencrypt.certbot.user }}'
 
 - name: install certbot package
-  yum:
+  package:
     name:
       - certbot
       - python3-certbot-apache
@@ -24,7 +24,9 @@
   service:
     name: httpd
     state: stopped
-  when: not letsencrypt_cert.stat.exists
+  when:
+    - ansible_os_family == "RedHat"
+    - not letsencrypt_cert.stat.exists
 
 - name: Generate new certificate if one doesn't exist.
   command: 'certbot --apache --noninteractive --agree-tos --email {{ letsencrypt.certbot.email }} -d {{ servername }}'
@@ -34,11 +36,24 @@
   service:
     name: httpd
     state: started
-  when: not letsencrypt_cert.stat.exists
+  when:
+    - ansible_os_family == "RedHat"
+    - not letsencrypt_cert.stat.exists
 
-- name: automatically renew certs
+- name: automatically renew certs on rocky
   service:
     name: certbot-renew.timer
     state: started
-    enabled: yes
-  when: letsencrpyt.certbot.autonew == true
+    enabled: true
+  when:
+    - letsencrypt.certbot.autorenew == true
+    - ansible_os_family == "RedHat"
+
+- name: automatically renew certs on debian
+  service:
+    name: certbot
+    state: started
+    enabled: true
+  when:
+    - letsencrypt.certbot.autorenew == true
+    - ansible_os_family == "Debian"
