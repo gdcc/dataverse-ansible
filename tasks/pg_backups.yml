@@ -34,3 +34,16 @@
     dest: /etc/cron.d/pg_backup.cron
     owner: root
     mode: '0640'
+  when:
+    - ansible_os_family == "RedHat"
+
+# Debian does not execute cron.d entries that have suffixes
+# cf. https://unix.stackexchange.com/a/465526/133739
+- name: place cron config on Debian
+  template:
+    src: pg_backup.cron.j2
+    dest: /etc/cron.d/pg_backup
+    owner: root
+    mode: '0640'
+  when:
+    - ansible_os_family == "Debian"
