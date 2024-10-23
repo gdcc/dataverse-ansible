@@ -29,7 +29,7 @@
     - not letsencrypt_cert.stat.exists
 
 - name: Generate new certificate if one doesn't exist.
-  command: 'certbot --apache --noninteractive --agree-tos --email {{ letsencrypt.certbot.email }} -d {{ servername }}'
+  command: 'certbot --apache --noninteractive --agree-tos --email {{ letsencrypt.certbot.email }} -d {{ servername }} {{ "--test-cert" if letsencrypt.certbot.test_cert else "" }}'
   when: not letsencrypt_cert.stat.exists
 
 - name: start services after cert has been generated
