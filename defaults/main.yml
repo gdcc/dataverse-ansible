@@ -40,6 +40,10 @@ letsencrypt:
     autorenew: true
     email:
     user: certbot
+    # Use the letsencrypt staging server for deployment tests
+    # to avoid rate limiting:
+    # https://letsencrypt.org/docs/duplicate-certificate-limit/
+    test_cert: false
 
 dataverse_misc_files_dir: '/opt/dv'
 
