@@ -5,7 +5,7 @@
     name: perl
     state: latest
 
-- name: "place Leonid's PERL scripts"
+- name: "place Leonid's PERL scripts from develop"
   ansible.builtin.get_url:
     url: '{{ item }}'
     dest: '/var/lib/pgsql/{{ db.postgres.version }}/data/log/'
@@ -14,6 +14,17 @@
     - "{{ dataverse_raw_repo }}/develop/scripts/database/querycount/parse.pl"
     - "{{ dataverse_raw_repo }}/develop/scripts/database/querycount/count.pl"
   when: dataverse_branch == "release"
+
+- name: "place Leonid's PERL scripts from branch"
+  ansible.builtin.copy:
+    src: '{{ item }}'
+    dest: '/var/lib/pgsql/{{ db.postgres.version }}/data/log/'
+    mode: '0755'
+    remote_src: yes
+  loop:
+    - "{{ dataverse.srcdir }}/develop/scripts/database/querycount/parse.pl"
+    - "{{ dataverse.srcdir }}/develop/scripts/database/querycount/count.pl"
+  when: dataverse_branch != "release"
 
 - name: get name of Postgres logfile
   ansible.builtin.find:
