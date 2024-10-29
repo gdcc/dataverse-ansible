@@ -5,7 +5,6 @@
     name: perl
     state: latest
 
-# use Leonid's branch until merged into develop
 - name: "place Leonid's PERL scripts"
   ansible.builtin.get_url:
     url: '{{ item }}'
@@ -14,6 +13,7 @@
   loop:
     - "{{ dataverse_raw_repo }}/develop/scripts/database/querycount/parse.pl"
     - "{{ dataverse_raw_repo }}/develop/scripts/database/querycount/count.pl"
+  when: dataverse_branch == "release"
 
 - name: get name of Postgres logfile
   ansible.builtin.find:
