@@ -11,3 +11,5 @@ galaxy_info:
         - 7
   galaxy_tags:
     - dataverse
+  role_name: dataverse
+  namespace: ucla-data-science-center

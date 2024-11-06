@@ -8,7 +8,7 @@ dataverse_repo: https://github.com/IQSS/dataverse.git
 # dataverse_installer_url: https://example.com/path/to/dvinstall.zip
 
 # set this to true for troubleshooting
-any_errors_fatal: true
+#any_errors_fatal: true
 
 apache:
   enabled: true
@@ -47,9 +47,9 @@ dataverse:
   adminpass: admin1
   allow_signups: true
   api:
-    allow_lookup: false
-    blocked_endpoints: "admin,builtin-users,test"
-    blocked_policy: "localhost-only"
+    allow_lookup: true
+    blocked_endpoints: "builtin-users,test"
+    blocked_policy: ""
     location: "http://localhost:8080/api"
     test_suite: false
     # possible test values from https://github.com/IQSS/dataverse/blob/develop/conf/docker-aio/run-test-suite.sh#L11
@@ -57,7 +57,7 @@ dataverse:
     #tests: "DataversesIT,DatasetsIT,AdminIT"
     tests: default
   branding:
-    enabled: false
+    enabled: true
     directory: "{{ playbook_dir }}/files/branding"
     favicons_directory: "{{ playbook_dir }}/files/favicons"
     fileSettings:
@@ -66,23 +66,23 @@ dataverse:
      - setting: StyleCustomizationFile
        file: custom-stylesheet.css
      - setting: LogoCustomizationFile
-       file: topbanner001w425_darkbg.png'
+       file: dataverseUCLA_logo.png
     otherSettings:
      - setting: FooterCopyright
-       value: Your institute name here
+       value: " UC Regents"
   language:
-    enabled: false # setting this to true allows the language task to run
+    enabled: true # setting this to true allows the language task to run
     languages:
      - locale: en_US
        title: English
-     - locale: de_DE
-       title: Deutsch
+     - locale: de_ES
+       title: Spanish
     language_packs:
       source: https://github.com/GlobalDataverseCommunityConsortium/dataverse-language-packs.git
       version: develop
     lang_directory: "{{ dataverse_misc_files_dir }}/lang"
   licenses:
-    enabled: false
+    enabled: true
     user: dataverseAdmin
     licenses:
      - name: CC0 1.0
@@ -129,7 +129,7 @@ dataverse:
        sortOrder: 7
   copyright: "UC Regents"
   counter:
-    enabled: false
+    enabled: true
     #geoipdir: maxmind_geoip
     #geoipfile: GeoLite2-Country.mmdb
     hub_api_token: set_me_in_secrets
@@ -145,7 +145,7 @@ dataverse:
     user: counter
     year_month: "2018-05"
   custom_metadata_blocks:
-    enabled: false
+    enabled: true
     urls:
       - https://github.com/IQSS/dataverse/files/3744336/codemeta.tsv.txt
   default:
@@ -322,7 +322,7 @@ localstack:
   web_ui: 8888
   buckets:
     - label: LocalStack
-      id: localstack1
+      id: loalstack1
       bucket_name: mybucket
       enabled: false
       access_key: 4cc355_k3y
@@ -394,7 +394,7 @@ rserve:
   workdir: /tmp/Rserv
 
 s3:
-  enabled: true
+  enabled: false
   access_key: 4cc355_k3y
   secret_access_key: s3cr3t_4cc355_k3y
   bucket_name: s3-test

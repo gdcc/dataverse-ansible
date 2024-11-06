@@ -22,6 +22,10 @@ platforms:
 #      - "8080:8080"
 provisioner:
   name: ansible
+  log: true  # Enable logging
+  config_options:
+    defaults:
+      log_path: ./ansible-output.log  # Path where the log will be saved
   roles_path:
     - ..
   playbooks:

@@ -3,3 +3,4 @@ venv
 /.idea
 /*.iml
 inventory_ec2
+.DS_Store

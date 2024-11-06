@@ -39,6 +39,7 @@
     url: "{{ solr_download_url }}"
     checksum: "{{ dataverse.solr.checksum }}"
     dest: /tmp/solr-{{ dataverse.solr.version }}.tgz
+    timeout: 600
   register: solr_installer_download
 
 - name: untar solr

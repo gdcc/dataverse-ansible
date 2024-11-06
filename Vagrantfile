@@ -4,8 +4,9 @@
 VAGRANTFILE_API_VERSION = "2"
 
 Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
-  config.vm.box = "bento/rockylinux-9"
-
+  #config.vm.box = "bento/rockylinux-9"
+  config.vm.box = "bento/rockylinux-9-arm64"
+  
   config.vm.synced_folder ".", "/vagrant"
   config.vm.synced_folder ".", "/etc/ansible/roles/dataverse"
 
@@ -20,7 +21,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   config.vm.network :forwarded_port, guest: 9090, host: 9090, auto_correct: true # Prometheus
 
   config.vm.provision :ansible_local do |ansible|
-    ansible.playbook = "tests/site.yml"
+    ansible.playbook = "site.yml"
     ansible.groups = {
       "dataverse" => %(default),
       "db"        => %(default),
@@ -34,8 +35,15 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     ansible.verbose = true
   end
 
-  config.vm.provider "virtualbox" do |vbox|
-    vbox.cpus = 4
-    vbox.memory = 8192
+  config.vm.provider "vmware_desktop" do |vmware|
+    vmware.vmx["tools.upgrade.policy"] = "manual"
+    vmware.gui = false
+    vmware.ssh_info_public = true
+    vmware.allowlist_verified = true
+    vmware.linked_clone = false
+    vmware.vmx["ethernet0.virtualdev"] = "vmxnet3"
+    vmware.vmx["ethernet1.virtualdev"] = "vmxnet3"
+    vmware.vmx["memsize"] = "8192"
+    vmware.vmx["numvcpus"] = "4"
   end
 end

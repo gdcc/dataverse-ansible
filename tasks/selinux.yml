@@ -8,9 +8,8 @@
       - setools
       - setools-console
       - policycoreutils
-  when: ansible_os_family == 'RedHat'
+  when: ansible_os_family == 'RedHat' and ansible_selinux.status == "enabled"
 
-# Ansible seboolean works on Rocky 9, 8.6 handled below.
 - name: set httpd_can_network_connect on and keep it persistent across reboots
   seboolean:
     name: httpd_can_network_connect
@@ -19,15 +18,15 @@
   when:
   - ansible_os_family == 'RedHat'
   - ansible_distribution_major_version == "9"
+  - ansible_selinux.status == "enabled"
 
-# Ansible seboolean module is broken on RHEL/Rocky 8.6, use shell cmd instead.
-- name: allow apache to make outbound connections
+- name: allow apache to make outbound connections (for Rocky 8.6)
   shell: '/usr/sbin/setsebool -P httpd_can_network_connect 1'
   when:
     - ansible_os_family == "RedHat"
     - ansible_distribution_major_version == "8"
+    - ansible_selinux.status == "enabled"
 
-# Ansible seboolean works on Rocky 9, 8.6 handled below.
 - name: allow apache to read user content by default
   seboolean:
     name: httpd_read_user_content
@@ -36,20 +35,23 @@
   when:
   - ansible_os_family == "RedHat"
   - ansible_distribution_major_version == "9"
+  - ansible_selinux.status == "enabled"
 
-# Ansible seboolean module is broken on RHEL/Rocky 8.6. dls 20220602
-- name: allow apache to read user content by default
+- name: allow apache to read user content by default (for Rocky 8.6)
   shell: 'setsebool -P httpd_read_user_content 1'
   when:
     - ansible_os_family == "RedHat"
     - ansible_distribution_major_version == "8"
+    - ansible_selinux.status == "enabled"
 
-- name: "both redhat and ubuntu default to /var/www/html"
+- name: "both RedHat and Ubuntu default to /var/www/html"
   shell: 'semanage fcontext -a -t httpd_sys_content_t "/var/www/html(/.*)?" || semanage fcontext -m -t httpd_sys_content_t "/var/www/html(/.*)?"'
   when:
     - ansible_os_family == "RedHat"
+    - ansible_selinux.status == "enabled"
 
 - name: "allow apache read-only access to /var/www/html"
   shell: 'restorecon -R -v /var/www/html'
   when:
     - ansible_os_family == "RedHat"
+    - ansible_selinux.status == "enabled"
