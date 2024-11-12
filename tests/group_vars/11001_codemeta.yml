@@ -85,7 +85,7 @@ dataverse:
   custom_metadata_blocks:
     enabled: true
     urls:
-      - https://raw.githubusercontent.com/IQSS/dataverse/refs/heads/10519-dataset-types/scripts/api/data/metadatablocks/codemeta.tsv
+      - https://raw.githubusercontent.com/IQSS/dataverse/refs/heads/develop/scripts/api/data/metadatablocks/codemeta.tsv
   default:
     config:
     storage_id: file
