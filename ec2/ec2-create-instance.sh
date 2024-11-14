@@ -289,9 +289,9 @@ if [ -z "$DESTROY" ]; then
 else
    echo "destroying AWS instance"
    eval $DESTROY_CMD
+   if [ -z "$PEM_PATH" ]; then
+        aws $PROFILE ec2 delete-key-pair --key-name $KEY_NAME
+      fi
    echo "removing EC2 PEM"
    rm -f $PEM_FILE
-   if [ -z "$PEM_PATH" ]; then
-     aws $PROFILE ec2 delete-key-pair --key-name $KEY_NAME
-   fi
 fi
