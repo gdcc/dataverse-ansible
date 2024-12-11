@@ -3,6 +3,8 @@
 - name: flush handlers to restart Payara if needed
   meta: flush_handlers
 
+- ansible.builtin.import_tasks: check_index_status.yml
+
 - name: escape custom endpoint url colons
   ansible.builtin.set_fact: "custom_endpoint_escaped={{ minio.docker.custom_endpoint_url | regex_replace (':','\\:') }}"
 

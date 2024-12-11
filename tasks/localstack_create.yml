@@ -3,6 +3,8 @@
 - name: flush handlers to restart Payara if needed
   meta: flush_handlers
 
+- ansible.builtin.import_tasks: check_index_status.yml
+
 - name: build list from json
   ansible.builtin.set_fact:
     s3_bucketlist: "{{ localstack.buckets }}"

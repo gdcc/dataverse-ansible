@@ -160,15 +160,7 @@
     name: payara
     state: started
 
-- name: wait for payara to become ready
-  wait_for:
-    port: 8009
-    state: present
-    timeout: "{{ dataverse.payara.launch_timeout }}"
-
-- name: really wait for Payara to become ready
-  ansible.builtin.pause:
-    seconds: 150
+- ansible.builtin.import_tasks: check_index_status.yml
 
 # install.py doesn't currently log this output, nothing sensitive in install.out
 #- name: negate need for password aliases

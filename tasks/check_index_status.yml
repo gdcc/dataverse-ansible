@@ -1,0 +1,11 @@
+- name: Wait until Solr status is 200
+  uri:
+    url: 'http://localhost:8080/api/admin/index'
+    return_content: yes
+    validate_certs: no
+    status_code:
+      - 200
+  until: uri_output.status == 200
+  retries: 18 # 18 retries * 10 seconds == 3 minutes
+  delay: 10
+  register: uri_output
