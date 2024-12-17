@@ -36,6 +36,14 @@
 - name: ensure we have api script data directory
   shell: "/bin/cp -r {{ dataverse.srcdir }}/scripts/api/data /tmp/dvinstall/"
 
+- name: ensure we have a target when not in a branch
+  ansible.builtin.file:
+    path: '{{ dataverse.srcdir }}/target'
+    owner: '{{ dataverse.payara.user }}'
+    group: '{{ dataverse.payara.group }}'
+    state: directory
+    mode: '0755'
+
 - name: set user management quesadilla
   uri:
     url: 'http://localhost:8080/api/admin/settings/BuiltinUsers.KEY'

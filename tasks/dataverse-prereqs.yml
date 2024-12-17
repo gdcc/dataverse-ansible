@@ -32,10 +32,9 @@
     state: latest
   when: ansible_os_family == "RedHat"
 
-# Install general system utilities and Python dependencies
-- name: Install necessary packages
-  dnf:
-    name: ['bash-completion', 'git', 'jq', 'mlocate', 'net-tools', 'sudo', 'unzip', 'python3', 'zip', 'tar']
+- name: install some necessary packages
+  ansible.builtin.package:
+    name: ['bash-completion', 'bc', 'ed', 'git', 'jq', 'mlocate', 'net-tools', 'sudo', 'unzip', 'python3-psycopg2', 'zip', 'tar', 'wget']
     state: latest
   when: ansible_os_family == "RedHat"
 

@@ -1,7 +1,7 @@
 # dataverse/tasks/dataverse-branch.yml
 
 - name: clone branch
-  debug:
+  ansible.builtin.debug:
     msg: '##### CLONE BRANCH #####'
 
 - name: ensure service account and group exist
@@ -14,11 +14,46 @@
     owner: '{{ dataverse.payara.user }}'
     group: '{{ dataverse.payara.user }}'
 
+- name: git wants identity to merge a branch
+  ansible.builtin.command:
+    cmd: 'git config --global user.name "nobody"'
+  become: true
+  become_user: '{{ dataverse.payara.user }}'
+
+- name: git wants identity to merge a branch
+  ansible.builtin.command:
+    cmd: 'git config --global user.email "nobody@nowhere.com"'
+  become: true
+  become_user: '{{ dataverse.payara.user }}'
+
 - name: clone specified branch
   git:
     repo: "{{ dataverse_repo }}"
     dest: "{{ dataverse.srcdir }}"
     version: "{{ dataverse_branch }}"
-  when: dataverse_branch != "release"
+  become: true
+  become_user: '{{ dataverse.payara.user }}'
+
+- name: add IQSS as upstream when building PR
+  ansible.builtin.command:
+    cmd: 'git remote add upstream https://github.com/IQSS/dataverse.git'
+  args:
+    chdir: '{{ dataverse.srcdir }}'
+  become: true
+  become_user: '{{ dataverse.payara.user }}'
+
+- name: fetch upstream
+  ansible.builtin.command:
+    cmd: 'git fetch upstream'
+  args:
+    chdir: '{{ dataverse.srcdir }}'
+  become: true
+  become_user: '{{ dataverse.payara.user }}'
+
+- name: merge remote PR with develop
+  ansible.builtin.command:
+    cmd: 'git merge upstream/develop'
+  args:
+    chdir: '{{ dataverse.srcdir }}'
   become: true
   become_user: '{{ dataverse.payara.user }}'
