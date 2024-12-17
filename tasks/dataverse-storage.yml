@@ -7,6 +7,8 @@
 - name: flushing handlers to start payara if needed
   meta: flush_handlers
 
+- ansible.builtin.import_tasks: check_index_status.yml
+
 - name: get current dataverse storage-driver-id
   shell: "{{ payara_dir }}/bin/asadmin list-jvm-options | grep dataverse.files.storage-driver-id | sed 's/.*=//'"
   register: dataverse_filestores_storage_driver_id

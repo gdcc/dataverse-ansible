@@ -5,15 +5,27 @@
     name: perl
     state: latest
 
-# use Leonid's branch until merged into develop
-- name: "place Leonid's PERL scripts"
+# let's just use develop since this doesn't change and forks seem to be git-bombed.
+- name: "place Leonid's PERL scripts from develop"
   ansible.builtin.get_url:
     url: '{{ item }}'
     dest: '/var/lib/pgsql/{{ db.postgres.version }}/data/log/'
     mode: '0755'
   loop:
-    - "{{ dataverse_raw_repo }}/develop/scripts/database/querycount/parse.pl"
-    - "{{ dataverse_raw_repo }}/develop/scripts/database/querycount/count.pl"
+    - "https://raw.githubusercontent.com/IQSS/dataverse/develop/scripts/database/querycount/parse.pl"
+    - "https://raw.githubusercontent.com/IQSS/dataverse/develop/scripts/database/querycount/count.pl"
+
+# uncomment this if anyone ever works on parse/count.pl
+#- name: "place Leonid's PERL scripts from branch"
+#  ansible.builtin.copy:
+#    src: '{{ item }}'
+#    dest: '/var/lib/pgsql/{{ db.postgres.version }}/data/log/'
+#    mode: '0755'
+#    remote_src: yes
+#  loop:
+#    - "{{ dataverse.srcdir }}/develop/scripts/database/querycount/parse.pl"
+#    - "{{ dataverse.srcdir }}/develop/scripts/database/querycount/count.pl"
+#  when: dataverse_branch != "release"
 
 - name: get name of Postgres logfile
   ansible.builtin.find:

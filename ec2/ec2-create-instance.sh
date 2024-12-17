@@ -283,9 +283,15 @@ if [ -z "$DESTROY" ]; then
    echo "ssh -i $PEM_FILE $USER_AT_HOST"
    echo "When you are done, please terminate your instance with:"
    echo "$DESTROY_CMD"
+   if [ -z "$PEM_PATH" ]; then
+       echo "aws $PROFILE ec2 delete-key-pair --key-name $KEY_NAME"
+    fi
 else
    echo "destroying AWS instance"
    eval $DESTROY_CMD
+   if [ -z "$PEM_PATH" ]; then
+        aws $PROFILE ec2 delete-key-pair --key-name $KEY_NAME
+      fi
    echo "removing EC2 PEM"
    rm -f $PEM_FILE
 fi
