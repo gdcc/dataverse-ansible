@@ -4,6 +4,18 @@
   ansible.builtin.set_fact: "custom_endpoint_escaped={{ bucket_options.custom_endpoint_url | regex_replace (':','\\:') }}"
   when: bucket_options.custom_endpoint_url | length > 0
 
+- name: Wait until localstack status is ready
+  uri:
+    url: '{{ bucket_options.custom_endpoint_url }}'
+    return_content: yes
+    validate_certs: no
+    status_code:
+      - 200
+  until: uri_output.status == 200
+  retries: 18 # 18 retries * 10 seconds == 3 minutes
+  delay: 10
+  register: uri_output
+
 - name: create localstack bucket for testing
   ansible.builtin.shell: "aws --endpoint={{ custom_endpoint_escaped }} s3 mb s3://{{ bucket_options.bucket_name }}"
   become: yes
