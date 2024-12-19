@@ -66,7 +66,7 @@
       register: compose_file
 
     - name: STORAGE | Stop `docker-compose down` MinIO
-      community.docker.docker_compose:
+      community.docker.docker_compose_v2:
         project_src: "{{ minio.docker.project_location }}"
         state: absent
         remove_orphans: true
@@ -77,7 +77,7 @@
         - copy_compose.changed
 
     - name: STORAGE | Run `docker-compose up` MinIO
-      community.docker.docker_compose:
+      community.docker.docker_compose_v2:
         project_src: "{{ minio.docker.project_location }}"
         build: true
         files: minio_compose.yml
