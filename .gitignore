@@ -1,6 +1,9 @@
+.gitignore
 venv
 .vagrant/
 /.idea
 /*.iml
 inventory_ec2
 .DS_Store
+index.html
+
