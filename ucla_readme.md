@@ -20,3 +20,15 @@ To get a sense of what molecule provides run it without a command and it will li
 `molecule login --scenario-name rocky9` 
 
 Will ssh into the container. The ansible molecule documentation can be found here: https://ansible.readthedocs.io/projects/molecule/
+
+## Windows/WSL2 Linux specific changes
+Running on WSL2, Debian Linux  
+Created a local branch:  windows_wsl2_jmj  
+
+- **minio.yml**, lines 68, 79  community.docker.docker_compose to community.docker.docker_compose_v2    
+- **/tasks/postgres_redhat.yml**, line 11 from -aarch64to ansible_distribution_major_version }}-x86_64  
+
+
+
+
+
