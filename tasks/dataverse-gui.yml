@@ -23,7 +23,7 @@
 
 - name: copy branding files
   copy:
-    src: branding
+    src: '{{ dataverse.branding.directory }}'
     dest: '{{ gui_file_path }}'
     owner: '{{ dataverse.payara.user }}'
     group: '{{ dataverse.payara.group }}'
