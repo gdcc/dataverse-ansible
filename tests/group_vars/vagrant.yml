@@ -279,6 +279,7 @@ db:
     log_statements: none
     version: 16
     port: 5432
+    query_counts: true
     replication:
       enabled: false
       # all servers must be defined so firewalls may be opened accordingly
