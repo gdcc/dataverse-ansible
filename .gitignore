@@ -7,4 +7,5 @@ inventory_ec2
 .DS_Store
 index.html
 jmj-github-key
-
+check-architecture-local.yml
+check-architecture.yml
