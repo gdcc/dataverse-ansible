@@ -11,13 +11,17 @@
 # Apply GUI design
 - name: Applying GUI design
   debug:
-    msg: '##### Applying GUI design #####'
+    msg: '##### Applying GUI design #####' 
+    
+- name: Print out the playbook directory
+  debug:
+    msg: "#### WHERE IS THE DAMN DIRECTORY ### {{ playbook_dir }}/files/branding "
 
 # Copy navbar logo if exists
 - name: Copy navbar logo if exists
   copy:
-    src: '{{ dataverse.branding.directory }}/{{ dataverse.branding.fileSettings[2].file }}'
-    dest: '{{ gui_file_path }}/branding/'
+    src: ' dataverse.branding.directory/dataverse.branding.fileSettings[2].file '
+    dest: 'gui_file_path/branding/'
     mode: '0644'
     owner: '{{ dataverse.payara.user }}'
     group: '{{ dataverse.payara.group }}'
@@ -37,8 +41,8 @@
 # Optionally copy header and stylesheet files only if they exist
 - name: Copy custom header if exists
   copy:
-    src: '{{ dataverse.branding.directory }}/custom-header.html'
-    dest: '{{ gui_file_path }}/branding/custom-header.html'
+    src: 'dataverse.branding.directory/custom-header.html'
+    dest: 'gui_file_path/branding/custom-header.html'
     mode: '0644'
     owner: '{{ dataverse.payara.user }}'
     group: '{{ dataverse.payara.group }}'
@@ -47,7 +51,7 @@
 
 - name: Copy custom stylesheet if exists
   copy:
-    src: '{{ dataverse.branding.directory }}/custom-stylesheet.css'
+    src: 'dataverse.branding.directory/custom-stylesheet.css'
     dest: '{{ gui_file_path }}/branding/custom-stylesheet.css'
     mode: '0644'
     owner: '{{ dataverse.payara.user }}'
@@ -66,7 +70,7 @@
   uri:
     url: "http://localhost:8080/api/admin/settings/:{{ item.item.setting }}"
     method: PUT
-    body: "{{ gui_file_path }}/branding/{{ item.item.file }}"
+    body: "gui_file_path/branding/item.item.file"
     status_code: 200
   with_items: "{{ branding_files.results }}"
   when: item.branding_file_path is defined and item.branding_file_path != ""
