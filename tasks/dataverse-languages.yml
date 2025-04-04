@@ -35,6 +35,8 @@
   service: name=payara state=restarted
   when: (dataverse_lang_directory.stdout | trim) == ''
 
+- ansible.builtin.import_tasks: check_index_status.yml
+
 - name: clone dataverse language packs
   git:
     repo: "{{ dataverse.language.language_packs.source }}"
