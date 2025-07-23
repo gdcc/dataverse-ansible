@@ -46,7 +46,7 @@
 
 - name: set user management quesadilla
   uri:
-    url: 'http://localhost:8080/api/admin/settings/BuiltinUsers.KEY'
+    url: 'http://localhost:8080/api/admin/settings/:BuiltinUsersKey'
     method: PUT
     body: '{{ dataverse.usermgmtkey }}'
 
