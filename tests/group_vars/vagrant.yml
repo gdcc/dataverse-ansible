@@ -155,8 +155,8 @@ dataverse:
     siteurl: http://0.0.0.0
     root: /usr/local
     dir: payara6
-    zipurl: https://nexus.payara.fish/repository/payara-community/fish/payara/distributions/payara/6.2023.8/payara-6.2023.8.zip
-    zipchecksum: sha256:108ed0fa7f97bb3833ff00610a4951dd41389e2647dffe28132ad54231af694a
+    zipurl: https://nexus.payara.fish/repository/payara-community/fish/payara/distributions/payara/6.2025.2/payara-6.2025.2.zip
+    zipchecksum: sha256:c06edc1f39903c874decf9615ef641ea18d3f7969d38927c282885960d5ee796
   google_analytics_key:
   jacoco:
     enabled: false
@@ -246,13 +246,13 @@ dataverse:
   service_email: noreply@dataverse.yourinstitution.edu
   smtp: localhost
   solr:
-    download_url: https://archive.apache.org/dist/solr/solr/9.4.1/solr-9.4.1.tgz
+    download_url: https://archive.apache.org/dist/solr/solr/9.8.0/solr-9.8.0.tgz
     group: solr
     root: /usr/local/solr
     user: solr
-    version: 9.4.1
+    version: 9.8.0
     listen: 127.0.0.1
-    checksum: sha256:41015d7a693fefa4b8a537f5d0982adae8f13f382edf39c94a3497f9b3783250
+    checksum: sha256:9948dcf798c196b834c4cbb420d1ea5995479431669d266c33d46548b67e69e1
   srcdir: /opt/dataverse/dataverse
   thumbnails: false
   unittests:
@@ -262,7 +262,7 @@ dataverse:
   usermgmtkey: burrito
   deployment:
     upgrade_only: false
-  version: '6.4'
+  version: '6.7'
 
 build_guides: false
 
@@ -277,8 +277,9 @@ db:
     jdbcurl:
     log_lock_waits: true
     log_statements: none
-    version: 13
+    version: 16
     port: 5432
+    query_counts: true
     replication:
       enabled: false
       # all servers must be defined so firewalls may be opened accordingly
@@ -345,7 +346,7 @@ localstack:
       chunked_encoding: true
 
 maven:
-  version: 3.8.8
+  version: 3.9.11
 
 minio:
   enabled: false

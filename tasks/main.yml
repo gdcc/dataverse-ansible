@@ -180,6 +180,11 @@
   tags:
   - apitestsuite
 
+- ansible.builtin.import_tasks: postgresql_perl_party.yml
+  when: db.postgres.query_counts == true
+  tags:
+  - query_counts
+
 - ansible.builtin.import_tasks: jacoco-generate_report.yml
   when: dataverse.jacoco.enabled == true and
         dataverse_repo != "release"

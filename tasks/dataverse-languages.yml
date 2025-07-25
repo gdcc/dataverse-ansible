@@ -37,7 +37,9 @@
     state: restarted
   when: (dataverse_lang_directory.stdout | trim) == ''
 
-- name: Clone Dataverse language packs
+- ansible.builtin.import_tasks: check_index_status.yml
+
+- name: clone dataverse language packs
   git:
     repo: "{{ dataverse.language.language_packs.source }}"
     dest: "{{ lang_git_dir }}"

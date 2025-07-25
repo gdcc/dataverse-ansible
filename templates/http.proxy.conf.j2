@@ -103,6 +103,8 @@ Listen {{ apache.ssl.port }} https
   # /api/admin shouldn't be coming through the proxy anyway
   ProxyPassMatch ^/api/admin !
   RedirectMatch ^/api/admin(.*) /
+  ProxyPassMatch ^/api/v1/admin !
+  RedirectMatch ^/api/v1/admin(.*) /
 {% endif %}
 
 {% if apache.block.destroy == true %}

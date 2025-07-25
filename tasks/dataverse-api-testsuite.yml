@@ -127,9 +127,3 @@
   when: maven.version != 'default'
   become: true
   become_user: '{{ dataverse.payara.user }}'
-
-- ansible.builtin.import_tasks: postgresql_perl_party.yml
-  when:
-   - ansible_os_family == "RedHat"
-   - db.postgres.log_statements != 'none'
-   - not db.use_rds
