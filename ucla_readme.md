@@ -1,34 +1,118 @@
-## Running with molecule and docker 
+## Local setup (recommended)
 
-The scenario rocky9 uses docker as a provisioner. It uses an image that sets up systemd, so we can use sudo in docker (by default docker doesn't need sudo b/c it runs as root).
-This makes us not have to change much of the ansible role to accomodate for that (e.g. when the role switches to sudo to do things). 
+These instructions assume:
+- You have already cloned this repository locally:
+  ```
+  git clone https://github.com/ucla-data-science-center/dataverse-ansible.git
+  cd dataverse-ansible
+  ```
+- You have [Conda](https://docs.conda.io/en/latest/miniconda.html) installed (e.g. via Miniforge or Miniconda).
+- Docker is installed and running on your system.
 
-To run the build for the first time: 
+---
 
-`molecule converge --scenario-name rocky9`
+### Create the Conda environment
 
-If you run it successfully, you should access dataverse at http://localhost:8080. 
+To create a consistent development environment, use the provided `environment.yml` file:
 
-To teardown the build, run: 
+```
+conda env create -f environment.yml
+conda activate dataverse-ansible
+```
 
-`molecule reset --scenario-name rocky9`
+This will install Python 3.11, Ansible, Molecule, and Docker bindings.
 
-This will stop and delete the docker container. Since the ansible roles isn't idempotent, we typically need to destroy the container and rebuild when we make changes. 
+---
 
-To get a sense of what molecule provides run it without a command and it will list the help menu. For instance, 
+### Alternative: Manual environment creation
 
-`molecule login --scenario-name rocky9` 
+If you prefer not to use `environment.yml`, you can create the environment manually:
 
-Will ssh into the container. The ansible molecule documentation can be found here: https://ansible.readthedocs.io/projects/molecule/
+```
+conda create -n dataverse-ansible python=3.11 -y
+conda activate dataverse-ansible
+conda install -c conda-forge ansible molecule docker-py
+```
+
+If you plan to use Vagrant with Molecule instead of Docker, install the vagrant plugin:
+
+```
+pip install 'molecule[vagrant]'
+```
+
+---
+
+## Running with Molecule and Docker
+
+The `rocky9` Molecule scenario uses Docker as a provisioner. It relies on a custom image with `systemd` support, allowing `sudo` commands to run inside the container. This avoids modifying the Ansible role's privilege escalation behavior.
+
+From the root of the cloned repository, run:
+
+```
+molecule converge --scenario-name rocky9
+```
+
+This will build a Docker container, install Dataverse, and configure services.
+
+Once complete, you should be able to access Dataverse at:
+
+```
+http://localhost:8080
+```
+
+Default admin login:
+- **Username**: `dataverseAdmin`
+- **Password**: defined in `tests/group_vars/vagrant.yml` (look for `dataverse_adminpass`)
+
+To verify the server is responding:
+
+```
+curl -I http://localhost:8080
+```
+
+---
+
+## Teardown and Rebuild
+
+Because the Dataverse installer is not idempotent, it’s recommended to fully reset the container between changes.
+
+To stop and delete the container:
+
+```
+molecule reset --scenario-name rocky9
+```
+
+Then rebuild with `molecule converge`.
+
+To open a shell inside the running container:
+
+```
+molecule login --scenario-name rocky9
+```
+
+To see additional Molecule commands:
+
+```
+molecule --help
+```
+
+More documentation: https://ansible.readthedocs.io/projects/molecule/
+
+---
+
+## Notes
+
+- If port `8080` is already in use on your machine, update the port mapping in `molecule/rocky9/molecule.yml`.
+- Ensure Docker Desktop or your Linux Docker daemon is running before launching `molecule converge`.
+
+---
 
 ## Windows/WSL2 Linux specific changes
-Running on WSL2, Debian Linux  
-Created a local branch:  windows_wsl2_jmj  
 
-- **minio.yml**, lines 68, 79  community.docker.docker_compose to community.docker.docker_compose_v2    
-- **/tasks/postgres_redhat.yml**, line 11 from -aarch64to ansible_distribution_major_version }}-x86_64  
+If you're using WSL2 with Debian Linux, make the following adjustments (branch: `windows_wsl2_jmj`):
 
+- In `minio.yml`, lines 68 and 79:  
+  Change `community.docker.docker_compose` to `community.docker.docker_compose_v2`
 
-
-
-
+- In `tasks/postgres_redhat.yml`, line 11:  
+  Change `-aarch64` to `{{ ansible_distribution_major_version }}-x86_64`
