@@ -1,72 +1,81 @@
 ---
 # dataverse/tasks/dataverse-gui.yml
-# install gui modifications (branding and favicons), if defined
+# Install GUI branding modifications if branding files exist
 
-- name: calculate destination directories
+- name: Set key GUI paths
   set_fact:
     gui_file_path: '{{ payara_dir }}/glassfish/domains/{{ dataverse.payara.domain }}/applications/dataverse'
-    favicon_file_path: '{{ payara_dir }}/glassfish/domains/{{ dataverse.payara.domain }}/applications/dataverse/resources/images/fav/'
-    navbar_logo_path: '{{ payara_dir }}/glassfish/domains/{{ dataverse.payara.domain }}/docroot/logos/navbar/'
+    branding_dir: '{{ gui_file_path }}/branding'
+    navbar_logo_dir: '{{ payara_dir }}/glassfish/domains/{{ dataverse.payara.domain }}/docroot/logos/navbar'
 
-# Apply GUI design
-- name: Applying GUI design
-  debug:
-    msg: '##### Applying GUI design #####'
+- name: Ensure branding and logo directories exist
+  file:
+    path: "{{ item }}"
+    state: directory
+    owner: '{{ dataverse.payara.user }}'
+    group: '{{ dataverse.payara.group }}'
+    mode: '0755'
+  loop:
+    - "{{ branding_dir }}"
+    - "{{ navbar_logo_dir }}"
 
-# Copy navbar logo if exists
-- name: Copy navbar logo if exists
+# --- Copy and register individual files if they exist ---
+
+- name: Copy navbar logo if present
   copy:
-    src: '{{ dataverse.branding.directory }}/{{ dataverse.branding.fileSettings[2].file }}'
-    dest: '{{ gui_file_path }}/branding/'
+    src: "{{ dataverse.branding.directory }}/{{ dataverse.branding.fileSettings[2].file }}"
+    dest: "{{ navbar_logo_dir }}/{{ dataverse.branding.fileSettings[2].file }}"
     mode: '0644'
     owner: '{{ dataverse.payara.user }}'
     group: '{{ dataverse.payara.group }}'
-  when: 
-    - lookup('file', '{{ dataverse.branding.directory }}/{{ dataverse.branding.fileSettings[2].file }}', errors='ignore')
+  register: navbar_logo_result
+  when: lookup('file', dataverse.branding.directory + '/' + dataverse.branding.fileSettings[2].file, errors='ignore') != ""
 
-# Update logo setting in Dataverse if logo exists
-- name: Set logo for navbar in Dataverse if logo exists
+- name: Copy custom-header.html if present
+  copy:
+    src: "{{ dataverse.branding.directory }}/custom-header.html"
+    dest: "{{ branding_dir }}/custom-header.html"
+    mode: '0644'
+    owner: '{{ dataverse.payara.user }}'
+    group: '{{ dataverse.payara.group }}'
+  register: header_result
+  when: lookup('file', dataverse.branding.directory + '/custom-header.html', errors='ignore') != ""
+
+- name: Copy custom-stylesheet.css if present
+  copy:
+    src: "{{ dataverse.branding.directory }}/custom-stylesheet.css"
+    dest: "{{ branding_dir }}/custom-stylesheet.css"
+    mode: '0644'
+    owner: '{{ dataverse.payara.user }}'
+    group: '{{ dataverse.payara.group }}'
+  register: css_result
+  when: lookup('file', dataverse.branding.directory + '/custom-stylesheet.css', errors='ignore') != ""
+
+# --- Apply GUI settings via API ---
+
+- name: Apply LogoCustomizationFile setting
   uri:
-    url: http://localhost:8080/api/admin/settings/:LogoCustomizationFile
+    url: "http://localhost:8080/api/admin/settings/:LogoCustomizationFile"
     method: PUT
-    body: '{{ navbar_logo_path }}'
+    body: "/logos/navbar/{{ dataverse.branding.fileSettings[2].file }}"
     status_code: 200
-  when: 
-    - lookup('file', '{{ dataverse.branding.directory }}/{{ dataverse.branding.fileSettings[2].file }}', errors='ignore')
+  when: navbar_logo_result.changed
 
-# Optionally copy header and stylesheet files only if they exist
-- name: Copy custom header if exists
-  copy:
-    src: '{{ dataverse.branding.directory }}/custom-header.html'
-    dest: '{{ gui_file_path }}/branding/custom-header.html'
-    mode: '0644'
-    owner: '{{ dataverse.payara.user }}'
-    group: '{{ dataverse.payara.group }}'
-  when: 
-    - lookup('file', '{{ dataverse.branding.directory }}/custom-header.html', errors='ignore')
-
-- name: Copy custom stylesheet if exists
-  copy:
-    src: '{{ dataverse.branding.directory }}/custom-stylesheet.css'
-    dest: '{{ gui_file_path }}/branding/custom-stylesheet.css'
-    mode: '0644'
-    owner: '{{ dataverse.payara.user }}'
-    group: '{{ dataverse.payara.group }}'
-  when: 
-    - lookup('file', '{{ dataverse.branding.directory }}/custom-stylesheet.css', errors='ignore')
-
-# Update branding file settings on server (this includes the logo customization)
-- name: Set branding file path
-  set_fact:
-    branding_file_path: "{{ lookup('file', dataverse.branding.directory + '/' + item.file, errors='ignore') }}"
-  with_items: "{{ dataverse.branding.fileSettings }}"
-  register: branding_files
-
-- name: Update branding file settings on server
+- name: Apply HeaderCustomizationFile setting
   uri:
-    url: "http://localhost:8080/api/admin/settings/:{{ item.item.setting }}"
+    url: "http://localhost:8080/api/admin/settings/:HeaderCustomizationFile"
     method: PUT
-    body: "{{ gui_file_path }}/branding/{{ item.item.file }}"
+    body: "/branding/custom-header.html"
     status_code: 200
-  with_items: "{{ branding_files.results }}"
-  when: item.branding_file_path is defined and item.branding_file_path != ""
+  when: header_result.changed
+
+- name: Apply StyleCustomizationFile setting
+  uri:
+    url: "http://localhost:8080/api/admin/settings/:StyleCustomizationFile"
+    method: PUT
+    body: "/branding/custom-stylesheet.css"
+    status_code: 200
+  when: css_result.changed
+
+- name: Restart Payara to apply GUI changes
+  meta: flush_handlers
