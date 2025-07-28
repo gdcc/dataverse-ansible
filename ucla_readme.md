@@ -117,13 +117,6 @@ More documentation: https://ansible.readthedocs.io/projects/molecule/
 
 ---
 
-## Notes
-
-- If port `8080` is already in use on your machine, update the port mapping in `molecule/rocky9/molecule.yml`.
-- Ensure Docker Desktop or your Linux Docker daemon is running before launching `molecule converge`.
-
----
-
 ## Windows/WSL2 Linux specific changes
 
 If you're using WSL2 with Debian Linux, make the following adjustments (branch: `windows_wsl2_jmj`):
@@ -133,3 +126,11 @@ If you're using WSL2 with Debian Linux, make the following adjustments (branch: 
 
 - In `tasks/postgres_redhat.yml`, line 11:  
   Change `-aarch64` to `{{ ansible_distribution_major_version }}-x86_64`
+
+---
+
+## Notes
+
+- If port `8080` is already in use on your machine, update the port mapping in `molecule/rocky9/molecule.yml`.
+- Ensure Docker Desktop or your Linux Docker daemon is running before launching `molecule converge`.
+
