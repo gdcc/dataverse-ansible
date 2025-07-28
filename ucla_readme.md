@@ -37,7 +37,7 @@ conda install -c conda-forge ansible molecule docker-py
 If you plan to use Vagrant with Molecule instead of Docker, install the vagrant plugin:
 
 ```
-pip install 'molecule[vagrant]'
+pip install 'molecule[docker]'
 ```
 
 ---
@@ -80,6 +80,23 @@ To stop and delete the container:
 
 ```
 molecule reset --scenario-name rocky9
+```
+
+```
+HTTP/1.1 302 Found
+Server: Payara Server 6.2025.2 #badassfish
+X-Powered-By: Servlet/6.0 JSP/3.1 (Payara Server 6.2025.2 #badassfish Java/Red Hat, Inc./17)
+Access-Control-Allow-Origin: *
+Access-Control-Allow-Methods: PUT, GET, POST, DELETE, OPTIONS
+Access-Control-Allow-Headers: Accept, Content-Type, X-Dataverse-key, Range
+Access-Control-Expose-Headers: Accept-Ranges, Content-Range, Content-Encoding
+Set-Cookie: JSESSIONID=23f7765f06c1f42ad21f492b85a6; Path=/;SameSite=Lax;SameSite=Lax
+Set-Cookie: csfcfc=6Ped8fcWqtJm0q1f2%2BUzSThNbg%2F8; Path=/; HttpOnly;SameSite=Lax
+Location: http://localhost:8080/loginpage.xhtml;jsessionid=23f7765f06c1f42ad21f492b85a6?redirectPage=%2Fdataverse.xhtml
+Content-Length: 267
+Content-Language: en
+Content-Type: text/html;charset=UTF-8
+X-Frame-Options: SAMEORIGIN
 ```
 
 Then rebuild with `molecule converge`.
