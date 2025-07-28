@@ -70,18 +70,6 @@ To verify the server is responding:
 curl -I http://localhost:8080
 ```
 
----
-
-## Teardown and Rebuild
-
-Because the Dataverse installer is not idempotent, it’s recommended to fully reset the container between changes.
-
-To stop and delete the container:
-
-```
-molecule reset --scenario-name rocky9
-```
-
 ```
 HTTP/1.1 302 Found
 Server: Payara Server 6.2025.2 #badassfish
@@ -97,6 +85,18 @@ Content-Length: 267
 Content-Language: en
 Content-Type: text/html;charset=UTF-8
 X-Frame-Options: SAMEORIGIN
+```
+
+---
+
+## Teardown and Rebuild
+
+Because the Dataverse installer is not idempotent, it’s recommended to fully reset the container between changes.
+
+To stop and delete the container:
+
+```
+molecule reset --scenario-name rocky9
 ```
 
 Then rebuild with `molecule converge`.
