@@ -1,44 +1,64 @@
-## Local setup (recommended)
+## Local Setup (Recommended)
 
 These instructions assume:
+
 - You have already cloned this repository locally:
-  ```
-  git clone https://github.com/ucla-data-science-center/dataverse-ansible.git
-  cd dataverse-ansible
-  ```
-- You have [Conda](https://docs.conda.io/en/latest/miniconda.html) installed (e.g. via Miniforge or Miniconda).
+
+    ```bash
+    git clone https://github.com/ucla-data-science-center/dataverse-ansible.git
+    cd dataverse-ansible
+    ```
+
+- You have [Conda](https://docs.conda.io/en/latest/miniconda.html) installed (e.g. via [Miniforge](https://github.com/conda-forge/miniforge)).
 - Docker is installed and running on your system.
 
 ---
 
-### Create the Conda environment
+### 1. Create the Conda Environment
 
-To create a consistent development environment, use the provided `environment.yml` file:
+To create a consistent development environment using `pip-tools`:
 
-```
-conda env create -f environment.yml
-conda activate dataverse-ansible
-```
+    ```bash
+    conda env create -f environment.yml
+    conda activate dataverse-ansible
+    ```
 
-This will install Python 3.11, Ansible, Molecule, and Docker bindings.
+This will install:
+
+- Python 3.11
+- `pip-tools` (to manage Python packages via lockfiles)
 
 ---
 
-### Alternative: Manual environment creation
+### 2. Compile and Install Python Dependencies
 
-If you prefer not to use `environment.yml`, you can create the environment manually:
+This project uses [`pip-tools`](https://pip-tools.readthedocs.io/) for dependency management. After activating the environment:
 
-```
-conda create -n dataverse-ansible python=3.11 -y
-conda activate dataverse-ansible
-conda install -c conda-forge ansible molecule docker-py
-```
+    ```bash
+    pip-compile requirements.in
+    pip-sync
+    ```
 
-If you plan to use Vagrant with Molecule instead of Docker, install the vagrant plugin:
+This will install:
 
-```
-pip install 'molecule[docker]'
-```
+- `ansible-core`
+- `molecule`
+- `molecule-docker`
+- `docker` (Python SDK)
+
+> You only need to run `pip-compile` again if `requirements.in` changes. Use `pip-sync` to reinstall the locked dependencies.
+
+---
+
+### Optional: Manual Environment Creation
+
+If you prefer not to use `environment.yml` or `pip-tools`, you can manually create and install dependencies:
+
+    ```bash
+    conda create -n dataverse-ansible python=3.11 -y
+    conda activate dataverse-ansible
+    pip install ansible-core molecule molecule-docker docker
+    ```
 
 ---
 
@@ -48,44 +68,26 @@ The `rocky9` Molecule scenario uses Docker as a provisioner. It relies on a cust
 
 From the root of the cloned repository, run:
 
-```
-molecule converge --scenario-name rocky9
-```
+    ```bash
+    molecule converge --scenario-name rocky9
+    ```
 
 This will build a Docker container, install Dataverse, and configure services.
 
 Once complete, you should be able to access Dataverse at:
 
-```
-http://localhost:8080
-```
+    http://localhost:8080
 
-Default admin login:
+**Default admin login:**
+
 - **Username**: `dataverseAdmin`
-- **Password**: defined in `tests/group_vars/vagrant.yml` (look for `dataverse_adminpass`)
+- **Password**: defined in `tests/group_vars/vagrant.yml` (see `dataverse_adminpass`)
 
 To verify the server is responding:
 
-```
-curl -I http://localhost:8080
-```
-
-```
-HTTP/1.1 302 Found
-Server: Payara Server 6.2025.2 #badassfish
-X-Powered-By: Servlet/6.0 JSP/3.1 (Payara Server 6.2025.2 #badassfish Java/Red Hat, Inc./17)
-Access-Control-Allow-Origin: *
-Access-Control-Allow-Methods: PUT, GET, POST, DELETE, OPTIONS
-Access-Control-Allow-Headers: Accept, Content-Type, X-Dataverse-key, Range
-Access-Control-Expose-Headers: Accept-Ranges, Content-Range, Content-Encoding
-Set-Cookie: JSESSIONID=23f7765f06c1f42ad21f492b85a6; Path=/;SameSite=Lax;SameSite=Lax
-Set-Cookie: csfcfc=6Ped8fcWqtJm0q1f2%2BUzSThNbg%2F8; Path=/; HttpOnly;SameSite=Lax
-Location: http://localhost:8080/loginpage.xhtml;jsessionid=23f7765f06c1f42ad21f492b85a6?redirectPage=%2Fdataverse.xhtml
-Content-Length: 267
-Content-Language: en
-Content-Type: text/html;charset=UTF-8
-X-Frame-Options: SAMEORIGIN
-```
+    ```bash
+    curl -I http://localhost:8080
+    ```
 
 ---
 
@@ -95,42 +97,45 @@ Because the Dataverse installer is not idempotent, it’s recommended to fully r
 
 To stop and delete the container:
 
-```
-molecule reset --scenario-name rocky9
-```
+    ```bash
+    molecule reset --scenario-name rocky9
+    ```
 
-Then rebuild with `molecule converge`.
+Then rebuild with:
+
+    ```bash
+    molecule converge --scenario-name rocky9
+    ```
 
 To open a shell inside the running container:
 
-```
-molecule login --scenario-name rocky9
-```
+    ```bash
+    molecule login --scenario-name rocky9
+    ```
 
 To see additional Molecule commands:
 
-```
-molecule --help
-```
+    ```bash
+    molecule --help
+    ```
 
-More documentation: https://ansible.readthedocs.io/projects/molecule/
-
----
-
-## Windows/WSL2 Linux specific changes
-
-If you're using WSL2 with Debian Linux, make the following adjustments (branch: `windows_wsl2_jmj`):
-
-- In `minio.yml`, lines 68 and 79:  
-  Change `community.docker.docker_compose` to `community.docker.docker_compose_v2`
-
-- In `tasks/postgres_redhat.yml`, line 11:  
-  Change `-aarch64` to `{{ ansible_distribution_major_version }}-x86_64`
+More documentation: [https://ansible.readthedocs.io/projects/molecule/](https://ansible.readthedocs.io/projects/molecule/)
 
 ---
 
 ## Notes
 
 - If port `8080` is already in use on your machine, update the port mapping in `molecule/rocky9/molecule.yml`.
-- Ensure Docker Desktop or your Linux Docker daemon is running before launching `molecule converge`.
+- Ensure Docker Desktop (macOS) or the Docker daemon (Linux/WSL2) is running before launching `molecule converge`.
 
+---
+
+## Windows/WSL2 Linux Specific Changes
+
+If you're using WSL2 with Debian Linux, make the following adjustments (see branch: `windows_wsl2_jmj`):
+
+- In `minio.yml`, lines 68 and 79:  
+  Change `community.docker.docker_compose` → `community.docker.docker_compose_v2`
+
+- In `tasks/postgres_redhat.yml`, line 11:  
+  Change `-aarch64` → `{{ ansible_distribution_major_version }}-x86_64`
