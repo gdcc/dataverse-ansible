@@ -1,0 +1,5 @@
+[dev]
+localhost ansible_connection=local
+
+[prod]
+dataverse-prod ansible_host=ec2-3-99-182-42.compute-1.amazonaws.com

@@ -26,6 +26,9 @@ provisioner:
   config_options:
     defaults:
       log_path: ./ansible-output.log  # Path where the log will be saved
+  inventory:
+    links:
+      group_vars: ../../group_vars/molecule
   roles_path:
     - ..
   playbooks:

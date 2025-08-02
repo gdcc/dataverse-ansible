@@ -1,0 +1,20 @@
+dataverse:
+  payara:
+    siteurl: "http://localhost:8080"
+  smtp: "localhost"
+  doi:
+    provider: FAKE
+    baseurl: "https://mds.test.datacite.org/"
+    dataciterestapiurl: "https://api.test.datacite.org"
+    mdcbaseurl: "https://api.test.datacite.org/"
+  shibboleth:
+    enabled: false
+  previewers:
+    on_same_server: true
+  counter:
+    upload_to_hub: false
+  branding:
+    enabled: true
+
+letsencrypt:
+  enabled: false
