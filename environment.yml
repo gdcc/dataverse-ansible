@@ -3,9 +3,5 @@ channels:
   - conda-forge
 dependencies:
   - python=3.11
-  - ansible
-  - molecule
-  - docker-py
   - pip
-  - pip:
-      - molecule-docker
+  - pip-tools
