@@ -1,20 +1,67 @@
-dataverse:
-  payara:
-    siteurl: "http://localhost:8080"
-  smtp: "localhost"
-  doi:
-    provider: FAKE
-    baseurl: "https://mds.test.datacite.org/"
-    dataciterestapiurl: "https://api.test.datacite.org"
-    mdcbaseurl: "https://api.test.datacite.org/"
-  shibboleth:
-    enabled: false
-  previewers:
-    on_same_server: true
-  counter:
-    upload_to_hub: false
-  branding:
-    enabled: true
+# group_vars/molecule.yml
 
-letsencrypt:
-  enabled: false
+# Dataverse core config
+dataverse_hostname: localhost
+dataverse_siteurl: "http://localhost:8080"
+dataverse_http_port: 8080
+dataverse_adminemail: "admin@example.edu"
+dataverse_service_email: "noreply@example.edu"
+dataverse_adminpass: admin1
+
+# Optional features
+dataverse_use_ssl: false
+dataverse_use_shib: false
+dataverse_enable_telemetry: false
+
+# DOI settings
+dataverse_doi_provider: none
+dataverse_doi_authority: "10.5072"
+dataverse_doi_username: ""
+dataverse_doi_password: ""
+
+# Email / SMTP
+dataverse_smtp_host: localhost
+dataverse_smtp_port: 25
+
+# Apache settings
+dataverse_apache_config_dir: "/etc/httpd/conf.d"
+dataverse_apache_user: apache
+dataverse_apache_group: apache
+
+# Solr
+dataverse_solr_version: 9.8.0
+dataverse_solr_core_name: collection1
+
+# PostgreSQL
+dataverse_postgresql_version: 16
+dataverse_postgresql_user: dvnuser
+dataverse_postgresql_db: dvndb
+dataverse_postgresql_host: localhost
+dataverse_postgresql_port: 5432
+dataverse_postgresql_password: dvnsecret
+dataverse_postgresql_admin_user: postgres
+dataverse_postgresql_admin_password: DVn33dsth1s
+dataverse_postgresql_log_lock_waits: true
+dataverse_postgresql_log_statements: none
+dataverse_postgresql_query_counts: false
+dataverse_use_rds: false
+
+# Payara
+dataverse_payara_version: 5.2022.5
+dataverse_payara_domain: domain1
+
+# JVM options
+dataverse_jvm_options:
+  - "-Xms512m"
+  - "-Xmx1024m"
+  - "-XX:+UseG1GC"
+
+# PostgreSQL backups (disabled in molecule)
+dataverse_postgresql_backups_enabled: false
+dataverse_postgresql_backup_rootdir: /opt/pg_backups
+dataverse_postgresql_backup_backupdir: backups
+dataverse_postgresql_backup_host: localhost
+dataverse_postgresql_backup_user: postgres
+dataverse_postgresql_backup_custom: 'yes'
+dataverse_postgresql_backup_globals: 'no'
+dataverse_postgresql_backup_plain: 'no'
