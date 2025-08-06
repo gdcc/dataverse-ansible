@@ -38,4 +38,16 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     vbox.cpus = 4
     vbox.memory = 8192
   end
+
+  # Inspired by https://github.com/zulip/zulip/blob/10.4/Vagrantfile
+  config.vm.provider "docker" do |d, override|
+    # don't use the VirtualBox VM defined above
+    override.vm.box = nil
+    # see docker/Dockerfile
+    d.build_dir = File.join(__dir__, "docker")
+    d.build_args = ["--build-arg", "VAGRANT_UID=#{Process.uid}"]
+    d.has_ssh = true
+    d.create_args = ["--ulimit", "nofile=1024:65536"]
+  end
+
 end
