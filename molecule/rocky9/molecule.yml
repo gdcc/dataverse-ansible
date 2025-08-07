@@ -31,7 +31,8 @@ provisioner:
       group_vars: ../../group_vars/molecule.yml
   roles_path:
     - ..
-  playbooks:
-    converge: ../../site.yml
+playbooks:
+  create: ../../molecule/_patched/create.yml
+  converge: ../../site.yml
 verifier:
   name: testinfra
