@@ -215,8 +215,8 @@ dataverse:
     request_timeout: 1800
     root: /usr/local
     dir: payara6
-    zipurl: https://nexus.payara.fish/repository/payara-community/fish/payara/distributions/payara/6.2025.2/payara-6.2025.2.zip
-    zipchecksum: sha256:c06edc1f39903c874decf9615ef641ea18d3f7969d38927c282885960d5ee796
+    zipurl: https://nexus.payara.fish/repository/payara-community/fish/payara/distributions/payara/6.2025.3/payara-6.2025.3.zip
+    zipchecksum: sha256:88f5c1e5b40ea4bc60ae3e34e6858c1b33145dc06c4b05c3d318ed67c131e210
   google_analytics_key:
   jacoco:
     enabled: false
@@ -266,7 +266,7 @@ dataverse:
   usermgmtkey: burrito
   deployment:
     upgrade_only: false
-  version: '6.7'
+  version: '6.7.1'
 #  robots_txt_url: https://guides.dataverse.org/en/latest/_downloads/3a5cd7a283eecd5e93289e30af713554/robots.txt
 
 build_guides: false
