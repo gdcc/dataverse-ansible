@@ -1,87 +1,95 @@
-
 # Contributing to UCLA's Dataverse-Ansible Fork
 
-Welcome! This repository customizes the [gdcc/dataverse-ansible](https://github.com/gdcc/dataverse-ansible) project to support UCLA Library’s Dataverse deployment. This document outlines our Git workflow and how to contribute changes.
+Thanks for helping improve our Dataverse Ansible infrastructure! This guide outlines our team’s Git workflow, branch naming conventions, and testing expectations.
 
----
+## 🔁 Branching Strategy
+
+We use a **feature branch workflow** off `develop`. Avoid direct commits to `main`.
+
+### Branch Prefixes
+
+| Prefix    | Purpose                                                   |
+| --------- | --------------------------------------------------------- |
+| `config/` | Changes to group\_vars, defaults, environment config      |
+| `task/`   | Fixes or updates to role tasks, handlers, templates, etc. |
+| `doc/`    | Documentation or markdown (README, usage notes, etc.)     |
+
+### Create a Branch
+
+```
+git checkout -b config/molecule-vars
+```
+
+Use a short, descriptive suffix after the prefix.
 
 ## 🛠 Local Workflow
 
-We use a **feature branch workflow**, with the `develop` branch as our integration branch. Most contributions follow this cycle:
+### 1. Work on Your Branch
 
-### 1. Create a New Feature or Fix Branch
+Make small, focused commits:
 
-Use a descriptive name, prefixed by the type of change:
-
-```bash
-git checkout -b feature/enable-shib
-````
-
-Use `fix/` for bug fixes and `feature/` for enhancements.
-
-### 2. Make and Commit Your Changes
-
-Keep commits focused and relevant. Test as you go.
-
-```bash
+```
 git add group_vars/molecule.yml
-git commit -m "Enable Shibboleth settings in molecule.yml"
+git commit -m "Add vars for molecule testing"
 ```
 
-If your change addresses a previously discussed issue, mention it in the message.
+Avoid combining unrelated changes in one commit.
 
-### 3. Merge Back into `develop`
+### 2. Test with Molecule
 
-When you're ready to integrate:
+For full tests:
 
-```bash
+```
+molecule test -s rocky9
+```
+
+Or iterate with:
+
+```
+molecule converge -s rocky9
+```
+
+
+
+### 3. Push to GitHub
+
+```
+git push origin config/molecule-vars
+```
+
+
+
+### 4. Create a Pull Request
+
+Use GitHub CLI:
+
+```
+gh pr create --base develop --fill
+```
+
+If you're still working:
+
+```
+gh pr create --base develop --draft --fill
+```
+
+New commits to the same branch automatically update the PR.
+
+### 5. Merge
+
+After review:
+
+```
 git checkout develop
-git merge feature/enable-shib
+git merge config/molecule-vars
 git push origin develop
 ```
 
-Avoid long-running branches. Merge frequently to keep things clean.
+## 🧾 Best Practices
 
----
+* Keep branches short-lived and narrow in scope.
+* Use flat key-value structure in `group_vars/molecule.yml`.
+* Do not commit secrets. Use placeholders like `admin1` or `dvnsecret`.
+* Add inline comments or notes (`UCLA-CONTRIBUTING.md`) for non-obvious decisions.
 
-## 🔁 Syncing and Rebasing
-
-If `develop` moves forward while you're working:
-
-```bash
-git checkout feature/your-branch
-git fetch origin
-git rebase origin/develop
-```
-
-Then resolve any conflicts and continue working.
-
----
-
-## 🧪 Molecule Testing
-
-Most tests are run locally using Molecule with Docker:
-
-```bash
-molecule test
-```
-
-For iterative changes:
-
-```bash
-molecule converge
-```
-
-Vars for Molecule are stored in `group_vars/molecule.yml` using a **flat structure** (e.g., `dataverse_hostname`, not nested keys).
-
----
-
-## 🧾 Notes and Practices
-
-* `develop` is our working branch. We don't commit directly to `main` at this time.
-* Keep commits atomic and reversible.
-* Don’t commit secrets. Use fake passwords (`admin1`, `dvnsecret`) in shared vars.
-* Document major changes inline with comments or markdown notes where appropriate.
-
-
-If in doubt, check the existing branches or reach out to Tim.
+For questions, check existing branches or ask Tim.
