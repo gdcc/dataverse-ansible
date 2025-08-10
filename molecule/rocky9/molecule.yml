@@ -32,7 +32,7 @@ provisioner:
   roles_path:
     - ..
 playbooks:
-  create: ../../molecule/_patched/create.yml
+#  create: ../../molecule/_patched/create.yml
   converge: ../../site.yml
 verifier:
   name: testinfra
