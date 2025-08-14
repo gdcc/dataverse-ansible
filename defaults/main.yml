@@ -211,6 +211,7 @@ dataverse:
     adminuser: admin
     adminpass: notPr0d
     siteurl:
+    listen_address: 127.0.0.1
     launch_timeout: 180
     request_timeout: 1800
     root: /usr/local
