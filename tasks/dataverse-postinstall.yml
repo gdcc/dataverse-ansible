@@ -30,7 +30,7 @@
 - name: set payara to default to localhost
   become: yes
   become_user: "{{ dataverse.payara.user }}"
-  shell: "{{ payara_dir }}/bin/asadmin set server-config.network-config.network-listeners.network-listener.http-listener-1.address={{ payara.listen_address }}"
+  shell: "{{ payara_dir }}/bin/asadmin set server-config.network-config.network-listeners.network-listener.http-listener-1.address={{ dataverse.payara.listen_address }}"
 
 - name: override some default settings
   become: yes
