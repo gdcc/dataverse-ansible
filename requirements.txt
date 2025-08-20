@@ -82,8 +82,9 @@ referencing==0.36.2
     # via
     #   jsonschema
     #   jsonschema-specifications
-requests==2.32.4
+requests==2.31.0
     # via
+    #   -r requirements.in
     #   docker
     #   molecule-docker
 resolvelib==1.0.1
@@ -100,8 +101,9 @@ subprocess-tee==0.4.2
     # via ansible-compat
 typing-extensions==4.14.1
     # via referencing
-urllib3==2.5.0
+urllib3==1.26.20
     # via
+    #   -r requirements.in
     #   docker
     #   requests
 wcmatch==10.1
