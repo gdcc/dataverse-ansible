@@ -32,6 +32,5 @@ provisioner:
       group_vars: ./group_vars/
   playbooks:
     converge: ../../site.yml
-
 verifier:
   name: testinfra
