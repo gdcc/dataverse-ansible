@@ -65,3 +65,5 @@ dataverse_postgresql_backup_user: postgres
 dataverse_postgresql_backup_custom: 'yes'
 dataverse_postgresql_backup_globals: 'no'
 dataverse_postgresql_backup_plain: 'no'
+
+rserve_install: false
