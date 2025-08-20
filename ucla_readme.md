@@ -129,13 +129,3 @@ More documentation: [https://ansible.readthedocs.io/projects/molecule/](https://
 - Ensure Docker Desktop (macOS) or the Docker daemon (Linux/WSL2) is running before launching `molecule converge`.
 
 ---
-
-## Windows/WSL2 Linux Specific Changes
-
-If you're using WSL2 with Debian Linux, make the following adjustments (see branch: `windows_wsl2_jmj`):
-
-- In `minio.yml`, lines 68 and 79:  
-  Change `community.docker.docker_compose` → `community.docker.docker_compose_v2`
-
-- In `tasks/postgres_redhat.yml`, line 11:  
-  Change `-aarch64` → `{{ ansible_distribution_major_version }}-x86_64`
