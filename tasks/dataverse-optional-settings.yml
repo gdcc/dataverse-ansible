@@ -16,15 +16,31 @@
   shell: 'curl -X PUT -d {{ dataverse.options.provcollectionenabled }} {{ dataverse.api.location }}/admin/settings/:ProvCollectionEnabled'
   when: dataverse.options.provcollectionenabled
 
-- name: Check if system email JVM option already exists
-  shell: "{{ payara_dir}}/bin/asadmin list-jvm-options | grep -q \"-Ddataverse.mail.system-email\""
-  ignore_errors: yes
-  register: check_jvm_option
+- name: Get JVM options
+  command: /usr/local/payara6/bin/asadmin list-jvm-options
+  register: jvm_options
+  changed_when: false
+
+- name: Check if system email JVM option exists
+  set_fact:
+    has_system_email: "{{ '-Ddataverse.mail.system-email' in jvm_options.stdout }}"
 
 - name: Set SystemEmail as a JVM option if it doesn't already exist
-  shell: "{{ payara_dir}}/bin/asadmin create-jvm-options \"-Ddataverse.mail.system-email=noreply@dataverse.yourinstitution.edu\""
-  when: check_jvm_option.rc != 0
-  become: yes
+  command: >
+    /usr/local/payara6/bin/asadmin create-jvm-options "-Ddataverse.mail.system-email={{ dataverse_system_email }}"
+  when: not has_system_email
+
+
+
+#- name: Check if system email JVM option already exists
+#  shell: "{{ payara_dir}}/bin/asadmin list-jvm-options | grep -q \"-Ddataverse.mail.system-email\""
+#  ignore_errors: yes
+#  register: check_jvm_option
+
+# name: Set SystemEmail as a JVM option if it doesn't already exist
+# shell: "{{ payara_dir}}/bin/asadmin create-jvm-options \"-Ddataverse.mail.system-email=noreply@dataverse.yourinstitution.edu\""
+# when: check_jvm_option.rc != 0
+# become: yes
 
 #- name: set SystemEmail as a jvm-option now
 #  shell: '{{ payara_dir}}/bin/asadmin create-jvm-options "-Ddataverse.mail.system-email={{ dataverse.service_email }}"'
