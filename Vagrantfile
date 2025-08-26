@@ -22,6 +22,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 
   config.vm.provision :ansible_local do |ansible|
     ansible.playbook = "tests/site.yml"
+    ansible.install_mode = "pip"
     ansible.groups = {
       "dataverse" => %(default),
       "db"        => %(default),
