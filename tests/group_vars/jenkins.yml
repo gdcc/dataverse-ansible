@@ -258,7 +258,7 @@ dataverse:
   usermgmtkey: burrito
   deployment:
     upgrade_only: false
-  version: '6.7'
+  version: '6.7.1'
 
 build_guides: false
 
