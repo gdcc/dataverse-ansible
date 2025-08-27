@@ -2,7 +2,7 @@
 # dataverse/tests/group_vars/vagrant.yml
 
 # un-nested so we can pass them at the CLI
-dataverse_branch: release
+dataverse_branch: develop
 dataverse_repo: https://github.com/IQSS/dataverse.git
 any_errors_fatal: true
 
@@ -313,7 +313,7 @@ harvest:
     maxrecords: 2
 
 java:
-  version: 17
+  version: 21
 
 localstack:
   enabled: false
@@ -389,7 +389,7 @@ prometheus:
   user: prometheus
 
 rserve:
-  install: false
+  install: true
   host: localhost
   user: rserve
   group: rserve
