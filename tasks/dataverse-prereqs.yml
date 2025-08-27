@@ -43,7 +43,7 @@
 
 - name: install some necessary packages
   ansible.builtin.package:
-    name: ['bash-completion', 'bc', 'ed', 'git', 'jq', 'mlocate', 'net-tools', 'sudo', 'unzip', 'python3-psycopg2', 'zip', 'tar', 'wget']
+    name: ['bash-completion', 'bc', 'ed', 'git', 'jq', 'net-tools', 'sudo', 'unzip', 'python3-psycopg2', 'zip', 'tar', 'wget']
     state: latest
 
 - name: "RHEL/Rocky 8.6-packaged Ansible wants Python-3.8"
