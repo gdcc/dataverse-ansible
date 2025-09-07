@@ -35,10 +35,10 @@
   notify: enable and restart apache
 
 - name: enable apache mods on Debian
-  apache2_module:
+  community.general.apache2_module:
     state: present
     name: "{{ item }}"
-  with_items:
+  loop:
     - proxy
     - proxy_http
     - proxy_ajp

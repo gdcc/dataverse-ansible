@@ -1,0 +1,8 @@
+####################################################################
+# WARNING: These are designed specifically for Ansible tests       #
+# and should not be used as examples of how to write Ansible roles #
+####################################################################
+
+# Initial CI tests of postgresql_ping module
+- name: Import the original test task file
+  ansible.builtin.import_tasks: postgresql_ping_initial.yml

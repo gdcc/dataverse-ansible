@@ -34,6 +34,10 @@
     solr_download_url: "{{ dataverse.solr.download_url }}"
   when: dataverse.solr.download_url is defined
 
+- name: show solr_download_url
+  debug:
+    var: solr_download_url
+
 - name: download and unzip solr
   get_url:
     url: "{{ solr_download_url }}"

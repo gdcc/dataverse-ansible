@@ -1,4 +1,4 @@
-# group_vars/molecule.yml
+# molecule/rocky9/group_vars/molecule.yml
 
 # Dataverse core config
 dataverse_hostname: localhost
@@ -67,3 +67,32 @@ dataverse_postgresql_backup_globals: 'no'
 dataverse_postgresql_backup_plain: 'no'
 
 rserve_install: false
+
+# --- compatibility shim: keep flat vars, satisfy role's nested lookups ---
+
+# Role expects: apache.port and letsencrypt.enabled
+apache:
+  port: 80
+letsencrypt:
+  enabled: false
+
+# Role expects: db.use_rds and db.postgres.*
+db:
+  use_rds: "{{ dataverse_use_rds | default(false) }}"
+  postgres:
+    name: "{{ dataverse_postgresql_db }}"
+    user: "{{ dataverse_postgresql_user }}"
+    pass: "{{ dataverse_postgresql_password }}"
+    adminpass: "{{ dataverse_postgresql_admin_password }}"
+    host: "{{ dataverse_postgresql_host }}"
+    port: "{{ dataverse_postgresql_port }}"
+    version: "{{ dataverse_postgresql_version }}"
+    replication:
+      enabled: false
+
+# Role expects: postgres_config_dir for lineinfile edits (Rocky default path)
+postgres_config_dir: "/var/lib/pgsql/data"
+
+# Role/tasks reference solr_url / solr_download_url
+solr_download_url: "https://archive.apache.org/dist/solr/solr/{{ dataverse_solr_version }}/solr-{{ dataverse_solr_version }}.tgz"
+solr_url: "{{ solr_download_url }}"

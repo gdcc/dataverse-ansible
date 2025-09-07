@@ -4,18 +4,18 @@
 #  set_fact:
 #    servers_in_group: "{{ groups['dataverse'] | intersect(groups[server_group]) }}"
 
+- ansible.builtin.import_tasks: postgres-prereqs.yml
+
 - name: enable replication-related settings on all servers if there are authorized replicators
   lineinfile:
     path: '{{ postgres_config_dir }}/postgresql.conf'
     regexp: '{{ item.regexp }}'
     line: '{{ item.line }}'
-  with_items:
-   - regexp: 'hot_standby = '
-     line: 'hot_standby = on			# "off" disallows queries during recovery'
-   - regexp: 'listen_addresses = '
-     line: "listen_addresses = '*'		# what IP address(es) to listen on; "
+  loop:
+    - { regexp: 'hot_standby = ',     line: 'hot_standby = on            # "off" disallows queries during recovery' }
+    - { regexp: 'listen_addresses = ', line: "listen_addresses = '*'      # what IP address(es) to listen on; " }
   when:
-   - db.use_rds == false
+    - db.use_rds == false
   notify: enable and restart postgres
 
 - name: some more replication-related settings on older (<13) postgres
@@ -23,12 +23,11 @@
     path: '{{ postgres_config_dir }}/postgresql.conf'
     regexp: '{{ item.regexp }}'
     line: '{{ item.line }}'
-  with_items:
-   - regexp: 'wal_keep_segments = '
-     line: 'wal_keep_segments = 100		# in logfile segments; 0 disables'
+  loop:
+    - { regexp: 'wal_keep_segments = ', line: 'wal_keep_segments = 100    # in logfile segments; 0 disables' }
   when:
-   - db.use_rds == false
-   - db.postgres.version < '13'
+    - db.use_rds == false
+    - db.postgres.version < '13'
   notify: enable and restart postgres
 
 - name: allow in firewall for specific servers to access postgres
@@ -39,7 +38,7 @@
    - firewall=='ufw'
 
 - name: create replication postgres user, set permissions
-  postgresql_user:
+  community.postgresql.postgresql_user:
     db: '{{ db.postgres.name }}'
     name: 'rep'
     password: '{{ db.postgres.replication.pass }}'
