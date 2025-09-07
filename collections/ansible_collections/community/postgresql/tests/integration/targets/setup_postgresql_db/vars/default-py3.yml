@@ -1,0 +1,3 @@
+postgresql_packages:
+  - "postgresql-server"
+  - "python3-psycopg2"

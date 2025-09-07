@@ -1,0 +1,478 @@
+- name: Make sure file does not exist
+  file:
+    dest: /tmp/pg_hba.conf
+    state: absent
+
+- name: check_mode run
+  postgresql_pg_hba:
+    dest: /tmp/pg_hba.conf
+    contype: host
+    source: '0000:ffff::'
+    netmask: 'ffff:fff0::'
+    method: md5
+    backup: 'True'
+    state: "{{item}}"
+  check_mode: true
+  with_items:
+  - present
+  - absent
+
+- name: check_mode check
+  stat:
+    path: /tmp/pg_hba.conf
+  register: pg_hba_checkmode_check
+
+- name: Remove several ip addresses for idempotency check
+  postgresql_pg_hba:
+    contype: "{{item.contype|default('host')}}"
+    databases: "{{item.databases|default('all')}}"
+    dest: /tmp/pg_hba.conf
+    method: "{{item.method|default('md5')}}"
+    netmask: "{{item.netmask|default('')}}"
+    source: "{{item.source|default('')}}"
+    state: absent
+    users: "{{item.users|default('all')}}"
+  with_items: "{{pg_hba_test_ips}}"
+  register: pg_hba_idempotency_check1
+
+- name: idempotency not creating file check
+  stat:
+    path: /tmp/pg_hba.conf
+  register: pg_hba_idempotency_file_check
+
+- name: Add several ip addresses
+  postgresql_pg_hba:
+    backup: 'True'
+    contype: "{{item.contype|default('host')}}"
+    create: 'True'
+    databases: "{{item.databases|default('all')}}"
+    dest: /tmp/pg_hba.conf
+    method: "{{item.method|default('md5')}}"
+    netmask: "{{item.netmask|default('')}}"
+    source: "{{item.source|default('')}}"
+    state: present
+    users: "{{item.users|default('all')}}"
+  register: pg_hba_change
+  with_items: "{{pg_hba_test_ips}}"
+
+- name: Able to add options on rule without
+  postgresql_pg_hba:
+    dest: "/tmp/pg_hba.conf"
+    users: "+some"
+    state: "present"
+    contype: "local"
+    method: "cert"
+    options: "{{ item }}"
+    address: ""
+  with_items:
+  - ""
+  - "clientcert=1"
+
+- name: Retain options even if they contain spaces
+  postgresql_pg_hba:
+    dest: "/tmp/pg_hba.conf"
+    users: "+some"
+    state: "present"
+    contype: "{{ item.contype }}"
+    method: "{{ item.method }}"
+    options: "{{ item.options }}"
+    address: "{{ item.address }}"
+  with_items:
+  - { address: "", contype: "local", method: "ldap", options: "ldapserver=example.com ldapport=389 ldapprefix=\"cn=\"" }
+  - { address: "red", contype: "hostssl", method: "cert", options: "clientcert=1 map=mymap" }
+  - { address: "blue", contype: "hostssl", method: "cert", options: "clientcert=1 map=mymap" }
+  - { address: "green", contype: "hostssl", method: "ldap", options: "ldapserver=example.com ldapport=389 ldapprefix=\"cn=\" ldapbindpasswd=\"#BROKEN\"" }
+  register: pg_hba_options
+
+- name: read pg_hba rules
+  postgresql_pg_hba:
+    dest: /tmp/pg_hba.conf
+  register: pg_hba
+
+- name: Add several ip addresses again for idempotency check
+  postgresql_pg_hba:
+    contype: "{{item.contype|default('host')}}"
+    databases: "{{item.databases|default('all')}}"
+    dest: /tmp/pg_hba.conf
+    method: "{{item.method|default('md5')}}"
+    netmask: "{{item.netmask|default('')}}"
+    source: "{{item.source|default('')}}"
+    state: present
+    users: "{{item.users|default('all')}}"
+  with_items: "{{pg_hba_test_ips}}"
+  register: pg_hba_idempotency_check2
+
+- name: pre-backup stat
+  stat:
+    path: /tmp/pg_hba.conf
+  register: prebackupstat
+
+- name: Add new ip address for backup check and netmask_sameas_prefix check
+  postgresql_pg_hba:
+    backup: 'True'
+    contype: host
+    dest: /tmp/pg_hba.conf
+    method: md5
+    netmask: 255.255.255.0
+    source: '172.21.0.0'
+    state: present
+  register: pg_hba_backup_check2
+
+- name: Add new ip address for netmask_sameas_prefix check
+  postgresql_pg_hba:
+    backup: 'True'
+    contype: host
+    dest: /tmp/pg_hba.conf
+    method: md5
+    source: '172.21.0.0/24'
+    state: present
+  register: netmask_sameas_prefix_check
+
+- name: post-backup stat
+  stat:
+    path: "{{pg_hba_backup_check2.backup_file}}"
+  register: postbackupstat
+
+- name: Dont allow netmask for src in [all, samehost, samenet]
+  postgresql_pg_hba:
+    contype: host
+    dest: /tmp/pg_hba.conf
+    method: md5
+    netmask: '255.255.255.255'
+    source: all
+    state: present
+  register: pg_hba_fail_src_all_with_netmask
+  ignore_errors: true
+
+- debug:
+    var: pg_hba.pg_hba
+- assert:
+    that:
+    - 'pg_hba.pg_hba == [
+           { "db": "all", "method": "ldap", "type": "local", "usr": "+some", "options": "ldapport=389 ldapprefix=\"cn=\" ldapserver=example.com"},
+           { "db": "all", "method": "md5", "type": "local", "usr": "postgres" },
+           { "db": "all", "method": "md5", "type": "local", "usr": "test" },
+           { "db": "all", "method": "md5", "type": "local", "usr": "all" },
+           { "db": "all", "method": "md5", "src": "2001:db8::1/128", "type": "hostgssenc", "usr": "postgres" },
+           { "db": "all", "method": "cert", "src": "blue", "type": "hostssl", "usr": "+some", "options": "clientcert=1 map=mymap"},
+           { "db": "all", "method": "ldap", "src": "green", "type": "hostssl", "usr": "+some", "options": "ldapbindpasswd=\"#BROKEN\" ldapport=389 ldapprefix=\"cn=\" ldapserver=example.com"},
+           { "db": "all", "method": "cert", "src": "red", "type": "hostssl", "usr": "+some", "options": "clientcert=1 map=mymap"},
+           { "db": "all", "method": "md5", "src": "127.0.0.1/32", "type": "host", "usr": "all" },
+           { "db": "all", "method": "md5", "src": "::1/128", "type": "host", "usr": "all" },
+           { "db": "all", "method": "md5", "src": "2001:db8::1/128", "type": "hostnogssenc", "usr": "all" },
+           { "db": "all", "method": "scram-sha-256", "src": "0:ff00::/120", "type": "host", "usr": "all" },
+           { "db": "replication", "method": "md5", "src": "192.168.0.0/24", "type": "host", "usr": "all" },
+           { "db": "all", "method": "md5", "src": "192.168.0.0/24", "type": "host", "usr": "all" },
+           { "db": "all", "method": "reject", "src": "192.168.1.0/24", "type": "host", "usr": "all" },
+           { "db": "all", "method": "trust", "src": "172.16.0.0/16", "type": "host", "usr": "all" },
+           { "db": "all", "method": "md5", "src": "0:fff0::/28", "type": "host", "usr": "all" }
+      ]'
+    - 'pg_hba_change is changed'
+    - 'pg_hba_checkmode_check.stat.exists == false'
+    - 'not pg_hba_idempotency_check1 is changed'
+    - 'not pg_hba_idempotency_check2 is changed'
+    - 'pg_hba_idempotency_file_check.stat.exists == false'
+    - 'prebackupstat.stat.checksum == postbackupstat.stat.checksum'
+    - 'pg_hba_fail_src_all_with_netmask is failed'
+    - 'not netmask_sameas_prefix_check is changed'
+    - 'pg_hba_options is changed'
+
+- name: ensure test file is empty
+  copy:
+    content: ''
+    dest: /tmp/pg_hba2.conf
+
+- name: Create a rule with the comment 'comment1'
+  postgresql_pg_hba:
+    contype: host
+    dest: /tmp/pg_hba2.conf
+    create: true
+    method: md5
+    address: "2001:db8::1/128"
+    state: present
+    comment: "comment1"
+
+- name: Fetch the file
+  fetch:
+    src: /tmp/pg_hba2.conf
+    dest: /tmp/pg_hba2.conf
+    flat: true
+- name: Read pg_hba2.conf
+  set_fact:
+    content: "{{ lookup('file', '/tmp/pg_hba2.conf') }}"
+- debug:
+    var: content
+- assert:
+    that:
+      - '"host\tall\tall\t2001:db8::1/128\tmd5\t#comment1" == content'
+
+- name: Create a rule with the comment 'comment2'
+  postgresql_pg_hba:
+    contype: host
+    dest: /tmp/pg_hba2.conf
+    method: md5
+    address: "2001:db8::2/128"
+    state: present
+    comment: "comment2"
+
+- name: Fetch the file
+  fetch:
+    src: /tmp/pg_hba2.conf
+    dest: /tmp/pg_hba2.conf
+    flat: true
+- name: Read pg_hba2.conf
+  set_fact:
+    content: "{{ lookup('file', '/tmp/pg_hba2.conf') }}"
+- debug:
+    var: content
+- assert:
+    that:
+      - '"host\tall\tall\t2001:db8::1/128\tmd5\t#comment1\nhost\tall\tall\t2001:db8::2/128\tmd5\t#comment2" == content'
+
+- name: Create a rule with the comment 'comment3' and keep_comments_at_rules
+  postgresql_pg_hba:
+    contype: host
+    dest: /tmp/pg_hba2.conf
+    method: md5
+    address: "2001:db8::3/128"
+    state: present
+    comment: "comment3"
+    keep_comments_at_rules: true
+
+- name: Fetch the file
+  fetch:
+    src: /tmp/pg_hba2.conf
+    dest: /tmp/pg_hba2.conf
+    flat: true
+- name: Read pg_hba2.conf
+  set_fact:
+    content: "{{ lookup('file', '/tmp/pg_hba2.conf') }}"
+- debug:
+    var: content
+- assert:
+    that:
+      - '"host\tall\tall\t2001:db8::1/128\tmd5\t#comment1\nhost\tall\tall\t2001:db8::2/128\tmd5\t#comment2\nhost\tall\tall\t2001:db8::3/128\tmd5\t#comment3" == content'
+
+- name: test local with default address
+  community.postgresql.postgresql_pg_hba:
+    dest: /tmp/pg_hba3.conf
+    contype: local
+    method: trust
+    state: present
+    create: true
+  register: local_with_address
+
+- assert:
+    that: 'local_with_address.pg_hba == [{"db": "all", "method": "trust", "type": "local", "usr": "all"}]'
+
+- name: test that local ignores address when supplied
+  community.postgresql.postgresql_pg_hba:
+    dest: /tmp/pg_hba3.conf
+    contype: local
+    method: trust
+    address: 127.0.0.0
+    netmask: 255.0.0.0
+    state: present
+  register: local_with_address
+
+- assert:
+    that: 'local_with_address.pg_hba == [{"db": "all", "method": "trust", "type": "local", "usr": "all"}]'
+
+- name: test that it fails on invalid usernames
+  community.postgresql.postgresql_pg_hba:
+    dest: /tmp/pg_hba.conf
+    users: '{ "oh": "no" }'
+    state: present
+    contype: host
+    create: true
+  register: invalid_username
+  ignore_errors: true
+
+- assert:
+    that: invalid_username is failed
+
+- community.postgresql.postgresql_pg_hba:
+    dest: /tmp/pg_hba.conf
+    users: oops
+    state: present
+    contype: host
+    create: true
+
+- name: create file that contains edge-cases
+  copy:
+    dest: /tmp/edgecase_test_pg_hba.conf
+    content: |
+      # z full line comment
+      # a full line comment
+      local all all ident # comment
+
+      hostssl all all 192.168.0.0/24 md5
+      hostssl all all \
+      10.10.0.0/16 md5
+      hostssl all all 10.11.0.0/16 md5#comment
+      hostssl all all 10.12.0.0/16 ldap ldapserver=example.com ldapport=389 ldapprefix="cn=" ldapbindpasswd="#BROKEN"
+      hostssl all all 10.13.0.0/16 radius radiusservers="server1,server2" radiussecrets="""secret one"",""secret two"""
+      include_if_exists schroedingers_file.conf
+      include_dir /etc/some/dir
+      include some_file.conf
+
+- name: check that there are no errors while parsing the file
+  postgresql_pg_hba:
+    dest: /tmp/edgecase_test_pg_hba.conf
+  register: pg_hba
+
+- debug:
+    var: pg_hba.pg_hba
+
+- assert:
+    that:
+      - 'pg_hba.pg_hba == [
+              {"db": "all", "method": "ident", "type": "local", "usr": "all"},
+              {"db": "all", "method": "md5", "src": "192.168.0.0/24", "type": "hostssl", "usr": "all"},
+              {"db": "all", "method": "md5", "src": "10.10.0.0/16",  "type": "hostssl", "usr": "all"},
+              {"db": "all", "method": "md5", "src": "10.11.0.0/16", "type": "hostssl", "usr": "all"},
+              {"db": "all", "method": "ldap", "options": "ldapbindpasswd=\"#BROKEN\" ldapport=389 ldapprefix=\"cn=\" ldapserver=example.com", "src": "10.12.0.0/16", "type": "hostssl", "usr": "all"},
+              {"db": "all", "method": "radius", "options": "radiussecrets=\"\"\"secret one\"\",\"\"secret two\"\"\" radiusservers=\"server1,server2\"", "src": "10.13.0.0/16", "type": "hostssl", "usr": "all"}
+        ]'
+
+- name: change something in the file
+  community.postgresql.postgresql_pg_hba:
+    dest: /tmp/edgecase_test_pg_hba.conf
+    users: all
+    databases: all
+    contype: hostssl
+    address: 192.168.0.0/24
+    method: scram-sha-256
+
+- name: Fetch the file
+  fetch:
+    src: /tmp/edgecase_test_pg_hba.conf
+    dest: /tmp/edgecase_test_pg_hba.conf
+    flat: true
+- name: Read the edge-case file
+  set_fact:
+    content: "{{ lookup('file', '/tmp/edgecase_test_pg_hba.conf') }}"
+
+- name: assert that the include is still there
+  assert:
+    that: 'content == "# z full line comment\n# a full line comment\nlocal all all ident # comment\nhostssl\tall\tall\t192.168.0.0/24\tscram-sha-256\nhostssl all all \\\n10.10.0.0/16 md5\nhostssl all all 10.11.0.0/16 md5#comment\nhostssl all all 10.12.0.0/16 ldap ldapserver=example.com ldapport=389 ldapprefix=\"cn=\" ldapbindpasswd=\"#BROKEN\"\nhostssl all all 10.13.0.0/16 radius radiusservers=\"server1,server2\" radiussecrets=\"\"\"secret one\"\",\"\"secret two\"\"\"\ninclude_if_exists schroedingers_file.conf\ninclude_dir /etc/some/dir\ninclude some_file.conf"'
+
+- name: create faulty file
+  copy:
+    dest: /tmp/faulty_test_pg_hba.conf
+    content: |-
+      local all all ident # comment
+      hostssl all all \
+
+- name: check that parsing failed (invalid continuation)
+  postgresql_pg_hba:
+    dest: /tmp/faulty_test_pg_hba.conf
+  register: faulty_pg_hba
+  ignore_errors: true
+
+- debug:
+    var: faulty_pg_hba
+- assert:
+    that:
+      - faulty_pg_hba is failed
+      - faulty_pg_hba.msg is search("The last line ended with a '\\\\' \(line continuation\)\.")
+
+- name: create faulty file
+  copy:
+    dest: /tmp/faulty_test_pg_hba.conf
+    content: |
+      local all all ident # comment
+      hostssl all all 192.168.0.0/24 ldap ldapserver=example.com ldapport=389 ldapprefix="cn=" ldapbindpasswd="#BROKEN
+
+- name: check that parsing failed (unterminated quote)
+  postgresql_pg_hba:
+    dest: /tmp/faulty_test_pg_hba.conf
+  register: faulty_pg_hba
+  ignore_errors: true
+
+- assert:
+    that:
+      - faulty_pg_hba is failed
+      - faulty_pg_hba.msg is search("Error in line 2")
+
+- name: create faulty file
+  copy:
+    dest: /tmp/faulty_test_pg_hba.conf
+    content: |-
+      local all all ident # comment
+      hostssl all all
+      hostssl all all 192.168.0.0/24 md5
+
+- name: check that parsing failed (too few symbols)
+  postgresql_pg_hba:
+    dest: /tmp/faulty_test_pg_hba.conf
+  register: faulty_pg_hba
+  ignore_errors: true
+
+- assert:
+    that:
+      - faulty_pg_hba is failed
+      - faulty_pg_hba.msg is search("Error in line 2")
+
+- name: check if we recognize unparsable options
+  community.postgresql.postgresql_pg_hba:
+    dest: /tmp/test.conf
+    create: true
+    contype: host
+    address: 10.0.0.0/8
+    users: all
+    databases: all
+    method: ldap
+    options: "ldapbindpasswd=\"#BROKEN\" ldapport=389 ldapprefix=\"cn= ldapserver=example.com"
+  check_mode: true
+  ignore_errors: true
+  register: should_fail
+
+- assert:
+    that: should_fail is failed
+
+- name: check if we recognize unparsable options
+  community.postgresql.postgresql_pg_hba:
+    dest: /tmp/test.conf
+    create: true
+    contype: host
+    address: 10.0.0.0/8
+    users: all
+    databases: all
+    method: ldap
+    options: "ldapbindpasswd=\"#BROKEN\" ldapport=389 ldapprefix ldapserver=example.com"
+  check_mode: true
+  ignore_errors: true
+  register: should_fail
+
+- assert:
+    that: should_fail is failed
+
+- name: add two lines with the same user
+  community.postgresql.postgresql_pg_hba:
+    dest: /tmp/pg_hba_same_user_twice.conf
+    create: true
+    contype: "{{ item.contype }}"
+    databases: all
+    source: "0.0.0.0/0"
+    users: "{{ item.users }}"
+    method: "{{ item.method }}"
+  loop:
+    - users: "user1"
+      method: "scram-sha-256"
+      contype: "hostnossl"
+    - users: "user1"
+      method: "scram-sha-256"
+      contype: "hostssl"
+
+- name: load the config to check the users
+  community.postgresql.postgresql_pg_hba:
+    dest: /tmp/pg_hba_same_user_twice.conf
+  register: double_user_pg_hba
+
+- assert:
+    that:
+      - 'double_user_pg_hba.pg_hba == [
+          {"db": "all", "method": "scram-sha-256", "src": "0.0.0.0/0", "type": "hostnossl", "usr": "user1"},
+          {"db": "all", "method": "scram-sha-256", "src": "0.0.0.0/0", "type": "hostssl", "usr": "user1"},
+        ]'

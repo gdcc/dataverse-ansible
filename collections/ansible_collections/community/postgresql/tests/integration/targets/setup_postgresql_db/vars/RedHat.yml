@@ -1,0 +1,5 @@
+postgresql_packages:
+  - "postgresql-server"
+  - "postgresql-contrib"
+  - "python-psycopg2"
+  - "bzip2"

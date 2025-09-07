@@ -1,0 +1,5 @@
+---
+- name: Install psycopg2 driver for PostgreSQL modules
+  ansible.builtin.package:
+    name: python3-psycopg2
+    state: present

@@ -1,7 +1,7 @@
 ---
 
 - name: get initial admin API token
-  postgresql_query:
+  community.postgresql.postgresql_query:
     db: '{{ db.postgres.name }}'
     login_user: '{{ db.postgres.user }}'
     login_password: '{{ db.postgres.pass }}'
