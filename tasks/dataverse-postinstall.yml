@@ -27,6 +27,11 @@
   become_user: "{{ dataverse.payara.user }}"
   shell: "{{ payara_dir }}/bin/asadmin set-log-levels org.glassfish.grizzly.http.server.util.RequestUtils=SEVERE"
 
+- name: set payara to default to localhost
+  become: yes
+  become_user: "{{ dataverse.payara.user }}"
+  shell: "{{ payara_dir }}/bin/asadmin set server-config.network-config.network-listeners.network-listener.http-listener-1.address={{ dataverse.payara.listen_address }}"
+
 - name: override some default settings
   become: yes
   become_user: "{{ dataverse.payara.user }}"

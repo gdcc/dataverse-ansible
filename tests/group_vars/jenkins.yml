@@ -148,6 +148,7 @@ dataverse:
     launch_timeout: 180
     request_timeout: 1800
     siteurl: 
+    listen_address: 127.0.0.1
     root: /usr/local
     dir: payara6
     zipurl: https://nexus.payara.fish/repository/payara-community/fish/payara/distributions/payara/6.2025.3/payara-6.2025.3.zip
@@ -242,7 +243,8 @@ dataverse:
   service_email: noreply@dataverse.yourinstitution.edu
   smtp: localhost
   solr:
-    download_url: https://archive.apache.org/dist/solr/solr/9.8.0/solr-9.8.0.tgz
+    #download_url: https://archive.apache.org/dist/solr/solr/9.8.0/solr-9.8.0.tgz
+    download_url: https://mirrors.ibiblio.org/dataverse_artifacts/solr/solr-9.8.0.tgz
     group: solr
     root: /usr/local/solr
     user: solr
@@ -258,7 +260,7 @@ dataverse:
   usermgmtkey: burrito
   deployment:
     upgrade_only: false
-  version: '6.7'
+  version: '6.8'
 
 build_guides: false
 

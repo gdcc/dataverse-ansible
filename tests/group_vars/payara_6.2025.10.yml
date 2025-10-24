@@ -1,10 +1,5 @@
 ---
-# dataverse/tests/group_vars/vagrant.yml
-
-# un-nested so we can pass them at the CLI
-dataverse_branch: release
-dataverse_repo: https://github.com/IQSS/dataverse.git
-any_errors_fatal: true
+# dataverse/tests/group_vars/jenkins.yml
 
 apache:
   enabled: true
@@ -51,7 +46,7 @@ dataverse:
     blocked_endpoints: "admin,test"
     blocked_policy: "localhost-only"
     location: "http://localhost:8080/api"
-    test_suite: false
+    test_suite: true
     # possible test values from https://github.com/IQSS/dataverse/blob/develop/conf/docker-aio/run-test-suite.sh#L11
     # beware DataversesIT and DatasetsIT at minimum must be run for any other tests to succeed. have fun.
     #tests: "DataversesIT,DatasetsIT,AdminIT"
@@ -101,11 +96,11 @@ dataverse:
     shoulder: "FK2/"
   doi:
     baseurl: "https://mds.test.datacite.org/"
-    dataciterestapiurl: "https://api.test.datacite.org"
-    mdcbaseurl: "https://api.test.datacite.org/"
     username: "test.account"
     password: "not.my.password"
     provider: FAKE
+    mdcbaseurl: "https://api.test.datacite.org/"
+    dataciterestapiurl: "https://api.test.datacite.org"
   ## Handlenet variables are only used if dataverse.pid.protocol is set to 'hdl'
   handlenet:
     independenthandleservice: 'false'
@@ -121,14 +116,14 @@ dataverse:
     dataexplorer:
       enabled: true
     wholetale:
-      enabled: true
-  file_fixity_checksum_algorithm: "MD5"
+      enabled: false
   ## The first item of 'filesdirs' is the default filestore
   ## If you change the label, be prepared to change the SQL database if there are already files here
   ## It is better practice to add a new data store and then migrate to it later
   ## Also, changing the default storage takes effect immediately for temp files, but
   ## only after restart for publishing (i.e. without restart the temp files will be moved to the old default data store at publish time).
   filesdirs:
+    #storage_driver_id: file
     - label: file
       path: /usr/local/dvn/data
 #   - label: label
@@ -147,22 +142,23 @@ dataverse:
     user: dataverse
     group: dataverse
     domain: domain1
+    listen_address: 127.0.0.1
     logformat: ulf
     adminuser: admin
     adminpass: notPr0d
     launch_timeout: 180
     request_timeout: 1800
-    siteurl: http://0.0.0.0
-    listen_address: 127.0.0.1
+    siteurl: 
     root: /usr/local
     dir: payara6
-    zipurl: https://nexus.payara.fish/repository/payara-community/fish/payara/distributions/payara/6.2025.3/payara-6.2025.3.zip
-    zipchecksum: sha256:88f5c1e5b40ea4bc60ae3e34e6858c1b33145dc06c4b05c3d318ed67c131e210
+    zipurl: https://nexus.payara.fish/repository/payara-community/fish/payara/distributions/payara/6.2025.10/payara-6.2025.10.zip
+    zipchecksum: sha256:7478dd3870fde4f54e87675e4482950baa2c06bd1b6ba567e22676534fb3bbb6
   google_analytics_key:
   jacoco:
-    enabled: false
+    enabled: true
     home: /tmp/jacoco
     version: 0.8.12
+  file_fixity_checksum_algorithm: "MD5"
   language:
     enabled: false
     languages:
@@ -224,10 +220,10 @@ dataverse:
   options:
     filepids: 
     maxfileuploadsizeinbytes:
-    provcollectionenabled:
+    provcollectionenabled: true
     tabularingestsizelimit: 
   previewers:
-    enabled: true
+    enabled: false
     on_same_server: true
     zip_url: https://github.com/gdcc/dataverse-previewers/releases/download/1.2/dataverse-previewers-1.2.zip
     dir: /var/www/html
@@ -271,16 +267,15 @@ db:
   postgres:
     enabled: true
     adminpass: DVn33dsth1s
-    name: vagrantdb
+    name: dvndb
     host: localhost
-    user: vagrantuser
-    pass: vagrantsekret
+    user: dvnuser
+    pass: dvnsecret
     jdbcurl:
     log_lock_waits: true
-    log_statements: none
+    log_statements: all
     version: 16
     port: 5432
-    query_counts: true
     replication:
       enabled: false
       # all servers must be defined so firewalls may be opened accordingly
@@ -306,18 +301,13 @@ docker:
 
 grafana:
   grafana_user: 'admin'
-  grafana_password: 'admin'
-
-harvest:
-  oaiserver:
-    maxidentifiers: 2
-    maxrecords: 2
+  grafana_password: 'adm1n'
 
 java:
   version: 17
 
 localstack:
-  enabled: false
+  enabled: true
   container_name: dev_localstack
   # set to /tmp/localstack/data to enable persistence
   data_dir: /tmp/localstack/data
@@ -350,7 +340,7 @@ maven:
   version: 3.9.11
 
 minio:
-  enabled: false
+  enabled: true
   docker:
     version: "latest"
     service_name: "minio"
@@ -403,11 +393,10 @@ s3:
   access_key: 4cc355_k3y
   secret_access_key: s3cr3t_4cc355_k3y
   bucket_name: s3-test
-  create_bucket: true
   cors_already_set: false
-  # for non-amazon services. for localstack, you might set
-  #custom_endpoint_url: "http://localhost:4572"
-  custom_endpoint_url:
+  create_bucket: true
+  # for non-amazon services.
+  custom_endpoint_url: "http://localhost:4572"
   # note: direct upload and download require CORS on the bucket
   download_redirect: true
   upload_redirect: true
@@ -424,7 +413,7 @@ s3:
 
 schemaspy:
   enabled: false
-  jarurl: https://github.com/schemaspy/schemaspy/releases/download/v6.2.4/schemaspy-6.2.4.jar
+  jarurl: https://github.com/schemaspy/schemaspy/releases/download/v6.1.0/schemaspy-6.1.0.jar
 
 shibboleth:
   enabled: false
@@ -435,3 +424,16 @@ sshkeys:
   urls:
   user:
 
+
+harvest:
+  oaiserver:
+    maxidentifiers: 2
+    maxrecords: 2
+
+
+# un-nesting the below so's we can pass them at the CLI
+
+# the branch was .9, this isn't a typo.
+dataverse_branch: Payara-6.2025.9
+dataverse_repo: https://github.com/QualitativeDataRepository/dataverse.git
+any_errors_fatal: true
