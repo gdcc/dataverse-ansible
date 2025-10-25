@@ -146,6 +146,7 @@ dataverse:
     adminuser: admin
     adminpass: notPr0d
     launch_timeout: 180
+    listen_address: 127.0.0.1
     request_timeout: 1800
     siteurl: 
     root: /usr/local
@@ -242,7 +243,8 @@ dataverse:
   service_email: noreply@dataverse.yourinstitution.edu
   smtp: localhost
   solr:
-    download_url: https://archive.apache.org/dist/solr/solr/9.8.0/solr-9.8.0.tgz
+    #download_url: https://archive.apache.org/dist/solr/solr/9.8.0/solr-9.8.0.tgz
+    download_url: https://mirrors.ibiblio.org/dataverse_artifacts/solr/solr-9.8.0.tgz
     group: solr
     root: /usr/local/solr
     user: solr
@@ -258,7 +260,7 @@ dataverse:
   usermgmtkey: burrito
   deployment:
     upgrade_only: false
-  version: '6.7.1'
+  version: '6.8'
 
 build_guides: false
 
