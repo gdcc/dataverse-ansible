@@ -7,7 +7,7 @@ The role installs Apache, PostgreSQL, GlassFish/Payara and other prerequisites, 
 
 Running the following commands as root should install the latest released version of Dataverse.
 
-	$ git clone https://github.com/GlobalDataverseCommunityConsortium/dataverse-ansible.git dataverse
+	$ git clone https://github.com/ucla-data-science-center/dataverse-ansible.git dataverse
 	$ ansible-playbook --connection=local -v -i dataverse/inventory dataverse/dataverse.pb -e "@dataverse/defaults/main.yml"
 
 Recent, specific versions of Dataverse (namely, 4.20 and 5.0) may be installed using branches tagged with that version.
@@ -89,8 +89,8 @@ It is possible to run certain portions of the playbook to avoid running the enti
 **Note:** While Ansible in general strives to achieve role idempotence, the dataverse-ansible role is merely a wrapper for the Dataverse installer, which itself is not idempotent. If you strongly desire that the role be idempotent and would like achieve this via semaphores, pull requests are welcome!
 
 ### To test using Vagrant:
-	$ git clone https://github.com/GlobalDataverseCommunityConsortium/dataverse-ansible
-	$ cd dataverse-ansible
+	$ git clone https://github.com/ucla-data-science-center/dataverse-ansible.git ucla-dataverse
+	$ cd ucla-dataverse
 	$ vagrant up
 
 On successful completion of the Vagrant run, you should be able to log in to your test Dataverse as dataverseAdmin using the dataverse_adminpass from tests/group_vars/vagrant.yml using the address:

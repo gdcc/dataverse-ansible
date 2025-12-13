@@ -1,0 +1,104 @@
+---
+# dataverse/tasks/dataverse-prereqs.yml
+
+- name: install prerequisite packages
+  debug:
+    msg: '##### INSTALL PREREQUISITE PACKAGES #####'
+
+- name: yum clean all
+  shell: 'yum clean all'
+  when: ansible_os_family == "RedHat"
+
+- name: let's use the closest mirror
+  file:
+    path: /var/cache/yum/x86_64/7/timedhosts.txt
+    state: absent
+  when: ansible_os_family == "RedHat" and
+        ansible_distribution_major_version == "7"
+
+- name: let's use the fastest mirror
+  lineinfile:
+    path: /etc/dnf/dnf.conf
+    line: 'fastestmirror=1'
+    insertafter: '^gpgcheck'
+  when: ansible_os_family == "RedHat" and
+        ansible_distribution_major_version == "8"
+
+- name: makecache on RedHat
+  yum:
+    update_cache: yes
+  when: ansible_os_family == "RedHat" and
+        ansible_distribution_major_version == "7"
+
+- name: makecache
+  apt:
+    update_cache: yes
+  when: ansible_os_family == "Debian"
+
+- name: ensure EPEL repository for RedHat/Rocky
+  yum:
+    name: epel-release
+    state: latest
+  when: ansible_os_family == "RedHat"
+
+- name: install some necessary packages
+  ansible.builtin.package:
+    name: ['bash-completion', 'git', 'jq', 'mlocate', 'net-tools', 'sudo', 'unzip', 'python3-psycopg2', 'zip', 'tar']
+    state: latest
+
+- name: "RHEL/Rocky 8.6-packaged Ansible wants Python-3.8"
+  ansible.builtin.package:
+    name: ['python38-psycopg2']
+    state: latest
+  when: ansible_os_family == "RedHat" and
+        ansible_distribution_major_version == "8"
+
+- name: "RHEL/Rocky 9 provides Python-3.9"
+  ansible.builtin.package:
+    name: python3-psycopg2
+    state: latest
+  when: ansible_os_family == "RedHat" and
+        ansible_distribution_major_version == "9"
+
+- name: install java-nnn-openjdk and other packages for RedHat/Rocky
+  yum:
+    name: ['java-{{ java.version }}-openjdk-devel', 'tzdata-java', 'vim-enhanced']
+    state: latest
+  when: ansible_os_family == "RedHat"
+
+- name: install java-nnn-openjdk and other packages for Debian/Ubuntu.
+  package:
+    name: ['acl', 'openjdk-{{ java.version }}-jdk-headless', 'python3', 'vim']
+  when: ansible_os_family == "Debian"
+
+# it is strongly recommended to check for open CVEs before enabling this.
+- name: install GraphicsMagic on RHEL/Rocky for thumbnail generation
+  dnf:
+    name: GraphicsMagick
+  when:
+    - ansible_os_family == "RedHat"
+    - ansible_distribution_major_version == "8" or ansible_distribution_major_version == "9"
+    - dataverse.thumbnails
+
+- name: install GraphicsMagic on Debian/Ubuntu for thumbnail generation
+  package:
+    name: graphicsmagick
+  when:
+    - ansible_os_family == "Debian"
+    - dataverse.thumbnails
+
+- name: install curl on Debian/Ubuntu
+  package:
+    name: curl
+  when:
+    - ansible_os_family == "Debian"
+
+- name: Payara service account must exist
+  import_tasks: payara_service_account.yml
+
+- name: create dataverse misc files directory for language and handle and other similar auxilliary files
+  file:
+    path: "{{ dataverse_misc_files_dir }}"
+    state: directory
+    owner: "{{ dataverse.payara.user }}"
+    group: "{{ dataverse.payara.group }}"

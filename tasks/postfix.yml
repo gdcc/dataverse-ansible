@@ -16,6 +16,9 @@
   - ansible_os_family == "RedHat"
   - ansible_distribution_major_version == "8"
 
+#- name: start postfix without systemctl
+#  command: /usr/sbin/postfix start
+
 - name: enable and start postfix
   systemd:
     name: postfix

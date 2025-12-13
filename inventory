@@ -1,2 +1,2 @@
 [dataverse]
-localhost
+rocky9 ansible_connection=docker

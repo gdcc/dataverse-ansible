@@ -9,16 +9,16 @@
     name: python38-pip
     state: latest
   when:
-  - ansible_os_family == "RedHat"
-  - ansible_distribution_major_version == "8"
+    - ansible_os_family == "RedHat"
+    - ansible_distribution_major_version == "8"
 
 - name: ensure python39-pip on RHEL/Rocky 9
   ansible.builtin.package:
     name: python3-pip
     state: latest
   when:
-  - ansible_os_family == "RedHat"
-  - ansible_distribution_major_version == "9"
+    - ansible_os_family == "RedHat"
+    - ansible_distribution_major_version == "9"
 
 - name: ensure counter user exists
   user:
@@ -31,8 +31,14 @@
     remote_src: yes
     owner: "{{ dataverse.counter.user }}"
 
+# Find the correct path to python3
+- name: Find path to python3
+  command: "which python3"
+  register: python_path
+
+# Use the dynamically found python path to install the requirements
 - name: pip install requirements
-  shell: "/usr/bin/python3.8 -m pip install -r /usr/local/counter-processor-{{ dataverse.counter.version }}/requirements.txt"
+  shell: "{{ python_path.stdout }} -m pip install -r /usr/local/counter-processor-{{ dataverse.counter.version }}/requirements.txt"
   become: yes
 
 - name: create sample log dir
@@ -56,7 +62,7 @@
 
 - name: launch counter
   shell:
-    cmd: 'cd /usr/local/counter-processor-{{ dataverse.counter.version }} || python3.9 main.py'
+    cmd: 'cd /usr/local/counter-processor-{{ dataverse.counter.version }} || {{ python_path.stdout }} main.py'
   vars:
     CONFIG_FILE: "/usr/local/counter-processor-{{ dataverse.counter.version }}/counter-processor-config.yml"
   become: yes

@@ -27,12 +27,12 @@
     mode: '0600'
 
 - name: set s3 settings in dataverse
+  environment:
+    PATH: "{{ lookup('env', 'PATH') }}:/usr/local/bin"
   shell: 'asadmin-create-or-replace-option.sh "{{ item.key }}" "{{ item.value }}"'
   register: output
   changed_when: "'Command create-jvm-options executed successfully.' in output.stdout"
-  when:
-   - item.value is defined
-   - item.value != ''
+  
   with_items:
    - key: dataverse.files.storage-driver-id
      value: "{{ s3.storage_driver_id }}"
@@ -52,9 +52,8 @@
      value: "{{ s3.payload_signing }}"
    - key: dataverse.files.s3.chunked-encoding
      value: "{{ s3.chunked_encoding }}"
-   - key: dataverse.files.s3.custom-endpoint-region
-     value: "{{ s3.custom_endpoint_region }}"
-
+   - key: dataverse.files.s3.path-style-access
+     value: "{{ s3.path_style_access }}"
 # optional s3 settings
 
 - name: expose custom_endpoint_url as variable
@@ -66,7 +65,7 @@
 
 - name: create S3 bucket
   shell:
-    'aws s3api create-bucket --bucket {{ s3.bucket_name }}'
+    'aws s3api create-bucket --bucket {{ s3.bucket_name }} --create-bucket-configuration LocationConstraint={{ s3.location_constraint }} --region {{ s3.region }}'
   args:
     executable: /bin/bash
   become_user: '{{ dataverse.payara.user }}'
@@ -98,6 +97,8 @@
     and custom_endpoint_url | length == 0
     and s3.cors_already_set == false
 - name: set s3 direct download
+  environment:
+   PATH: "{{ lookup('env', 'PATH') }}:/usr/local/bin"
   shell: 'asadmin-create-or-replace-option.sh "dataverse.files.s3.download-redirect" "{{ s3.download_redirect }}"'
   register: output
   changed_when: "'Command create-jvm-options executed successfully.' in output.stdout"

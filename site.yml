@@ -1,8 +1,20 @@
----
-# dataverse.pb
-
 - name: Install Dataverse
-  hosts: dataverse
-  become: true
-  roles:
-    - role: dataverse
+  hosts: all  # or use "dataverse" if it's correctly defined
+  #become: true
+  tasks:
+    - name: Install sudo
+      package:
+        name: sudo
+        state: present
+
+    - name: Install which and pip3
+      package:
+        name: "{{ item }}"
+        state: present
+      loop:
+        - which
+        - python3-pip
+
+    - name: Install Dataverse
+      include_role:
+        name: ../  # Your Dataverse role path

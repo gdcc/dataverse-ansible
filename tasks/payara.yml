@@ -26,6 +26,7 @@
 - name: download payara zip
   get_url:
     url: '{{ dataverse.payara.zipurl }}'
+    #url: 'https://nexus.payara.fish/repository/payara-community/fish/payara/distributions/payara/6.2023.8/payara-6.2023.8.zip'
     checksum: '{{ dataverse.payara.zipchecksum }}'
     dest: /tmp/payara.zip
   register: payara_zip_download

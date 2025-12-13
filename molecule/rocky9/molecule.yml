@@ -1,0 +1,34 @@
+---
+dependency:
+  name: galaxy
+driver:
+  name: docker
+platforms:
+  - name: rocky9
+    image: eniocarboni/docker-rockylinux-systemd:latest
+    pre_build_image: true
+    privileged: true
+    command: /usr/sbin/init
+    groups:
+      - dataverse
+    volumes:
+      - /sys/fs/cgroup:/sys/fs/cgroup:rw
+      - /var/lib/containerd
+    cgroupns_mode: host
+    published_ports: 
+      - "8080:8080"
+# gpt lies! 
+#    ports:
+#      - "8080:8080"
+provisioner:
+  name: ansible
+  log: true  # Enable logging
+  config_options:
+    defaults:
+      log_path: ./ansible-output.log  # Path where the log will be saved
+  roles_path:
+    - ..
+  playbooks:
+    converge: ../../site.yml
+verifier:
+  name: testinfra

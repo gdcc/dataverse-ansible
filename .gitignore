@@ -2,3 +2,37 @@ venv
 .vagrant/
 /.idea
 /*.iml
+inventory_ec2
+.DS_Store
+
+
+### ucla local 
+
+# Conda environment artifacts
+.env/
+.venv/
+conda-meta/
+*.conda
+*.egg-info/
+
+# Python bytecode
+__pycache__/
+*.py[cod]
+*.pyo
+
+# Pip-tools generated lockfile (optional to ignore)
+# If you want reproducibility, keep this file checked in.
+# If you want to force all devs to recompile, uncomment below:
+# requirements.txt
+
+# pip-sync temporary install log
+pip-log.txt
+
+# Molecule test artifacts
+.molecule/
+*.retry
+*.log
+
+# VSCode & Editor configs
+.vscode/
+.idea/
