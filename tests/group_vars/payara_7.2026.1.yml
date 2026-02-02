@@ -435,6 +435,6 @@ harvest:
 
 # un-nesting the below so's we can pass them at the CLI
 
-dataverse_branch: 12020-Payara7_Java21_update
+dataverse_branch: IQSS/12020-Payara7_Java21_update
 dataverse_repo: https://github.com/QualitativeDataRepository/dataverse.git
 any_errors_fatal: true
