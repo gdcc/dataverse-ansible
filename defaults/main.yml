@@ -348,7 +348,7 @@ localstack:
       chunked_encoding: true
 
 maven:
-  version: 3.9.12
+  version: 3.9.13
 
 minio:
   enabled: false
