@@ -260,7 +260,7 @@ dataverse:
   usermgmtkey: burrito
   deployment:
     upgrade_only: false
-  version: '6.9'
+  version: '6.10'
 
 build_guides: false
 
