@@ -7,7 +7,7 @@ The role installs Apache, PostgreSQL, GlassFish/Payara and other prerequisites, 
 
 Running the following commands as root should install the latest released version of Dataverse.
 
-	$ git clone https://github.com/GlobalDataverseCommunityConsortium/dataverse-ansible.git dataverse
+	$ git clone https://github.com/gdcc/dataverse-ansible.git dataverse
 	$ ansible-playbook --connection=local -v -i dataverse/inventory dataverse/dataverse.pb -e "@dataverse/defaults/main.yml"
 
 Recent, specific versions of Dataverse (namely, 4.20 and 5.0) may be installed using branches tagged with that version.
@@ -65,7 +65,7 @@ sure to use something like `dataverse.payara.siteurl: https://dataverse.example.
 ### Full(er) Usage:
 Here is an example of how to execute the `dataverse-ansible` role with more adjustable parameters:
 
-	$ git clone https://github.com/GlobalDataverseCommunityConsortium/dataverse-ansible.git dataverse
+	$ git clone https://github.com/gdcc/dataverse-ansible.git dataverse
 	$ export ANSIBLE_ROLES_PATH=.
 	$ ansible-playbook -i <inventory file> [-u <user>] [-b] [-K] -e "@dataverse/defaults/main.yml" [-v] dataverse/dataverse.pb
 
@@ -89,7 +89,7 @@ It is possible to run certain portions of the playbook to avoid running the enti
 **Note:** While Ansible in general strives to achieve role idempotence, the dataverse-ansible role is merely a wrapper for the Dataverse installer, which itself is not idempotent. If you strongly desire that the role be idempotent and would like achieve this via semaphores, pull requests are welcome!
 
 ### To test using Vagrant:
-	$ git clone https://github.com/GlobalDataverseCommunityConsortium/dataverse-ansible
+	$ git clone https://github.com/gdcc/dataverse-ansible
 	$ cd dataverse-ansible
 	$ vagrant up
 
@@ -163,7 +163,7 @@ Others are available but disabled by default:
 
 This is a community effort, written primarily by [Don Sizemore][donsizemore]. The role is under active development - pull requests, suggestions and other contributions are welcome!
 
-[![Build Status](https://travis-ci.org/GlobalDataverseCommunityConsortium/dataverse-ansible.svg?branch=master)](https://travis-ci.org/GlobalDataverseCommunityConsortium/dataverse-ansible)
+[![Build Status](https://travis-ci.org/gdcc/dataverse-ansible.svg?branch=master)](https://travis-ci.org/gdcc/dataverse-ansible)
 
 [ansible]: http://ansible.com
 [counter-processor]: https://github.com/IQSS/counter-processor

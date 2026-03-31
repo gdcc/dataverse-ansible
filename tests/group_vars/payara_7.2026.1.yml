@@ -142,17 +142,17 @@ dataverse:
     user: dataverse
     group: dataverse
     domain: domain1
+    listen_address: 127.0.0.1
     logformat: ulf
     adminuser: admin
     adminpass: notPr0d
     launch_timeout: 180
     request_timeout: 1800
     siteurl: 
-    listen_address: 127.0.0.1
     root: /usr/local
-    dir: payara7
-    zipurl: https://nexus.payara.fish/repository/payara-community/fish/payara/distributions/payara/7.2026.2/payara-7.2026.2.zip
-    zipchecksum: sha256:3495d025450f2b4263f7fc91014bea89db9de907ad516b675d4f47b00e1ad4de
+    dir: payara6
+    zipurl: https://nexus.payara.fish/repository/payara-community/fish/payara/distributions/payara/7.2026.1/payara-7.2026.1.zip
+    zipchecksum: sha256:c79e74cb26834b1b0486cb22bcbf3f6941b689f1c5c1b61c749764585863e54a
   google_analytics_key:
   jacoco:
     enabled: true
@@ -260,7 +260,7 @@ dataverse:
   usermgmtkey: burrito
   deployment:
     upgrade_only: false
-  version: '6.10.1'
+  version: '6.9'
 
 build_guides: false
 
@@ -306,7 +306,7 @@ grafana:
   grafana_password: 'adm1n'
 
 java:
-  version: 21
+  version: 21 
 
 localstack:
   enabled: true
@@ -435,6 +435,6 @@ harvest:
 
 # un-nesting the below so's we can pass them at the CLI
 
-dataverse_branch: develop
-dataverse_repo: https://github.com/IQSS/dataverse.git
+dataverse_branch: IQSS/12020-Payara7_Java21_update
+dataverse_repo: https://github.com/QualitativeDataRepository/dataverse.git
 any_errors_fatal: true

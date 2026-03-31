@@ -211,6 +211,7 @@ dataverse:
     adminuser: admin
     adminpass: notPr0d
     siteurl:
+    listen_address: 127.0.0.1
     launch_timeout: 180
     request_timeout: 1800
     root: /usr/local
@@ -266,7 +267,7 @@ dataverse:
   usermgmtkey: burrito
   deployment:
     upgrade_only: false
-  version: '6.7.1'
+  version: '6.9'
 #  robots_txt_url: https://guides.dataverse.org/en/latest/_downloads/3a5cd7a283eecd5e93289e30af713554/robots.txt
 
 build_guides: false
@@ -347,7 +348,7 @@ localstack:
       chunked_encoding: true
 
 maven:
-  version: 3.9.11
+  version: 3.9.14
 
 minio:
   enabled: false
