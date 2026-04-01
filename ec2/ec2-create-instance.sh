@@ -241,7 +241,7 @@ ssh -T -i $PEM_FILE -o 'StrictHostKeyChecking no' -o 'UserKnownHostsFile=/dev/nu
 sudo dnf -q -y install epel-release
 #sudo dnf -q -y install ansible git
 sudo dnf -q -y install python3-pip git
-pip3 install --user ansible-core==2.14.18
+pip3 install --user ansible-core==2.17
 ansible-galaxy collection install community.general community.postgresql community.docker ansible.posix
 git clone -b $DA_BRANCH https://github.com/GlobalDataverseCommunityConsortium/dataverse-ansible.git dataverse
 export ANSIBLE_ROLES_PATH=.
