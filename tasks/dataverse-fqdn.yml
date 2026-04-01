@@ -29,7 +29,7 @@
 - name: and stick with it.
   ansible.builtin.set_fact:
     custom_fqdn: True
-  when: public_fqdn|length > 1
+  when: public_fqdn is not none and public_fqdn|length > 1
 
 - name: if no public_fqdn, use ansible fqdn
   ansible.builtin.set_fact:
