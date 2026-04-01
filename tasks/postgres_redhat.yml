@@ -12,6 +12,7 @@
 
 - name: "RHEL/Rocky: disable PostgreSQL proper in the OS"
   shell: 'dnf -qy module disable postgresql'
+  when: ansible_distribution_major_version in ["8", "9"]
 
 - name: get postgres config directory
   set_fact:
