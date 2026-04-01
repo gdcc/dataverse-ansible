@@ -9,7 +9,10 @@ PEM_DEFAULT=${HOME}
 VERBOSE_ARG=""
 
 # rocky linux 9.6 official, us-east-1
-AWS_AMI_DEFAULT='ami-08ace1224b75d38c1'
+#AWS_AMI_DEFAULT='ami-08ace1224b75d38c1'
+
+# rocky linux 10.1 official, us-east-1
+AWS_AMI_DEFAULT='ami-0588b361e4987b47f'
 
 usage() {
   echo "Usage: $0 -b <branch> -r <repo> -p <pem_path> -g <group_vars> -a <dataverse-ansible branch> -i aws_image -u aws_user -s aws_size -t aws_tag -f aws_security group -e aws_profile -l local_log_path -d -v" 1>&2
@@ -236,7 +239,10 @@ fi
 # TODO: Add some error checking for this ssh command.
 ssh -T -i $PEM_FILE -o 'StrictHostKeyChecking no' -o 'UserKnownHostsFile=/dev/null' -o 'ConnectTimeout=300' $USER_AT_HOST <<EOF
 sudo dnf -q -y install epel-release
-sudo dnf -q -y install ansible git
+#sudo dnf -q -y install ansible git
+sudo dnf -q -y install python3-pip git
+pip3 install --user ansible
+ansible-galaxy collection install community.general community.postgresql community.docker ansible.posix
 git clone -b $DA_BRANCH https://github.com/GlobalDataverseCommunityConsortium/dataverse-ansible.git dataverse
 export ANSIBLE_ROLES_PATH=.
 ansible-playbook $VERBOSE_ARG -i dataverse/inventory dataverse/dataverse.pb --connection=local $GVARG

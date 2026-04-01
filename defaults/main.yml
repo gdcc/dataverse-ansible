@@ -216,8 +216,10 @@ dataverse:
     request_timeout: 1800
     root: /usr/local
     dir: payara6
-    zipurl: https://nexus.payara.fish/repository/payara-community/fish/payara/distributions/payara/6.2025.3/payara-6.2025.3.zip
-    zipchecksum: sha256:88f5c1e5b40ea4bc60ae3e34e6858c1b33145dc06c4b05c3d318ed67c131e210
+    #zipurl: https://nexus.payara.fish/repository/payara-community/fish/payara/distributions/payara/6.2025.3/payara-6.2025.3.zip
+    #zipchecksum: sha256:88f5c1e5b40ea4bc60ae3e34e6858c1b33145dc06c4b05c3d318ed67c131e210
+    zipurl: https://nexus.payara.fish/repository/payara-community/fish/payara/distributions/payara/7.2026.2/payara-7.2026.2.zip
+    zipchecksum: sha256:3495d025450f2b4263f7fc91014bea89db9de907ad516b675d4f47b00e1ad4de
   google_analytics_key:
   jacoco:
     enabled: false
@@ -267,7 +269,8 @@ dataverse:
   usermgmtkey: burrito
   deployment:
     upgrade_only: false
-  version: '6.9'
+  #version: '6.9'
+  version: '6.10.1'
 #  robots_txt_url: https://guides.dataverse.org/en/latest/_downloads/3a5cd7a283eecd5e93289e30af713554/robots.txt
 
 build_guides: false
@@ -314,7 +317,7 @@ grafana:
   grafana_password: 'adm1n'
 
 java:
-  version: 17
+  version: 21
 java_home: /usr/lib/jvm/java-{{ java.version }}
 
 localstack:
