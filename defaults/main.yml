@@ -215,7 +215,7 @@ dataverse:
     launch_timeout: 180
     request_timeout: 1800
     root: /usr/local
-    dir: payara6
+    dir: payara7
     #zipurl: https://nexus.payara.fish/repository/payara-community/fish/payara/distributions/payara/6.2025.3/payara-6.2025.3.zip
     #zipchecksum: sha256:88f5c1e5b40ea4bc60ae3e34e6858c1b33145dc06c4b05c3d318ed67c131e210
     zipurl: https://nexus.payara.fish/repository/payara-community/fish/payara/distributions/payara/7.2026.2/payara-7.2026.2.zip
