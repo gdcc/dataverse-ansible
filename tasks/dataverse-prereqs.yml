@@ -53,12 +53,12 @@
   when: ansible_os_family == "RedHat" and
         ansible_distribution_major_version == "8"
 
-- name: "RHEL/Rocky 9 provides Python-3.9"
+- name: "RHEL/Rocky 9, 10 provides Python"
   ansible.builtin.package:
     name: python3-psycopg2
     state: latest
   when: ansible_os_family == "RedHat" and
-        ansible_distribution_major_version == "9"
+        ansible_distribution_major_version in ["9", "10"]
 
 - name: install java-nnn-openjdk and other packages for RedHat/Rocky
   yum:
@@ -77,7 +77,6 @@
     name: GraphicsMagick
   when:
     - ansible_os_family == "RedHat"
-    - ansible_distribution_major_version == "8" or ansible_distribution_major_version == "9"
     - dataverse.thumbnails
 
 - name: install GraphicsMagic on Debian/Ubuntu for thumbnail generation

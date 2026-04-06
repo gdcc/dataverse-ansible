@@ -14,6 +14,13 @@
         ansible_distribution_major_version == "9" and
         db.postgres.version < 13
 
+- name: RHEL10 and RockyLinux likely require PG16
+  set_fact:
+    die: "RHEL/Rocky 10 packages PostgresQL 16 and PG16 is the recommended version."
+  when: ansible_os_family == "RedHat" and
+        ansible_distribution_major_version == "10" and
+        db.postgres.version < 16
+
 - name: Shibboleth requires AJP
   set_fact:
     die: "Shibboleth requires AJP"

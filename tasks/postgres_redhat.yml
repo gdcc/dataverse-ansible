@@ -10,9 +10,9 @@
     name: 'https://download.postgresql.org/pub/repos/yum/reporpms/EL-{{ ansible_distribution_major_version }}-x86_64/pgdg-redhat-repo-latest.noarch.rpm'
     state: present
 
-- name: "RHEL/Rocky: disable PostgreSQL proper in the OS"
+- name: "RHEL/Rocky 8, 9: disable PostgreSQL proper in the OS"
   shell: 'dnf -qy module disable postgresql'
-  when: ansible_distribution_major_version in ["8", "9"]
+  when: ansible_os_family == "RedHat" and ansible_distribution_major_version in ["8", "9"]
 
 - name: get postgres config directory
   set_fact:

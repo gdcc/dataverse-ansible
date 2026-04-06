@@ -103,14 +103,12 @@
     mode: 0644
   notify: enable and restart apache
 
-- name: this package provides semanage on RHEL / Rocky 8 and 9
+- name: this package provides semanage on RHEL / Rocky
   ansible.builtin.package:
     name: policycoreutils-python-utils
     state: latest
   when:
     - ansible_os_family == "RedHat"
-    - ansible_distribution_major_version == "8"
-      or ansible_distribution_major_version == "9"
 
 - name: remove unnecessary mod_cgi
   ansible.builtin.file:
