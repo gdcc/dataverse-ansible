@@ -19,6 +19,17 @@
   shell: "{{ payara_dir }}/bin/asadmin create-jvm-options -Djava.io.tmpdir={{ dataverse.payara.tempdir }}"
   when: dataverse.payara.tempdir is defined
 
+- name: Configure Dataverse CORS JVM options
+  become: yes
+  become_user: "{{ dataverse.payara.user }}"
+  shell: |
+    {{ payara_dir }}/bin/asadmin create-jvm-options \
+    "-Ddataverse.cors.origin=*" \
+    "-Ddataverse.cors.methods=GET,POST,OPTIONS,PUT,DELETE" \
+    "-Ddataverse.cors.headers.allow=*" \
+    "-Ddataverse.cors.headers.expose=ETag,Accept-Ranges,Content-Encoding,Content-Range,Accept,Content-Type,X-Dataverse-key,Range"
+  when: dataverse.payara.user is defined
+
 - ansible.builtin.import_tasks: custom_metadata_blocks.yml
   when: dataverse.custom_metadata_blocks.enabled == True
 
