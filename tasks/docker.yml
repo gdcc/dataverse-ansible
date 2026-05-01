@@ -15,6 +15,7 @@
   ansible.builtin.package:
     name: ['python3-docker','python3-pip']
     state: latest
+  when: ansible_os_family == "RedHat" and ansible_distribution_major_version in ["8", "9"]
 
 - name: and docker-compose python package
   ansible.builtin.pip:
