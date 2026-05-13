@@ -337,12 +337,12 @@ localstack:
       url_expiration_minutes: 60
       payload_signing: false
       chunked_encoding: true
-    # localstack_noredirect: same bucket/endpoint as localstack1 but with
-    # both redirects disabled, so tests can exercise the non-redirect
+    # localstack_noredirect: same endpoint as localstack1 but with a distinct
+    # bucket and both redirects disabled, so tests can exercise the non-redirect
     # (proxy-through-Dataverse) code path explicitly.
     - label: LocalStackNoRedirect
       id: localstack_noredirect
-      bucket_name: mybucket
+      bucket_name: mybucket-noredirect
       enabled: false
       access_key: 4cc355_k3y
       secret_access_key: s3cr3t_4cc355_k3y
