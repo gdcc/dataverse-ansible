@@ -134,6 +134,11 @@
     python_bin: '/usr/bin/python3'
   when: ansible_os_family == "Debian"
 
+- name: installer breakpoint
+  ansible.builtin.fail:
+    msg: "You may now run the installer as {{ dataverse.payara.user }} in /tmp/dvinstall with python ./install.py -f --config_file=default.config"
+  when: breakpoint.installer == true
+
 - name: fire off installer
   shell: '{{ python_bin }} /tmp/dvinstall/install.py -f --config_file=default.config --noninteractive > /tmp/dvinstall/install.out 2>&1'
   become: yes
