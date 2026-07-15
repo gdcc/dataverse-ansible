@@ -339,30 +339,6 @@ localstack:
 maven:
   version: 3.9.5
 
-minio:
-  enabled: true
-  docker:
-    version: "latest"
-    service_name: "minio"
-    network:
-      name: "minio"
-      external: false
-    project_location: "/home/dataverse/minio"
-    timezone: "America/New_York"
-    user: dataverse
-    group: dataverse
-    server_port: 9000
-    console_port: 9001
-    root_user: "4cc355_k3y"
-    root_password: "s3cr3t_4cc355_k3y"
-    default_bucket: "mybucket"
-    label: MinIO
-    custom_endpoint_url: "http://localhost:9000"
-    custom_endpoint_region: us-east-1
-    path-style-access: true
-    access_key: 4cc355_k3y
-    secret_key: s3cr3t_4cc355_k3y
-
 munin:
   install: false
   admin:
