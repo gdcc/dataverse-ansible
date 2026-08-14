@@ -295,7 +295,7 @@ localstack:
   enabled: false
   docker:
     cidr: 
-    repo: https://download.docker.com/linux/centos/docker-ce.repo
+    repo: https://download.docker.com/linux/rhel/docker-ce.repo
   container: 's3-test'
   # set to /tmp/localstack/data to enable persistence
   data_dir:

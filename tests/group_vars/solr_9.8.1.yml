@@ -297,7 +297,7 @@ db:
 
 docker:
   cidr: 10.0.0.99/24
-  repo: https://download.docker.com/linux/centos/docker-ce.repo
+  repo: https://download.docker.com/linux/rhel/docker-ce.repo
 
 grafana:
   grafana_user: 'admin'
