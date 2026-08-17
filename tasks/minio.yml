@@ -2,8 +2,8 @@
 
 - ansible.builtin.import_tasks: docker.yml
 
-- name: minio needs a newer docker community module
-  ansible.builtin.command: /usr/local/bin/ansible-galaxy collection install community.docker --force
+#- name: minio needs a newer docker community module
+#  ansible.builtin.command: /usr/local/bin/ansible-galaxy collection install community.docker --force
 
 - name: STORAGE | Import assert.yml
   ansible.builtin.import_tasks: minio_assert.yml
