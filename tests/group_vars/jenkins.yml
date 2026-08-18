@@ -358,11 +358,7 @@ localstack:
       chunked_encoding: true
 
 maven:
-<<<<<<< HEAD
-  version: 3.9.16
-=======
   version: 3.9.15
->>>>>>> origin/develop
 
 minio:
   enabled: true
