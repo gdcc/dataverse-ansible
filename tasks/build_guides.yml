@@ -14,6 +14,11 @@
   when: ansible_os_family == 'RedHat' and
         ansible_distribution_major_version == '8'
 
+- name: install sphinx redirect extension
+  pip:
+    name: sphinx-reredirects
+    state: present
+
 - name: if branch is release, use develop for guides
   set_fact:
     dataverse_branch: 'develop'
