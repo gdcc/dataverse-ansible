@@ -216,8 +216,8 @@ dataverse:
     request_timeout: 1800
     root: /usr/local
     dir: payara7
-    zipurl: https://nexus.payara.fish/repository/payara-community/fish/payara/distributions/payara/7.2026.2/payara-7.2026.2.zip
-    zipchecksum: sha256:3495d025450f2b4263f7fc91014bea89db9de907ad516b675d4f47b00e1ad4de
+    zipurl: https://nexus.payara.fish/repository/payara-community/fish/payara/distributions/payara/7.2026.8/payara-7.2026.8.zip 
+    zipchecksum: sha256:8d43ff25ef02d697fdc647f5352f473575b7d6f247d37411b5d892308531c68b 
   google_analytics_key:
   jacoco:
     enabled: false
@@ -267,7 +267,7 @@ dataverse:
   usermgmtkey: burrito
   deployment:
     upgrade_only: false
-  version: '6.11'
+  version: '6.12'
 #  robots_txt_url: https://guides.dataverse.org/en/latest/_downloads/3a5cd7a283eecd5e93289e30af713554/robots.txt
 
 build_guides: false
@@ -424,7 +424,7 @@ s3:
   chunked_encoding: true
 
 schemaspy:
-  enabled: false
+  enabled: true 
   jarurl: https://github.com/schemaspy/schemaspy/releases/download/v6.1.0/schemaspy-6.1.0.jar
 
 shibboleth:

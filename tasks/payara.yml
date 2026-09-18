@@ -76,6 +76,23 @@
   when: dataverse.payara.zipurl is match(".*glassfish-4.1.zip")
   notify: enable and restart payara
 
+- name: remove jersey for payara-7.2026.8
+  file:
+    name: '{{ payara_dir }}/glassfish/modules/jersey-cdi1x.jar'
+    state: absent
+  when: dataverse.payara.zipurl is match(".*payara-7.2026.8.zip")
+  notify: enable and restart payara
+
+- name: get patched jersey jar for payara-7.2026.8
+  get_url:
+    url: https://nexus.flowlogix.com/repository/maven-releases/fish/payara/patched/jersey/jersey-cdi1x/4.0.2.payara-p2/jersey-cdi1x-4.0.2.payara-p2.jar 
+    dest: '{{ payara_dir }}/glassfish/modules'
+    owner: root
+    group: root
+    mode: 0644
+  when: dataverse.payara.zipurl is match(".*payara-7.2026.8.zip")
+  notify: enable and restart payara
+
 # we don't need the JDBC driver any more but let's keep custom JDBC URLs
 - name: set jdbcurl
   set_fact:
