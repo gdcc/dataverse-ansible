@@ -26,6 +26,23 @@
     path: /opt/maven/bin
   register: maven_bin
 
+# payara.yml also installs bsdtar, but container mode never runs it
+- name: install bsdtar on RedHat
+  package:
+    name: bsdtar
+    state: latest
+  when:
+    - maven.version != 'default'
+    - ansible_os_family == "RedHat"
+
+- name: install bsdtar on Debian
+  package:
+    name: libarchive-tools
+    state: latest
+  when:
+    - maven.version != 'default'
+    - ansible_os_family == "Debian"
+
 - name: bsdtar so we get /opt/maven
   shell: 'bsdtar --strip-components=1 -C /opt/maven -xf /tmp/apache-maven-{{ maven.version }}-bin.tar.gz'
   when: maven.version != 'default' and

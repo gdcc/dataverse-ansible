@@ -27,6 +27,12 @@
 # Also adds the dataverse service account to the docker group
 - ansible.builtin.import_tasks: docker.yml
 
+# The Maven image builds use buildx; docker-ce only recommends it
+- name: install docker buildx plugin
+  ansible.builtin.package:
+    name: docker-buildx-plugin
+    state: latest
+
 - name: construct the maven command
   ansible.builtin.set_fact:
     container_mvn: "{{ '' if maven.version == 'default' else 'source /etc/profile.d/maven.sh && ' }}export JAVA_HOME={{ java_home }} && mvn -B"
