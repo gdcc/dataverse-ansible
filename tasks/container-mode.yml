@@ -75,6 +75,22 @@
       retries: 60
       delay: 10
 
+    # dev_bootstrap creates the root collection and admin user, but only waits 3 minutes for
+    # Dataverse. On a slower host Dataverse can take longer, so if it gave up, run it again.
+    - name: wait for dev_bootstrap, and run it again if it timed out
+      ansible.builtin.shell: |
+        rc=$(docker wait dev_bootstrap)
+        if [ "$rc" != "0" ]; then
+          echo "dev_bootstrap exited with $rc before Dataverse was ready, running it again"
+          docker start -a dev_bootstrap
+        fi
+      args:
+        executable: /bin/bash
+
+    - name: the root collection must exist
+      ansible.builtin.uri:
+        url: http://localhost:8080/api/dataverses/root
+
     - name: Dataverse is up
       ansible.builtin.debug:
         msg: '{{ dv_version.json.data }}'
