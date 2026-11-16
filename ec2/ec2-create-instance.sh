@@ -19,7 +19,7 @@ usage() {
   echo "example group_vars may be retrieved from https://raw.githubusercontent.com/GlobalDataverseCommunityConsortium/dataverse-ansible/develop/defaults/main.yml"
   echo "default AWS AMI ID is $AWS_AMI_DEFAULT, find the full list at https://rockylinux.org/ami/"
   echo "default AWS user is rocky"
-  echo "default AWS instance size is t3a.large"
+  echo "default AWS instance size is t3a.large, or t3a.xlarge with -c"
   echo "default AWS security group is dataverse-sg"
   echo "local log path will rsync Payara, Jacoco, Maven and other logs back to the specified path"
   echo "-c container mode: build the branch's container images and run Dataverse in Docker, on port 8080"
@@ -134,6 +134,10 @@ if [ ! -z "$AWS_SIZE" ]; then
    SIZE=$AWS_SIZE
 else
    SIZE="t3a.large"
+   # container mode builds all images and runs ~15 containers: match GitHub's 4-vCPU runners
+   if [ ! -z "$CONTAINER" ]; then
+      SIZE="t3a.xlarge"
+   fi
 fi
 echo "using $SIZE"
 
@@ -216,9 +220,15 @@ elif [ -z "$PEM_PATH" ]; then
   fi
 fi
 
+# container images, the Maven cache and Docker volumes need more room than a classic install
+VOLUME_SIZE=20
+if [ ! -z "$CONTAINER" ]; then
+   VOLUME_SIZE=30
+fi
+
 echo "Creating EC2 instance"
 # TODO: Add some error checking for "ec2 run-instances".
-INSTANCE_ID=$(aws $PROFILE ec2 run-instances --image-id $AMI_ID --security-groups $AWS_SG $TAGARG --count 1 --instance-type $SIZE --key-name $KEY_NAME --query 'Instances[0].InstanceId' --block-device-mappings '[ { "DeviceName": "/dev/sda1", "Ebs": { "DeleteOnTermination": true, "VolumeSize": 20 } } ]' | tr -d \")
+INSTANCE_ID=$(aws $PROFILE ec2 run-instances --image-id $AMI_ID --security-groups $AWS_SG $TAGARG --count 1 --instance-type $SIZE --key-name $KEY_NAME --query 'Instances[0].InstanceId' --block-device-mappings '[ { "DeviceName": "/dev/sda1", "Ebs": { "DeleteOnTermination": true, "VolumeSize": '"$VOLUME_SIZE"' } } ]' | tr -d \")
 echo "Instance ID: "$INSTANCE_ID
 
 DESTROY_CMD="aws $PROFILE ec2 terminate-instances --instance-ids $INSTANCE_ID"

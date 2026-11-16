@@ -61,6 +61,13 @@
       ansible.builtin.command: docker image inspect gdcc/dataverse:unstable gdcc/configbaker:unstable
       changed_when: false
 
+    # The Maven builds leave a buildkit container running; it isn't needed once the images exist
+    # (the Maven plugin registers the builder in its own docker config, so remove the container itself)
+    - name: remove the buildx builder container
+      ansible.builtin.shell: docker ps -aq --filter name=buildx_buildkit_ | xargs -r docker rm -f
+      args:
+        executable: /bin/bash
+
     - name: start the Dataverse stack. tail {{ dataverse.srcdir }}/mvn-start.out for gory details.
       ansible.builtin.shell: '{{ container_mvn }} -Pct docker:start > mvn-start.out 2>&1'
       args:
