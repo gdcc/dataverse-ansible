@@ -22,7 +22,29 @@
 # Clones dataverse_repo/dataverse_branch into dataverse.srcdir and merges upstream develop
 - ansible.builtin.import_tasks: dataverse-branch.yml
 
-- ansible.builtin.import_tasks: maven.yml
+# Container mode installs Maven itself rather than through maven.yml, so classic mode stays untouched.
+# Maven Central serves the same tarball as archive.apache.org from a CDN, ~100x faster.
+- name: download Maven {{ maven.version }} from Maven Central
+  ansible.builtin.get_url:
+    url: 'https://repo.maven.apache.org/maven2/org/apache/maven/apache-maven/{{ maven.version }}/apache-maven-{{ maven.version }}-bin.tar.gz'
+    dest: '/tmp/apache-maven-{{ maven.version }}-bin.tar.gz'
+    mode: '0644'
+
+- name: Maven install dir must exist
+  ansible.builtin.file:
+    path: /opt/maven
+    owner: root
+    group: root
+    mode: '0755'
+    state: directory
+
+- name: unpack Maven into /opt/maven
+  ansible.builtin.unarchive:
+    src: '/tmp/apache-maven-{{ maven.version }}-bin.tar.gz'
+    dest: /opt/maven
+    remote_src: true
+    extra_opts: ['--strip-components=1']
+    creates: /opt/maven/bin/mvn
 
 # Also adds the dataverse service account to the docker group
 - ansible.builtin.import_tasks: docker.yml
@@ -35,7 +57,7 @@
 
 - name: construct the maven command
   ansible.builtin.set_fact:
-    container_mvn: "{{ '' if maven.version == 'default' else 'source /etc/profile.d/maven.sh && ' }}export JAVA_HOME={{ java_home }} && mvn -B"
+    container_mvn: "export JAVA_HOME={{ java_home }} && /opt/maven/bin/mvn -B"
 
 - name: build the images and start the Dataverse stack
   become: true

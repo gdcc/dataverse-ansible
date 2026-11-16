@@ -8,8 +8,7 @@
 
 - name: download custom maven version
   get_url:
-    # Maven Central serves the same file from a CDN; archive.apache.org is throttled (~100x slower)
-    url: 'https://repo.maven.apache.org/maven2/org/apache/maven/apache-maven/{{ maven.version }}/apache-maven-{{ maven.version }}-bin.tar.gz'
+    url: 'https://archive.apache.org/dist/maven/maven-3/{{ maven.version }}/binaries/apache-maven-{{ maven.version }}-bin.tar.gz'
     dest: '/tmp/apache-maven-{{ maven.version }}-bin.tar.gz'
   when: maven.version != 'default'
 
@@ -26,23 +25,6 @@
   stat:
     path: /opt/maven/bin
   register: maven_bin
-
-# payara.yml also installs bsdtar, but container mode never runs it
-- name: install bsdtar on RedHat
-  package:
-    name: bsdtar
-    state: latest
-  when:
-    - maven.version != 'default'
-    - ansible_os_family == "RedHat"
-
-- name: install bsdtar on Debian
-  package:
-    name: libarchive-tools
-    state: latest
-  when:
-    - maven.version != 'default'
-    - ansible_os_family == "Debian"
 
 - name: bsdtar so we get /opt/maven
   shell: 'bsdtar --strip-components=1 -C /opt/maven -xf /tmp/apache-maven-{{ maven.version }}-bin.tar.gz'
