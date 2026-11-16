@@ -1,0 +1,102 @@
+---
+# dataverse/tasks/container-mode.yml
+#
+# Container mode (ec2-create-instance.sh -c): instead of installing Payara, PostgreSQL and Solr
+# on the host, build every Dataverse image from the branch and start the stack defined in
+# docker-compose-dev.yml, the same way the IQSS/dataverse "Dataverse Tests" workflow does.
+# Nothing of ours is pulled from a registry: base, app and configbaker images are built here.
+
+- name: begin container mode
+  ansible.builtin.debug:
+    msg: '##### CONTAINER MODE #####'
+
+# Container mode always builds from git, so the "release" default (dvinstall.zip) means develop here.
+- name: container mode builds a branch, default to develop
+  ansible.builtin.set_fact:
+    dataverse_branch: develop
+  when: dataverse_branch == "release"
+
+# Java 21, git, jq and the dataverse service account, which owns the checkout and runs the build
+- ansible.builtin.import_tasks: dataverse-prereqs.yml
+
+# Clones dataverse_repo/dataverse_branch into dataverse.srcdir and merges upstream develop
+- ansible.builtin.import_tasks: dataverse-branch.yml
+
+- ansible.builtin.import_tasks: maven.yml
+
+# Also adds the dataverse service account to the docker group
+- ansible.builtin.import_tasks: docker.yml
+
+- name: construct the maven command
+  ansible.builtin.set_fact:
+    container_mvn: "{{ '' if maven.version == 'default' else 'source /etc/profile.d/maven.sh && ' }}export JAVA_HOME={{ java_home }} && mvn -B"
+
+- name: build the images and start the Dataverse stack
+  become: true
+  become_user: '{{ dataverse.payara.user }}'
+  block:
+
+    # Built from the branch rather than pulled: a branch may change modules/container-base
+    - name: build base image. tail {{ dataverse.srcdir }}/mvn-base.out for gory details.
+      ansible.builtin.shell: '{{ container_mvn }} -Pct clean package -f modules/container-base/pom.xml > mvn-base.out 2>&1'
+      args:
+        chdir: '{{ dataverse.srcdir }}'
+        executable: /bin/bash
+
+    # The ct profile skips tests and builds the app and configbaker images on top of the base image
+    - name: build app and configbaker images. tail {{ dataverse.srcdir }}/mvn.out for gory details.
+      ansible.builtin.shell: '{{ container_mvn }} -Pct -T 1C package > mvn.out 2>&1'
+      args:
+        chdir: '{{ dataverse.srcdir }}'
+        executable: /bin/bash
+
+    # docker-compose-dev.yml would otherwise fall back to pulling an old image from Docker Hub
+    - name: the images built from the branch must be present locally
+      ansible.builtin.command: docker image inspect gdcc/dataverse:unstable gdcc/configbaker:unstable
+      changed_when: false
+
+    - name: start the Dataverse stack. tail {{ dataverse.srcdir }}/mvn-start.out for gory details.
+      ansible.builtin.shell: '{{ container_mvn }} -Pct docker:start > mvn-start.out 2>&1'
+      args:
+        chdir: '{{ dataverse.srcdir }}'
+        executable: /bin/bash
+
+    - name: wait for the Dataverse API
+      ansible.builtin.uri:
+        url: http://localhost:8080/api/info/version
+      register: dv_version
+      until: dv_version.json is defined and dv_version.json.status | default('') == 'OK'
+      retries: 60
+      delay: 10
+
+    - name: Dataverse is up
+      ansible.builtin.debug:
+        msg: '{{ dv_version.json.data }}'
+
+  rescue:
+
+    - name: collect maven output and container status
+      ansible.builtin.shell: |
+        for f in mvn-base.out mvn.out mvn-start.out; do
+          [ -f "$f" ] && { echo "===== tail of $f ====="; tail -n 40 "$f"; }
+        done
+        echo "===== containers ====="
+        docker ps -a || true
+        echo "===== tail of dev_dataverse log ====="
+        docker logs --tail 40 dev_dataverse 2>&1 || true
+      args:
+        chdir: '{{ dataverse.srcdir }}'
+        executable: /bin/bash
+      register: container_failure
+      changed_when: false
+      failed_when: false
+
+    - name: container mode failed
+      ansible.builtin.fail:
+        msg: "{{ container_failure.stdout_lines }}"
+
+- ansible.builtin.import_tasks: fin.yml
+
+# Container mode is complete: skip the classic install in main.yml
+- name: end container mode
+  ansible.builtin.meta: end_host

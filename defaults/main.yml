@@ -4,6 +4,9 @@
 # un-nested so we can pass them at the CLI
 dataverse_branch: release
 dataverse_repo: https://github.com/IQSS/dataverse.git
+# Build the branch's container images and start the stack in Docker instead of a native install.
+# ec2-create-instance.sh -c sets this. A dataverse_branch of "release" means develop here.
+container_mode: false
 # To use a dvinstall.zip from a different location than IQSS:
 # dataverse_installer_url: https://example.com/path/to/dvinstall.zip
 

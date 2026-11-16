@@ -12,7 +12,7 @@ VERBOSE_ARG=""
 AWS_AMI_DEFAULT='ami-08ace1224b75d38c1'
 
 usage() {
-  echo "Usage: $0 -b <branch> -r <repo> -p <pem_path> -g <group_vars> -a <dataverse-ansible branch> -i aws_image -u aws_user -s aws_size -t aws_tag -f aws_security group -e aws_profile -l local_log_path -d -v" 1>&2
+  echo "Usage: $0 -b <branch> -r <repo> -p <pem_path> -g <group_vars> -a <dataverse-ansible branch> -i aws_image -u aws_user -s aws_size -t aws_tag -f aws_security group -e aws_profile -l local_log_path -c -d -v" 1>&2
   echo "default branch is develop"
   echo "default repo is https://github.com/IQSS/dataverse"
   echo "default .pem location is ${HOME}"
@@ -22,12 +22,13 @@ usage() {
   echo "default AWS instance size is t3a.large"
   echo "default AWS security group is dataverse-sg"
   echo "local log path will rsync Payara, Jacoco, Maven and other logs back to the specified path"
+  echo "-c container mode: build the branch's container images and run Dataverse in Docker, on port 8080"
   echo "-d will destroy ("terminate") the AWS instance once testing and reporting completes"
   echo "-v increases Ansible output verbosity"
   exit 1
 }
 
-while getopts ":a:r:b:g:p:i:s:t:f:e:l:dv" o; do
+while getopts ":a:r:b:g:p:i:s:t:f:e:l:cdv" o; do
   case "${o}" in
   a)
     DA_BRANCH=${OPTARG}
@@ -64,6 +65,9 @@ while getopts ":a:r:b:g:p:i:s:t:f:e:l:dv" o; do
     ;;
   e)
     AWS_PROFILE=${OPTARG}
+    ;;
+  c)
+    CONTAINER=true
     ;;
   d)
     DESTROY=true
@@ -152,6 +156,12 @@ fi
 if [ ! -z "$AWS_PROFILE" ]; then
    PROFILE="--profile=$AWS_PROFILE"
    echo "using profile $PROFILE"
+fi
+
+# container mode
+if [ ! -z "$CONTAINER" ]; then
+   GVARG+=" -e container_mode=true"
+   echo "using container mode"
 fi
 
 # verbosity
@@ -274,6 +284,10 @@ fi
 # from HTTP to HTTPS and the cert is invalid (self-signed), forcing
 # the user to click through browser warnings.
 CLICKABLE_LINK="http://${PUBLIC_DNS}"
+# In container mode there is no Apache in front: Dataverse answers on port 8080.
+if [ ! -z "$CONTAINER" ]; then
+   CLICKABLE_LINK="http://${PUBLIC_DNS}:8080"
+fi
 echo "Branch $BRANCH from $REPO_URL has been deployed to $CLICKABLE_LINK"
 
 if [ -z "$DESTROY" ]; then

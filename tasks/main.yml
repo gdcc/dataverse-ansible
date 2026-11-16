@@ -5,6 +5,12 @@
   debug:
     msg: '##### BEGIN ANSIBLE ROLE #####'
 
+# Container mode runs its own short path and ends the play; nothing below runs.
+- ansible.builtin.include_tasks: container-mode.yml
+  when: container_mode | bool
+  tags:
+  - always
+
 - ansible.builtin.import_tasks: sanity-checks.yml
   tags:
   - prereqs
