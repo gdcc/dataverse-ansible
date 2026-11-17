@@ -299,6 +299,9 @@ if [ ! -z "$CONTAINER" ]; then
    CLICKABLE_LINK="http://${PUBLIC_DNS}:8080"
 fi
 echo "Branch $BRANCH from $REPO_URL has been deployed to $CLICKABLE_LINK"
+if [ ! -z "$CONTAINER" ]; then
+   echo "To start, stop or check the containers, ssh into the instance and run: dvctl help"
+fi
 
 if [ -z "$DESTROY" ]; then
    echo "To ssh into the new instance:"

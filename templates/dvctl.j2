@@ -1,0 +1,179 @@
+#!/bin/bash
+# dvctl: start, stop and check the Dataverse containers on a container mode instance.
+# Installed by dataverse-ansible's container mode (tasks/container-mode.yml).
+
+set -euo pipefail
+
+DV_USER='{{ dataverse.payara.user }}'
+SRCDIR='{{ dataverse.srcdir }}'
+ENV_FILE=/etc/profile.d/dataverse-container.sh
+{% raw %}
+APP=dev_dataverse
+API=http://localhost:8080/api/info/version
+
+usage() {
+  cat <<EOF
+dvctl: start, stop and check Dataverse, which runs in Docker containers on this server.
+The data (database, search index, uploaded files) is kept in
+$SRCDIR/docker-dev-volumes and survives every command below.
+
+Usage: dvctl <command>
+
+  start     Start Dataverse. Restarts the stopped containers, or creates them if
+            there are none, then waits until Dataverse answers (up to 10 minutes)
+            and prints its address.
+  stop      Stop Dataverse. The containers are kept, so the next start is quick.
+  destroy   Remove the containers. 'dvctl start' creates them again.
+  recreate  Remove the containers and create new ones. Use it after rebuilding
+            the images or changing docker-compose-dev.yml.
+  status    List the containers and whether Dataverse answers.
+  version   Show which branch and commit are deployed, and the Dataverse version.
+  help      Show this help.
+
+If Dataverse doesn't start, see its log with: sudo docker logs $APP
+EOF
+}
+
+case "${1:-}" in
+  start|stop|destroy|recreate|status|version) ;;
+  help) usage; exit 0 ;;
+  *) usage; exit 1 ;;
+esac
+
+# Docker and Maven run as the service account that owns the checkout
+if [ "$(id -un)" != "$DV_USER" ]; then
+  exec sudo -u "$DV_USER" "$(readlink -f "$0")" "$@"
+fi
+
+# JAVA_HOME, MAVEN_HOME and PATH, the same as in a login shell
+# shellcheck source=/dev/null
+. "$ENV_FILE"
+
+mvn_ct() {
+  cd "$SRCDIR"
+  mvn -B -Pct "$@"
+}
+
+# Every container on this host except the image builder: a container mode instance runs nothing else
+containers() {
+  docker ps -a "$@" --format '{{.Names}}' | grep -v '^buildx_buildkit_' || true
+}
+
+public_url() {
+  local token host
+  token=$(curl -sf -m 2 -X PUT http://169.254.169.254/latest/api/token \
+    -H 'X-aws-ec2-metadata-token-ttl-seconds: 60' || true)
+  host=$(curl -sf -m 2 -H "X-aws-ec2-metadata-token: $token" \
+    http://169.254.169.254/latest/meta-data/public-hostname || true)
+  echo "http://${host:-localhost}:8080"
+}
+
+wait_for_dataverse() {
+  local version
+  echo "Waiting for Dataverse to answer (up to 10 minutes)..."
+  for _ in $(seq 1 60); do
+    if version=$(curl -sf -m 5 "$API" | jq -er 'select(.status == "OK") | .data.version'); then
+      echo "Dataverse $version is up at $(public_url)"
+      return 0
+    fi
+    sleep 10
+  done
+  echo "Dataverse did not answer within 10 minutes. See its log with: sudo docker logs $APP" >&2
+  return 1
+}
+
+cmd_start() {
+  local name policy
+  if [ -z "$(containers)" ]; then
+    echo "No containers yet, creating them from docker-compose-dev.yml"
+    mvn_ct docker:start
+  else
+    # Skip the one-time setup containers (restart: "no"); they already did their job.
+    # Start Dataverse last, so its database and search index are up first.
+    for name in $(containers); do
+      [ "$name" = "$APP" ] && continue
+      policy=$(docker inspect -f '{{.HostConfig.RestartPolicy.Name}}' "$name")
+      if [ -z "$policy" ] || [ "$policy" = "no" ]; then
+        continue
+      fi
+      docker start "$name" >/dev/null
+      echo "started $name"
+    done
+    docker start "$APP" >/dev/null
+    echo "started $APP"
+  fi
+  wait_for_dataverse
+}
+
+cmd_stop() {
+  local running
+  if [ -z "$(containers --filter status=running)" ]; then
+    echo "Nothing is running."
+    return 0
+  fi
+  # Stop Dataverse first, while its database is still up. Payara needs more than
+  # Docker's default 10 seconds to shut down cleanly.
+  if containers --filter status=running | grep -qx "$APP"; then
+    docker stop -t 60 "$APP" >/dev/null
+    echo "stopped $APP"
+  fi
+  running=$(containers --filter status=running)
+  if [ -n "$running" ]; then
+    # shellcheck disable=SC2086
+    docker stop $running >/dev/null
+    echo "stopped ${running//$'\n'/ }"
+  fi
+  echo "Stopped. Run 'dvctl start' to start again."
+}
+
+cmd_destroy() {
+  local left
+  if [ -z "$(containers)" ]; then
+    echo "There are no containers to remove."
+    return 0
+  fi
+  mvn_ct docker:stop
+  left=$(containers)
+  if [ -n "$left" ]; then
+    echo "Removing containers Maven left behind: ${left//$'\n'/ }"
+    # shellcheck disable=SC2086
+    docker rm -f $left >/dev/null
+  fi
+  echo "Containers removed. The data is kept in $SRCDIR/docker-dev-volumes."
+}
+
+cmd_status() {
+  local version
+  if [ -z "$(containers)" ]; then
+    echo "No containers. Run 'dvctl start' to create them."
+  else
+    docker ps -a --format 'table {{.Names}}\t{{.Status}}' | grep -v '^buildx_buildkit_'
+  fi
+  echo
+  if version=$(curl -sf -m 5 "$API" | jq -er 'select(.status == "OK") | .data.version'); then
+    echo "Dataverse $version is up at $(public_url)"
+  else
+    echo "Dataverse is not answering."
+  fi
+}
+
+cmd_version() {
+  local version
+  echo "Branch:    $(git -C "$SRCDIR" rev-parse --abbrev-ref HEAD)"
+  echo "Commit:    $(git -C "$SRCDIR" log -1 --format='%h %s')"
+  if version=$(curl -sf -m 5 "$API" | jq -er 'select(.status == "OK") | .data.version'); then
+    echo "Dataverse: $version"
+  else
+    echo "Dataverse: not running"
+  fi
+}
+
+case "$1" in
+  start)    cmd_start ;;
+  stop)     cmd_stop ;;
+  destroy)  cmd_destroy ;;
+  recreate) cmd_destroy; cmd_start ;;
+  status)   cmd_status ;;
+  version)  cmd_version ;;
+esac
+{% endraw %}

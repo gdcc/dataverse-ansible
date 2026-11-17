@@ -55,9 +55,27 @@
     name: docker-buildx-plugin
     state: latest
 
+# JAVA_HOME, MAVEN_HOME and PATH for login shells, dvctl and the build steps below.
+# Classic mode's /etc/profile.d/maven.sh is not used here.
+- name: set up the Java and Maven environment
+  ansible.builtin.template:
+    src: dataverse-container-env.sh.j2
+    dest: /etc/profile.d/dataverse-container.sh
+    owner: root
+    group: root
+    mode: '0644'
+
+- name: install dvctl, to start, stop and check the containers
+  ansible.builtin.template:
+    src: dvctl.j2
+    dest: /usr/local/bin/dvctl
+    owner: root
+    group: root
+    mode: '0755'
+
 - name: construct the maven command
   ansible.builtin.set_fact:
-    container_mvn: "export JAVA_HOME={{ java_home }} && /opt/maven/bin/mvn -B"
+    container_mvn: "source /etc/profile.d/dataverse-container.sh && mvn -B"
 
 - name: build the images and start the Dataverse stack
   become: true
