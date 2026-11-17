@@ -1,0 +1,171 @@
+---
+# dataverse/tasks/container-mode.yml
+#
+# Container mode (ec2-create-instance.sh -c): instead of installing Payara, PostgreSQL and Solr
+# on the host, build every Dataverse image from the branch and start the stack defined in
+# docker-compose-dev.yml, the same way the IQSS/dataverse "Dataverse Tests" workflow does.
+# Nothing of ours is pulled from a registry: base, app and configbaker images are built here.
+
+- name: begin container mode
+  ansible.builtin.debug:
+    msg: '##### CONTAINER MODE #####'
+
+# Container mode always builds from git, so the "release" default (dvinstall.zip) means develop here.
+- name: container mode builds a branch, default to develop
+  ansible.builtin.set_fact:
+    dataverse_branch: develop
+  when: dataverse_branch == "release"
+
+# Java 21, git, jq and the dataverse service account, which owns the checkout and runs the build
+- ansible.builtin.import_tasks: dataverse-prereqs.yml
+
+# Clones dataverse_repo/dataverse_branch into dataverse.srcdir and merges upstream develop
+- ansible.builtin.import_tasks: dataverse-branch.yml
+
+# Container mode installs Maven itself rather than through maven.yml, so classic mode stays untouched.
+# Maven Central serves the same tarball as archive.apache.org from a CDN, ~100x faster.
+- name: download Maven {{ maven.version }} from Maven Central
+  ansible.builtin.get_url:
+    url: 'https://repo.maven.apache.org/maven2/org/apache/maven/apache-maven/{{ maven.version }}/apache-maven-{{ maven.version }}-bin.tar.gz'
+    dest: '/tmp/apache-maven-{{ maven.version }}-bin.tar.gz'
+    mode: '0644'
+
+- name: Maven install dir must exist
+  ansible.builtin.file:
+    path: /opt/maven
+    owner: root
+    group: root
+    mode: '0755'
+    state: directory
+
+- name: unpack Maven into /opt/maven
+  ansible.builtin.unarchive:
+    src: '/tmp/apache-maven-{{ maven.version }}-bin.tar.gz'
+    dest: /opt/maven
+    remote_src: true
+    extra_opts: ['--strip-components=1']
+    creates: /opt/maven/bin/mvn
+
+# Also adds the dataverse service account to the docker group
+- ansible.builtin.import_tasks: docker.yml
+
+# The Maven image builds use buildx; docker-ce only recommends it
+- name: install docker buildx plugin
+  ansible.builtin.package:
+    name: docker-buildx-plugin
+    state: latest
+
+# JAVA_HOME, MAVEN_HOME and PATH for login shells, dvctl and the build steps below.
+# Classic mode's /etc/profile.d/maven.sh is not used here.
+- name: set up the Java and Maven environment
+  ansible.builtin.template:
+    src: dataverse-container-env.sh.j2
+    dest: /etc/profile.d/dataverse-container.sh
+    owner: root
+    group: root
+    mode: '0644'
+
+- name: install dvctl, to start, stop and check the containers
+  ansible.builtin.template:
+    src: dvctl.j2
+    dest: /usr/local/bin/dvctl
+    owner: root
+    group: root
+    mode: '0755'
+
+- name: construct the maven command
+  ansible.builtin.set_fact:
+    container_mvn: "source /etc/profile.d/dataverse-container.sh && mvn -B"
+
+- name: build the images and start the Dataverse stack
+  become: true
+  become_user: '{{ dataverse.payara.user }}'
+  block:
+
+    # Built from the branch rather than pulled: a branch may change modules/container-base
+    - name: build base image. tail {{ dataverse.srcdir }}/mvn-base.out for gory details.
+      ansible.builtin.shell: '{{ container_mvn }} -Pct clean package -f modules/container-base/pom.xml > mvn-base.out 2>&1'
+      args:
+        chdir: '{{ dataverse.srcdir }}'
+        executable: /bin/bash
+
+    # The ct profile skips tests and builds the app and configbaker images on top of the base image
+    - name: build app and configbaker images. tail {{ dataverse.srcdir }}/mvn.out for gory details.
+      ansible.builtin.shell: '{{ container_mvn }} -Pct -T 1C package > mvn.out 2>&1'
+      args:
+        chdir: '{{ dataverse.srcdir }}'
+        executable: /bin/bash
+
+    # docker-compose-dev.yml would otherwise fall back to pulling an old image from Docker Hub
+    - name: the images built from the branch must be present locally
+      ansible.builtin.command: docker image inspect gdcc/dataverse:unstable gdcc/configbaker:unstable
+      changed_when: false
+
+    # The Maven builds leave a buildkit container running; it isn't needed once the images exist
+    # (the Maven plugin registers the builder in its own docker config, so remove the container itself)
+    - name: remove the buildx builder container
+      ansible.builtin.shell: docker ps -aq --filter name=buildx_buildkit_ | xargs -r docker rm -f
+      args:
+        executable: /bin/bash
+
+    - name: start the Dataverse stack. tail {{ dataverse.srcdir }}/mvn-start.out for gory details.
+      ansible.builtin.shell: '{{ container_mvn }} -Pct docker:start > mvn-start.out 2>&1'
+      args:
+        chdir: '{{ dataverse.srcdir }}'
+        executable: /bin/bash
+
+    - name: wait for the Dataverse API
+      ansible.builtin.uri:
+        url: http://localhost:8080/api/info/version
+      register: dv_version
+      until: dv_version.json is defined and dv_version.json.status | default('') == 'OK'
+      retries: 60
+      delay: 10
+
+    # dev_bootstrap creates the root collection and admin user, but only waits 3 minutes for
+    # Dataverse. On a slower host Dataverse can take longer, so if it gave up, run it again.
+    - name: wait for dev_bootstrap, and run it again if it timed out
+      ansible.builtin.shell: |
+        rc=$(docker wait dev_bootstrap)
+        if [ "$rc" != "0" ]; then
+          echo "dev_bootstrap exited with $rc before Dataverse was ready, running it again"
+          docker start -a dev_bootstrap
+        fi
+      args:
+        executable: /bin/bash
+
+    - name: the root collection must exist
+      ansible.builtin.uri:
+        url: http://localhost:8080/api/dataverses/root
+
+    - name: Dataverse is up
+      ansible.builtin.debug:
+        msg: '{{ dv_version.json.data }}'
+
+  rescue:
+
+    - name: collect maven output and container status
+      ansible.builtin.shell: |
+        for f in mvn-base.out mvn.out mvn-start.out; do
+          [ -f "$f" ] && { echo "===== tail of $f ====="; tail -n 40 "$f"; }
+        done
+        echo "===== containers ====="
+        docker ps -a || true
+        echo "===== tail of dev_dataverse log ====="
+        docker logs --tail 40 dev_dataverse 2>&1 || true
+      args:
+        chdir: '{{ dataverse.srcdir }}'
+        executable: /bin/bash
+      register: container_failure
+      changed_when: false
+      failed_when: false
+
+    - name: container mode failed
+      ansible.builtin.fail:
+        msg: "{{ container_failure.stdout_lines }}"
+
+- ansible.builtin.import_tasks: fin.yml
+
+# Container mode is complete: skip the classic install in main.yml
+- name: end container mode
+  ansible.builtin.meta: end_host

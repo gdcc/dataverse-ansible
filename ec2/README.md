@@ -8,11 +8,11 @@ An **AWS client** and account with access to create EC2 instances as documented 
 
 If you intend to use the `-l` logpath argument, you will need **rsync version 3.1.0 or above**. *(OS X users: install a newer rsync with brew or macports)*
 
-An existing AWS **security group** to allow network access, typically ports 22, 80, 443, and/or 8080 depending on your needs. A group name of `dataverse-sg` is currently hard-coded in the script. If one uses script defaults, the security group should allow ports 22 and 80.
+An existing AWS **security group** to allow network access, typically ports 22, 80, 443, and/or 8080 depending on your needs. A group name of `dataverse-sg` is currently hard-coded in the script. If one uses script defaults, the security group should allow ports 22 and 80; container mode (`-c`) needs ports 22 and 8080.
 
 ### Full Usage:
 
-`./ec2-create-instance.sh -b <branch> -r <repo> -p <pem_dir> -g <group_vars> -a <dataverse-ansible branch> -i aws_image -s aws_size -t aws_tag -l local_log_path -d`
+`./ec2-create-instance.sh -b <branch> -r <repo> -p <pem_dir> -g <group_vars> -a <dataverse-ansible branch> -i aws_image -s aws_size -t aws_tag -l local_log_path -c -d`
 
 * the default branch is `develop`
 * the default repo is `https://github.com/IQSS/dataverse`
@@ -21,6 +21,7 @@ An existing AWS **security group** to allow network access, typically ports 22, 
 * the default AWS AMI ID is ami-043ceee68871e0bb5 *(Rocky 8 in us-east-1)* ; full list at https://rockylinux.org/ami/
 * the default AWS size is t2.xlarge to avoid OoM killer during integration tests (otherwise, t2.large or even t2.medium may be fine)
 * local log path will rsync Payara, Jacoco, Maven and other logs back to the specified path
+* `-c` runs Dataverse in containers instead of installing it on the instance; see [Container Mode](#container-mode) below
 * `-d` will destroy (terminate) the AWS instance once testing, reporting, and log-copying completes
 
 ### Quick Start
@@ -40,6 +41,38 @@ To stand up the `5292-small-container branch` from @poikilotherm's fork:
 To stand up an instance from current develop with unit and integration tests enabled, as run on [https://jenkins.dataverse.org/](https://jenkins.dataverse.org/) grab a current copy of [jenkins.yml](https://raw.githubusercontent.com/GlobalDataverseCommunityConsortium/dataverse-ansible/develop/tests/group_vars/jenkins.yml) and issue:
 
 `./ec2-create-instance.sh -g jenkins.yml -l logs`
+
+### Container Mode
+
+With `-c`, the instance builds all of the Dataverse container images (base, app and configbaker) from the chosen branch and starts the stack defined in the branch's `docker-compose-dev.yml`, the same containers developers run on their own computers. Nothing is pulled from a registry for Dataverse itself, so the instance runs exactly the code in the branch (with `develop` merged in, as in classic mode).
+
+To stand up `develop` in container mode:
+
+`./ec2-create-instance.sh -c`
+
+or a branch from a fork:
+
+`./ec2-create-instance.sh -c -b <branch> -r <repo>`
+
+Building the images takes a while: expect about 30 minutes. In container mode the default AWS size is t3a.xlarge with a 30 GB disk; `-s` still overrides the size. When it's done, the script prints a link on port 8080. Log in as `dataverseAdmin` with the password `admin1`.
+
+On the instance, the `dvctl` command starts, stops and checks the containers:
+
+| Command | What it does |
+|---|---|
+| `dvctl start` | Start Dataverse, wait until it answers and print its address |
+| `dvctl stop` | Stop the containers; they are kept, so the next start is quick |
+| `dvctl destroy` | Remove the containers |
+| `dvctl recreate` | Remove the containers and create new ones, e.g. after editing `docker-compose-dev.yml` |
+| `dvctl status` | List the containers and whether Dataverse answers |
+| `dvctl version` | Show the deployed branch, commit and Dataverse version |
+| `dvctl help` | Show the help |
+
+The database, Solr index and uploaded files are kept in `/opt/dataverse/dataverse/docker-dev-volumes` and survive all of these commands. The checkout, including `docker-compose-dev.yml`, is in `/opt/dataverse/dataverse`.
+
+You can also run it from your own computer over SSH, e.g. `ssh -i <pem> rocky@<host> dvctl status`.
+
+If you stop the EC2 instance to save money and start it again later, run `dvctl start` (or `dvctl status` to check). The instance also gets a new public address.
 
 ### Paying the Piper
 

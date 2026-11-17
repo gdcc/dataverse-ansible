@@ -1,0 +1,5 @@
+# Java and Maven for the Dataverse container stack.
+# Installed by dataverse-ansible's container mode (tasks/container-mode.yml); also used by dvctl.
+export JAVA_HOME={{ java_home }}
+export MAVEN_HOME=/opt/maven
+export PATH=/opt/maven/bin:$PATH
