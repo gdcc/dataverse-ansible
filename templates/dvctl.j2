@@ -82,20 +82,29 @@ wait_for_dataverse() {
   return 1
 }
 
+# The one-time setup containers: docker-compose-dev.yml marks them restart: "no".
+# (Docker reports "no" for services without a restart setting too, such as Keycloak,
+# so ask Compose, which tells the two apart.)
+one_shot_containers() {
+  (cd "$SRCDIR" && docker compose -f docker-compose-dev.yml config --format json 2>/dev/null) |
+    jq -r '.services | to_entries[] | select(.value.restart == "no") | .value.container_name // .key'
+}
+
 cmd_start() {
-  local name policy
+  local name one_shot
   if [ -z "$(containers)" ]; then
     echo "No containers yet, creating them from docker-compose-dev.yml"
     mvn_ct docker:start
   else
-    # Skip the one-time setup containers (restart: "no"); they already did their job.
+    # Skip the one-time setup containers; they already did their job.
     # Start Dataverse last, so its database and search index are up first.
+    if ! one_shot=$(one_shot_containers); then
+      echo "Could not read docker-compose-dev.yml; starting every container" >&2
+      one_shot=""
+    fi
     for name in $(containers); do
       [ "$name" = "$APP" ] && continue
-      policy=$(docker inspect -f '{{.HostConfig.RestartPolicy.Name}}' "$name")
-      if [ -z "$policy" ] || [ "$policy" = "no" ]; then
-        continue
-      fi
+      grep -qxF "$name" <<<"$one_shot" && continue
       docker start "$name" >/dev/null
       echo "started $name"
     done
