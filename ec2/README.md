@@ -80,7 +80,7 @@ If you stop the EC2 instance to save money and start it again later, run `dvctl 
 
 1. It downloads `docker/compose/demo/compose.yml` from the release's tag in [IQSS/dataverse](https://github.com/IQSS/dataverse).
 2. That file always uses the `latest` images, so the script pins `gdcc/dataverse` and `gdcc/configbaker` to the release's [`<version>-noble` tag](https://guides.dataverse.org/en/latest/container/app-image.html#supported-image-tags).
-3. It creates the instance, installs Docker (or Podman) and runs `compose up -d`.
+3. It creates the instance, installs Docker and runs `docker compose up -d`.
 
 Releases 6.4 and later are supported. The script checks the release before it creates the instance.
 
@@ -88,14 +88,13 @@ To run the latest release:
 
 `./ec2-deploy-docker-demo.sh`
 
-A specific release, with Podman instead of Docker:
+A specific release:
 
-`./ec2-deploy-docker-demo.sh -v 6.11 -m podman`
+`./ec2-deploy-docker-demo.sh -v 6.11`
 
 Options:
 
 * `-v` Dataverse release, e.g. `6.12.1` (default: the latest release)
-* `-m` container engine: `docker` (default) or `podman`
 * `-e` AWS profile (default: your default AWS credentials)
 * `-s` AWS instance size (default: t3a.large)
 * `-t` AWS name tag for the instance
@@ -104,7 +103,7 @@ Options:
 
 It takes about 10 minutes. The script then prints a link on port 8080 (log in as `dataverseAdmin` with the password `admin1`), the ssh command, and the commands to terminate the instance and delete the key pair it created.
 
-On the instance, the compose file and the data are in `/opt/dataverse-demo`. From there, with `podman` in place of `docker` if you used `-m podman`:
+On the instance, the compose file and the data are in `/opt/dataverse-demo`. From there:
 
 * `sudo docker compose stop` stops Dataverse
 * `sudo docker compose start` starts it again

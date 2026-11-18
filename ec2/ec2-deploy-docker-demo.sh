@@ -4,8 +4,8 @@
 # https://guides.dataverse.org/en/latest/container/running/demo.html
 #
 # It downloads docker/compose/demo/compose.yml from the release's tag in IQSS/dataverse,
-# pins the Dataverse images to that release, and runs "compose up" with Docker (default)
-# or Podman. Nothing is built; for a branch, use ec2-create-instance.sh -c instead.
+# pins the Dataverse images to that release, and runs "docker compose up". Nothing is built;
+# for a branch, use ec2-create-instance.sh -c instead.
 
 set -euo pipefail
 
@@ -20,13 +20,12 @@ DOCKER_REPO=https://download.docker.com/linux/centos/docker-ce.repo
 
 usage() {
   cat <<EOF
-Usage: $0 [-v <version>] [-m docker|podman] [-e aws_profile] [-s aws_size] [-t aws_tag] [-i aws_image] [-f aws_security_group]
+Usage: $0 [-v <version>] [-e aws_profile] [-s aws_size] [-t aws_tag] [-i aws_image] [-f aws_security_group]
 
 Runs a released version of Dataverse on a new EC2 instance, with the demo compose.yml
 from https://guides.dataverse.org/en/latest/container/running/demo.html
 
   -v  Dataverse release, 6.4 or later, e.g. 6.12.1 (default: the latest release)
-  -m  container engine: docker (default) or podman
   -e  AWS profile (default: your default AWS credentials)
   -s  AWS instance size (default: $SIZE_DEFAULT)
   -t  AWS name tag for the instance
@@ -38,17 +37,15 @@ EOF
 }
 
 VERSION=""
-ENGINE=docker
 AWS_PROFILE_ARG=""
 SIZE=$SIZE_DEFAULT
 TAG=""
 AMI_ID=$AWS_AMI_DEFAULT
 AWS_SG=$AWS_SG_DEFAULT
 
-while getopts ":v:m:e:s:t:i:f:h" o; do
+while getopts ":v:e:s:t:i:f:h" o; do
   case "$o" in
   v) VERSION=${OPTARG#v} ;;
-  m) ENGINE=$OPTARG ;;
   e) AWS_PROFILE_ARG="--profile=$OPTARG" ;;
   s) SIZE=$OPTARG ;;
   t) TAG=$OPTARG ;;
@@ -58,11 +55,6 @@ while getopts ":v:m:e:s:t:i:f:h" o; do
   *) usage ;;
   esac
 done
-
-case "$ENGINE" in
-  docker|podman) ;;
-  *) echo "-m must be docker or podman, not \"$ENGINE\"" >&2; exit 1 ;;
-esac
 
 if ! command -v aws >/dev/null; then
   echo 'The "aws" program could not be found. Is it in your PATH?' >&2
@@ -106,10 +98,6 @@ for image in dataverse configbaker; do
   fi
 done
 sed -E -i.bak "s#(image:[[:space:]]*gdcc/(dataverse|configbaker)):latest#\1:$IMAGE_TAG#" "$COMPOSE_FILE"
-rm -f "$COMPOSE_FILE.bak"
-# Spell out docker.io: Podman won't guess the registry of a short name like postgres:17.
-# Images that already name a registry (a dot before the first slash) are left alone.
-sed -E -i.bak '/image:[[:space:]]*[^[:space:]/]*\.[^[:space:]/]*\//! s#(image:[[:space:]]*)#\1docker.io/#' "$COMPOSE_FILE"
 rm -f "$COMPOSE_FILE.bak"
 if grep -q 'gdcc/.*:latest' "$COMPOSE_FILE"; then
   echo "Could not pin every gdcc image to $IMAGE_TAG in $COMPOSE_URL:" >&2
@@ -165,30 +153,19 @@ for _ in $(seq 1 30); do
   sleep 10
 done
 
-# --- Install the engine and start Dataverse ----------------------------------
+# --- Install Docker and start Dataverse -------------------------------------
 
 scp -q "${SSH_OPTS[@]}" "$COMPOSE_FILE" "$USER_AT_HOST:compose.yml"
 
-echo "Installing $ENGINE and starting Dataverse $VERSION. This takes about 10 minutes."
+echo "Installing Docker and starting Dataverse $VERSION. This takes about 10 minutes."
 ssh -T "${SSH_OPTS[@]}" "$USER_AT_HOST" \
-  ENGINE="$ENGINE" DEMO_DIR="$DEMO_DIR" DOCKER_REPO="$DOCKER_REPO" PUBLIC_DNS="$PUBLIC_DNS" bash -s <<'REMOTE'
+  DEMO_DIR="$DEMO_DIR" DOCKER_REPO="$DOCKER_REPO" PUBLIC_DNS="$PUBLIC_DNS" bash -s <<'REMOTE'
 set -euo pipefail
 
-if [ "$ENGINE" = docker ]; then
-  sudo dnf -q -y install dnf-plugins-core
-  sudo dnf config-manager --add-repo "$DOCKER_REPO"
-  sudo dnf -q -y install docker-ce docker-ce-cli containerd.io docker-compose-plugin
-  sudo systemctl enable --now docker
-else
-  # podman compose needs a compose provider; podman-compose comes from EPEL
-  sudo dnf -q -y install epel-release
-  sudo dnf -q -y install podman podman-compose
-  # The demo bind-mounts ./data without SELinux labels (:z); Docker doesn't label containers here, Podman does.
-  sudo mkdir -p /etc/containers/containers.conf.d
-  printf '[containers]\nlabel = false\n' | sudo tee /etc/containers/containers.conf.d/dataverse-demo.conf >/dev/null
-  # Bring back containers that have a restart policy after a reboot
-  sudo systemctl enable podman-restart.service
-fi
+sudo dnf -q -y install dnf-plugins-core
+sudo dnf config-manager --add-repo "$DOCKER_REPO"
+sudo dnf -q -y install docker-ce docker-ce-cli containerd.io docker-compose-plugin
+sudo systemctl enable --now docker
 
 sudo mkdir -p "$DEMO_DIR"
 sudo mv ~/compose.yml "$DEMO_DIR/compose.yml"
@@ -196,7 +173,7 @@ sudo mv ~/compose.yml "$DEMO_DIR/compose.yml"
 echo "MACHINE_IP=$PUBLIC_DNS" | sudo tee "$DEMO_DIR/.env" >/dev/null
 
 cd "$DEMO_DIR"
-sudo "$ENGINE" compose up -d
+sudo docker compose up -d
 
 echo "Waiting for Dataverse to answer (up to 15 minutes)..."
 for _ in $(seq 1 90); do
@@ -205,19 +182,19 @@ for _ in $(seq 1 90); do
 done
 curl -fs -m 5 http://localhost:8080/api/info/version | grep -q '"status":"OK"' || {
   echo "Dataverse did not answer within 15 minutes. Its log:" >&2
-  sudo "$ENGINE" logs --tail 40 dataverse >&2 || true
+  sudo docker logs --tail 40 dataverse >&2 || true
   exit 1
 }
 
 # bootstrap creates the root collection and dataverseAdmin, but gives up after 3 minutes.
 # If Dataverse took longer than that, run it again.
-rc=$(sudo "$ENGINE" wait bootstrap)
+rc=$(sudo docker wait bootstrap)
 if [ "$rc" != "0" ]; then
   echo "bootstrap exited with $rc before Dataverse was ready, running it again"
-  sudo "$ENGINE" start -a bootstrap
+  sudo docker start -a bootstrap
 fi
 curl -fs -m 5 -o /dev/null http://localhost:8080/api/dataverses/root || {
-  echo "Dataverse is up, but the root collection is missing. See: sudo $ENGINE logs bootstrap" >&2
+  echo "Dataverse is up, but the root collection is missing. See: sudo docker logs bootstrap" >&2
   exit 1
 }
 REMOTE
@@ -230,9 +207,9 @@ Log in as dataverseAdmin with the password admin1.
 To ssh into the instance:
   ssh -i $PEM_FILE $USER_AT_HOST
 The compose file and the data are in $DEMO_DIR. From there:
-  sudo $ENGINE compose stop      stop Dataverse
-  sudo $ENGINE compose start     start it again
-  sudo $ENGINE compose down      remove the containers (the data in $DEMO_DIR/data is kept)
+  sudo docker compose stop      stop Dataverse
+  sudo docker compose start     start it again
+  sudo docker compose down      remove the containers (the data in $DEMO_DIR/data is kept)
 
 When you are done, please terminate the instance and delete its key with:
   $DESTROY_CMD
