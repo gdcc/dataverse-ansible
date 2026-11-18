@@ -145,10 +145,13 @@ INSTANCE_ID=$(aws_ ec2 run-instances --image-id "$AMI_ID" --instance-type "$SIZE
   --security-groups "$AWS_SG" --key-name "$KEY_NAME" ${TAG_ARGS[@]+"${TAG_ARGS[@]}"} \
   --block-device-mappings '[{"DeviceName":"/dev/sda1","Ebs":{"DeleteOnTermination":true,"VolumeSize":'"$VOLUME_SIZE"'}}]' \
   --query 'Instances[0].InstanceId' --output text)
+# Each run creates its own key pair, so clean it up along with the instance
 DESTROY_CMD="aws $AWS_PROFILE_ARG ec2 terminate-instances --instance-ids $INSTANCE_ID"
+DELETE_KEY_CMD="aws $AWS_PROFILE_ARG ec2 delete-key-pair --key-name $KEY_NAME && rm -f $PEM_FILE"
 echo "Instance ID: $INSTANCE_ID"
-echo "When you are done, please terminate it with:"
+echo "When you are done, please terminate it and delete its key with:"
 echo "  $DESTROY_CMD"
+echo "  $DELETE_KEY_CMD"
 
 aws_ ec2 wait instance-running --instance-ids "$INSTANCE_ID"
 PUBLIC_DNS=$(aws_ ec2 describe-instances --instance-ids "$INSTANCE_ID" \
@@ -231,6 +234,7 @@ The compose file and the data are in $DEMO_DIR. From there:
   sudo $ENGINE compose start     start it again
   sudo $ENGINE compose down      remove the containers (the data in $DEMO_DIR/data is kept)
 
-When you are done, please terminate the instance with:
+When you are done, please terminate the instance and delete its key with:
   $DESTROY_CMD
+  $DELETE_KEY_CMD
 EOF
