@@ -74,6 +74,44 @@ You can also run it from your own computer over SSH, e.g. `ssh -i <pem> rocky@<h
 
 If you stop the EC2 instance to save money and start it again later, run `dvctl start` (or `dvctl status` to check). The instance also gets a new public address.
 
+### Demo of a Release: ec2-deploy-docker-demo.sh
+
+`ec2-create-instance.sh` is for developers: it deploys a branch. To try out a released version of Dataverse instead, `ec2-deploy-docker-demo.sh` runs it on a new EC2 instance with the demo `compose.yml` from the [Container Guide](https://guides.dataverse.org/en/latest/container/running/demo.html). It doesn't use Ansible and builds nothing:
+
+1. It downloads `docker/compose/demo/compose.yml` from the release's tag in [IQSS/dataverse](https://github.com/IQSS/dataverse).
+2. That file always uses the `latest` images, so the script pins `gdcc/dataverse` and `gdcc/configbaker` to the release's [`<version>-noble` tag](https://guides.dataverse.org/en/latest/container/app-image.html#supported-image-tags).
+3. It creates the instance, installs Docker and runs `docker compose up -d`.
+
+Releases 6.4 and later are supported. The script checks the release before it creates the instance.
+
+To run the latest release:
+
+`./ec2-deploy-docker-demo.sh`
+
+A specific release:
+
+`./ec2-deploy-docker-demo.sh -v 6.11`
+
+Options:
+
+* `-v` Dataverse release, e.g. `6.12.1` (default: the latest release)
+* `-e` AWS profile (default: your default AWS credentials)
+* `-s` AWS instance size (default: t3a.large)
+* `-t` AWS name tag for the instance
+* `-i` AWS AMI ID (default: Rocky Linux 9 in us-east-1)
+* `-f` AWS security group (default: `dataverse-sg`; it must allow ports 22 and 8080)
+
+It takes about 10 minutes. The script then prints a link on port 8080 (log in as `dataverseAdmin` with the password `admin1`), the ssh command, and the commands to terminate the instance and delete the key pair it created.
+
+On the instance, the compose file and the data are in `/opt/dataverse-demo`. From there:
+
+* `sudo docker compose stop` stops Dataverse
+* `sudo docker compose start` starts it again
+* `sudo docker compose down` removes the containers; the data in `/opt/dataverse-demo/data` is kept
+* `sudo docker compose logs -f dataverse` follows the Dataverse log
+
+As in the Container Guide, this is a setup for demos and evaluations, not for production.
+
 ### Paying the Piper
 
 To see how many instances you or others in your organization have in use, one may:
